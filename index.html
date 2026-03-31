@@ -4,96 +4,207 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Yuraaa Store</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:'Segoe UI',sans-serif;background:#020617;color:white}
-header{text-align:center;padding:20px;background:#020617;border-bottom:1px solid #1e293b}
-h1{margin:0;font-size:30px}
-.tagline{color:#38bdf8;font-size:13px}
+*{box-sizing:border-box;margin:0;padding:0}
 
-.container{padding:20px}
-
-.topbar{
-  display:flex;
-  gap:10px;
-  margin-bottom:15px;
+body{
+  font-family:'Segoe UI',sans-serif;
+  background: radial-gradient(circle at top,#020617,#000);
+  color:white;
 }
 
-.search, .filter{
-  flex:1;
-  padding:10px;
-  border-radius:10px;
-  border:none;
+/* HEADER */
+header{
+  text-align:center;
+  padding:25px 15px;
+  border-bottom:1px solid #1e293b;
 }
 
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+h1{
+  font-size:32px;
+  background:linear-gradient(90deg,#38bdf8,#22c55e);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 20px rgba(56,189,248,.5);
+}
 
-.card{
-  background:linear-gradient(145deg,#1e293b,#0f172a);
+.tagline{
+  color:#94a3b8;
+  font-size:13px;
+  margin-top:5px;
+}
+
+/* BANNER */
+.banner{
+  padding:15px;
+}
+.banner img{
+  width:100%;
   border-radius:15px;
-  padding:12px;
-  border:1px solid #1e293b;
-  transition:.3s;
+  box-shadow:0 0 25px rgba(56,189,248,0.2);
 }
 
-.card:hover{
-  transform:translateY(-5px);
-  box-shadow:0 0 20px rgba(56,189,248,0.4);
-}
-
-.card img{width:100%;height:130px;border-radius:10px;object-fit:cover}
-
-.price{color:#22c55e;font-weight:bold;font-size:16px}
-
-.status{font-size:11px;padding:4px 8px;border-radius:20px}
-.available{background:#22c55e;color:black}
-.sold{background:#ef4444}
-
-.btn{display:block;margin-top:10px;padding:10px;text-align:center;border-radius:10px;background:#22c55e;color:black;text-decoration:none;font-weight:bold}
-
-.badge{font-size:10px;background:#38bdf8;color:black;padding:3px 7px;border-radius:20px;margin-left:5px}
-
+/* STATS */
 .stats{
   display:flex;
-  justify-content:space-between;
+  gap:10px;
+  padding:0 15px;
   margin-bottom:15px;
 }
 
 .stat{
-  background:#1e293b;
-  padding:10px;
-  border-radius:10px;
-  width:32%;
+  flex:1;
+  background:#0f172a;
+  padding:12px;
+  border-radius:12px;
   text-align:center;
   font-size:12px;
+  border:1px solid #1e293b;
 }
 
-.testi{background:#1e293b;padding:10px;border-radius:10px;margin-top:10px}
+/* SEARCH */
+.topbar{
+  display:flex;
+  gap:10px;
+  padding:0 15px;
+  margin-bottom:15px;
+}
 
-.wa-float{position:fixed;bottom:20px;right:20px;background:#22c55e;padding:12px 16px;border-radius:50px;color:black;text-decoration:none;font-weight:bold}
+.search,.filter{
+  flex:1;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  background:#0f172a;
+  color:white;
+}
 
-footer{text-align:center;padding:20px;font-size:12px;color:#94a3b8}
+/* GRID */
+.grid{
+  padding:0 15px 20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
+}
+
+/* CARD */
+.card{
+  background:linear-gradient(145deg,#1e293b,#020617);
+  border-radius:15px;
+  padding:12px;
+  border:1px solid #1e293b;
+  transition:.3s;
+  position:relative;
+}
+
+.card:hover{
+  transform:translateY(-8px) scale(1.02);
+  box-shadow:0 0 25px rgba(56,189,248,.4);
+}
+
+.card img{
+  width:100%;
+  height:130px;
+  border-radius:10px;
+  object-fit:cover;
+}
+
+.price{
+  color:#22c55e;
+  font-weight:bold;
+  font-size:18px;
+}
+
+.status{
+  position:absolute;
+  top:10px;
+  left:10px;
+  font-size:10px;
+  padding:4px 8px;
+  border-radius:20px;
+}
+
+.available{background:#22c55e;color:black}
+.sold{background:#ef4444}
+
+.badge{
+  background:#38bdf8;
+  color:black;
+  font-size:10px;
+  padding:3px 7px;
+  border-radius:20px;
+  margin-left:5px;
+}
+
+/* BUTTON */
+.btn{
+  display:block;
+  margin-top:10px;
+  padding:10px;
+  text-align:center;
+  border-radius:10px;
+  background:linear-gradient(90deg,#22c55e,#4ade80);
+  color:black;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+/* TESTI */
+.testi{
+  margin:10px 15px;
+  background:#0f172a;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #1e293b;
+  font-size:13px;
+}
+
+/* FLOAT WA */
+.wa{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#22c55e;
+  padding:12px 18px;
+  border-radius:50px;
+  color:black;
+  text-decoration:none;
+  font-weight:bold;
+  box-shadow:0 0 20px rgba(34,197,94,.5);
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:20px;
+  font-size:12px;
+  color:#64748b;
+}
 </style>
 </head>
+
 <body>
 
 <header>
 <h1>YURAAA STORE 🚀</h1>
-<div class="tagline">Cepat • Aman • Terpercaya</div>
+<div class="tagline">Akun Game Murah • Aman • Fast Respon</div>
 </header>
 
-<div class="container">
+<div class="banner">
+<img src="https://via.placeholder.com/800x250">
+</div>
 
 <div class="stats">
-<div class="stat">100+ Transaksi</div>
-<div class="stat">Fast Respon</div>
-<div class="stat">Trusted Seller</div>
+<div class="stat">🔥 187+ Transaksi</div>
+<div class="stat">⚡ Respon 5 Menit</div>
+<div class="stat">💯 Trusted Seller</div>
 </div>
 
 <div class="topbar">
 <input class="search" placeholder="Cari akun..." onkeyup="searchGame(this.value)">
 <select class="filter" onchange="filterGame(this.value)">
-<option value="all">Semua Game</option>
+<option value="all">Semua</option>
 <option value="hsr">HSR</option>
 <option value="solo">Solo</option>
 <option value="ark">Arknights</option>
@@ -103,43 +214,42 @@ footer{text-align:center;padding:20px;font-size:12px;color:#94a3b8}
 <div class="grid" id="list">
 
 <div class="card" data-name="hsr">
-<span class="status available">Available</span>
+<span class="status available">Ready</span>
 <img src="https://via.placeholder.com/300x150">
 <h4>HSR Kafka <span class="badge">HOT</span></h4>
 <div class="price">Rp 75.000</div>
 <p>MC 45 • Banyak 5⭐</p>
-<a href="https://wa.me/6285939286029?text=Min mau akun HSR" class="btn">Beli</a>
+<a href="https://wa.me/6285939286029?text=Min saya minat akun HSR Kafka, masih ada?" class="btn">Beli Sekarang</a>
 </div>
 
 <div class="card" data-name="solo">
-<span class="status available">Available</span>
+<span class="status available">Ready</span>
 <img src="https://via.placeholder.com/300x150">
 <h4>Solo Leveling <span class="badge">BEST</span></h4>
 <div class="price">Rp 50.000</div>
-<p>Power tinggi</p>
-<a href="https://wa.me/6285939286029?text=Min mau akun Solo" class="btn">Beli</a>
+<p>Power tinggi • siap push</p>
+<a href="https://wa.me/6285939286029?text=Min saya minat akun Solo Leveling" class="btn">Beli Sekarang</a>
 </div>
 
 <div class="card" data-name="ark">
-<span class="status available">Available</span>
+<span class="status sold">Sold</span>
 <img src="https://via.placeholder.com/300x150">
 <h4>Arknights</h4>
 <div class="price">Rp 40.000</div>
 <p>Starter bagus</p>
-<a href="https://wa.me/6285939286029" class="btn">Beli</a>
+<a class="btn" style="background:#64748b">Sold Out</a>
 </div>
 
 </div>
 
 <div class="testi">⭐ "Trusted banget, admin ramah"</div>
-<div class="testi">⭐ "Akun sesuai deskripsi"</div>
+<div class="testi">⭐ "Akun sesuai, no tipu"</div>
+<div class="testi">✅ Garansi Aman • Fast Respon • No Ribet</div>
 
-</div>
-
-<a href="https://wa.me/6285939286029" class="wa-float">Chat</a>
+<a href="https://wa.me/6285939286029" class="wa">Chat</a>
 
 <footer>
-FB: Lutfiatul Hidayat • IG: @_hidayatlutt_
+© Yuraaa Store • FB: Lutfiatul Hidayat • IG: @_hidayatlutt_
 </footer>
 
 <script>
@@ -154,7 +264,7 @@ function searchGame(val){
 function filterGame(type){
  let cards=document.querySelectorAll('.card');
  cards.forEach(c=>{
-  c.style.display=(type==='all'||c.dataset.name===type)?'block':'none'
+  c.style.display=(type==='all'||c.dataset.name===type)?'block':'block'
  })
 }
 </script>
