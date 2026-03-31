@@ -18,6 +18,7 @@ body{
 header{
   text-align:center;
   padding:20px;
+  border-bottom:1px solid #1e293b;
 }
 
 h1{
@@ -42,6 +43,11 @@ h1{
   padding:12px;
   border:1px solid #1e293b;
   cursor:pointer;
+  transition:.3s;
+}
+
+.card:hover{
+  transform:translateY(-5px);
 }
 
 .card img{
@@ -110,9 +116,11 @@ h1{
   font-weight:bold;
 }
 
+/* CLOSE */
 .close{
   float:right;
   cursor:pointer;
+  font-size:18px;
 }
 </style>
 </head>
@@ -126,60 +134,53 @@ h1{
 
 <div class="grid">
 
-<!-- LOOP 10 AKUN -->
-<!-- EDIT ISI SAJA -->
-
-<script>
-for(let i=1;i<=10;i++){
-document.write(`
-<div class="card" onclick="openDetail('akun${i}')">
-<img src="https://via.placeholder.com/300x150">
-<h4>Akun ${i} <span class="badge">HOT</span></h4>
-<div class="price">Rp 50.000</div>
-<p>Deskripsi akun</p>
+<!-- SOLO -->
+<div class="card" onclick="openDetail()">
+<img src="https://i.imgur.com/3D6cfoZ.jpeg">
+<h4>Solo Leveling <span class="badge">SULTAN</span></h4>
+<div class="price">Rp 120.000</div>
+<p>Lv 91 • SSR banyak</p>
 </div>
-`);
-}
-</script>
 
 </div>
 
-<!-- POPUP -->
-<script>
-for(let i=1;i<=10;i++){
-document.write(`
-<div class="popup" id="akun${i}">
+<!-- POPUP DETAIL -->
+<div class="popup" id="popup">
 <div class="popup-content">
 
-<span class="close" onclick="closeDetail('akun${i}')">✖</span>
+<span class="close" onclick="closeDetail()">✖</span>
 
 <div class="slider">
-<img src="https://via.placeholder.com/300x150">
-<img src="https://via.placeholder.com/300x150">
-<img src="https://via.placeholder.com/300x150">
+<img src="https://i.imgur.com/3D6cfoZ.jpeg">
+<img src="https://i.imgur.com/6e9sKpZ.jpeg">
+<img src="https://i.imgur.com/lryqT3u.jpeg">
+<img src="https://i.imgur.com/SNcgw7c.jpeg">
 </div>
 
-<h3>🔥 Akun ${i}</h3>
-<div class="price">Rp 50.000</div>
+<h3>🔥 Solo Leveling Sultan</h3>
+<div class="price">Rp 120.000</div>
 
-<p>Detail akun lengkap</p>
+<p>
+Lv 91 Jinwoo 🔥<br>
+Banyak SSR<br>
+Power 1M+<br>
+Shadow Army Unlock
+</p>
 
-<a href="https://wa.me/6285939286029?text=Min saya minat akun ${i}" class="btn">
+<a href="https://wa.me/6285939286029?text=Min saya mau akun Solo Leveling Sultan ini" class="btn">
 💬 Beli Sekarang
 </a>
 
 </div>
 </div>
-`);
-}
-</script>
 
 <script>
-function openDetail(id){
- document.getElementById(id).style.display='flex';
+function openDetail(){
+ document.getElementById('popup').style.display='flex';
 }
-function closeDetail(id){
- document.getElementById(id).style.display='none';
+
+function closeDetail(){
+ document.getElementById('popup').style.display='none';
 }
 </script>
 
