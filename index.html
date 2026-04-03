@@ -51,11 +51,16 @@ function render(data){
   grid.innerHTML="";
 
   data.forEach((a,i)=>{
+
+    const nama = a.Nama || "Tanpa Nama";
+    const harga = a.Harga || "-";
+    const gambar = a.Gambar || "https://via.placeholder.com/300x150";
+    
     grid.innerHTML += `
     <div class="card" onclick="detail(${i})">
-      <img src="${a.Gambar}">
-      <h4>${a.Nama}</h4>
-      <div class="price">${a.Harga}</div>
+      <img src="${gambar}">
+      <h4>${nama}</h4>
+      <div class="price">${harga}</div>
     </div>`;
   });
 }
