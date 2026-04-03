@@ -3,96 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Store</title>
+<title>Yuraaa Store - Final Boss</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI';background:#020617;color:white}
+body{font-family:'Poppins',sans-serif;background:#020617;color:white}
 
 header{text-align:center;padding:20px;border-bottom:1px solid #1e293b}
+h1{font-size:32px;background:linear-gradient(90deg,#38bdf8,#22c55e,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-h1{
-  font-size:28px;
-  background:linear-gradient(90deg,#38bdf8,#22c55e);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+/* COUNTDOWN */
+.timer{
+ text-align:center;
+ background:#0f172a;
+ padding:10px;
+ font-size:14px;
+ color:#facc15;
 }
 
-.grid{
-  padding:15px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
-}
+.filter{display:flex;gap:10px;padding:10px;overflow-x:auto}
+.filter button{background:#0f172a;border:1px solid #1e293b;color:white;padding:8px 12px;border-radius:20px}
+.filter .active{background:#22c55e;color:black}
 
-.card{
-  background:#0f172a;
-  border-radius:15px;
-  padding:12px;
-  border:1px solid #1e293b;
-  cursor:pointer;
-}
+.grid{padding:15px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
 
-.card img{
-  width:100%;
-  height:130px;
-  border-radius:10px;
-}
+.card{background:#0f172a;border-radius:15px;padding:10px;border:1px solid #1e293b;cursor:pointer;position:relative}
+.card:hover{transform:scale(1.03)}
 
+.card img{width:100%;height:130px;border-radius:10px;object-fit:cover}
 .price{color:#22c55e;font-weight:bold}
 
-.badge{
-  background:#facc15;
-  color:black;
-  font-size:10px;
-  padding:3px 6px;
-  border-radius:20px;
-}
+.badge{background:#facc15;color:black;font-size:10px;padding:3px 6px;border-radius:20px}
+.status{position:absolute;top:10px;left:10px;padding:4px 8px;border-radius:10px;font-size:10px}
+.ready{background:#22c55e;color:black}
+.sold{background:red}
+.hot{background:orange}
 
-/* POPUP */
-.popup{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  display:none;
-  background:rgba(0,0,0,0.8);
-  justify-content:center;
-  align-items:center;
-}
+.popup{position:fixed;top:0;left:0;width:100%;height:100%;display:none;background:rgba(0,0,0,0.9);justify-content:center;align-items:center}
+.popup-content{background:#020617;padding:15px;border-radius:15px;width:90%;max-width:400px}
 
-.popup-content{
-  background:#020617;
-  padding:15px;
-  border-radius:15px;
-  width:90%;
-  max-width:400px;
-}
+.btn{display:block;margin-top:10px;padding:12px;text-align:center;border-radius:10px;background:#22c55e;color:black;text-decoration:none}
 
-.slider{
-  display:flex;
-  overflow-x:auto;
-  gap:6px;
-}
+.detail-list{font-size:13px;margin-top:10px;line-height:1.6;color:#94a3b8}
 
-.slider img{
-  width:100%;
-  border-radius:10px;
-}
+.testimoni{padding:15px}
+.testi-box{background:#0f172a;padding:10px;border-radius:10px;margin-bottom:8px}
 
-.btn{
-  display:block;
-  margin-top:10px;
-  padding:12px;
-  text-align:center;
-  border-radius:10px;
-  background:#22c55e;
-  color:black;
-  text-decoration:none;
-}
+.live{position:fixed;bottom:20px;left:20px;background:#0f172a;padding:10px;border-radius:10px;border:1px solid #1e293b;font-size:12px;display:none}
 
-.close{float:right;cursor:pointer}
+footer{text-align:center;padding:15px;color:#64748b;font-size:12px}
 </style>
 </head>
 
@@ -103,107 +63,176 @@ h1{
 <p>Akun Game Murah • Aman • Fast Respon</p>
 </header>
 
+<div class="timer" id="timer">Promo berakhir dalam: --:--:--</div>
+
+<div class="filter">
+<button class="active" onclick="filterGame('all',this)">Semua</button>
+<button onclick="filterGame('solo',this)">Solo</button>
+<button onclick="filterGame('hsr',this)">HSR</button>
+</div>
+
 <div class="grid">
 
-<!-- AKUN 1 -->
-<div class="card" onclick="openDetail('akun1')">
+<div class="card" data-game="solo" onclick="openDetail('a1')">
+<div class="status hot">HOT</div>
 <img src="https://i.imgur.com/3D6cfoZ.jpeg">
-<h4>Solo Leveling Gacha <span class="badge">HOT</span></h4>
-<div class="price">Rp 300.000</div>
-<p>Lv 91 • Ready Gacha</p>
+<h4>Solo Sultan</h4>
+<div class="price">Rp 300K</div>
 </div>
 
-<!-- AKUN 2 -->
-<div class="card" onclick="openDetail('akun2')">
+<div class="card" data-game="hsr" onclick="openDetail('a2')">
+<div class="status ready">READY</div>
 <img src="https://i.imgur.com/3D6cfoZ.jpeg">
-<h4>Solo Leveling Sultan <span class="badge">🔥</span></h4>
-<div class="price">Rp 120.000</div>
-<p>Lv 91 • SSR banyak</p>
-</div>
-
-<!-- AKUN 3 -->
-<div class="card" onclick="openDetail('akun3')">
-<img src="https://i.imgur.com/3D6cfoZ.jpeg">
-<h4>Solo Leveling Sultan <span class="badge">🔥</span></h4>
-<div class="price">Rp 1.000.000</div>
-<p>Lv 91 • SSR banyak</p>
+<h4>HSR Endgame</h4>
+<div class="price">Rp 1JT</div>
 </div>
 
 </div>
 
-<!-- POPUP AKUN 1 -->
-<div class="popup" id="akun1">
-<div class="popup-content">
-
-<span class="close" onclick="closeDetail('akun1')">✖</span>
-
-<div class="slider">
-<img src="https://i.imgur.com/3D6cfoZ.jpeg">
-<img src="https://i.imgur.com/6e9sKpZ.jpeg">
+<div class="testimoni">
+<h3>⭐ Testimoni</h3>
+<div class="testi-box">"Trusted banget!"</div>
+<div class="testi-box">"Akun langsung masuk 🔥"</div>
 </div>
 
-<h3>🔥 Solo Leveling Gacha</h3>
-<div class="price">Rp 300.000</div>
-
-<p>Lv 91 • Ready Gacha • SSR banyak</p>
-
-<a href="https://wa.me/6285939286029" class="btn">Beli</a>
-
+<div class="popup" id="a1"><div class="popup-content">
+<span onclick="closeDetail('a1')">✖</span>
+<h3>Solo Sultan</h3>
+<div class="detail-list">
+• Level 91<br>
+• SSR Banyak<br>
+• Power Tinggi<br>
+• Siap Tempur
 </div>
-</div>
+<a href="https://wa.me/6285939286029?text=Saya%20mau%20akun%20Solo%20Sultan" class="btn">Beli Sekarang</a>
+</div></div>
 
-<!-- POPUP AKUN 2 -->
-<div class="popup" id="akun2">
-<div class="popup-content">
+<input id="search" placeholder="Cari akun..." style="margin:10px;padding:10px;width:90%;border-radius:10px;border:none;display:block;margin:auto">
 
-<span class="close" onclick="closeDetail('akun2')">✖</span>
+<div class="popup" id="detailPopup"></div>
 
-<div class="slider">
-<img src="https://i.imgur.com/3D6cfoZ.jpeg">
-<img src="https://i.imgur.com/6e9sKpZ.jpeg">
-<img src="https://i.imgur.com/lryqT3u.jpeg">
-<img src="https://i.imgur.com/SNcgw7c.jpeg">
-</div>
-
-<h3>🔥 Solo Leveling Sultan</h3>
-<div class="price">Rp 120.000</div>
-
-<p>Lv 91 • SSR banyak • Power 1M+</p>
-
-<a href="https://wa.me/6285939286029" class="btn">Beli</a>
-
-</div>
-</div>
-
-<div class="popup" id="akun3">
-<div class="popup-content">
-
-<span class="close" onclick="closeDetail('akun3')">✖</span>
-
-<div class="slider">
-<img src="https://i.imgur.com/3D6cfoZ.jpeg">
-<img src="https://i.imgur.com/6e9sKpZ.jpeg">
-</div>
-
-<h3>🔥 Solo Leveling Gacha</h3>
-<div class="price">Rp 300.000</div>
-
-<p>Lv 91 • Ready Gacha • SSR banyak</p>
-
-<a href="https://wa.me/6285939286029" class="btn">Beli</a>
-
-</div>
-</div>
-
+<div class="live" id="liveNotif"></div>
 
 <script>
-function openDetail(id){
- document.getElementById(id).style.display='flex';
+function openDetail(id){document.getElementById(id).style.display='flex'}
+function closeDetail(id){document.getElementById(id).style.display='none'}
+
+function filterGame(game,btn){
+ let cards=document.querySelectorAll('.card');
+ document.querySelectorAll('.filter button').forEach(b=>b.classList.remove('active'));
+ btn.classList.add('active');
+ cards.forEach(c=>{
+   if(game==='all'||c.dataset.game===game){c.style.display='block'}
+   else{c.style.display='none'}
+ })
 }
 
-function closeDetail(id){
- document.getElementById(id).style.display='none';
+// TIMER
+let end=new Date().getTime()+7200000;
+setInterval(()=>{
+ let now=new Date().getTime();
+ let dist=end-now;
+ let h=Math.floor(dist/(1000*60*60));
+ let m=Math.floor((dist%(1000*60*60))/(1000*60));
+ let s=Math.floor((dist%(1000*60))/1000);
+ document.getElementById('timer').innerText=`Promo berakhir dalam: ${h}:${m}:${s}`;
+},1000);
+
+// LIVE NOTIF
+const names=["Andi","Rizky","Dimas","Fajar","Budi","Rian","Adit"];
+function showNotif(){
+ let n=names[Math.floor(Math.random()*names.length)];
+ let notif=document.getElementById('liveNotif');
+ notif.innerText=n+" baru saja membeli akun!";
+ notif.style.display='block';
+ setTimeout(()=>notif.style.display='none',3000);
 }
+setInterval(showNotif,6000);
+</script>
+
+<footer>
+© Yuraaa Store • Final Boss Mode Activated 😈
+</footer>
+
+<!-- GOOGLE SHEETS AUTO DATA -->
+<script>
+// 🔗 GANTI DENGAN LINK GOOGLE SHEETS JSON KAMU
+// Cara dapat link: File → Share → Publish to web → pilih CSV/JSON (pakai sheet2api / opensheet)
+const SHEET_URL = "https://opensheet.elk.sh/PASTE_ID_SHEET/Sheet1";
+
+let allData = [];
+
+async function loadData(){
+  const searchInput = document.getElementById('search');
+  try{
+    const res = await fetch(SHEET_URL);
+    const data = await res.json();
+    allData = data;
+
+    const grid = document.querySelector('.grid');
+    renderData(data);
+
+    data.forEach((item,i)=>{
+      const statusClass = item.Status === 'sold' ? 'sold' : item.Status === 'hot' ? 'hot' : 'ready';
+
+      grid.innerHTML += `
+      <div class="card" data-game="${item.Game}">
+        <div class="status ${statusClass}">${item.Status.toUpperCase()}</div>
+        <img src="${item.Gambar}">
+        <h4>${item.Nama}</h4>
+        <div class="price">${item.Harga}</div>
+      </div>`;
+    });
+
+    // SEARCH FUNCTION
+    if(searchInput){
+      searchInput.addEventListener('input', ()=>{
+        const keyword = searchInput.value.toLowerCase();
+        const filtered = allData.filter(a=>a.Nama.toLowerCase().includes(keyword));
+        renderData(filtered);
+      });
+    }
+
+  }catch(e){
+    console.log('Error ambil data:',e);
+  }
+}
+
+function renderData(data){
+  const grid = document.querySelector('.grid');
+  grid.innerHTML='';
+
+  data.forEach((item,i)=>{
+    const statusClass = item.Status === 'sold' ? 'sold' : item.Status === 'hot' ? 'hot' : 'ready';
+
+    grid.innerHTML += `
+    <div class="card" data-game="${item.Game}" onclick="showDetail(${i})">
+      <div class="status ${statusClass}">${item.Status.toUpperCase()}</div>
+      <img src="${item.Gambar}">
+      <h4>${item.Nama}</h4>
+      <div class="price">${item.Harga}</div>
+    </div>`;
+  });
+}
+
+function showDetail(i){
+  const item = allData[i];
+  const popup = document.getElementById('detailPopup');
+  popup.innerHTML = `
+  <div class="popup-content">
+    <span onclick="closePopup()">✖</span>
+    <img src="${item.Gambar}" style="width:100%;border-radius:10px">
+    <h3>${item.Nama}</h3>
+    <div class="price">${item.Harga}</div>
+    <div class="detail-list">${item.Deskripsi || ''}</div>
+    <a href="https://wa.me/6285939286029?text=Saya%20mau%20${item.Nama}" class="btn">Beli Sekarang</a>
+  </div>`;
+  popup.style.display='flex';
+}
+
+function closePopup(){document.getElementById('detailPopup').style.display='none'}
+
+loadData();
 </script>
 
 </body>
