@@ -18,6 +18,39 @@ input{margin:10px auto;padding:12px;width:90%;border-radius:12px;border:none;dis
 
 .toolbar{display:flex;gap:10px;justify-content:center;margin:10px;flex-wrap:wrap}
 .toolbar button{padding:8px 12px;border-radius:10px;border:none;color:black;font-weight:600}
+
+.tabs{
+ display:flex;
+ overflow-x:auto;
+ gap:8px;
+ padding:10px;
+}
+
+.tab{
+ display:flex;
+ align-items:center;
+ gap:6px;
+
+ padding:8px 14px;
+ border-radius:20px;
+ border:none;
+ background:#0f172a;
+ color:white;
+ cursor:pointer;
+ white-space:nowrap;
+}
+
+.tab img{
+ width:18px;
+ height:18px;
+ object-fit:contain;
+}
+}
+
+.tab.active{
+ background:#22c55e;
+ color:black;
+}
 .btn-green{background:#22c55e}
 .btn-blue{background:#38bdf8}
 .btn-gray{background:#94a3b8}
@@ -54,15 +87,18 @@ footer{text-align:center;padding:15px;color:#64748b;font-size:12px}
 
 <input id="search" placeholder="Cari akun favoritmu...">
 
+<div class="tabs">
+  <button onclick="filterGame('all')" class="tab active">🌐 Semua</button>
+  <button onclick="filterGame('hsr')" class="tab"><img src="https://upload.wikimedia.org/wikipedia/en/8/8a/Honkai_Star_Rail_logo.png">HSR</button>
+  <button onclick="filterGame('solo')" class="tab"><img src="https://upload.wikimedia.org/wikipedia/en/6/6b/Solo_Leveling_logo.png">Solo</button>
+  <button onclick="filterGame('ml')" class="tab"><img src="https://upload.wikimedia.org/wikipedia/en/7/7e/Mobile_Legends_logo.png">ML</button>
+  <button onclick="filterGame('endfield')" class="tab"><img src="https://upload.wikimedia.org/wikipedia/en/0/0f/Arknights_logo.png">Endfield</button>
+  <button onclick="filterGame('arena')" class="tab"><img src="https://upload.wikimedia.org/wikipedia/en/3/3c/Arena_Breakout_logo.png">Arena</button>
+</div>
+
 <div class="toolbar">
   <button class="btn-green" onclick="sortMurah()">Termurah</button>
   <button class="btn-blue" onclick="sortMahal()">Termahal</button>
-  <button class="btn-gray" onclick="filterGame('all')">Semua</button>
-  <button class="btn-gray" onclick="filterGame('hsr')">HSR</button>
-  <button class="btn-gray" onclick="filterGame('solo')">Solo</button>
-  <button class="btn-gray" onclick="filterGame('ml')">Mobile Legends</button>
-  <button class="btn-gray" onclick="filterGame('endfield')">Arknights Endfield</button>
-  <button class="btn-gray" onclick="filterGame('arena')">Arena Breakout</button>
   <button class="btn-gray" onclick="toggleHideSold()">Hide SOLD</button>
 </div>
 
@@ -131,6 +167,8 @@ function sortMahal(){
 
 function filterGame(game){
  currentGame = game;
+ document.querySelectorAll('.tab').forEach(btn=>btn.classList.remove('active'));
+ event.target.classList.add('active');
  applyFiltersAndRender();
 }
 
@@ -186,7 +224,7 @@ search.addEventListener('input', e=>{
 loadData();
 </script>
 
-<footer>© Yuraaa Store </footer>
+<footer>© Yuraaa Store • Premium UI</footer>
 
 </body>
 </html>
