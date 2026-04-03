@@ -8,14 +8,98 @@
 <style>
 body{font-family:sans-serif;background:#020617;color:white;margin:0}
 header{text-align:center;padding:20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;padding:15px}
-.card{background:#0f172a;padding:10px;border-radius:10px}
-.card img{width:100%;border-radius:10px}
-.price{color:#22c55e}
-input{margin:10px;padding:10px;width:90%;border-radius:10px;border:none;display:block;margin:auto}
-.popup{position:fixed;top:0;left:0;width:100%;height:100%;display:none;background:rgba(0,0,0,0.9);justify-content:center;align-items:center}
-.popup-content{background:#020617;padding:15px;border-radius:10px;width:90%;max-width:400px}
-.btn{display:block;margin-top:10px;padding:10px;background:#22c55e;color:black;text-align:center;text-decoration:none}
+h1{color:#38bdf8}
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+ gap:15px;
+ padding:15px
+}
+
+.card{
+ background:#0f172a;
+ padding:10px;
+ border-radius:12px;
+ cursor:pointer;
+ position:relative;
+ transition:0.3s
+}
+
+.card:hover{transform:scale(1.05)}
+
+.card img{
+ width:100%;
+ height:130px;
+ object-fit:cover;
+ border-radius:10px
+}
+
+.price{color:#22c55e;font-weight:bold}
+
+.badge{
+ position:absolute;
+ top:10px;
+ left:10px;
+ padding:4px 8px;
+ border-radius:10px;
+ font-size:10px
+}
+
+.ready{background:#22c55e;color:black}
+.sold{background:red}
+.hot{background:orange}
+
+input{
+ margin:10px;
+ padding:10px;
+ width:90%;
+ border-radius:10px;
+ border:none;
+ display:block;
+ margin:auto
+}
+
+.popup{
+ position:fixed;
+ top:0;left:0;
+ width:100%;
+ height:100%;
+ display:none;
+ background:rgba(0,0,0,0.9);
+ justify-content:center;
+ align-items:center
+}
+
+.popup-content{
+ background:#020617;
+ padding:15px;
+ border-radius:12px;
+ width:90%;
+ max-width:400px
+}
+
+.btn{
+ display:block;
+ margin-top:10px;
+ padding:12px;
+ background:#22c55e;
+ color:black;
+ text-align:center;
+ text-decoration:none;
+ border-radius:10px
+}
+
+.live{
+ position:fixed;
+ bottom:20px;
+ left:20px;
+ background:#0f172a;
+ padding:10px;
+ border-radius:10px;
+ font-size:12px;
+ display:none
+}
 </style>
 </head>
 
@@ -23,73 +107,98 @@ input{margin:10px;padding:10px;width:90%;border-radius:10px;border:none;display:
 
 <header>
 <h1>YURAAA STORE 🚀</h1>
-<p>Akun Game Murah • Aman</p>
+<p>Akun Game Murah • Aman • Trusted</p>
 </header>
 
 <input id="search" placeholder="Cari akun...">
 
 <div class="grid"></div>
-
 <div class="popup" id="popup"></div>
+<div class="live" id="live"></div>
 
 <script>
 
-// 🔥 GANTI ID INI SAJA
+// 🔥 PASTIKAN LINK INI SUDAH BENAR
 const SHEET_URL = "https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1";
 
 let allData = [];
 
+// LOAD DATA
 async function loadData(){
+ try{
   const res = await fetch(SHEET_URL);
   const data = await res.json();
   allData = data;
   render(data);
+ }catch(e){
+  console.log("ERROR:", e);
+ }
 }
 
+// RENDER
 function render(data){
-  const grid = document.querySelector(".grid");
-  grid.innerHTML="";
+ const grid = document.querySelector(".grid");
+ grid.innerHTML="";
 
-  data.forEach((a,i)=>{
+ data.forEach((a,i)=>{
 
-    const nama = a.Nama || "Tanpa Nama";
-    const harga = a.Harga || "-";
-    const gambar = a.Gambar || "https://via.placeholder.com/300x150";
-    
-    grid.innerHTML += `
-    <div class="card" onclick="detail(${i})">
-      <img src="${gambar}">
-      <h4>${nama}</h4>
-      <div class="price">${harga}</div>
-    </div>`;
-  });
-}
+  const nama = a.Nama || "Tanpa Nama";
+  const harga = a.Harga || "-";
+  const gambar = a.Gambar || "https://via.placeholder.com/300x150";
+  const status = (a.Status || "ready").toLowerCase();
 
-function detail(i){
-  const a = allData[i];
-  const popup = document.getElementById("popup");
-  popup.innerHTML = `
-  <div class="popup-content">
-    <span onclick="closePop()">✖</span>
-    <img src="${a.Gambar}" style="width:100%">
-    <h3>${a.Nama}</h3>
-    <div class="price">${a.Harga}</div>
-    <p>${a.Deskripsi || ''}</p>
-    <a href="https://wa.me/6285939286029?text=Saya mau ${a.Nama}" class="btn">Beli</a>
+  grid.innerHTML += `
+  <div class="card" onclick="detail(${i})">
+    <div class="badge ${status}">${status.toUpperCase()}</div>
+    <img src="${gambar}">
+    <h4>${nama}</h4>
+    <div class="price">${harga}</div>
   </div>`;
-  popup.style.display="flex";
+ });
 }
 
+// DETAIL
+function detail(i){
+ const a = allData[i];
+ const gambar = a.Gambar || "https://via.placeholder.com/300x150";
+
+ const popup = document.getElementById("popup");
+ popup.innerHTML = `
+ <div class="popup-content">
+   <span onclick="closePop()">✖</span>
+   <img src="${gambar}" style="width:100%;border-radius:10px">
+   <h3>${a.Nama || '-'}</h3>
+   <div class="price">${a.Harga || '-'}</div>
+   <p>${a.Deskripsi || 'Tidak ada deskripsi'}</p>
+   <a href="https://wa.me/6285939286029?text=Saya mau ${a.Nama}" class="btn">Beli Sekarang</a>
+ </div>`;
+ popup.style.display="flex";
+}
+
+// CLOSE POPUP
 function closePop(){
-  document.getElementById("popup").style.display="none";
+ document.getElementById("popup").style.display="none";
 }
 
 // SEARCH
 document.getElementById("search").addEventListener("input", e=>{
-  const val = e.target.value.toLowerCase();
-  const filtered = allData.filter(a=>a.Nama.toLowerCase().includes(val));
-  render(filtered);
+ const val = e.target.value.toLowerCase();
+ const filtered = allData.filter(a =>
+   (a.Nama || "").toLowerCase().includes(val)
+ );
+ render(filtered);
 });
+
+// LIVE NOTIF
+const names=["Andi","Rizky","Dimas","Fajar","Budi","Rian"];
+function notif(){
+ const n = names[Math.floor(Math.random()*names.length)];
+ const box = document.getElementById("live");
+ box.innerText = n+" baru saja membeli akun!";
+ box.style.display="block";
+ setTimeout(()=>box.style.display="none",3000);
+}
+setInterval(notif,6000);
 
 loadData();
 
