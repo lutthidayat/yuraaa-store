@@ -3,103 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Store</title>
+<title>Yuraaa Store Premium</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-body{font-family:sans-serif;background:#020617;color:white;margin:0}
-header{text-align:center;padding:20px}
-h1{color:#38bdf8}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Poppins',sans-serif;background:#020617;color:white}
 
+header{text-align:center;padding:25px}
+h1{
+ font-size:32px;
+ background:linear-gradient(90deg,#38bdf8,#22c55e,#a78bfa);
+ -webkit-background-clip:text;
+ -webkit-text-fill-color:transparent
+}
+
+/* SEARCH */
+input{
+ margin:10px auto;
+ padding:12px;
+ width:90%;
+ border-radius:12px;
+ border:none;
+ display:block;
+ font-size:14px
+}
+
+/* GRID */
 .grid{
  display:grid;
- grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
- gap:15px;
+ grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ gap:18px;
  padding:15px
 }
 
+/* CARD */
 .card{
- background:#0f172a;
- padding:10px;
- border-radius:12px;
+ background:linear-gradient(145deg,#0f172a,#020617);
+ padding:12px;
+ border-radius:18px;
  cursor:pointer;
  position:relative;
- transition:0.3s
+ transition:0.3s;
+ border:1px solid #1e293b
 }
 
-.card:hover{transform:scale(1.05)}
+.card:hover{
+ transform:translateY(-5px) scale(1.03);
+ box-shadow:0 10px 25px rgba(34,197,94,0.2)
+}
 
 .card img{
  width:100%;
- height:130px;
+ height:140px;
  object-fit:cover;
- border-radius:10px
+ border-radius:12px
 }
 
-.price{color:#22c55e;font-weight:bold}
+.price{color:#22c55e;font-weight:bold;margin-top:5px}
 
+/* BADGE */
 .badge{
  position:absolute;
  top:10px;
  left:10px;
- padding:4px 8px;
- border-radius:10px;
- font-size:10px
+ padding:4px 10px;
+ border-radius:20px;
+ font-size:10px;
+ font-weight:bold
 }
 
 .ready{background:#22c55e;color:black}
 .sold{background:red}
 .hot{background:orange}
 
-input{
- margin:10px;
- padding:10px;
- width:90%;
- border-radius:10px;
- border:none;
- display:block;
- margin:auto
-}
-
+/* POPUP */
 .popup{
  position:fixed;
  top:0;left:0;
- width:100%;
- height:100%;
+ width:100%;height:100%;
  display:none;
  background:rgba(0,0,0,0.9);
  justify-content:center;
- align-items:center
+ align-items:center;
+ backdrop-filter:blur(6px)
 }
 
 .popup-content{
  background:#020617;
  padding:15px;
- border-radius:12px;
- width:90%;
- max-width:400px
+ border-radius:18px;
+ width:92%;
+ max-width:420px;
+ border:1px solid #1e293b;
+ animation:fade 0.3s ease
+}
+
+@keyframes fade{
+ from{opacity:0;transform:scale(0.9)}
+ to{opacity:1;transform:scale(1)}
 }
 
 .btn{
  display:block;
- margin-top:10px;
+ margin-top:12px;
  padding:12px;
- background:#22c55e;
+ border-radius:12px;
+ background:linear-gradient(90deg,#22c55e,#4ade80);
  color:black;
  text-align:center;
  text-decoration:none;
- border-radius:10px
+ font-weight:600
 }
 
+/* LIVE */
 .live{
  position:fixed;
  bottom:20px;
  left:20px;
  background:#0f172a;
- padding:10px;
- border-radius:10px;
+ padding:10px 15px;
+ border-radius:12px;
  font-size:12px;
- display:none
+ display:none;
+ border:1px solid #1e293b
 }
+
+footer{
+ text-align:center;
+ padding:15px;
+ color:#64748b;
+ font-size:12px
+}
+
 </style>
 </head>
 
@@ -110,7 +147,12 @@ input{
 <p>Akun Game Murah • Aman • Trusted</p>
 </header>
 
-<input id="search" placeholder="Cari akun...">
+<input id="search" placeholder="Cari akun favoritmu...">
+
+<div style="display:flex;gap:10px;justify-content:center;margin:10px">
+  <button onclick="sortMurah()" style="padding:8px 12px;border-radius:10px;border:none;background:#22c55e;color:black">Termurah</button>
+  <button onclick="sortMahal()" style="padding:8px 12px;border-radius:10px;border:none;background:#38bdf8;color:black">Termahal</button>
+</div>
 
 <div class="grid"></div>
 <div class="popup" id="popup"></div>
@@ -118,30 +160,22 @@ input{
 
 <script>
 
-// 🔥 PASTIKAN LINK INI SUDAH BENAR
 const SHEET_URL = "https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1";
 
 let allData = [];
 
-// LOAD DATA
 async function loadData(){
- try{
-  const res = await fetch(SHEET_URL);
-  const data = await res.json();
-  allData = data;
-  render(data);
- }catch(e){
-  console.log("ERROR:", e);
- }
+ const res = await fetch(SHEET_URL);
+ const data = await res.json();
+ allData = data;
+ render(data);
 }
 
-// RENDER
 function render(data){
  const grid = document.querySelector(".grid");
  grid.innerHTML="";
 
  data.forEach((a,i)=>{
-
   const nama = a.Nama || "Tanpa Nama";
   const harga = a.Harga || "-";
   const gambar = a.Gambar || "https://via.placeholder.com/300x150";
@@ -157,25 +191,55 @@ function render(data){
  });
 }
 
-// DETAIL
 function detail(i){
  const a = allData[i];
- const gambar = a.Gambar || "https://via.placeholder.com/300x150";
+ const images = (a.Gambar || "").split(",");
+ let index = 0;
+
+ function renderSlide(){
+   return `
+   <div style="position:relative">
+     <img src="${images[index].trim()}" style="width:100%;border-radius:12px">
+     <button onclick="prevSlide()" style="position:absolute;left:5px;top:45%;background:black;color:white;border:none;padding:5px 10px">◀</button>
+     <button onclick="nextSlide()" style="position:absolute;right:5px;top:45%;background:black;color:white;border:none;padding:5px 10px">▶</button>
+   </div>`;
+ }
+
+ window.nextSlide = function(){
+   index = (index + 1) % images.length;
+   update();
+ }
+
+ window.prevSlide = function(){
+   index = (index - 1 + images.length) % images.length;
+   update();
+ }
+
+ function update(){
+   document.getElementById("sliderBox").innerHTML = renderSlide();
+ }
 
  const popup = document.getElementById("popup");
  popup.innerHTML = `
  <div class="popup-content">
    <span onclick="closePop()">✖</span>
-   <img src="${gambar}" style="width:100%;border-radius:10px">
-   <h3>${a.Nama || '-'}</h3>
-   <div class="price">${a.Harga || '-'}</div>
-   <p>${a.Deskripsi || 'Tidak ada deskripsi'}</p>
+   <div id="sliderBox"></div>
+   <h3>${a.Nama}</h3>
+   <div class="price">${a.Harga}</div>
+   <p style="color:#94a3b8">${a.Deskripsi || ''}</p>
    <a href="https://wa.me/6285939286029?text=Saya mau ${a.Nama}" class="btn">Beli Sekarang</a>
  </div>`;
+
  popup.style.display="flex";
+ update();
+
+ // AUTO SLIDE
+ setInterval(()=>{
+   index = (index + 1) % images.length;
+   update();
+ },3000);
 }
 
-// CLOSE POPUP
 function closePop(){
  document.getElementById("popup").style.display="none";
 }
@@ -183,13 +247,11 @@ function closePop(){
 // SEARCH
 document.getElementById("search").addEventListener("input", e=>{
  const val = e.target.value.toLowerCase();
- const filtered = allData.filter(a =>
-   (a.Nama || "").toLowerCase().includes(val)
- );
+ const filtered = allData.filter(a => (a.Nama || "").toLowerCase().includes(val));
  render(filtered);
 });
 
-// LIVE NOTIF
+// LIVE
 const names=["Andi","Rizky","Dimas","Fajar","Budi","Rian"];
 function notif(){
  const n = names[Math.floor(Math.random()*names.length)];
@@ -200,9 +262,29 @@ function notif(){
 }
 setInterval(notif,6000);
 
+// SORT FUNCTIONS
+function parseHarga(h){
+  if(!h) return 0;
+  return parseInt(h.replace(/[^0-9]/g,"")) || 0;
+}
+
+function sortMurah(){
+  const sorted = [...allData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga));
+  render(sorted);
+}
+
+function sortMahal(){
+  const sorted = [...allData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga));
+  render(sorted);
+}
+
 loadData();
 
 </script>
+
+<footer>
+© Yuraaa Store • Premium UI Activated 💎
+</footer>
 
 </body>
 </html>
