@@ -12,131 +12,36 @@
 body{font-family:'Poppins',sans-serif;background:#020617;color:white}
 
 header{text-align:center;padding:25px}
-h1{
- font-size:32px;
- background:linear-gradient(90deg,#38bdf8,#22c55e,#a78bfa);
- -webkit-background-clip:text;
- -webkit-text-fill-color:transparent
-}
+h1{font-size:32px;background:linear-gradient(90deg,#38bdf8,#22c55e,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-/* SEARCH */
-input{
- margin:10px auto;
- padding:12px;
- width:90%;
- border-radius:12px;
- border:none;
- display:block;
- font-size:14px
-}
+input{margin:10px auto;padding:12px;width:90%;border-radius:12px;border:none;display:block;font-size:14px}
 
-/* GRID */
-.grid{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
- gap:18px;
- padding:15px
-}
+.toolbar{display:flex;gap:10px;justify-content:center;margin:10px;flex-wrap:wrap}
+.toolbar button{padding:8px 12px;border-radius:10px;border:none;color:black;font-weight:600}
+.btn-green{background:#22c55e}
+.btn-blue{background:#38bdf8}
+.btn-gray{background:#94a3b8}
 
-/* CARD */
-.card{
- background:linear-gradient(145deg,#0f172a,#020617);
- padding:12px;
- border-radius:18px;
- cursor:pointer;
- position:relative;
- transition:0.3s;
- border:1px solid #1e293b
-}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;padding:15px}
 
-.card:hover{
- transform:translateY(-5px) scale(1.03);
- box-shadow:0 10px 25px rgba(34,197,94,0.2)
-}
+.card{background:linear-gradient(145deg,#0f172a,#020617);padding:12px;border-radius:18px;cursor:pointer;position:relative;transition:0.3s;border:1px solid #1e293b}
+.card:hover{transform:translateY(-5px) scale(1.03);box-shadow:0 10px 25px rgba(34,197,94,0.2)}
 
-.card img{
- width:100%;
- height:140px;
- object-fit:cover;
- border-radius:12px
-}
-
+.card img{width:100%;height:140px;object-fit:cover;border-radius:12px}
 .price{color:#22c55e;font-weight:bold;margin-top:5px}
 
-/* BADGE */
-.badge{
- position:absolute;
- top:10px;
- left:10px;
- padding:4px 10px;
- border-radius:20px;
- font-size:10px;
- font-weight:bold
-}
-
+.badge{position:absolute;top:10px;left:10px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:bold}
 .ready{background:#22c55e;color:black}
 .sold{background:red}
 .hot{background:orange}
 
-/* POPUP */
-.popup{
- position:fixed;
- top:0;left:0;
- width:100%;height:100%;
- display:none;
- background:rgba(0,0,0,0.9);
- justify-content:center;
- align-items:center;
- backdrop-filter:blur(6px)
-}
+.popup{position:fixed;top:0;left:0;width:100%;height:100%;display:none;background:rgba(0,0,0,0.9);justify-content:center;align-items:center;backdrop-filter:blur(6px)}
+.popup-content{background:#020617;padding:15px;border-radius:18px;width:92%;max-width:420px;border:1px solid #1e293b;animation:fade 0.3s ease}
+@keyframes fade{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
 
-.popup-content{
- background:#020617;
- padding:15px;
- border-radius:18px;
- width:92%;
- max-width:420px;
- border:1px solid #1e293b;
- animation:fade 0.3s ease
-}
+.btn{display:block;margin-top:12px;padding:12px;border-radius:12px;background:linear-gradient(90deg,#22c55e,#4ade80);color:black;text-align:center;text-decoration:none;font-weight:600}
 
-@keyframes fade{
- from{opacity:0;transform:scale(0.9)}
- to{opacity:1;transform:scale(1)}
-}
-
-.btn{
- display:block;
- margin-top:12px;
- padding:12px;
- border-radius:12px;
- background:linear-gradient(90deg,#22c55e,#4ade80);
- color:black;
- text-align:center;
- text-decoration:none;
- font-weight:600
-}
-
-/* LIVE */
-.live{
- position:fixed;
- bottom:20px;
- left:20px;
- background:#0f172a;
- padding:10px 15px;
- border-radius:12px;
- font-size:12px;
- display:none;
- border:1px solid #1e293b
-}
-
-footer{
- text-align:center;
- padding:15px;
- color:#64748b;
- font-size:12px
-}
-
+footer{text-align:center;padding:15px;color:#64748b;font-size:12px}
 </style>
 </head>
 
@@ -149,38 +54,58 @@ footer{
 
 <input id="search" placeholder="Cari akun favoritmu...">
 
-<div style="display:flex;gap:10px;justify-content:center;margin:10px">
-  <button onclick="sortMurah()" style="padding:8px 12px;border-radius:10px;border:none;background:#22c55e;color:black">Termurah</button>
-  <button onclick="sortMahal()" style="padding:8px 12px;border-radius:10px;border:none;background:#38bdf8;color:black">Termahal</button>
+<div class="toolbar">
+  <button class="btn-green" onclick="sortMurah()">Termurah</button>
+  <button class="btn-blue" onclick="sortMahal()">Termahal</button>
+  <button class="btn-gray" onclick="filterGame('all')">Semua</button>
+  <button class="btn-gray" onclick="filterGame('hsr')">HSR</button>
+  <button class="btn-gray" onclick="filterGame('solo')">Solo</button>
+  <button class="btn-gray" onclick="toggleHideSold()">Hide SOLD</button>
 </div>
 
 <div class="grid"></div>
 <div class="popup" id="popup"></div>
-<div class="live" id="live"></div>
 
 <script>
-
 const SHEET_URL = "https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1";
 
 let allData = [];
+let currentData = [];
+let currentGame = 'all';
+let hideSold = false;
 
 async function loadData(){
  const res = await fetch(SHEET_URL);
  const data = await res.json();
  allData = data;
- render(data);
+ applyFiltersAndRender();
+}
+
+function parseHarga(h){
+  if(!h) return 0;
+  return parseInt(String(h).replace(/[^0-9]/g,"") ) || 0;
+}
+
+function applyFiltersAndRender(){
+ let data = [...allData];
+ if(currentGame !== 'all'){
+   data = data.filter(a => (a.Game || '').toLowerCase() === currentGame);
+ }
+ if(hideSold){
+   data = data.filter(a => (a.Status || 'ready').toLowerCase() !== 'sold');
+ }
+ currentData = data;
+ render(currentData);
 }
 
 function render(data){
- const grid = document.querySelector(".grid");
- grid.innerHTML="";
-
+ const grid = document.querySelector('.grid');
+ grid.innerHTML='';
  data.forEach((a,i)=>{
-  const nama = a.Nama || "Tanpa Nama";
-  const harga = a.Harga || "-";
-  const gambar = a.Gambar || "https://via.placeholder.com/300x150";
-  const status = (a.Status || "ready").toLowerCase();
-
+  const nama = a.Nama || 'Tanpa Nama';
+  const harga = a.Harga || '-';
+  const gambar = a.Gambar ? a.Gambar.split(',')[0].trim() : 'https://via.placeholder.com/300x150';
+  const status = (a.Status || 'ready').toLowerCase();
   grid.innerHTML += `
   <div class="card" onclick="detail(${i})">
     <div class="badge ${status}">${status.toUpperCase()}</div>
@@ -191,100 +116,74 @@ function render(data){
  });
 }
 
+function sortMurah(){
+ const sorted = [...currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga));
+ render(sorted);
+}
+
+function sortMahal(){
+ const sorted = [...currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga));
+ render(sorted);
+}
+
+function filterGame(game){
+ currentGame = game;
+ applyFiltersAndRender();
+}
+
+function toggleHideSold(){
+ hideSold = !hideSold;
+ applyFiltersAndRender();
+}
+
 function detail(i){
- const a = allData[i];
- const images = (a.Gambar || "").split(",");
+ const a = currentData[i];
+ const images = (a.Gambar || '').split(',').map(s=>s.trim()).filter(Boolean);
  let index = 0;
 
- function renderSlide(){
+ function slide(){
+   const src = images[index] || 'https://via.placeholder.com/300x150';
    return `
    <div style="position:relative">
-     <img src="${images[index].trim()}" style="width:100%;border-radius:12px">
-     <button onclick="prevSlide()" style="position:absolute;left:5px;top:45%;background:black;color:white;border:none;padding:5px 10px">◀</button>
-     <button onclick="nextSlide()" style="position:absolute;right:5px;top:45%;background:black;color:white;border:none;padding:5px 10px">▶</button>
+     <img src="${src}" style="width:100%;border-radius:12px">
+     ${images.length>1?`<button onclick=\"prevSlide()\" style=\"position:absolute;left:5px;top:45%;background:black;color:white;border:none;padding:6px 10px\">◀</button>
+     <button onclick=\"nextSlide()\" style=\"position:absolute;right:5px;top:45%;background:black;color:white;border:none;padding:6px 10px\">▶</button>`:''}
    </div>`;
  }
 
- window.nextSlide = function(){
-   index = (index + 1) % images.length;
-   update();
- }
+ window.nextSlide = function(){ index = (index+1) % (images.length||1); update(); }
+ window.prevSlide = function(){ index = (index-1+(images.length||1)) % (images.length||1); update(); }
+ function update(){ document.getElementById('sliderBox').innerHTML = slide(); }
 
- window.prevSlide = function(){
-   index = (index - 1 + images.length) % images.length;
-   update();
- }
-
- function update(){
-   document.getElementById("sliderBox").innerHTML = renderSlide();
- }
-
- const popup = document.getElementById("popup");
+ const popup = document.getElementById('popup');
  popup.innerHTML = `
  <div class="popup-content">
    <span onclick="closePop()">✖</span>
    <div id="sliderBox"></div>
-   <h3>${a.Nama}</h3>
-   <div class="price">${a.Harga}</div>
+   <h3>${a.Nama || '-'}</h3>
+   <div class="price">${a.Harga || '-'}</div>
    <p style="color:#94a3b8">${a.Deskripsi || ''}</p>
-   <a href="https://wa.me/6285939286029?text=Saya mau ${a.Nama}" class="btn">Beli Sekarang</a>
+   <a href="https://wa.me/6285939286029?text=Saya mau ${encodeURIComponent(a.Nama||'akun')}" class="btn">Beli Sekarang</a>
  </div>`;
-
- popup.style.display="flex";
+ popup.style.display='flex';
  update();
-
- // AUTO SLIDE
- setInterval(()=>{
-   index = (index + 1) % images.length;
-   update();
- },3000);
+ if(images.length>1){ setInterval(()=>{ index=(index+1)%images.length; update(); },3000); }
 }
 
-function closePop(){
- document.getElementById("popup").style.display="none";
-}
+function closePop(){ document.getElementById('popup').style.display='none'; }
 
 // SEARCH
-document.getElementById("search").addEventListener("input", e=>{
+const search = document.getElementById('search');
+search.addEventListener('input', e=>{
  const val = e.target.value.toLowerCase();
- const filtered = allData.filter(a => (a.Nama || "").toLowerCase().includes(val));
+ const filtered = currentData.filter(a => (a.Nama||'').toLowerCase().includes(val));
  render(filtered);
 });
 
-// LIVE
-const names=["Andi","Rizky","Dimas","Fajar","Budi","Rian"];
-function notif(){
- const n = names[Math.floor(Math.random()*names.length)];
- const box = document.getElementById("live");
- box.innerText = n+" baru saja membeli akun!";
- box.style.display="block";
- setTimeout(()=>box.style.display="none",3000);
-}
-setInterval(notif,6000);
-
-// SORT FUNCTIONS
-function parseHarga(h){
-  if(!h) return 0;
-  return parseInt(h.replace(/[^0-9]/g,"")) || 0;
-}
-
-function sortMurah(){
-  const sorted = [...allData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga));
-  render(sorted);
-}
-
-function sortMahal(){
-  const sorted = [...allData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga));
-  render(sorted);
-}
-
 loadData();
-
 </script>
 
-<footer>
-© Yuraaa Store • Premium UI Activated 💎
-</footer>
+<footer>© Yuraaa Store • Premium UI</footer>
 
 </body>
 </html>
