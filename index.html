@@ -194,24 +194,21 @@ function apply(){
 }
 
 function render(data){
- const grid=document.querySelector('.grid');grid.innerHTML='';
- data.forEach((a,i)=>{
-  const img=a.Gambar?a.Gambar.split(',')[0]:'';
+ const grid=document.querySelector('.grid');
+ grid.innerHTML='';
+
+ data.forEach((a)=>{
+  const img=a.Gambar ? a.Gambar.split(',')[0] : '';
+
   grid.innerHTML+=`
-  <div class="card" onclick='detail(${JSON.stringify(a)})'
+  <div class="card" onclick='detail(${JSON.stringify(a)})'>
     <div class="badge ${(a.Status||'ready').toLowerCase()}">${(a.Status||'ready').toUpperCase()}</div>
-    <img src="${img||'https://via.placeholder.com/300'}">
+    <img src="${img || 'https://via.placeholder.com/300'}">
     <h4>${a.Nama||'-'}</h4>
-    ${(() => {
-  const normal = parseHarga(a.Diskon);
-  const harga = parseHarga(a.Harga);
-  if(!normal || !harga || normal <= harga) return '';
-  const persen = Math.round((normal - harga) / normal * 100);
-  return `<div class="old">${a.Diskon}</div><div class="discount">-${persen}%</div>`;
-})()}
     <div class="price">${a.Harga||'-'}</div>
   </div>`;
  });
+}
 }
 
 function sortMurah(){render([...currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)))}
