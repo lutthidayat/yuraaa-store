@@ -223,19 +223,27 @@ function toggleSold(){
  apply();
 }
 
-function detail(i){
- const a=currentData[i];
- const img=a.Gambar?a.Gambar.split(',')[0]:'';
- const p=document.getElementById('popup');
+function detail(a){
+ const images = a.Gambar ? a.Gambar.split(',') : [];
+ const p = document.getElementById('popup');
+
  p.innerHTML=`
  <div class="popup-content">
- <span onclick="closePop()">✖</span>
- <img src="${img}" style="width:100%;border-radius:10px">
+ <span onclick="closePop()" style="cursor:pointer">✖</span>
+
+ <div style="display:flex;gap:8px;overflow:auto;margin-bottom:10px">
+   ${images.map(img=>`
+     <img src="${img}" style="width:100%;max-width:120px;border-radius:10px;cursor:pointer">
+   `).join('')}
+ </div>
+
  <h3>${a.Nama}</h3>
  <div class="price">${a.Harga}</div>
  <p>${a.Deskripsi||''}</p>
+
  <a href="https://wa.me/6285939286029?text=Saya mau ${encodeURIComponent(a.Nama)}" class="btn wa">Chat WhatsApp</a>
  <a href="https://www.facebook.com/share/1Nk4kQ2FXJ/" class="btn fb">Lihat Facebook</a>
+
  </div>`;
  p.style.display='flex';
 }
