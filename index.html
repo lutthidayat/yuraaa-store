@@ -198,7 +198,7 @@ function render(data){
  data.forEach((a,i)=>{
   const img=a.Gambar?a.Gambar.split(',')[0]:'';
   grid.innerHTML+=`
-  <div class="card" onclick="detail(${i})">
+  <div class="card" onclick='detail(${JSON.stringify(a)})'
     <div class="badge ${(a.Status||'ready').toLowerCase()}">${(a.Status||'ready').toUpperCase()}</div>
     <img src="${img||'https://via.placeholder.com/300'}">
     <h4>${a.Nama||'-'}</h4>
