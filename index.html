@@ -3,122 +3,307 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yuraaa Store - Closing Mode</title>
 
-<title>Yuraaa Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-body{font-family:sans-serif;background:#020617;color:white;margin:0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Poppins',sans-serif;background:#020617;color:white}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;padding:15px}
-
-.card{background:#0f172a;padding:10px;border-radius:15px;cursor:pointer}
-.card img{width:100%;height:140px;object-fit:cover;border-radius:10px}
-
-.price{color:#22c55e;font-weight:bold}
-
-.popup{
- position:fixed;
- top:0;left:0;
- width:100%;height:100%;
- display:none;
- background:rgba(0,0,0,0.9);
- justify-content:center;
- align-items:center;
+header{text-align:center;padding:25px}
+h1{
+ font-size:34px;
+ font-weight:600;
+ background:linear-gradient(90deg,#38bdf8,#22c55e,#a78bfa,#facc15);
+ -webkit-background-clip:text;
+ -webkit-text-fill-color:transparent;
+ letter-spacing:1px;
 }
 
-.popup-content{
- background:#020617;
- padding:15px;
- border-radius:15px;
- width:90%;
- max-width:400px;
-}
-
-.btn{
- display:block;
- margin-top:10px;
- padding:10px;
+.cta-top{
  text-align:center;
- border-radius:10px;
- text-decoration:none;
- font-weight:bold;
+ color:#22c55e;
+ font-size:14px;
+ margin-top:-10px;
+ font-weight:600;
 }
 
+.hero{
+ margin:15px auto;
+ width:90%;
+ padding:12px;
+ border-radius:15px;
+ background:linear-gradient(90deg,#0f172a,#020617);
+ border:1px solid #1e293b;
+ text-align:center;
+ box-shadow:0 0 15px rgba(56,189,248,0.2);
+}
+
+input{margin:10px auto;padding:12px;width:90%;border-radius:12px;border:none;display:block;font-size:14px}
+
+.tabs{display:flex;overflow-x:auto;gap:8px;padding:10px}
+.tab{padding:8px 14px;border-radius:20px;border:none;background:#0f172a;color:white;cursor:pointer;white-space:nowrap}
+.tab.active{background:#22c55e;color:black}
+
+.toolbar{display:flex;gap:10px;justify-content:center;margin:10px}
+.toolbar button{padding:8px 12px;border-radius:10px;border:none;color:black;font-weight:600}
+.btn-green{background:#22c55e}
+.btn-blue{background:#38bdf8}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;padding:15px}
+
+.card{background:#0f172a;padding:12px;border-radius:18px;cursor:pointer;position:relative;transition:0.3s;border:1px solid #1e293b}
+.card:hover{
+ transform:translateY(-5px) scale(1.05);
+ box-shadow:0 0 20px rgba(34,197,94,0.4);
+}
+
+.card img{width:100%;height:140px;object-fit:cover;border-radius:12px}
+.price{color:#22c55e;font-weight:bold}
+.old{font-size:12px;color:#94a3b8;text-decoration:line-through}
+.discount{
+ background:red;
+ color:white;
+ font-size:11px;
+ padding:2px 6px;
+ border-radius:8px;
+ display:inline-block;
+ margin-top:4px;
+ animation:blink 1s infinite;
+}
+@keyframes blink{0%{opacity:1}50%{opacity:0.5}100%{opacity:1}}
+
+.badge{position:absolute;top:10px;left:10px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:bold}
+.ready{background:#22c55e;color:black}
+.sold{background:red}
+.hot{
+ background:orange;
+ box-shadow:0 0 15px orange,0 0 25px rgba(255,165,0,0.5);
+}
+
+.popup{position:fixed;top:0;left:0;width:100%;height:100%;display:none;background:rgba(0,0,0,0.9);justify-content:center;align-items:center}
+.popup-content{background:#020617;padding:15px;border-radius:18px;width:92%;max-width:420px}
+
+.btn{display:block;margin-top:10px;padding:12px;border-radius:12px;text-align:center;text-decoration:none;font-weight:600}
 .wa{background:#22c55e;color:black}
 .fb{background:#1877f2;color:white}
+
+footer{text-align:center;padding:15px;color:#64748b;font-size:12px}
+
+/* TRUST BADGES */
+.trust{
+ display:flex;
+ justify-content:center;
+ gap:10px;
+ margin-top:10px;
+ font-size:12px;
+ color:#94a3b8
+}
+.trust span{
+ background:#0f172a;
+ padding:5px 10px;
+ border-radius:10px;
+ border:1px solid #1e293b
+}
+
+/* CARD ANIMATION */
+.card{
+ animation:fadeUp 0.4s ease
+}
+@keyframes fadeUp{
+ from{opacity:0;transform:translateY(10px)}
+ to{opacity:1;transform:translateY(0)}
+}
+
+/* BUTTON HOVER */
+.btn:hover{
+ transform:scale(1.05);
+ transition:0.2s
+}
+
+/* POPUP ANIMATION */
+.popup-content{
+ animation:zoomIn 0.3s ease
+}
+@keyframes zoomIn{
+ from{transform:scale(0.8);opacity:0}
+ to{transform:scale(1);opacity:1}
+}
+
 </style>
 </head>
 
 <body>
+
+<header>
+<h1>YURAAA STORE 🎮</h1>
+<p style="font-size:14px;color:#94a3b8">Top Up & Akun Game • Trusted Seller • Fast Response</p>
+
+
+<div class="hero">
+  <p>🎮 Jual Akun HSR • ML • Solo • Arena</p>
+  <p style="font-size:12px;color:#94a3b8">Harga Murah • Aman • Bisa Cek Detail</p>
+</div>
+<div class="trust">
+  <span>✔ Aman</span>
+  <span>✔ Fast Respon</span>
+  <span>✔ Trusted Seller</span>
+</div>
+</header>
+
+<input id="search" placeholder="Cari akun favoritmu...">
+
+<div class="tabs">
+  <button onclick="filterGame('all')" class="tab active">Semua</button>
+  <button onclick="filterGame('hsr')" class="tab">HSR</button>
+  <button onclick="filterGame('solo')" class="tab">Solo</button>
+  <button onclick="filterGame('ml')" class="tab">Mobile Legends</button>
+  <button onclick="filterGame('endfield')" class="tab">Endfield</button>
+  <button onclick="filterGame('arena')" class="tab">Arena Breakout</button>
+</div>
+
+<div class="toolbar">
+  <button class="btn-green" onclick="sortMurah()">Termurah</button>
+  <button class="btn-blue" onclick="sortMahal()">Termahal</button>
+  <button class="btn-green" onclick="toggleSold()">Hide SOLD</button>
+</div>
 
 <div class="grid"></div>
 <div class="popup" id="popup"></div>
 
 <script>
 const SHEET_URL = "https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1";
-
-let allData=[];
+let allData=[];let currentData=[];let currentGame='all';let hideSold=false;
 
 async function loadData(){
  const res=await fetch(SHEET_URL);
  const data=await res.json();
  allData=data;
- render(data);
+ apply();
 }
 
-function parseHarga(h){
- return parseInt((h||'').replace(/[^0-9]/g,''))||0
+function parseHarga(h){return parseInt((h||'').replace(/[^0-9]/g,''))||0}
+
+function apply(){
+ let data=[...allData];
+ if(currentGame!=='all') data=data.filter(a=>(a.Game||'').toLowerCase()===currentGame);
+ if(hideSold) data=data.filter(a=>(a.Status||'').toLowerCase()!=='sold');
+ currentData=data;
+ sortMurah();
 }
 
 function render(data){
- const grid=document.querySelector('.grid');
- grid.innerHTML='';
-
- data.forEach(a=>{
-  const img=a.Gambar ? a.Gambar.split(',')[0] : '';
-
+ const grid=document.querySelector('.grid');grid.innerHTML='';
+ data.forEach((a,i)=>{
+  const img=a.Gambar?a.Gambar.split(',')[0]:'';
   grid.innerHTML+=`
-  <div class="card" onclick='detail(${JSON.stringify(a)})'>
-    <img src="${img || 'https://via.placeholder.com/300'}">
+  <div class="card" onclick="detail(${i})">
+    <div class="badge ${(a.Status||'ready').toLowerCase()}">${(a.Status||'ready').toUpperCase()}</div>
+    <img src="${img||'https://via.placeholder.com/300'}">
     <h4>${a.Nama||'-'}</h4>
+    ${(() => {
+  const normal = parseHarga(a.Diskon);
+  const harga = parseHarga(a.Harga);
+  if(!normal || !harga || normal <= harga) return '';
+  const persen = Math.round((normal - harga) / normal * 100);
+  return `<div class="old">${a.Diskon}</div><div class="discount">-${persen}%</div>`;
+})()}
     <div class="price">${a.Harga||'-'}</div>
   </div>`;
  });
 }
 
-function detail(a){
- const images = a.Gambar ? a.Gambar.split(',') : [];
- const p=document.getElementById('popup');
+function sortMurah(){render([...currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)))}
+function sortMahal(){render([...currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)))}
+function filterGame(g){currentGame=g;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));event.target.classList.add('active');apply()}
 
+function toggleSold(){
+ hideSold=!hideSold;
+ apply();
+}
+
+function detail(i){
+ const a=currentData[i];
+ const img=a.Gambar?a.Gambar.split(',')[0]:'';
+ const p=document.getElementById('popup');
  p.innerHTML=`
  <div class="popup-content">
-
- <span onclick="closePop()" style="cursor:pointer">✖</span>
-
- <div style="display:flex;gap:8px;overflow:auto;margin:10px 0">
-   ${images.map(img=>`
-     <img src="${img}" style="width:100%;max-width:120px;border-radius:10px">
-   `).join('')}
- </div>
-
+ <span onclick="closePop()">✖</span>
+ <img src="${img}" style="width:100%;border-radius:10px">
  <h3>${a.Nama}</h3>
  <div class="price">${a.Harga}</div>
  <p>${a.Deskripsi||''}</p>
-
  <a href="https://wa.me/6285939286029?text=Saya mau ${encodeURIComponent(a.Nama)}" class="btn wa">Chat WhatsApp</a>
- <a href="#" class="btn fb">Facebook</a>
-
+ <a href="https://www.facebook.com/share/1Nk4kQ2FXJ/" class="btn fb">Lihat Facebook</a>
  </div>`;
-
  p.style.display='flex';
 }
 
-function closePop(){
- document.getElementById('popup').style.display='none';
-}
+function closePop(){document.getElementById('popup').style.display='none'}
+
+// search
+document.getElementById('search').addEventListener('input',e=>{
+ const val=e.target.value.toLowerCase();
+ render(currentData.filter(a=>(a.Nama||'').toLowerCase().includes(val)))
+});
 
 loadData();
+// BEST SELLER HIGHLIGHT
+function isBest(a){
+  return (a.Status||'').toLowerCase()==='hot';
+}
+
+// MODIFY RENDER FOR BEST SELLER
+const oldRender = render;
+render = function(data){
+ const grid=document.querySelector('.grid');
+ grid.innerHTML='';
+ data.forEach((a,i)=>{
+  const img=a.Gambar?a.Gambar.split(',')[0]:'';
+  const best = isBest(a) ? '<div class="best">BEST</div>' : '';
+  grid.innerHTML+=`
+  <div class="card" onclick="detail(${i})">
+    ${best}
+    <div class="badge ${(a.Status||'ready').toLowerCase()}">${(a.Status||'ready').toUpperCase()}</div>
+    <img src="${img||'https://via.placeholder.com/300'}">
+    <h4>${a.Nama||'-'}</h4>
+    ${(() => {
+  const normal = parseHarga(a.Diskon);
+  const harga = parseHarga(a.Harga);
+  if(!normal || !harga || normal <= harga) return '';
+  const persen = Math.round((normal - harga) / normal * 100);
+  return `<div class="old">${a.Diskon}</div><div class="discount">-${persen}%</div>`;
+})()}
+    <div class="price">${a.Harga||'-'}</div>
+  </div>`;
+ });
+}
+
+// ADD CSS BEST
+const style=document.createElement('style');
+style.innerHTML=`
+.best{
+ position:absolute;
+ right:10px;
+ top:10px;
+ background:gold;
+ color:black;
+ font-size:10px;
+ padding:4px 8px;
+ border-radius:10px;
+ font-weight:bold;
+}
+`;
+document.head.appendChild(style);
+
 </script>
+
+<footer>
+<p>⭐ Sudah dipercaya banyak buyer</p>
+<p>© Yuraaa Store • Fast • Trusted • No Drama 🎮</p>
+</footer>
 
 </body>
 </html>
+
