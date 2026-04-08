@@ -9,69 +9,94 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Poppins',sans-serif;background:linear-gradient(180deg,#020617,#020617,#020617,#0f172a);color:white}
+body{font-family:'Poppins',sans-serif;background:linear-gradient(180deg,#020617,#0f172a);color:white}
 
-header{text-align:center;padding:30px 20px}
-h1{font-size:36px;font-weight:700;background:linear-gradient(90deg,#38bdf8,#22c55e,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+header{text-align:center;padding:30px}
+h1{font-size:34px;background:linear-gradient(90deg,#38bdf8,#22c55e,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-.subtitle{color:#94a3b8;font-size:14px;margin-top:5px}
-
-.search-box{width:90%;margin:20px auto}
+.search-box{width:90%;margin:15px auto}
 .search-box input{
- width:100%;padding:14px;border-radius:15px;border:none;background:#0f172a;color:white;font-size:14px;
- box-shadow:0 0 10px rgba(0,0,0,0.3)
+ width:100%;padding:14px;border-radius:15px;border:none;background:#0f172a;color:white
 }
 
-.tabs{display:flex;gap:10px;overflow-x:auto;padding:10px 15px}
-.tab{
- padding:10px 16px;border-radius:999px;background:#0f172a;color:#94a3b8;font-size:13px;border:1px solid #1e293b
-}
-.tab.active{background:#22c55e;color:black;font-weight:600}
+.tabs{display:flex;gap:10px;overflow-x:auto;padding:10px}
+.tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:#94a3b8}
+.tab.active{background:#22c55e;color:black}
 
-.toolbar{display:flex;gap:10px;justify-content:center;margin:15px}
-.toolbar button{
- padding:10px 14px;border-radius:12px;border:none;font-weight:600;font-size:13px
-}
-.btn-green{background:#22c55e;color:black}
-.btn-gray{background:#1e293b;color:white}
+.toolbar{display:flex;gap:10px;justify-content:center;margin:10px}
+button{padding:8px 12px;border-radius:10px;border:none}
 
-.grid{display:grid;grid-template-columns:1fr;gap:18px;padding:15px}
+.grid{display:grid;grid-template-columns:1fr;gap:15px;padding:15px}
 
 .card{
- background:linear-gradient(145deg,#0f172a,#020617);
+ background:#0f172a;
  border-radius:18px;
- padding:12px;
- box-shadow:0 0 20px rgba(0,0,0,0.4);
- transition:0.3s;
+ padding:10px;
+ position:relative;
 }
-.card:hover{transform:scale(1.02)}
 
 .card img{
- width:100%;height:160px;object-fit:cover;border-radius:14px;margin-bottom:10px
+ width:100%;
+ height:160px;
+ object-fit:cover;
+ border-radius:14px;
 }
 
-h4{font-size:16px;margin-bottom:5px}
-.price{color:#22c55e;font-size:18px;font-weight:600}
-.old{font-size:12px;color:#94a3b8;text-decoration:line-through}
+/* BADGE */
+.badge{
+ position:absolute;
+ top:10px;
+ left:10px;
+ padding:4px 10px;
+ border-radius:999px;
+ font-size:10px;
+ font-weight:600;
+}
+
+.ready{background:#22c55e;color:black}
+.sold{background:#ef4444;color:white}
+.hot{background:orange;color:black}
+
+.price{color:#22c55e;font-size:18px}
+.old{font-size:12px;text-decoration:line-through;color:#94a3b8}
+
 .discount{
- background:#ef4444;
- padding:4px 8px;
- border-radius:10px;
+ background:red;
  font-size:11px;
+ padding:3px 6px;
+ border-radius:8px;
  display:inline-block;
- margin-top:4px
-}
-
-.popup{position:fixed;top:0;left:0;width:100%;height:100%;display:none;background:rgba(0,0,0,0.9);justify-content:center;align-items:center}
-.popup-content{
- background:#020617;padding:15px;border-radius:18px;width:90%;max-width:420px
+ margin-top:4px;
 }
 
 .slider{display:flex;overflow-x:auto;gap:10px}
 .slider img{width:100%;border-radius:12px}
 
+.popup{
+ position:fixed;
+ top:0;left:0;
+ width:100%;height:100%;
+ display:none;
+ background:rgba(0,0,0,0.9);
+ justify-content:center;
+ align-items:center;
+}
+
+.popup-content{
+ background:#020617;
+ padding:15px;
+ border-radius:15px;
+ width:90%;
+ max-width:400px;
+}
+
 .btn{
- display:block;margin-top:10px;padding:12px;border-radius:12px;text-align:center;text-decoration:none;font-weight:600
+ display:block;
+ margin-top:10px;
+ padding:10px;
+ border-radius:10px;
+ text-align:center;
+ text-decoration:none;
 }
 .wa{background:#22c55e;color:black}
 .fb{background:#1877f2;color:white}
@@ -83,7 +108,6 @@ h4{font-size:16px;margin-bottom:5px}
 
 <header>
 <h1>YURAAA STORE 🎮</h1>
-<p class="subtitle">Akun Game Murah • Aman • Trusted</p>
 </header>
 
 <div class="search-box">
@@ -99,9 +123,9 @@ h4{font-size:16px;margin-bottom:5px}
 </div>
 
 <div class="toolbar">
-<button class="btn-green" onclick="sortMurah()">Termurah</button>
-<button class="btn-gray" onclick="sortMahal()">Termahal</button>
-<button class="btn-gray" onclick="toggleSold()">Hide SOLD</button>
+<button onclick="sortMurah()">Termurah</button>
+<button onclick="sortMahal()">Termahal</button>
+<button onclick="toggleSold()">Hide SOLD</button>
 </div>
 
 <div class="grid"></div>
@@ -109,7 +133,9 @@ h4{font-size:16px;margin-bottom:5px}
 
 <script>
 const SHEET_URL = "https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1";
-let allData=[];let currentData=[];let currentGame='all';let hideSold=false;
+
+let allData=[];let currentData=[];
+let currentGame='all';let hideSold=false;
 
 async function loadData(){
  const res=await fetch(SHEET_URL);
@@ -118,12 +144,19 @@ async function loadData(){
  apply();
 }
 
-function parseHarga(h){return parseInt((h||'').replace(/[^0-9]/g,''))||0}
+function parseHarga(h){
+ return parseInt((h||'').replace(/[^0-9]/g,''))||0;
+}
 
 function apply(){
  let data=[...allData];
- if(currentGame!=='all') data=data.filter(a=>(a.Game||'').toLowerCase()===currentGame);
- if(hideSold) data=data.filter(a=>(a.Status||'').toLowerCase()!=='sold');
+
+ if(currentGame!=='all')
+  data=data.filter(a=>(a.Game||'').toLowerCase()===currentGame);
+
+ if(hideSold)
+  data=data.filter(a=>(a.Status||'').toLowerCase()!=='sold');
+
  currentData=data;
  sortMurah();
 }
@@ -131,31 +164,47 @@ function apply(){
 function render(data){
  const grid=document.querySelector('.grid');
  grid.innerHTML='';
+
  data.forEach(a=>{
   const img=a.Gambar?a.Gambar.split(',')[0]:'';
   const i=currentData.indexOf(a);
 
   const normal=parseHarga(a.Diskon);
   const harga=parseHarga(a.Harga);
-  let diskon='';
 
+  let diskon='';
   if(normal && harga && normal>harga){
     const persen=Math.round((normal-harga)/normal*100);
-    diskon=`<div class="old">${a.Diskon}</div><div class="discount">-${persen}%</div>`;
+    diskon=`<div class="old">${a.Diskon}</div>
+            <div class="discount">-${persen}%</div>`;
   }
 
   grid.innerHTML+=`
   <div class="card" onclick="detail(${i})">
+
+    <div class="badge ${(a.Status||'ready').toLowerCase()}">
+      ${(a.Status||'ready').toUpperCase()}
+    </div>
+
     <img src="${img||'https://via.placeholder.com/300'}">
+
     <h4>${a.Nama}</h4>
+
     ${diskon}
+
     <div class="price">${a.Harga}</div>
+
   </div>`;
  });
 }
 
-function sortMurah(){render([...currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)))}
-function sortMahal(){render([...currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)))}
+function sortMurah(){
+ render([...currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)))
+}
+
+function sortMahal(){
+ render([...currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)))
+}
 
 function filterGame(g){currentGame=g;apply()}
 function toggleSold(){hideSold=!hideSold;apply()}
@@ -163,25 +212,33 @@ function toggleSold(){hideSold=!hideSold;apply()}
 function detail(i){
  const a=currentData[i];
  const imgs=a.Gambar?a.Gambar.split(','):[];
+
  const p=document.getElementById('popup');
 
  p.innerHTML=`
  <div class="popup-content">
+
  <span onclick="closePop()">✖</span>
+
  <div class="slider">
  ${imgs.map(img=>`<img src="${img.trim()}">`).join('')}
  </div>
+
  <h3>${a.Nama}</h3>
  <div class="price">${a.Harga}</div>
  <p>${a.Deskripsi||''}</p>
+
  <a href="https://wa.me/6285939286029?text=Saya mau ${encodeURIComponent(a.Nama)}" class="btn wa">WhatsApp</a>
  <a href="https://www.facebook.com/share/1Nk4kQ2FXJ/" class="btn fb">Facebook</a>
+
  </div>`;
 
  p.style.display='flex';
 }
 
-function closePop(){document.getElementById('popup').style.display='none'}
+function closePop(){
+ document.getElementById('popup').style.display='none'
+}
 
 document.getElementById('search').addEventListener('input',e=>{
  const val=e.target.value.toLowerCase();
