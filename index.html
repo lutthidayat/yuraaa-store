@@ -8,7 +8,16 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#060b1a;--card:#0f172a;--card2:#020617;--primary:#22c55e;--accent:#38bdf8;--danger:#ef4444;--text:#e5e7eb;--sub:#94a3b8}
+:root{
+ --bg:#060b1a;
+ --card:#0f172a;
+ --card2:#020617;
+ --primary:#22c55e; /* hijau fresh */
+ --accent:#3b82f6; /* biru modern */
+ --danger:#ef4444;
+ --text:#e5e7eb;
+ --sub:#94a3b8;
+}
 body{font-family:'Poppins',sans-serif;background:radial-gradient(1000px 500px at 50% -150px,#1e293b,transparent),linear-gradient(180deg,var(--bg),#020617);color:var(--text)}
 
 header{position:sticky;top:0;z-index:10;background:rgba(2,6,23,.7);backdrop-filter:blur(10px);padding:18px 12px 10px;border-bottom:1px solid #1e293b}
@@ -22,11 +31,11 @@ h1{font-size:28px;font-weight:700;background:linear-gradient(90deg,var(--accent)
 .search-box{width:92%;margin:10px auto}
 .search-box input{width:100%;padding:14px;border-radius:14px;border:none;background:#0f172a;color:white;box-shadow:inset 0 0 0 1px #1e293b}
 
-.tabs{display:flex;gap:8px;overflow-x:auto;padding:8px 10px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:8px 10px;justify-content:center}
 .tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:var(--sub);font-size:12px;border:1px solid #1e293b}
 .tab.active{background:linear-gradient(90deg,var(--primary),#4ade80);color:black;font-weight:600}
 
-.toolbar{display:flex;gap:8px;justify-content:center;margin:10px}
+.toolbar{display:flex;gap:10px;justify-content:center;margin:14px}
 .toolbar button{padding:8px 12px;border-radius:10px;border:none;font-size:12px;font-weight:600}
 .btn-green{background:linear-gradient(90deg,var(--primary),#4ade80);color:black}
 .btn-gray{background:#1e293b;color:white}
@@ -66,11 +75,7 @@ h4{font-size:15px}
 <p class="subtitle">Akun Game Murah • Aman • Trusted</p>
 </header>
 
-<div class="banner">
- <div class="banner-track">
-  <img src="https://i.imgur.com/3D6cfoZ.jpeg">
-  <img src="https://i.imgur.com/6e9sKpZ.jpeg">
- </div>
+
 </div>
 
 <div class="search-box"><input id="search" placeholder="Cari akun..."></div>
