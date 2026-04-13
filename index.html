@@ -340,6 +340,11 @@ function showReady(){
 }
 
 function showReadyByGame(game){
+
+ // 🔥 TUTUP POPUP DULU
+ document.getElementById('popup').style.display='none';
+ document.body.classList.remove('popup-active');
+
  const gameFix = (game||'').toLowerCase().trim();
 
  const readyData = allData.filter(a =>
@@ -365,7 +370,8 @@ function showReadyByGame(game){
 
  currentGame = gameFix;
  currentStatus = 'ready';
- apply();
+
+ apply();window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 
