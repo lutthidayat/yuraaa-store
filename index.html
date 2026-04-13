@@ -32,11 +32,37 @@ h1{font-size:24px}
 /* GRID */
 .grid{display:grid;gap:14px;padding:12px}
 
-/* CARD */
-.card{position:relative;background:#0f172a;border-radius:18px;padding:10px;cursor:pointer}
-.card img{width:100%;height:150px;border-radius:14px;object-fit:cover}
+/* CARD PREMIUM */
+.card{
+ position:relative;
+ background:#0b1220;
+ border-radius:18px;
+ padding:10px;
+ cursor:pointer;
+ border:1px solid #1e293b;
+ transition:.2s;
+}
+.card:active{transform:scale(0.97)}
 
-.card.sold{opacity:0.5;cursor:not-allowed}
+.card img{
+ width:100%;
+ height:150px;
+ border-radius:14px;
+ object-fit:cover;
+}
+
+/* SOLD */
+.card.sold{
+ opacity:0.5;
+ filter:grayscale(0.4);
+ cursor:not-allowed;
+}
+
+/* BEST DEAL */
+.card.best-deal{
+ box-shadow:0 0 12px #22c55e55;
+ border:1px solid #22c55e55;
+}
 
 /* BADGE */
 .badge{position:absolute;top:10px;left:10px;padding:4px 8px;border-radius:999px;font-size:10px}
@@ -49,9 +75,28 @@ h1{font-size:24px}
 .promo{background:gold;color:black}
 
 /* PRICE */
-.price{color:#22c55e;font-weight:bold;font-size:16px}
-.old{text-decoration:line-through;font-size:12px;color:#94a3b8}
-.discount{background:red;padding:2px 6px;border-radius:6px;font-size:10px;margin-top:4px;display:inline-block}
+.price{
+ color:#22c55e;
+ font-weight:700;
+ font-size:18px;
+ margin-top:4px;
+}
+
+.old{
+ text-decoration:line-through;
+ font-size:12px;
+ color:#64748b;
+}
+
+.discount{
+ background:#ef4444;
+ color:white;
+ padding:3px 8px;
+ border-radius:999px;
+ font-size:11px;
+ display:inline-block;
+ margin-top:4px;
+}
 
 /* POPUP */
 .popup{
@@ -60,11 +105,12 @@ h1{font-size:24px}
  width:100%;height:100%;
  display:none;
  background:rgba(0,0,0,0.6);
- backdrop-filter: blur(6px);
+ backdrop-filter:blur(6px);
  justify-content:center;
  align-items:center;
 }
 
+/* POPUP BOX */
 .popup-box{
  background:linear-gradient(145deg,#020617,#0f172a);
  padding:20px;
@@ -74,6 +120,16 @@ h1{font-size:24px}
  text-align:center;
 }
 
+/* ALERT */
+.alert-box{
+ background:#020617;
+ padding:20px;
+ border-radius:20px;
+ text-align:center;
+}
+.alert-box h3{color:#ef4444}
+
+/* BUTTON */
 .btn{
  display:block;
  margin:10px 0;
@@ -95,15 +151,6 @@ h1{font-size:24px}
  color:white;
  width:100%;
 }
-
-.alert-box{
- background:#020617;
- padding:20px;
- border-radius:20px;
- text-align:center;
-}
-
-.alert-box h3{color:#ef4444}
 
 .footer{text-align:center;font-size:11px;padding:10px;color:#94a3b8}
 </style>
@@ -199,14 +246,19 @@ function render(data){
   if(label==='hot') labelHTML='<div class="badge-right hot">HOT</div>';
   if(label==='promo') labelHTML='<div class="badge-right promo">PROMO</div>';
 
+  let extraClass='';
+  if(harga < 150000){
+    extraClass='best-deal';
+  }
+
   grid.innerHTML+=`
-  <div class="card ${status}" onclick='handleClick(${JSON.stringify(a)})'>
+  <div class="card ${status} ${extraClass}" onclick='handleClick(${JSON.stringify(a)})'>
     <div class="badge ${status}">${status.toUpperCase()}</div>
     ${labelHTML}
     <img src="${img}">
     <h4>${a.Nama||'-'}</h4>
-    ${diskon}
     <div class="price">${a.Harga||'-'}</div>
+    ${diskon}
   </div>`;
  });
 }
