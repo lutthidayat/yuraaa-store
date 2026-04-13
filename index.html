@@ -16,10 +16,6 @@ header{text-align:center;padding:16px}
 h1{font-size:24px}
 .subtitle{font-size:12px;color:#94a3b8}
 
-/* SEARCH */
-.search-box{width:92%;margin:10px auto}
-.search-box input{width:100%;padding:10px;border-radius:12px;border:none;background:#0f172a;color:white}
-
 /* TAB */
 .tabs{display:flex;gap:8px;justify-content:center;margin:10px}
 .tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:#94a3b8;font-size:12px}
@@ -48,144 +44,58 @@ h1{font-size:24px}
  object-fit:cover;
 }
 
-/* SOLD */
-.card.sold{
- opacity:0.5;
- filter:grayscale(0.4);
- cursor:not-allowed;
-}
+/* STATUS */
+.card.sold{opacity:0.5;filter:grayscale(0.4)}
+.card.proses{opacity:0.7}
+
 .card.sold::after{
  content:"TERJUAL";
  position:absolute;
- top:50%;
- left:50%;
+ top:50%;left:50%;
  transform:translate(-50%,-50%);
  background:#ef4444;
  padding:6px 12px;
  border-radius:8px;
  font-size:12px;
- font-weight:bold;
 }
 
-/* PROSES */
-.card.proses{
- opacity:0.7;
- cursor:not-allowed;
-}
 .card.proses::after{
  content:"PROSES";
  position:absolute;
- top:50%;
- left:50%;
+ top:50%;left:50%;
  transform:translate(-50%,-50%);
  background:#f59e0b;
  padding:6px 12px;
  border-radius:8px;
  font-size:12px;
- font-weight:bold;
 }
 
 /* BADGE */
-.badge{
- position:absolute;
- top:10px;
- left:10px;
- padding:4px 8px;
- border-radius:999px;
- font-size:10px;
-}
+.badge{position:absolute;top:10px;left:10px;padding:4px 8px;border-radius:999px;font-size:10px}
 .badge.ready{background:#22c55e;color:black}
 .badge.sold{background:#ef4444;color:white}
 .badge.proses{background:#f59e0b;color:black}
 
-/* LABEL */
-.badge-right{
- position:absolute;
- top:10px;
- right:10px;
- padding:4px 8px;
- border-radius:999px;
- font-size:10px;
-}
-.hot{background:orange}
-.promo{background:gold;color:black}
-
 /* PRICE */
-.price{
- color:#22c55e;
- font-weight:700;
- font-size:18px;
-}
-.old{ text-decoration:line-through;font-size:12px;color:#64748b}
-.discount{
- background:#ef4444;
- color:white;
- padding:3px 8px;
- border-radius:999px;
- font-size:11px;
- display:inline-block;
- margin-top:4px;
-}
-
-/* LOADING */
-.loading{
- text-align:center;
- padding:30px;
- color:#94a3b8;
-}
+.price{color:#22c55e;font-weight:bold}
+.old{text-decoration:line-through;font-size:12px;color:#64748b}
+.discount{background:#ef4444;color:white;padding:3px 6px;border-radius:6px;font-size:10px}
 
 /* POPUP */
 .popup{
- position:fixed;
- top:0;left:0;
- width:100%;height:100%;
- display:none;
- background:rgba(0,0,0,0.6);
- backdrop-filter:blur(6px);
- justify-content:center;
- align-items:center;
+ position:fixed;top:0;left:0;width:100%;height:100%;
+ display:none;background:rgba(0,0,0,0.6);
+ justify-content:center;align-items:center;
 }
-
 .popup-box{
- background:#020617;
- padding:16px;
- border-radius:16px;
- width:90%;
- max-width:320px;
- text-align:center;
-}
-
-/* SLIDER */
-.slider{
- display:flex;
- gap:6px;
- overflow-x:auto;
-}
-.slider img{
- height:120px;
- border-radius:10px;
+ background:#020617;padding:16px;border-radius:16px;width:90%;max-width:320px;text-align:center;
 }
 
 /* BUTTON */
-.btn{
- display:block;
- margin:8px 0;
- padding:10px;
- border-radius:10px;
- text-decoration:none;
-}
+.btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none}
 .wa{background:#22c55e;color:black}
 .fb{background:#3b82f6;color:white}
-
-.close-btn{
- margin-top:8px;
- padding:8px;
- border:none;
- border-radius:10px;
- background:#1e293b;
- color:white;
- width:100%;
-}
+.close-btn{margin-top:8px;padding:8px;border:none;border-radius:10px;background:#1e293b;color:white;width:100%}
 </style>
 </head>
 
@@ -196,33 +106,31 @@ h1{font-size:24px}
 <p class="subtitle">Akun Game Murah • Trusted</p>
 </header>
 
-<div class="search-box">
-<input id="search" placeholder="Cari akun...">
-</div>
-
+<!-- FILTER GAME -->
 <div class="tabs">
-<button onclick="filterGame('all',this)" class="tab active">Semua</button>
-<button onclick="filterGame('hsr',this)" class="tab">HSR</button>
-<button onclick="filterGame('solo',this)" class="tab">Solo</button>
-<button onclick="filterGame('ml',this)" class="tab">ML</button>
-<button onclick="filterGame('arena',this)" class="tab">Arena</button>
+<button onclick="setGame('all',this)" class="tab active">Semua</button>
+<button onclick="setGame('hsr',this)" class="tab">HSR</button>
+<button onclick="setGame('solo',this)" class="tab">Solo</button>
+<button onclick="setGame('ml',this)" class="tab">ML</button>
+<button onclick="setGame('arena',this)" class="tab">Arena</button>
 </div>
 
-<div class="toolbar">
-<button onclick="sortMurah()">Termurah</button>
-<button onclick="sortMahal()">Termahal</button>
-<button onclick="toggleSold()">Hide SOLD</button>
+<!-- FILTER STATUS -->
+<div class="tabs">
+<button onclick="setStatus('all',this)" class="tab active">Semua</button>
+<button onclick="setStatus('ready',this)" class="tab">Ready</button>
+<button onclick="setStatus('proses',this)" class="tab">Proses</button>
+<button onclick="setStatus('sold',this)" class="tab">Sold</button>
 </div>
 
-<div id="loading" class="loading">Loading...</div>
+<div id="loading" style="text-align:center;padding:20px">Loading...</div>
 <div class="grid"></div>
 <div class="popup" id="popup"></div>
 
 <script>
 let allData=[];
-window.currentData=[];
 let currentGame='all';
-let hideSold=false;
+let currentStatus='all';
 
 function formatRupiah(num){
  return "Rp " + num.toLocaleString("id-ID");
@@ -241,13 +149,79 @@ function parseHarga(h){
 
 function apply(){
  let data=[...allData];
- window.currentData=data;
- sortMurah();
+
+ // FILTER GAME
+ if(currentGame!=='all'){
+  data=data.filter(a=>(a.Game||'').toLowerCase()===currentGame);
+ }
+
+ // FILTER STATUS
+ if(currentStatus!=='all'){
+  data=data.filter(a=>(a.Status||'ready').toLowerCase()===currentStatus);
+ }
+
+ render(data);
 }
 
 function render(data){
  const grid=document.querySelector('.grid');
  grid.innerHTML='';
+
+ data.sort((a,b)=>{
+  const order={ready:1, proses:2, sold:3};
+  const A=(a.Status||'ready').toLowerCase();
+  const B=(b.Status||'ready').toLowerCase();
+
+  if(order[A]!==order[B]) return order[A]-order[B];
+  return parseHarga(a.Harga)-parseHarga(b.Harga);
+ });
+
+ data.forEach(a=>{
+  const img=(a.Gambar||'').split(',')[0];
+  const status=(a.Status||'ready').toLowerCase();
+  const label=(a.Label||'').toLowerCase();
+
+  const harga=parseHarga(a.Harga);
+  const normal=parseHarga(a.Diskon);
+
+  // 🔥 DISKON BALIK
+  let diskon='';
+  if(normal && harga && normal>harga){
+    const persen=Math.round((normal-harga)/normal*100);
+    diskon=`<div class="old">${a.Diskon}</div>
+            <div class="discount">-${persen}%</div>`;
+  }
+
+  // 🔥 LABEL BALIK
+  let labelHTML='';
+  if(label==='hot'){
+    labelHTML='<div class="badge-right hot">HOT</div>';
+  }
+  else if(label==='promo'){
+    labelHTML='<div class="badge-right promo">PROMO</div>';
+  }
+
+  grid.innerHTML+=`
+  <div class="card ${status}" onclick='handleClick(${JSON.stringify(a)})'>
+    <div class="badge ${status}">${status.toUpperCase()}</div>
+    ${labelHTML}
+    <img src="${img}">
+    <h4>${a.Nama}</h4>
+    <div class="price">${formatRupiah(harga)}</div>
+    ${diskon}
+  </div>`;
+ });
+}
+
+ // SORT
+ data.sort((a,b)=>{
+  const order={ready:1, proses:2, sold:3};
+  const A=(a.Status||'ready').toLowerCase();
+  const B=(b.Status||'ready').toLowerCase();
+
+  if(order[A]!==order[B]) return order[A]-order[B];
+  return parseHarga(a.Harga)-parseHarga(b.Harga);
+ });
 
  data.forEach(a=>{
   const img=(a.Gambar||'').split(',')[0];
@@ -258,80 +232,56 @@ function render(data){
   <div class="card ${status}" onclick='handleClick(${JSON.stringify(a)})'>
     <div class="badge ${status}">${status.toUpperCase()}</div>
     <img src="${img}">
-    <h4>${a.Nama||'-'}</h4>
+    <h4>${a.Nama}</h4>
     <div class="price">${formatRupiah(harga)}</div>
   </div>`;
  });
 }
 
+// FILTER FUNCTION
+function setGame(g,el){
+ currentGame=g;
+ document.querySelectorAll('.tabs:nth-child(2) .tab').forEach(t=>t.classList.remove('active'));
+ el.classList.add('active');
+ apply();
+}
+
+function setStatus(s,el){
+ currentStatus=s;
+ document.querySelectorAll('.tabs:nth-child(3) .tab').forEach(t=>t.classList.remove('active'));
+ el.classList.add('active');
+ apply();
+}
+
+// POPUP
 function handleClick(a){
  const popup=document.getElementById('popup');
-
  const status=(a.Status||'ready').toLowerCase();
 
  if(status==='sold'){
-  popup.innerHTML=`<div class="popup-box">
-    <h3>❌ Akun Sudah SOLD</h3>
-    <button class="close-btn" onclick="tutup()">Tutup</button>
-  </div>`;
-  popup.style.display='flex';
-  return;
+  popup.innerHTML=`<div class="popup-box"><h3>❌ SOLD</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
  }
-
- if(status==='proses'){
-  popup.innerHTML=`<div class="popup-box">
-    <h3>⏳ Sedang Diproses</h3>
-    <p>Akun ini sedang dalam tahap pengerjaan / transaksi.<br>Silakan cek akun lainnya ya 😊</p>
-    <button class="close-btn" onclick="tutup()">Tutup</button>
-  </div>`;
-  popup.style.display='flex';
-  return;
+ else if(status==='proses'){
+  popup.innerHTML=`<div class="popup-box"><h3>⏳ Sedang Diproses</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
  }
+ else{
+  const harga=parseHarga(a.Harga);
+  const pesan=`Halo kak, saya mau beli akun:\n${a.Nama}\n${a.Game}\n${formatRupiah(harga)}`;
+  const wa=`https://wa.me/6285939286029?text=${encodeURIComponent(pesan)}`;
 
- const harga=parseHarga(a.Harga);
-
- const pesan=`Halo kak, saya mau beli akun:
-Nama: ${a.Nama}
-Game: ${a.Game}
-Harga: ${formatRupiah(harga)}`;
-
- const wa=`https://wa.me/6285939286029?text=${encodeURIComponent(pesan)}`;
- const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
-
- popup.innerHTML=`
- <div class="popup-box">
-   <h3>${a.Nama}</h3>
-   <div class="price">${formatRupiah(harga)}</div>
-   <a href="${wa}" class="btn wa">Direct (WA)</a>
-   <a href="${fb}" class="btn fb">Middleman</a>
-   <button class="close-btn" onclick="tutup()">Tutup</button>
- </div>`;
+  popup.innerHTML=`<div class="popup-box">
+  <h3>${a.Nama}</h3>
+  <div class="price">${formatRupiah(harga)}</div>
+  <a href="${wa}" class="btn wa">Beli (WA)</a>
+  <button class="close-btn" onclick="tutup()">Tutup</button>
+  </div>`;
+ }
 
  popup.style.display='flex';
 }
 
 function tutup(){
  document.getElementById('popup').style.display='none';
-}
-
-function sortMurah(){
- render([...window.currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)));
-}
-
-function sortMahal(){
- render([...window.currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)));
-}
-
-function filterGame(g,el){
- currentGame=g;
- document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
- el.classList.add('active');
- apply();
-}
-
-function toggleSold(){
- hideSold=!hideSold;
- apply();
 }
 </script>
 
