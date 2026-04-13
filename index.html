@@ -1,28 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yuraaa Store</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+ --bg:#060b1a;
+ --card:#0f172a;
+ --card2:#020617;
+ --primary:#22c55e;
+ --accent:#3b82f6;
+ --danger:#ef4444;
+ --text:#e5e7eb;
+ --sub:#94a3b8;
+}
+
+body{font-family:'Poppins',sans-serif;background:linear-gradient(180deg,var(--bg),#020617);color:var(--text)}
+
+header{padding:18px;text-align:center}
+h1{font-size:26px}
+.subtitle{font-size:12px;color:var(--sub)}
+
+.search-box{width:92%;margin:10px auto}
+.search-box input{width:100%;padding:12px;border-radius:12px;border:none;background:#0f172a;color:white}
+
+.tabs{display:flex;gap:8px;justify-content:center;margin:10px}
+.tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:var(--sub);font-size:12px;border:1px solid #1e293b}
+.tab.active{background:var(--primary);color:black}
+
+.toolbar{display:flex;gap:10px;justify-content:center;margin:10px}
+.toolbar button{padding:8px 12px;border-radius:10px;border:none}
+
+.grid{display:grid;gap:16px;padding:12px}
+
+.card{position:relative;background:#0f172a;border-radius:16px;padding:10px}
+.card img{width:100%;height:160px;object-fit:cover;border-radius:12px}
+
+.badge{position:absolute;top:10px;left:10px;padding:4px 10px;border-radius:999px;font-size:10px;font-weight:700}
+.ready{background:var(--primary);color:black}
+.sold{background:var(--danger);color:white}
+
+/* 🔥 BADGE KANAN */
+.badge-right{
+ position:absolute;
+ top:10px;
+ right:10px;
+ padding:4px 10px;
+ border-radius:999px;
+ font-size:10px;
+ font-weight:700;
+}
+
+.hot{background:orange;color:black}
+.best{background:var(--accent);color:black}
+.promo{background:gold;color:black}
+.rare{background:purple;color:white}
+
+.price{color:var(--primary);font-weight:700}
+.old{text-decoration:line-through;font-size:11px;color:var(--sub)}
+.discount{background:var(--danger);padding:3px 6px;border-radius:6px;font-size:10px}
+
+.footer{text-align:center;font-size:11px;padding:10px;color:var(--sub)}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>YURAAA STORE 🎮</h1>
+<p class="subtitle">Akun Game Murah • Aman • Trusted</p>
+</header>
+
+<div class="search-box">
+<input id="search" placeholder="Cari akun...">
+</div>
+
+<div class="tabs">
+<button onclick="filterGame('all',this)" class="tab active">Semua</button>
+<button onclick="filterGame('hsr',this)" class="tab">HSR</button>
+<button onclick="filterGame('solo',this)" class="tab">Solo</button>
+<button onclick="filterGame('ml',this)" class="tab">ML</button>
+<button onclick="filterGame('arena',this)" class="tab">Arena</button>
+</div>
+
+<div class="toolbar">
+<button onclick="sortMurah()">Termurah</button>
+<button onclick="sortMahal()">Termahal</button>
+<button onclick="toggleSold()">Hide SOLD</button>
+</div>
+
+<div class="grid"></div>
+
 <script>
 document.addEventListener("DOMContentLoaded", ()=>{
 
 const SHEET_URL="https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1";
 
-let allData=[];
-let currentData=[];
-let currentGame='all';
-let hideSold=false;
+let allData=[],currentData=[],currentGame='all',hideSold=false;
 
-// LOAD DATA
 async function loadData(){
- try{
-  const res=await fetch(SHEET_URL);
-  allData=await res.json();
-
-  if(!Array.isArray(allData)){
-    console.error("Data bukan array!");
-    return;
-  }
-
-  apply();
- }catch(e){
-  console.error("Gagal fetch:",e);
- }
+ const res=await fetch(SHEET_URL);
+ allData=await res.json();
+ apply();
 }
 
 function parseHarga(h){
@@ -46,22 +130,18 @@ function apply(){
 
 function render(data){
  const grid=document.querySelector('.grid');
- if(!grid) return;
-
  grid.innerHTML='';
 
  data.sort((a,b)=>{
-  const statusA=(a.Status||'ready').toLowerCase();
-  const statusB=(b.Status||'ready').toLowerCase();
-
-  if(statusA==='sold' && statusB!=='sold') return 1;
-  if(statusA!=='sold' && statusB==='sold') return -1;
-
+  const A=(a.Status||'ready').toLowerCase();
+  const B=(b.Status||'ready').toLowerCase();
+  if(A==='sold' && B!=='sold') return 1;
+  if(A!=='sold' && B==='sold') return -1;
   return 0;
  });
 
  data.forEach((a,i)=>{
-  const img=a.Gambar?a.Gambar.split(',')[0]:'';
+  const img=(a.Gambar||'').split(',')[0].trim();
 
   const normal=parseHarga(a.Diskon);
   const harga=parseHarga(a.Harga);
@@ -69,28 +149,28 @@ function render(data){
   let diskon='';
   if(normal && harga && normal>harga){
     const persen=Math.round((normal-harga)/normal*100);
-    diskon=`<div class="old">${a.Diskon}</div>
-            <div class="discount">-${persen}%</div>`;
+    diskon=`<div class="old">${a.Diskon}</div><div class="discount">-${persen}%</div>`;
   }
 
   const status=(a.Status||'ready').toLowerCase();
   const label=(a.Label||'').toLowerCase();
 
-  let customBadge='';
+  // 🔥 LABEL KANAN (TIDAK NIMPA STATUS)
+  let labelHTML='';
   if(label==='hot'){
-    customBadge='<div class="badge hot" style="right:10px;left:auto">HOT</div>';
+    labelHTML='<div class="badge-right hot">HOT</div>';
   }else if(label==='best'){
-    customBadge='<div class="badge best">BEST</div>';
+    labelHTML='<div class="badge-right best">BEST</div>';
   }else if(label==='promo'){
-    customBadge='<div class="badge" style="background:gold;color:black;right:10px;left:auto">PROMO</div>';
+    labelHTML='<div class="badge-right promo">PROMO</div>';
   }else if(label==='rare'){
-    customBadge='<div class="badge" style="background:purple;color:white;right:10px;left:auto">RARE</div>';
+    labelHTML='<div class="badge-right rare">RARE</div>';
   }
 
   grid.innerHTML+=`
-  <div class="card" onclick="detail(${i})">
+  <div class="card">
     <div class="badge ${status}">${status.toUpperCase()}</div>
-    ${customBadge}
+    ${labelHTML}
     <img src="${img||'https://via.placeholder.com/300'}">
     <h4>${a.Nama||'-'}</h4>
     ${diskon}
@@ -99,18 +179,13 @@ function render(data){
  });
 }
 
-function sortMurah(){
- render([...currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)));
-}
+function sortMurah(){render([...currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)))}
+function sortMahal(){render([...currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)))}
 
-function sortMahal(){
- render([...currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)));
-}
-
-function filterGame(g, el){
+function filterGame(g,el){
  currentGame=g;
  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
- if(el) el.classList.add('active');
+ el.classList.add('active');
  apply();
 }
 
@@ -119,42 +194,17 @@ function toggleSold(){
  apply();
 }
 
-function detail(i){
- const a=currentData[i];
- if(!a) return;
+document.getElementById('search').addEventListener('input',e=>{
+ const val=e.target.value.toLowerCase();
+ render(currentData.filter(a=>(a.Nama||'').toLowerCase().includes(val)));
+});
 
- const imgs=a.Gambar?a.Gambar.split(','):[];
- const p=document.getElementById('popup');
-
- p.innerHTML=`
- <div class="popup-content">
-  <span onclick="closePop()">✖</span>
-  <div class="slider">${imgs.map(img=>`<img src="${img.trim()}">`).join('')}</div>
-  <h3>${a.Nama||'-'}</h3>
-  <div class="price">${a.Harga||'-'}</div>
-  <p>${a.Deskripsi||''}</p>
-  <a href="https://wa.me/6285939286029?text=Saya mau ${encodeURIComponent(a.Nama||'')}" class="btn wa">WhatsApp</a>
-  <a href="https://www.facebook.com/share/1Nk4kQ2FXJ/" class="btn fb">Facebook</a>
- </div>`;
-
- p.style.display='flex';
-}
-
-function closePop(){
- document.getElementById('popup').style.display='none';
-}
-
-// SEARCH (AMAN SEKARANG)
-const searchInput=document.getElementById('search');
-if(searchInput){
- searchInput.addEventListener('input',e=>{
-  const val=e.target.value.toLowerCase();
-  render(currentData.filter(a=>(a.Nama||'').toLowerCase().includes(val)));
- });
-}
-
-// START
 loadData();
 
 });
 </script>
+
+<div class="footer">© Yuraaa Store</div>
+
+</body>
+</html>
