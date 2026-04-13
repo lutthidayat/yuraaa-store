@@ -245,10 +245,10 @@ function handleClick(a){
  const status=(a.Status||'ready').toLowerCase();
 
  if(status==='sold'){
-  popup.innerHTML=`<div class="popup-box"><h3>❌ SOLD</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
+  popup.innerHTML=`<div class="popup-box"><h3>❌ Maaf Akun Sudah Sold</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
  }
  else if(status==='proses'){
-  popup.innerHTML=`<div class="popup-box"><h3>⏳ Sedang Diproses</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
+  popup.innerHTML=`<div class="popup-box"><h3>⏳ Akun ini sedang dalam tahap pengerjaan.<br>Silahkan cek akun lainnya ya 😊</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
  }
  else{
   const harga=parseHarga(a.Harga);
