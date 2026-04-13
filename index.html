@@ -18,7 +18,7 @@ h1{font-size:24px}
 
 /* SEARCH */
 .search-box{width:92%;margin:10px auto}
-.search-box input{width:100%;padding:10px;border-radius:10px;border:none;background:#0f172a;color:white}
+.search-box input{width:100%;padding:10px;border-radius:12px;border:none;background:#0f172a;color:white}
 
 /* TAB */
 .tabs{display:flex;gap:8px;justify-content:center;margin:10px}
@@ -27,19 +27,16 @@ h1{font-size:24px}
 
 /* TOOLBAR */
 .toolbar{text-align:center;margin:10px}
-.toolbar button{margin:5px;padding:8px 12px;border-radius:10px;border:none}
+.toolbar button{margin:5px;padding:8px 12px;border-radius:12px;border:none}
 
 /* GRID */
 .grid{display:grid;gap:14px;padding:12px}
 
 /* CARD */
-.card{position:relative;background:#0f172a;border-radius:16px;padding:10px;cursor:pointer}
-.card img{width:100%;height:150px;border-radius:12px;object-fit:cover}
+.card{position:relative;background:#0f172a;border-radius:18px;padding:10px;cursor:pointer}
+.card img{width:100%;height:150px;border-radius:14px;object-fit:cover}
 
-.card.sold{
- opacity:0.6;
- cursor:not-allowed;
-}
+.card.sold{opacity:0.5;cursor:not-allowed}
 
 /* BADGE */
 .badge{position:absolute;top:10px;left:10px;padding:4px 8px;border-radius:999px;font-size:10px}
@@ -54,42 +51,61 @@ h1{font-size:24px}
 /* PRICE */
 .price{color:#22c55e;font-weight:bold}
 
-/* POPUP */
-.popup{position:fixed;top:0;left:0;width:100%;height:100%;display:none;background:rgba(0,0,0,.8);justify-content:center;align-items:center}
+/* POPUP OVERLAY */
+.popup{
+ position:fixed;
+ top:0;left:0;
+ width:100%;height:100%;
+ display:none;
+ background:rgba(0,0,0,0.6);
+ backdrop-filter: blur(6px);
+ justify-content:center;
+ align-items:center;
+ animation:fadeIn .3s;
+}
 
-/* POPUP BELI */
+/* POPUP BOX PREMIUM */
 .popup-box{
- background:#020617;
- padding:16px;
- border-radius:16px;
+ background:linear-gradient(145deg,#020617,#0f172a);
+ padding:20px;
+ border-radius:20px;
  width:90%;
- max-width:300px;
+ max-width:320px;
  text-align:center;
+ box-shadow:0 10px 30px rgba(0,0,0,0.5);
+ animation:scaleIn .25s ease;
 }
 
-/* ALERT SOLD */
-.alert-box{
- background:#020617;
- padding:16px;
- border-radius:16px;
- width:90%;
- max-width:300px;
- text-align:center;
- border:1px solid #1e293b;
+.popup-box h3{
+ margin-bottom:12px;
+ font-size:18px;
 }
 
-.alert-box h3{
- color:#ef4444;
- margin-bottom:6px;
+/* BUTTON */
+.btn{
+ display:block;
+ margin:10px 0;
+ padding:12px;
+ border-radius:14px;
+ text-decoration:none;
+ font-weight:600;
+ transition:.2s;
 }
 
-.alert-box p{
- font-size:13px;
- color:#94a3b8;
+.btn:active{transform:scale(0.95)}
+
+.wa{
+ background:linear-gradient(135deg,#22c55e,#16a34a);
+ color:black;
 }
 
-.alert-btn{
- margin-top:10px;
+.fb{
+ background:linear-gradient(135deg,#3b82f6,#2563eb);
+ color:white;
+}
+
+.close-btn{
+ margin-top:8px;
  padding:8px;
  border:none;
  border-radius:10px;
@@ -98,10 +114,26 @@ h1{font-size:24px}
  width:100%;
 }
 
-/* BUTTON */
-.btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none}
-.wa{background:#22c55e;color:black}
-.fb{background:#1877f2;color:white}
+/* ALERT SOLD */
+.alert-box{
+ background:linear-gradient(145deg,#020617,#0f172a);
+ padding:20px;
+ border-radius:20px;
+ text-align:center;
+ animation:scaleIn .25s;
+}
+
+.alert-box h3{color:#ef4444;margin-bottom:6px}
+
+@keyframes fadeIn{
+ from{opacity:0}
+ to{opacity:1}
+}
+
+@keyframes scaleIn{
+ from{transform:scale(.8);opacity:0}
+ to{transform:scale(1);opacity:1}
+}
 
 .footer{text-align:center;font-size:11px;padding:10px;color:#94a3b8}
 </style>
@@ -142,14 +174,11 @@ let currentGame='all';
 let hideSold=false;
 
 document.addEventListener("DOMContentLoaded", async ()=>{
-
-const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1");
-allData=await res.json();
-apply();
-
+ const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1");
+ allData=await res.json();
+ apply();
 });
 
-// APPLY
 function apply(){
  let data=[...allData];
 
@@ -165,7 +194,6 @@ function apply(){
  sortMurah();
 }
 
-// RENDER
 function render(data){
  const grid=document.querySelector('.grid');
  grid.innerHTML='';
@@ -198,24 +226,20 @@ function render(data){
  });
 }
 
-// CLICK
 function handleClick(a){
-
  const popup=document.getElementById('popup');
 
- // SOLD → popup keren
  if((a.Status||'').toLowerCase()==='sold'){
   popup.innerHTML=`
   <div class="alert-box">
     <h3>❌ Akun Sudah SOLD</h3>
-    <p>Maaf, akun ini sudah terjual.<br>Silakan pilih akun lain ya 😊</p>
-    <button class="alert-btn" onclick="tutup()">Oke</button>
+    <p>Pilih akun lain ya 😊</p>
+    <button class="close-btn" onclick="tutup()">Tutup</button>
   </div>`;
   popup.style.display='flex';
   return;
  }
 
- // READY → beli
  const pesan=`Halo kak, saya mau beli akun:\n${a.Nama}\nHarga: ${a.Harga}`;
  const wa=`https://wa.me/6285939286029?text=${encodeURIComponent(pesan)}`;
  const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
@@ -225,7 +249,7 @@ function handleClick(a){
    <h3>Pilih Metode</h3>
    <a href="${wa}" class="btn wa">Direct (WA)</a>
    <a href="${fb}" class="btn fb">Middleman (FB)</a>
-   <button onclick="tutup()">Tutup</button>
+   <button class="close-btn" onclick="tutup()">Tutup</button>
  </div>`;
  popup.style.display='flex';
 }
@@ -234,7 +258,6 @@ function tutup(){
  document.getElementById('popup').style.display='none';
 }
 
-// SORT
 function sortMurah(){
  render([...window.currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)));
 }
@@ -242,7 +265,6 @@ function sortMahal(){
  render([...window.currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)));
 }
 
-// FILTER
 function filterGame(g,el){
  currentGame=g;
  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -250,13 +272,11 @@ function filterGame(g,el){
  apply();
 }
 
-// TOGGLE SOLD
 function toggleSold(){
  hideSold=!hideSold;
  apply();
 }
 
-// SEARCH
 document.getElementById('search').addEventListener('input',e=>{
  const val=e.target.value.toLowerCase();
  render(window.currentData.filter(a=>(a.Nama||'').toLowerCase().includes(val)));
