@@ -15,47 +15,32 @@ header{text-align:center;padding:16px}
 h1{font-size:24px}
 .subtitle{font-size:12px;color:#94a3b8}
 
-.search-box{width:92%;margin:10px auto}
-.search-box input{width:100%;padding:10px;border-radius:10px;border:none;background:#0f172a;color:white}
-
-.tabs{display:flex;gap:8px;justify-content:center;margin:10px}
-.tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:#94a3b8;font-size:12px}
-.tab.active{background:#22c55e;color:black}
-
-.toolbar{text-align:center;margin:10px}
-.toolbar button{margin:5px;padding:8px 12px;border-radius:10px;border:none}
-
 .grid{display:grid;gap:14px;padding:12px}
 
 .card{position:relative;background:#0f172a;border-radius:16px;padding:10px;cursor:pointer}
 .card img{width:100%;height:150px;border-radius:12px;object-fit:cover}
 
-/* STATUS */
+/* SOLD DISABLE */
+.card.sold{
+ opacity:0.6;
+ cursor:not-allowed;
+}
+
 .badge{position:absolute;top:10px;left:10px;padding:4px 8px;border-radius:999px;font-size:10px}
 .ready{background:#22c55e;color:black}
 .sold{background:#ef4444;color:white}
 
-/* LABEL */
 .badge-right{position:absolute;top:10px;right:10px;padding:4px 8px;border-radius:999px;font-size:10px}
 .hot{background:orange}
 .promo{background:gold;color:black}
-.best{background:#3b82f6}
-.rare{background:purple}
-.new{background:#22c55e;color:black;top:40px}
 
-/* PRICE */
 .price{color:#22c55e;font-weight:bold}
-.old{text-decoration:line-through;font-size:11px;color:#94a3b8}
-.discount{background:red;padding:2px 5px;border-radius:6px;font-size:10px;margin-top:3px;display:inline-block}
 
-/* POPUP */
 .popup{position:fixed;top:0;left:0;width:100%;height:100%;display:none;background:rgba(0,0,0,.8);justify-content:center;align-items:center}
 .popup-box{background:#020617;padding:16px;border-radius:16px;width:90%;max-width:300px;text-align:center}
 .btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none}
 .wa{background:#22c55e;color:black}
 .fb{background:#1877f2;color:white}
-
-.footer{text-align:center;font-size:11px;padding:10px;color:#94a3b8}
 </style>
 </head>
 
@@ -66,152 +51,57 @@ h1{font-size:24px}
 <p class="subtitle">Akun Game Murah • Trusted</p>
 </header>
 
-<div class="search-box">
-<input id="search" placeholder="Cari akun...">
-</div>
-
-<div class="tabs">
-<button onclick="filterGame('all',this)" class="tab active">Semua</button>
-<button onclick="filterGame('hsr',this)" class="tab">HSR</button>
-<button onclick="filterGame('solo',this)" class="tab">Solo</button>
-<button onclick="filterGame('ml',this)" class="tab">ML</button>
-<button onclick="filterGame('arena',this)" class="tab">Arena</button>
-</div>
-
-<div class="toolbar">
-<button onclick="sortMurah()">Termurah</button>
-<button onclick="sortMahal()">Termahal</button>
-<button onclick="toggleSold()">Hide SOLD</button>
-</div>
-
 <div class="grid"></div>
 <div class="popup" id="popup"></div>
 
 <script>
 let allData=[];
-window.currentData=[];
-let currentGame='all';
-let hideSold=false;
+let currentData=[];
 
-document.addEventListener("DOMContentLoaded", ()=>{
+document.addEventListener("DOMContentLoaded", async ()=>{
 
 const SHEET_URL="https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1";
 
-async function loadData(){
- const res=await fetch(SHEET_URL);
- allData=await res.json();
- apply();
-}
+const res=await fetch(SHEET_URL);
+allData=await res.json();
+currentData=[...allData];
 
-function parseHarga(h){
- return parseInt((h||'').replace(/[^0-9]/g,''))||0;
-}
-
-function isNew(tanggal){
- if(!tanggal) return false;
- const diff=(new Date() - new Date(tanggal))/(1000*60*60*24);
- return diff <= 2;
-}
-
-function apply(){
- let data=[...allData];
-
- if(currentGame!=='all'){
-  data=data.filter(a=>(a.Game||'').toLowerCase()===currentGame);
- }
-
- if(hideSold){
-  data=data.filter(a=>(a.Status||'').toLowerCase()!=='sold');
- }
-
- window.currentData=data;
- sortMurah();
-}
+render(currentData);
+});
 
 function render(data){
  const grid=document.querySelector('.grid');
  grid.innerHTML='';
 
- data.sort((a,b)=>{
-  const A=(a.Status||'ready').toLowerCase();
-  const B=(b.Status||'ready').toLowerCase();
-  if(A==='sold' && B!=='sold') return 1;
-  if(A!=='sold' && B==='sold') return -1;
-  return 0;
- });
-
- data.forEach((a,i)=>{
+ data.forEach((a)=>{
   const img=(a.Gambar||'').split(',')[0].trim();
-
-  const normal=parseHarga(a.Diskon);
-  const harga=parseHarga(a.Harga);
-
-  let diskon='';
-  if(normal && harga && normal>harga){
-    const persen=Math.round((normal-harga)/normal*100);
-    diskon=`<div class="old">${a.Diskon}</div>
-            <div class="discount">-${persen}%</div>`;
-  }
-
   const status=(a.Status||'ready').toLowerCase();
   const label=(a.Label||'').toLowerCase();
 
   let labelHTML='';
   if(label==='hot') labelHTML='<div class="badge-right hot">HOT</div>';
   if(label==='promo') labelHTML='<div class="badge-right promo">PROMO</div>';
-  if(label==='best') labelHTML='<div class="badge-right best">BEST</div>';
-  if(label==='rare') labelHTML='<div class="badge-right rare">RARE</div>';
-
-  let newHTML='';
-  if(isNew(a.Tanggal)){
-    newHTML='<div class="badge-right new">NEW</div>';
-  }
 
   grid.innerHTML+=`
-  <div class="card" onclick="beli(${i})">
+  <div class="card ${status}" onclick='handleClick(${JSON.stringify(a)})'>
     <div class="badge ${status}">${status.toUpperCase()}</div>
     ${labelHTML}
-    ${newHTML}
-    <img src="${img||'https://via.placeholder.com/300'}">
+    <img src="${img}">
     <h4>${a.Nama||'-'}</h4>
-    ${diskon}
     <div class="price">${a.Harga||'-'}</div>
   </div>`;
  });
 }
 
-window.sortMurah=function(){
- render([...window.currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)));
-}
+// 🔥 FIX TOTAL CLICK
+function handleClick(a){
 
-window.sortMahal=function(){
- render([...window.currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)));
-}
+ // ❌ BLOCK SOLD
+ if((a.Status||'').toLowerCase()==='sold'){
+  alert("Akun sudah SOLD ❌");
+  return;
+ }
 
-window.filterGame=function(g,el){
- currentGame=g;
- document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
- el.classList.add('active');
- apply();
-}
-
-window.toggleSold=function(){
- hideSold=!hideSold;
- apply();
-}
-
-document.getElementById('search').addEventListener('input',e=>{
- const val=e.target.value.toLowerCase();
- render(window.currentData.filter(a=>(a.Nama||'').toLowerCase().includes(val)));
-});
-
-loadData();
-
-});
-
-// 🔥 GLOBAL (BIAR BISA DIKLIK)
-function beli(i){
- const a=window.currentData[i];
  const popup=document.getElementById('popup');
 
  const pesan=`Halo kak, saya mau beli akun:\n${a.Nama}\nHarga: ${a.Harga}`;
@@ -234,8 +124,6 @@ function tutup(){
  document.getElementById('popup').style.display='none';
 }
 </script>
-
-<div class="footer">© Yuraaa Store</div>
 
 </body>
 </html>
