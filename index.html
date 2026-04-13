@@ -1,4 +1,6 @@
 <script>
+document.addEventListener("DOMContentLoaded", ()=>{
+
 const SHEET_URL="https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1";
 
 let allData=[];
@@ -23,12 +25,10 @@ async function loadData(){
  }
 }
 
-// FORMAT HARGA
 function parseHarga(h){
  return parseInt((h||'').replace(/[^0-9]/g,''))||0;
 }
 
-// APPLY FILTER
 function apply(){
  let data=[...allData];
 
@@ -44,14 +44,12 @@ function apply(){
  sortMurah();
 }
 
-// RENDER
 function render(data){
  const grid=document.querySelector('.grid');
  if(!grid) return;
 
  grid.innerHTML='';
 
- // SORT READY DI ATAS
  data.sort((a,b)=>{
   const statusA=(a.Status||'ready').toLowerCase();
   const statusB=(b.Status||'ready').toLowerCase();
@@ -78,7 +76,6 @@ function render(data){
   const status=(a.Status||'ready').toLowerCase();
   const label=(a.Label||'').toLowerCase();
 
-  // BADGE CUSTOM
   let customBadge='';
   if(label==='hot'){
     customBadge='<div class="badge hot" style="right:10px;left:auto">HOT</div>';
@@ -102,7 +99,6 @@ function render(data){
  });
 }
 
-// SORT
 function sortMurah(){
  render([...currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)));
 }
@@ -111,7 +107,6 @@ function sortMahal(){
  render([...currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)));
 }
 
-// TAB FIX
 function filterGame(g, el){
  currentGame=g;
  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -119,13 +114,11 @@ function filterGame(g, el){
  apply();
 }
 
-// TOGGLE SOLD
 function toggleSold(){
  hideSold=!hideSold;
  apply();
 }
 
-// DETAIL POPUP
 function detail(i){
  const a=currentData[i];
  if(!a) return;
@@ -151,7 +144,7 @@ function closePop(){
  document.getElementById('popup').style.display='none';
 }
 
-// SEARCH
+// SEARCH (AMAN SEKARANG)
 const searchInput=document.getElementById('search');
 if(searchInput){
  searchInput.addEventListener('input',e=>{
@@ -162,4 +155,6 @@ if(searchInput){
 
 // START
 loadData();
+
+});
 </script>
