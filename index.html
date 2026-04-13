@@ -18,7 +18,7 @@ h1{font-size:24px}
 .subtitle{font-size:12px;color:#94a3b8}
 
 /* TAB */
-.tabs{display:flex;gap:8px;justify-content:center;margin:10px}
+.tabs{display:flex;gap:8px;justify-content:center;margin:10px;flex-wrap:wrap}
 .tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:#94a3b8;font-size:12px}
 .tab.active{background:#22c55e;color:black}
 
@@ -204,11 +204,11 @@ function apply(){
  let data=[...allData];
 
  if(currentGame!=='all'){
-  data=data.filter(a=>(a.Game||'').toLowerCase().trim() === currentGame)
+  data=data.filter(a=>(a.Game||'').toLowerCase().trim()===currentGame);
  }
 
  if(currentStatus!=='all'){
-  data=data.filter(a=>(a.Status||'').toLowerCase()===currentStatus);
+  data=data.filter(a=>(a.Status||'').toLowerCase().trim()===currentStatus);
  }
 
  render(data);
@@ -222,7 +222,6 @@ function render(data){
   const order={ready:1, proses:2, sold:3};
   const A=(a.Status||'ready').toLowerCase();
   const B=(b.Status||'ready').toLowerCase();
-
   if(order[A]!==order[B]) return order[A]-order[B];
   return parseHarga(a.Harga)-parseHarga(b.Harga);
  });
@@ -293,7 +292,7 @@ function handleClick(a){
  <div class="popup-box">
    <h3>⏳ Akun sedang diproses</h3>
    <p style="font-size:12px;color:#94a3b8">
-   Silakan cek akun lainnya ya, masih banyak yang ready 🔥
+   Silakan cek akun lainnya ya 🔥
    </p>
    <button class="close-btn" onclick="tutup()">Lihat akun lain</button>
  </div>`;
@@ -341,11 +340,11 @@ function showReady(){
 }
 
 function showReadyByGame(game){
- const gameFix = (game||'').toLowerCase().trim();
+ const gameFix=(game||'').toLowerCase().trim();
 
  const readyData = allData.filter(a =>
   (a.Status||'').toLowerCase()==='ready' &&
-  (a.Game||'').toLowerCase().trim() === gameFix
+  (a.Game||'').toLowerCase().trim()===gameFix
  );
 
  const popup=document.getElementById('popup');
@@ -355,7 +354,7 @@ function showReadyByGame(game){
   <div class="popup-box">
     <h3>😢 Akun ${game} belum tersedia</h3>
     <p style="font-size:12px;color:#94a3b8">
-    Saat ini belum ada akun ready untuk game ini, coba cek game lain ya 🔥
+    Coba cek game lain ya 🔥
     </p>
     <button class="close-btn" onclick="tutup()">Tutup</button>
   </div>`;
@@ -364,11 +363,9 @@ function showReadyByGame(game){
   return;
  }
 
- currentGame = gameFix;
- currentStatus = 'ready';
-
+ currentGame=gameFix;
+ currentStatus='ready';
  apply();
-}
 }
 </script>
 
