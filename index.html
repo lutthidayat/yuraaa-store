@@ -69,10 +69,10 @@ h1{font-size:24px}
 .promo{background:gold;color:black}
 
 /* PRICE */
-.price{color:#22c55e;font-weight:bold;font-size:16px}
+.price{color:#22c55e;font-weight:bold}
 .old{text-decoration:line-through;font-size:12px;color:#64748b}
 
-/* 🔥 DISKON FIX */
+/* DISKON */
 .discount{
  background:linear-gradient(135deg,#ff3b3b,#ff0000);
  color:white;
@@ -82,9 +82,22 @@ h1{font-size:24px}
  font-weight:bold;
  display:inline-block;
  margin-top:6px;
- width:auto;
- max-width:max-content;
- box-shadow:0 3px 8px rgba(255,0,0,0.4);
+}
+
+/* SLIDER */
+.slider{
+ display:flex;
+ gap:8px;
+ overflow-x:auto;
+ margin-bottom:10px;
+}
+.slider.center{
+ justify-content:center;
+}
+.slider img{
+ height:120px;
+ border-radius:10px;
+ object-fit:cover;
 }
 
 /* POPUP */
@@ -143,14 +156,10 @@ function formatRupiah(num){
 }
 
 document.addEventListener("DOMContentLoaded", async ()=>{
- try{
-  const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1");
-  allData=await res.json();
-  document.getElementById('loading').style.display='none';
-  apply();
- }catch(e){
-  document.getElementById('loading').innerText="Gagal load data 😢";
- }
+ const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1");
+ allData=await res.json();
+ document.getElementById('loading').style.display='none';
+ apply();
 });
 
 function parseHarga(h){
@@ -185,7 +194,8 @@ function render(data){
  });
 
  data.forEach(a=>{
-  const img=(a.Gambar||'').split(',')[0];
+  const imgs=(a.Gambar||'').split(',');
+  const firstImg=imgs[0];
   const status=(a.Status||'ready').toLowerCase();
   const label=(a.Label||'').toLowerCase();
 
@@ -207,8 +217,9 @@ function render(data){
   <div class="card ${status}" onclick='handleClick(${JSON.stringify(a)})'>
     <div class="badge ${status}">${status.toUpperCase()}</div>
     ${labelHTML}
-    <img src="${img}">
+    <img src="${firstImg}">
     <h4>${a.Nama||'-'}</h4>
+    <div style="font-size:12px;color:#94a3b8">${a.Game||''}</div>
     <div class="price">${formatRupiah(harga)}</div>
     ${diskon}
   </div>`;
@@ -241,16 +252,30 @@ function handleClick(a){
  }
  else{
   const harga=parseHarga(a.Harga);
-  const pesan=`Halo kak, saya mau beli akun:\n${a.Nama}\n${a.Game}\n${formatRupiah(harga)}`;
+  const imgs=(a.Gambar||'').split(',');
+
+  const pesan=`Halo kak, saya mau beli akun:
+Nama: ${a.Nama}
+Game: ${a.Game}
+Harga: ${formatRupiah(harga)}`;
+
   const wa=`https://wa.me/6285939286029?text=${encodeURIComponent(pesan)}`;
   const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
 
-  popup.innerHTML=`<div class="popup-box">
+  popup.innerHTML=`
+  <div class="popup-box">
+
+    <div class="slider ${imgs.length===1?'center':''}">
+      ${imgs.map(i=>`<img src="${i.trim()}">`).join('')}
+    </div>
+
     <h3>${a.Nama}</h3>
+    <div style="font-size:12px;color:#94a3b8">${a.Game}</div>
     <div class="price">${formatRupiah(harga)}</div>
-    <p style="font-size:12px;color:#94a3b8">Pilih metode transaksi 👇</p>
+
     <a href="${wa}" class="btn wa">⚡ Beli Cepat (Direct)</a>
     <a href="${fb}" class="btn fb">🔒 Aman via Middleman</a>
+
     <button class="close-btn" onclick="tutup()">Tutup</button>
   </div>`;
  }
