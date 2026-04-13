@@ -27,7 +27,7 @@ h1{font-size:24px}
 
 .grid{display:grid;gap:14px;padding:12px}
 
-.card{position:relative;background:#0f172a;border-radius:16px;padding:10px}
+.card{position:relative;background:#0f172a;border-radius:16px;padding:10px;cursor:pointer}
 .card img{width:100%;height:150px;border-radius:12px;object-fit:cover}
 
 /* STATUS */
@@ -41,14 +41,12 @@ h1{font-size:24px}
 .promo{background:gold;color:black}
 .best{background:#3b82f6}
 .rare{background:purple}
-
-/* NEW */
-.new{background:#22c55e;color:black;top:40px;right:10px}
+.new{background:#22c55e;color:black;top:40px}
 
 /* PRICE */
 .price{color:#22c55e;font-weight:bold}
 .old{text-decoration:line-through;font-size:11px;color:#94a3b8}
-.discount{background:red;padding:2px 5px;border-radius:6px;font-size:10px}
+.discount{background:red;padding:2px 5px;border-radius:6px;font-size:10px;margin-top:3px;display:inline-block}
 
 /* POPUP */
 .popup{position:fixed;top:0;left:0;width:100%;height:100%;display:none;background:rgba(0,0,0,.8);justify-content:center;align-items:center}
@@ -90,11 +88,14 @@ h1{font-size:24px}
 <div class="popup" id="popup"></div>
 
 <script>
+let allData=[];
+window.currentData=[];
+let currentGame='all';
+let hideSold=false;
+
 document.addEventListener("DOMContentLoaded", ()=>{
 
 const SHEET_URL="https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1";
-
-let allData=[],currentData=[],currentGame='all',hideSold=false;
 
 async function loadData(){
  const res=await fetch(SHEET_URL);
@@ -108,10 +109,8 @@ function parseHarga(h){
 
 function isNew(tanggal){
  if(!tanggal) return false;
- const today=new Date();
- const tgl=new Date(tanggal);
- const diff=(today - tgl)/(1000*60*60*24);
- return diff <= 2; // NEW kalau ≤2 hari
+ const diff=(new Date() - new Date(tanggal))/(1000*60*60*24);
+ return diff <= 2;
 }
 
 function apply(){
@@ -125,7 +124,7 @@ function apply(){
   data=data.filter(a=>(a.Status||'').toLowerCase()!=='sold');
  }
 
- currentData=data;
+ window.currentData=data;
  sortMurah();
 }
 
@@ -143,6 +142,17 @@ function render(data){
 
  data.forEach((a,i)=>{
   const img=(a.Gambar||'').split(',')[0].trim();
+
+  const normal=parseHarga(a.Diskon);
+  const harga=parseHarga(a.Harga);
+
+  let diskon='';
+  if(normal && harga && normal>harga){
+    const persen=Math.round((normal-harga)/normal*100);
+    diskon=`<div class="old">${a.Diskon}</div>
+            <div class="discount">-${persen}%</div>`;
+  }
+
   const status=(a.Status||'ready').toLowerCase();
   const label=(a.Label||'').toLowerCase();
 
@@ -162,30 +172,46 @@ function render(data){
     <div class="badge ${status}">${status.toUpperCase()}</div>
     ${labelHTML}
     ${newHTML}
-    <img src="${img}">
+    <img src="${img||'https://via.placeholder.com/300'}">
     <h4>${a.Nama||'-'}</h4>
+    ${diskon}
     <div class="price">${a.Harga||'-'}</div>
   </div>`;
  });
 }
 
-function sortMurah(){render([...currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)))}
-function sortMahal(){render([...currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)))}
+window.sortMurah=function(){
+ render([...window.currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)));
+}
 
-function filterGame(g,el){
+window.sortMahal=function(){
+ render([...window.currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)));
+}
+
+window.filterGame=function(g,el){
  currentGame=g;
  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
  el.classList.add('active');
  apply();
 }
 
-function toggleSold(){
+window.toggleSold=function(){
  hideSold=!hideSold;
  apply();
 }
 
+document.getElementById('search').addEventListener('input',e=>{
+ const val=e.target.value.toLowerCase();
+ render(window.currentData.filter(a=>(a.Nama||'').toLowerCase().includes(val)));
+});
+
+loadData();
+
+});
+
+// 🔥 GLOBAL (BIAR BISA DIKLIK)
 function beli(i){
- const a=currentData[i];
+ const a=window.currentData[i];
  const popup=document.getElementById('popup');
 
  const pesan=`Halo kak, saya mau beli akun:\n${a.Nama}\nHarga: ${a.Harga}`;
@@ -207,15 +233,6 @@ function beli(i){
 function tutup(){
  document.getElementById('popup').style.display='none';
 }
-
-document.getElementById('search').addEventListener('input',e=>{
- const val=e.target.value.toLowerCase();
- render(currentData.filter(a=>(a.Nama||'').toLowerCase().includes(val)));
-});
-
-loadData();
-
-});
 </script>
 
 <div class="footer">© Yuraaa Store</div>
