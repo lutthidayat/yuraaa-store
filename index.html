@@ -144,7 +144,7 @@ class="tab">Endfield</button>
 <button onclick="setStatus('sold',this)" class="tab">Sold</button>
 </div>
 
-<div id="loading" style="text-align:center;padding:20px">Loading...</div>
+<div id="loading" style="text-align:center;padding:20px">⏳ Memuat akun terbaik...</div>
 <div class="grid"></div>
 <div class="popup" id="popup"></div>
 
@@ -247,7 +247,7 @@ function handleClick(a){
  const status=(a.Status||'ready').toLowerCase();
 
  if(status==='sold'){
-  popup.innerHTML=`<div class="popup-box"><h3>❌ Yah, akun ini sudah terjual 😢<br>Coba lihat akun lainnya ya, masih banyak yang ready 🔥</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
+  popup.innerHTML=`<div class="popup-box"><h3>❌ Yah,akun ini sudah terjual😢<br>Coba lihat akun lainnya ya, masih banyak yang ready 🔥</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
  }
  else if(status==='proses'){
   popup.innerHTML=`<div class="popup-box"><h3>⏳ Aku ini sedang dalam tahap pengerjaan.<br>Silahkan cek akun lainnya ya😊</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
