@@ -252,7 +252,10 @@ function handleClick(a){
  const status=(a.Status||'ready').toLowerCase();
 
  if(status==='sold'){
-  popup.innerHTML=`<div class="popup-box"><h3>❌ Yah,akun sudah terjual😢<br>Coba lihat akun lainnya ya, masih banyak yang ready 🔥</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
+  popup.innerHTML=`<div class="popup-box"><h3>❌ Akun sudah terjual</h3>
+<p style="font-size:12px;color:#94a3b8">
+Silakan cek akun lainnya ya🔥
+</p></h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
  }
  else if(status==='proses'){
   popup.innerHTML=`<div class="popup-box"><h3><h3>⏳ Akun sedang diproses</h3>
