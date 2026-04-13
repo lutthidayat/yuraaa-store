@@ -21,10 +21,6 @@ h1{font-size:24px}
 .tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:#94a3b8;font-size:12px}
 .tab.active{background:#22c55e;color:black}
 
-/* TOOLBAR */
-.toolbar{text-align:center;margin:10px}
-.toolbar button{margin:5px;padding:8px 12px;border-radius:12px;border:none}
-
 /* GRID */
 .grid{display:grid;gap:14px;padding:12px}
 
@@ -34,8 +30,8 @@ h1{font-size:24px}
  background:#0b1220;
  border-radius:18px;
  padding:10px;
- cursor:pointer;
  border:1px solid #1e293b;
+ cursor:pointer;
 }
 .card img{
  width:100%;
@@ -50,24 +46,15 @@ h1{font-size:24px}
 
 .card.sold::after{
  content:"TERJUAL";
- position:absolute;
- top:50%;left:50%;
+ position:absolute;top:50%;left:50%;
  transform:translate(-50%,-50%);
- background:#ef4444;
- padding:6px 12px;
- border-radius:8px;
- font-size:12px;
+ background:#ef4444;padding:6px 12px;border-radius:8px;
 }
-
 .card.proses::after{
  content:"PROSES";
- position:absolute;
- top:50%;left:50%;
+ position:absolute;top:50%;left:50%;
  transform:translate(-50%,-50%);
- background:#f59e0b;
- padding:6px 12px;
- border-radius:8px;
- font-size:12px;
+ background:#f59e0b;padding:6px 12px;border-radius:8px;
 }
 
 /* BADGE */
@@ -76,10 +63,33 @@ h1{font-size:24px}
 .badge.sold{background:#ef4444;color:white}
 .badge.proses{background:#f59e0b;color:black}
 
+/* LABEL */
+.badge-right{position:absolute;top:10px;right:10px;padding:4px 8px;border-radius:999px;font-size:10px}
+.hot{background:orange}
+.promo{background:gold;color:black}
+
 /* PRICE */
 .price{color:#22c55e;font-weight:bold}
 .old{text-decoration:line-through;font-size:12px;color:#64748b}
-.discount{background:#ef4444;color:white;padding:3px 6px;border-radius:6px;font-size:10px}
+..discount{
+ background:linear-gradient(135deg,#ff3b3b,#ff0000);
+ color:white;
+ padding:6px 10px;
+ border-radius:999px;
+ font-size:11px;
+ font-weight:bold;
+ display:inline-block;
+ margin-top:6px;
+ box-shadow:0 4px 10px rgba(255,0,0,0.4);
+ animation:pulse 1.5s infinite;
+}
+
+/* animasi halus */
+@keyframes pulse{
+ 0%{transform:scale(1)}
+ 50%{transform:scale(1.08)}
+ 100%{transform:scale(1)}
+}
 
 /* POPUP */
 .popup{
@@ -107,7 +117,7 @@ h1{font-size:24px}
 </header>
 
 <!-- FILTER GAME -->
-<div class="tabs">
+<div class="tabs" id="gameTabs">
 <button onclick="setGame('all',this)" class="tab active">Semua</button>
 <button onclick="setGame('hsr',this)" class="tab">HSR</button>
 <button onclick="setGame('solo',this)" class="tab">Solo</button>
@@ -116,7 +126,7 @@ h1{font-size:24px}
 </div>
 
 <!-- FILTER STATUS -->
-<div class="tabs">
+<div class="tabs" id="statusTabs">
 <button onclick="setStatus('all',this)" class="tab active">Semua</button>
 <button onclick="setStatus('ready',this)" class="tab">Ready</button>
 <button onclick="setStatus('proses',this)" class="tab">Proses</button>
@@ -137,10 +147,14 @@ function formatRupiah(num){
 }
 
 document.addEventListener("DOMContentLoaded", async ()=>{
- const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1");
- allData=await res.json();
- document.getElementById('loading').style.display='none';
- apply();
+ try{
+  const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1");
+  allData=await res.json();
+  document.getElementById('loading').style.display='none';
+  apply();
+ }catch(e){
+  document.getElementById('loading').innerText="Gagal load data 😢";
+ }
 });
 
 function parseHarga(h){
@@ -150,12 +164,10 @@ function parseHarga(h){
 function apply(){
  let data=[...allData];
 
- // FILTER GAME
  if(currentGame!=='all'){
   data=data.filter(a=>(a.Game||'').toLowerCase()===currentGame);
  }
 
- // FILTER STATUS
  if(currentStatus!=='all'){
   data=data.filter(a=>(a.Status||'ready').toLowerCase()===currentStatus);
  }
@@ -184,96 +196,86 @@ function render(data){
   const harga=parseHarga(a.Harga);
   const normal=parseHarga(a.Diskon);
 
-  // 🔥 DISKON BALIK
   let diskon='';
   if(normal && harga && normal>harga){
     const persen=Math.round((normal-harga)/normal*100);
     diskon=`<div class="old">${a.Diskon}</div>
-            <div class="discount">-${persen}%</div>`;
+            <div class="discount">🔥 -${persen}%</div>`;
   }
 
-  // 🔥 LABEL BALIK
   let labelHTML='';
-  if(label==='hot'){
-    labelHTML='<div class="badge-right hot">HOT</div>';
-  }
-  else if(label==='promo'){
-    labelHTML='<div class="badge-right promo">PROMO</div>';
-  }
+  if(label==='hot') labelHTML='<div class="badge-right hot">HOT</div>';
+  if(label==='promo') labelHTML='<div class="badge-right promo">PROMO</div>';
 
   grid.innerHTML+=`
   <div class="card ${status}" onclick='handleClick(${JSON.stringify(a)})'>
     <div class="badge ${status}">${status.toUpperCase()}</div>
     ${labelHTML}
     <img src="${img}">
-    <h4>${a.Nama}</h4>
+    <h4>${a.Nama||'-'}</h4>
     <div class="price">${formatRupiah(harga)}</div>
     ${diskon}
   </div>`;
  });
 }
 
- // SORT
- data.sort((a,b)=>{
-  const order={ready:1, proses:2, sold:3};
-  const A=(a.Status||'ready').toLowerCase();
-  const B=(b.Status||'ready').toLowerCase();
-
-  if(order[A]!==order[B]) return order[A]-order[B];
-  return parseHarga(a.Harga)-parseHarga(b.Harga);
- });
-
- data.forEach(a=>{
-  const img=(a.Gambar||'').split(',')[0];
-  const status=(a.Status||'ready').toLowerCase();
-  const harga=parseHarga(a.Harga);
-
-  grid.innerHTML+=`
-  <div class="card ${status}" onclick='handleClick(${JSON.stringify(a)})'>
-    <div class="badge ${status}">${status.toUpperCase()}</div>
-    <img src="${img}">
-    <h4>${a.Nama}</h4>
-    <div class="price">${formatRupiah(harga)}</div>
-  </div>`;
- });
-}
-
-// FILTER FUNCTION
 function setGame(g,el){
  currentGame=g;
- document.querySelectorAll('.tabs:nth-child(2) .tab').forEach(t=>t.classList.remove('active'));
+ document.querySelectorAll('#gameTabs .tab').forEach(t=>t.classList.remove('active'));
  el.classList.add('active');
  apply();
 }
 
 function setStatus(s,el){
  currentStatus=s;
- document.querySelectorAll('.tabs:nth-child(3) .tab').forEach(t=>t.classList.remove('active'));
+ document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));
  el.classList.add('active');
  apply();
 }
 
-// POPUP
 function handleClick(a){
  const popup=document.getElementById('popup');
  const status=(a.Status||'ready').toLowerCase();
 
  if(status==='sold'){
-  popup.innerHTML=`<div class="popup-box"><h3>❌ SOLD</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
+  popup.innerHTML=`<div class="popup-box">
+    <h3>❌ Akun Sudah SOLD</h3>
+    <button class="close-btn" onclick="tutup()">Tutup</button>
+  </div>`;
  }
+
  else if(status==='proses'){
-  popup.innerHTML=`<div class="popup-box"><h3>⏳ Sedang Diproses</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
+  popup.innerHTML=`<div class="popup-box">
+    <h3>⏳ Sedang Diproses</h3>
+    <p>Akun ini sedang dalam transaksi ya kak 😊</p>
+    <button class="close-btn" onclick="tutup()">Tutup</button>
+  </div>`;
  }
+
  else{
   const harga=parseHarga(a.Harga);
-  const pesan=`Halo kak, saya mau beli akun:\n${a.Nama}\n${a.Game}\n${formatRupiah(harga)}`;
-  const wa=`https://wa.me/6285939286029?text=${encodeURIComponent(pesan)}`;
 
-  popup.innerHTML=`<div class="popup-box">
-  <h3>${a.Nama}</h3>
-  <div class="price">${formatRupiah(harga)}</div>
-  <a href="${wa}" class="btn wa">Beli (WA)</a>
-  <button class="close-btn" onclick="tutup()">Tutup</button>
+  const pesan=`Halo kak, saya mau beli akun:
+Nama: ${a.Nama}
+Game: ${a.Game}
+Harga: ${formatRupiah(harga)}`;
+
+  const wa=`https://wa.me/6285939286029?text=${encodeURIComponent(pesan)}`;
+  const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
+
+  popup.innerHTML=`
+  <div class="popup-box">
+    <h3>${a.Nama}</h3>
+    <div class="price">${formatRupiah(harga)}</div>
+
+    <p style="font-size:12px;color:#94a3b8">
+    Pilih metode transaksi 👇
+    </p>
+
+    <a href="${wa}" class="btn wa">⚡ Beli Cepat (Direct)</a>
+    <a href="${fb}" class="btn fb">🔒 Aman via Middleman</a>
+
+    <button class="close-btn" onclick="tutup()">Tutup</button>
   </div>`;
  }
 
