@@ -1,17 +1,34 @@
 <script>
 const SHEET_URL="https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1";
-let allData=[],currentData=[],currentGame='all',hideSold=false;
 
+let allData=[];
+let currentData=[];
+let currentGame='all';
+let hideSold=false;
+
+// LOAD DATA
 async function loadData(){
- const res=await fetch(SHEET_URL);
- allData=await res.json();
- apply();
+ try{
+  const res=await fetch(SHEET_URL);
+  allData=await res.json();
+
+  if(!Array.isArray(allData)){
+    console.error("Data bukan array!");
+    return;
+  }
+
+  apply();
+ }catch(e){
+  console.error("Gagal fetch:",e);
+ }
 }
 
+// FORMAT HARGA
 function parseHarga(h){
  return parseInt((h||'').replace(/[^0-9]/g,''))||0;
 }
 
+// APPLY FILTER
 function apply(){
  let data=[...allData];
 
@@ -27,24 +44,26 @@ function apply(){
  sortMurah();
 }
 
+// RENDER
 function render(data){
  const grid=document.querySelector('.grid');
+ if(!grid) return;
+
  grid.innerHTML='';
 
- // 🔥 READY di atas, SOLD di bawah
+ // SORT READY DI ATAS
  data.sort((a,b)=>{
-   const statusA=(a.Status||'ready').toLowerCase();
-   const statusB=(b.Status||'ready').toLowerCase();
+  const statusA=(a.Status||'ready').toLowerCase();
+  const statusB=(b.Status||'ready').toLowerCase();
 
-   if(statusA==='sold' && statusB!=='sold') return 1;
-   if(statusA!=='sold' && statusB==='sold') return -1;
+  if(statusA==='sold' && statusB!=='sold') return 1;
+  if(statusA!=='sold' && statusB==='sold') return -1;
 
-   return 0;
+  return 0;
  });
 
- data.forEach(a=>{
+ data.forEach((a,i)=>{
   const img=a.Gambar?a.Gambar.split(',')[0]:'';
-  const i=currentData.indexOf(a);
 
   const normal=parseHarga(a.Diskon);
   const harga=parseHarga(a.Harga);
@@ -59,7 +78,7 @@ function render(data){
   const status=(a.Status||'ready').toLowerCase();
   const label=(a.Label||'').toLowerCase();
 
-  // 🔥 BADGE CUSTOM (KANAN)
+  // BADGE CUSTOM
   let customBadge='';
   if(label==='hot'){
     customBadge='<div class="badge hot" style="right:10px;left:auto">HOT</div>';
@@ -83,7 +102,7 @@ function render(data){
  });
 }
 
-// 🔽 SORT
+// SORT
 function sortMurah(){
  render([...currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)));
 }
@@ -92,22 +111,25 @@ function sortMahal(){
  render([...currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)));
 }
 
-// 🔽 FIX EVENT TAB
+// TAB FIX
 function filterGame(g, el){
  currentGame=g;
  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
- el.classList.add('active');
+ if(el) el.classList.add('active');
  apply();
 }
 
+// TOGGLE SOLD
 function toggleSold(){
  hideSold=!hideSold;
  apply();
 }
 
-// 🔽 POPUP
+// DETAIL POPUP
 function detail(i){
  const a=currentData[i];
+ if(!a) return;
+
  const imgs=a.Gambar?a.Gambar.split(','):[];
  const p=document.getElementById('popup');
 
@@ -129,11 +151,15 @@ function closePop(){
  document.getElementById('popup').style.display='none';
 }
 
-// 🔽 SEARCH
-document.getElementById('search').addEventListener('input',e=>{
- const val=e.target.value.toLowerCase();
- render(currentData.filter(a=>(a.Nama||'').toLowerCase().includes(val)));
-});
+// SEARCH
+const searchInput=document.getElementById('search');
+if(searchInput){
+ searchInput.addEventListener('input',e=>{
+  const val=e.target.value.toLowerCase();
+  render(currentData.filter(a=>(a.Nama||'').toLowerCase().includes(val)));
+ });
+}
 
+// START
 loadData();
 </script>
