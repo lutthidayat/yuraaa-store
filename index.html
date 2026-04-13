@@ -36,7 +36,6 @@ h1{font-size:24px}
 .card{position:relative;background:#0f172a;border-radius:16px;padding:10px;cursor:pointer}
 .card img{width:100%;height:150px;border-radius:12px;object-fit:cover}
 
-/* SOLD STYLE */
 .card.sold{
  opacity:0.6;
  cursor:not-allowed;
@@ -57,7 +56,49 @@ h1{font-size:24px}
 
 /* POPUP */
 .popup{position:fixed;top:0;left:0;width:100%;height:100%;display:none;background:rgba(0,0,0,.8);justify-content:center;align-items:center}
-.popup-box{background:#020617;padding:16px;border-radius:16px;width:90%;max-width:300px;text-align:center}
+
+/* POPUP BELI */
+.popup-box{
+ background:#020617;
+ padding:16px;
+ border-radius:16px;
+ width:90%;
+ max-width:300px;
+ text-align:center;
+}
+
+/* ALERT SOLD */
+.alert-box{
+ background:#020617;
+ padding:16px;
+ border-radius:16px;
+ width:90%;
+ max-width:300px;
+ text-align:center;
+ border:1px solid #1e293b;
+}
+
+.alert-box h3{
+ color:#ef4444;
+ margin-bottom:6px;
+}
+
+.alert-box p{
+ font-size:13px;
+ color:#94a3b8;
+}
+
+.alert-btn{
+ margin-top:10px;
+ padding:8px;
+ border:none;
+ border-radius:10px;
+ background:#1e293b;
+ color:white;
+ width:100%;
+}
+
+/* BUTTON */
 .btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none}
 .wa{background:#22c55e;color:black}
 .fb{background:#1877f2;color:white}
@@ -102,9 +143,7 @@ let hideSold=false;
 
 document.addEventListener("DOMContentLoaded", async ()=>{
 
-const SHEET_URL="https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1";
-
-const res=await fetch(SHEET_URL);
+const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1");
 allData=await res.json();
 apply();
 
@@ -131,7 +170,6 @@ function render(data){
  const grid=document.querySelector('.grid');
  grid.innerHTML='';
 
- // 🔥 READY DI ATAS
  data.sort((a,b)=>{
   const A=(a.Status||'ready').toLowerCase();
   const B=(b.Status||'ready').toLowerCase();
@@ -160,18 +198,25 @@ function render(data){
  });
 }
 
-// CLICK FIX
+// CLICK
 function handleClick(a){
-
- if((a.Status||'').toLowerCase()==='sold'){
-  alert("Akun sudah SOLD ❌");
-  return;
- }
 
  const popup=document.getElementById('popup');
 
- const pesan=`Halo kak, saya mau beli akun:\n${a.Nama}\nHarga: ${a.Harga}`;
+ // SOLD → popup keren
+ if((a.Status||'').toLowerCase()==='sold'){
+  popup.innerHTML=`
+  <div class="alert-box">
+    <h3>❌ Akun Sudah SOLD</h3>
+    <p>Maaf, akun ini sudah terjual.<br>Silakan pilih akun lain ya 😊</p>
+    <button class="alert-btn" onclick="tutup()">Oke</button>
+  </div>`;
+  popup.style.display='flex';
+  return;
+ }
 
+ // READY → beli
+ const pesan=`Halo kak, saya mau beli akun:\n${a.Nama}\nHarga: ${a.Harga}`;
  const wa=`https://wa.me/6285939286029?text=${encodeURIComponent(pesan)}`;
  const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
 
@@ -182,7 +227,6 @@ function handleClick(a){
    <a href="${fb}" class="btn fb">Middleman (FB)</a>
    <button onclick="tutup()">Tutup</button>
  </div>`;
-
  popup.style.display='flex';
 }
 
@@ -194,7 +238,6 @@ function tutup(){
 function sortMurah(){
  render([...window.currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)));
 }
-
 function sortMahal(){
  render([...window.currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)));
 }
