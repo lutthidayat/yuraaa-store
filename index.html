@@ -140,24 +140,14 @@ function render(data){
 
   // 🔥 CUSTOM BADGE (DARI SHEET)
   let customBadge='';
-  if(label==='hot'){
-    customBadge='<div class="badge hot">HOT</div>';
-  }else if(label==='best'){
-    customBadge='<div class="badge best">BEST</div>';
-  }else if(label==='promo'){
-    customBadge='<div class="badge" style="background:gold;color:black">PROMO</div>';
-  }
-
-  grid.innerHTML+=`
-  <div class="card" onclick="detail(${i})">
-    <div class="badge ${status}">${status.toUpperCase()}</div>
-    ${customBadge}
-    <img src="${img||'https://via.placeholder.com/300'}">
-    <h4>${a.Nama||'-'}</h4>
-    ${diskon}
-    <div class="price">${a.Harga||'-'}</div>
-  </div>`;
- });
+if(label==='hot'){
+  customBadge='<div class="badge hot" style="right:10px;left:auto">HOT</div>';
+}else if(label==='best'){
+  customBadge='<div class="badge best">BEST</div>';
+}else if(label==='promo'){
+  customBadge='<div class="badge" style="background:gold;color:black;right:10px;left:auto">PROMO</div>';
+}else if(label==='rare'){
+  customBadge='<div class="badge" style="background:purple;color:white;right:10px;left:auto">RARE</div>';
 }
 
 function sortMurah(){render([...currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)))}
