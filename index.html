@@ -106,19 +106,59 @@ function parseHarga(h){return parseInt((h||'').replace(/[^0-9]/g,''))||0}
 
 function apply(){let data=[...allData];if(currentGame!=='all')data=data.filter(a=>(a.Game||'').toLowerCase()===currentGame);if(hideSold)data=data.filter(a=>(a.Status||'').toLowerCase()!=='sold');currentData=data;sortMurah()}
 
-function render(data){const grid=document.querySelector('.grid');grid.innerHTML='';data.forEach(a=>{
- const img=a.Gambar?a.Gambar.split(',')[0]:'';const i=currentData.indexOf(a);
- const normal=parseHarga(a.Diskon),harga=parseHarga(a.Harga);
- let diskon='';if(normal&&harga&&normal>harga){const persen=Math.round((normal-harga)/normal*100);diskon=`<div class="old">${a.Diskon}</div><div class="discount">-${persen}%</div>`}
- const status=(a.Status||'ready').toLowerCase();
- const best=harga<=150000?'<div class="badge best">BEST</div>':'';
- grid.innerHTML+=`<div class="card" onclick="detail(${i})">
-  <div class="badge ${status}">${status.toUpperCase()}</div>${best}
-  <img src="${img||'https://via.placeholder.com/300'}">
-  <h4>${a.Nama||'-'}</h4>
-  ${diskon}
-  <div class="price">${a.Harga||'-'}</div>
- </div>`})}
+function render(data){
+ const grid=document.querySelector('.grid');
+ grid.innerHTML='';
+
+ // 🔥 SORT: READY dulu baru SOLD
+ data.sort((a,b)=>{
+   const statusA=(a.Status||'ready').toLowerCase();
+   const statusB=(b.Status||'ready').toLowerCase();
+
+   if(statusA==='sold' && statusB!=='sold') return 1;
+   if(statusA!=='sold' && statusB==='sold') return -1;
+
+   return 0;
+ });
+
+ data.forEach(a=>{
+  const img=a.Gambar?a.Gambar.split(',')[0]:'';
+  const i=currentData.indexOf(a);
+
+  const normal=parseHarga(a.Diskon),
+        harga=parseHarga(a.Harga);
+
+  let diskon='';
+  if(normal && harga && normal>harga){
+    const persen=Math.round((normal-harga)/normal*100);
+    diskon=`<div class="old">${a.Diskon}</div>
+            <div class="discount">-${persen}%</div>`;
+  }
+
+  const status=(a.Status||'ready').toLowerCase();
+  const label=(a.Label||'').toLowerCase();
+
+  // 🔥 CUSTOM BADGE (DARI SHEET)
+  let customBadge='';
+  if(label==='hot'){
+    customBadge='<div class="badge hot">HOT</div>';
+  }else if(label==='best'){
+    customBadge='<div class="badge best">BEST</div>';
+  }else if(label==='promo'){
+    customBadge='<div class="badge" style="background:gold;color:black">PROMO</div>';
+  }
+
+  grid.innerHTML+=`
+  <div class="card" onclick="detail(${i})">
+    <div class="badge ${status}">${status.toUpperCase()}</div>
+    ${customBadge}
+    <img src="${img||'https://via.placeholder.com/300'}">
+    <h4>${a.Nama||'-'}</h4>
+    ${diskon}
+    <div class="price">${a.Harga||'-'}</div>
+  </div>`;
+ });
+}
 
 function sortMurah(){render([...currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)))}
 function sortMahal(){render([...currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)))}
