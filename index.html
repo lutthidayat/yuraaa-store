@@ -11,36 +11,58 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Poppins',sans-serif;background:#020617;color:#e5e7eb}
 
+/* HEADER */
 header{text-align:center;padding:16px}
 h1{font-size:24px}
 .subtitle{font-size:12px;color:#94a3b8}
 
+/* SEARCH */
+.search-box{width:92%;margin:10px auto}
+.search-box input{width:100%;padding:10px;border-radius:10px;border:none;background:#0f172a;color:white}
+
+/* TAB */
+.tabs{display:flex;gap:8px;justify-content:center;margin:10px}
+.tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:#94a3b8;font-size:12px}
+.tab.active{background:#22c55e;color:black}
+
+/* TOOLBAR */
+.toolbar{text-align:center;margin:10px}
+.toolbar button{margin:5px;padding:8px 12px;border-radius:10px;border:none}
+
+/* GRID */
 .grid{display:grid;gap:14px;padding:12px}
 
+/* CARD */
 .card{position:relative;background:#0f172a;border-radius:16px;padding:10px;cursor:pointer}
 .card img{width:100%;height:150px;border-radius:12px;object-fit:cover}
 
-/* SOLD DISABLE */
+/* SOLD STYLE */
 .card.sold{
  opacity:0.6;
  cursor:not-allowed;
 }
 
+/* BADGE */
 .badge{position:absolute;top:10px;left:10px;padding:4px 8px;border-radius:999px;font-size:10px}
 .ready{background:#22c55e;color:black}
 .sold{background:#ef4444;color:white}
 
+/* LABEL */
 .badge-right{position:absolute;top:10px;right:10px;padding:4px 8px;border-radius:999px;font-size:10px}
 .hot{background:orange}
 .promo{background:gold;color:black}
 
+/* PRICE */
 .price{color:#22c55e;font-weight:bold}
 
+/* POPUP */
 .popup{position:fixed;top:0;left:0;width:100%;height:100%;display:none;background:rgba(0,0,0,.8);justify-content:center;align-items:center}
 .popup-box{background:#020617;padding:16px;border-radius:16px;width:90%;max-width:300px;text-align:center}
 .btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none}
 .wa{background:#22c55e;color:black}
 .fb{background:#1877f2;color:white}
+
+.footer{text-align:center;font-size:11px;padding:10px;color:#94a3b8}
 </style>
 </head>
 
@@ -51,12 +73,32 @@ h1{font-size:24px}
 <p class="subtitle">Akun Game Murah • Trusted</p>
 </header>
 
+<div class="search-box">
+<input id="search" placeholder="Cari akun...">
+</div>
+
+<div class="tabs">
+<button onclick="filterGame('all',this)" class="tab active">Semua</button>
+<button onclick="filterGame('hsr',this)" class="tab">HSR</button>
+<button onclick="filterGame('solo',this)" class="tab">Solo</button>
+<button onclick="filterGame('ml',this)" class="tab">ML</button>
+<button onclick="filterGame('arena',this)" class="tab">Arena</button>
+</div>
+
+<div class="toolbar">
+<button onclick="sortMurah()">Termurah</button>
+<button onclick="sortMahal()">Termahal</button>
+<button onclick="toggleSold()">Hide SOLD</button>
+</div>
+
 <div class="grid"></div>
 <div class="popup" id="popup"></div>
 
 <script>
 let allData=[];
-let currentData=[];
+window.currentData=[];
+let currentGame='all';
+let hideSold=false;
 
 document.addEventListener("DOMContentLoaded", async ()=>{
 
@@ -64,16 +106,41 @@ const SHEET_URL="https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rgl
 
 const res=await fetch(SHEET_URL);
 allData=await res.json();
-currentData=[...allData];
+apply();
 
-render(currentData);
 });
 
+// APPLY
+function apply(){
+ let data=[...allData];
+
+ if(currentGame!=='all'){
+  data=data.filter(a=>(a.Game||'').toLowerCase()===currentGame);
+ }
+
+ if(hideSold){
+  data=data.filter(a=>(a.Status||'').toLowerCase()!=='sold');
+ }
+
+ window.currentData=data;
+ sortMurah();
+}
+
+// RENDER
 function render(data){
  const grid=document.querySelector('.grid');
  grid.innerHTML='';
 
- data.forEach((a)=>{
+ // 🔥 READY DI ATAS
+ data.sort((a,b)=>{
+  const A=(a.Status||'ready').toLowerCase();
+  const B=(b.Status||'ready').toLowerCase();
+  if(A==='sold' && B!=='sold') return 1;
+  if(A!=='sold' && B==='sold') return -1;
+  return 0;
+ });
+
+ data.forEach(a=>{
   const img=(a.Gambar||'').split(',')[0].trim();
   const status=(a.Status||'ready').toLowerCase();
   const label=(a.Label||'').toLowerCase();
@@ -93,10 +160,9 @@ function render(data){
  });
 }
 
-// 🔥 FIX TOTAL CLICK
+// CLICK FIX
 function handleClick(a){
 
- // ❌ BLOCK SOLD
  if((a.Status||'').toLowerCase()==='sold'){
   alert("Akun sudah SOLD ❌");
   return;
@@ -123,7 +189,42 @@ function handleClick(a){
 function tutup(){
  document.getElementById('popup').style.display='none';
 }
+
+// SORT
+function sortMurah(){
+ render([...window.currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)));
+}
+
+function sortMahal(){
+ render([...window.currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)));
+}
+
+// FILTER
+function filterGame(g,el){
+ currentGame=g;
+ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+ el.classList.add('active');
+ apply();
+}
+
+// TOGGLE SOLD
+function toggleSold(){
+ hideSold=!hideSold;
+ apply();
+}
+
+// SEARCH
+document.getElementById('search').addEventListener('input',e=>{
+ const val=e.target.value.toLowerCase();
+ render(window.currentData.filter(a=>(a.Nama||'').toLowerCase().includes(val)));
+});
+
+function parseHarga(h){
+ return parseInt((h||'').replace(/[^0-9]/g,''))||0;
+}
 </script>
+
+<div class="footer">© Yuraaa Store</div>
 
 </body>
 </html>
