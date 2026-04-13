@@ -12,64 +12,90 @@
 body{font-family:'Poppins',sans-serif;background:#020617;color:#e5e7eb}
 
 /* HEADER */
-header{text-align:center;padding:16px}
-h1{font-size:24px}
-.subtitle{font-size:12px;color:#94a3b8}
+header{text-align:center;padding:20px 10px}
+h1{font-size:26px;font-weight:700}
+.subtitle{font-size:12px;color:#94a3b8;margin-top:4px}
 
 /* TAB */
-.tabs{display:flex;gap:8px;justify-content:center;margin:10px}
-.tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:#94a3b8;font-size:12px}
+.tabs{
+ display:flex;
+ gap:8px;
+ overflow-x:auto;
+ padding:10px;
+}
+.tab{
+ padding:8px 14px;
+ border-radius:999px;
+ background:#0f172a;
+ color:#94a3b8;
+ font-size:12px;
+ white-space:nowrap;
+}
 .tab.active{background:#22c55e;color:black}
 
 /* GRID */
-.grid{display:grid;gap:14px;padding:12px}
+.grid{
+ display:grid;
+ gap:16px;
+ padding:12px;
+}
 
 /* CARD */
 .card{
  position:relative;
- background:#0b1220;
- border-radius:18px;
- padding:10px;
+ background:linear-gradient(145deg,#0b1220,#020617);
+ border-radius:20px;
+ padding:12px;
  border:1px solid #1e293b;
  cursor:pointer;
+ transition:.2s;
 }
+.card:active{transform:scale(0.97)}
+
 .card img{
  width:100%;
- height:150px;
+ height:160px;
  border-radius:14px;
  object-fit:cover;
+ margin-bottom:8px;
 }
 
 /* STATUS */
-.card.sold{opacity:0.5;filter:grayscale(0.4)}
+.card.sold{opacity:0.5}
 .card.proses{opacity:0.7}
 
-.card.sold::after{
- content:"TERJUAL";
- position:absolute;top:50%;left:50%;
- transform:translate(-50%,-50%);
- background:#ef4444;padding:6px 12px;border-radius:8px;
-}
-.card.proses::after{
- content:"PROSES";
- position:absolute;top:50%;left:50%;
- transform:translate(-50%,-50%);
- background:#f59e0b;padding:6px 12px;border-radius:8px;
-}
-
 /* BADGE */
-.badge{position:absolute;top:10px;left:10px;padding:4px 8px;border-radius:999px;font-size:10px;z-index:2}
-.badge.ready{background:#22c55e;color:black}
-.badge.sold{background:#ef4444;color:white}
-.badge.proses{background:#f59e0b;color:black}
+.badge{
+ position:absolute;
+ top:10px;
+ left:10px;
+ padding:5px 10px;
+ border-radius:999px;
+ font-size:11px;
+ z-index:2;
+}
+.ready{background:#22c55e;color:black}
+.sold{background:#ef4444;color:white}
+.proses{background:#f59e0b;color:black}
 
 /* LABEL */
-.badge-right{position:absolute;top:10px;right:10px;padding:4px 8px;border-radius:999px;font-size:10px;z-index:2}
-.hot{background:orange}
+.badge-right{
+ position:absolute;
+ top:10px;
+ right:10px;
+ padding:5px 10px;
+ border-radius:999px;
+ font-size:11px;
+ z-index:2;
+}
 .promo{background:gold;color:black}
 
+/* TEXT */
+.card h4{font-size:16px;margin-top:4px}
+.game{font-size:12px;color:#94a3b8}
+
 /* PRICE */
-.price{color:#22c55e;font-weight:bold}
+.price{color:#22c55e;font-weight:bold;font-size:18px;margin-top:4px}
 .old{text-decoration:line-through;font-size:12px;color:#64748b}
 
 /* DISKON */
@@ -84,6 +110,28 @@ h1{font-size:24px}
  margin-top:6px;
 }
 
+/* POPUP */
+.popup{
+ position:fixed;
+ top:0;left:0;
+ width:100%;height:100%;
+ display:none;
+ background:rgba(0,0,0,0.6);
+ backdrop-filter:blur(6px);
+ justify-content:center;
+ align-items:center;
+ z-index:999; /* 🔥 FIX badge ketimpa */
+}
+
+.popup-box{
+ background:linear-gradient(145deg,#020617,#0f172a);
+ padding:20px;
+ border-radius:20px;
+ width:90%;
+ max-width:320px;
+ text-align:center;
+}
+
 /* SLIDER */
 .slider{
  display:flex;
@@ -91,30 +139,33 @@ h1{font-size:24px}
  overflow-x:auto;
  margin-bottom:10px;
 }
-.slider.center{
- justify-content:center;
-}
+.slider.center{justify-content:center}
 .slider img{
  height:120px;
  border-radius:10px;
- object-fit:cover;
-}
-
-/* POPUP */
-.popup{
- position:fixed;top:0;left:0;width:100%;height:100%;
- display:none;background:rgba(0,0,0,0.6);
- justify-content:center;align-items:center;
-}
-.popup-box{
- background:#020617;padding:16px;border-radius:16px;width:90%;max-width:320px;text-align:center;
 }
 
 /* BUTTON */
-.btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none}
+.btn{
+ display:block;
+ margin:10px 0;
+ padding:12px;
+ border-radius:14px;
+ text-decoration:none;
+ font-weight:600;
+}
 .wa{background:#22c55e;color:black}
 .fb{background:#3b82f6;color:white}
-.close-btn{margin-top:8px;padding:8px;border:none;border-radius:10px;background:#1e293b;color:white;width:100%}
+
+.close-btn{
+ margin-top:8px;
+ padding:10px;
+ border:none;
+ border-radius:12px;
+ background:#1e293b;
+ color:white;
+ width:100%;
+}
 </style>
 </head>
 
@@ -125,33 +176,36 @@ h1{font-size:24px}
 <p class="subtitle">Akun Game Murah • Trusted</p>
 </header>
 
-<!-- FILTER GAME -->
 <div class="tabs" id="gameTabs">
 <button onclick="setGame('all',this)" class="tab active">Semua</button>
-<button onclick="setGame('honkai star rail',this)" class="tab">Honkai star rail</button>
-<button onclick="setGame('solo leveling',this)" class="tab">Solo Leveling</button>
-<button onclick="setGame('mobile legend',this)" class="tab">Mobile Legend</button>
-<button onclick="setGame('arena breakout',this)" class="tab">Arena Breakout</button>
-<button onclick="setGame('arknight endfield',this)"
-class="tab">Arknight Endfield</button>
+
+<button onclick="setGame('honkai star rail',this)" class="tab">
+🎮 Honkai Star Rail
+</button>
+
+<button onclick="setGame('solo leveling',this)" class="tab">
+⚔️ Solo Leveling
+</button>
+
+<button onclick="setGame('mobile legend',this)" class="tab">
+🔥 Mobile Legend
+</button>
+
+<button onclick="setGame('arena breakout',this)" class="tab">
+💥 Arena Breakout
+</button>
+
+<button onclick="setGame('arknight endfield',this)" class="tab">
+🧪 Arknights Endfield
+</button>
 </div>
 
-<!-- FILTER STATUS -->
-<div class="tabs" id="statusTabs">
-<button onclick="setStatus('all',this)" class="tab active">Semua</button>
-<button onclick="setStatus('ready',this)" class="tab">Ready</button>
-<button onclick="setStatus('proses',this)" class="tab">Proses</button>
-<button onclick="setStatus('sold',this)" class="tab">Sold</button>
-</div>
-
-<div id="loading" style="text-align:center;padding:20px">Loading...</div>
 <div class="grid"></div>
 <div class="popup" id="popup"></div>
 
 <script>
 let allData=[];
 let currentGame='all';
-let currentStatus='all';
 
 function formatRupiah(num){
  return "Rp " + num.toLocaleString("id-ID");
@@ -160,7 +214,6 @@ function formatRupiah(num){
 document.addEventListener("DOMContentLoaded", async ()=>{
  const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1");
  allData=await res.json();
- document.getElementById('loading').style.display='none';
  apply();
 });
 
@@ -172,11 +225,7 @@ function apply(){
  let data=[...allData];
 
  if(currentGame!=='all'){
-  data=data.filter(a=>(a.Game||'').toLowerCase()===currentGame);
- }
-
- if(currentStatus!=='all'){
-  data=data.filter(a=>(a.Status||'ready').toLowerCase()===currentStatus);
+  data=data.filter(a=>(a.Game||'').toLowerCase().includes(currentGame));
  }
 
  render(data);
@@ -186,18 +235,8 @@ function render(data){
  const grid=document.querySelector('.grid');
  grid.innerHTML='';
 
- data.sort((a,b)=>{
-  const order={ready:1, proses:2, sold:3};
-  const A=(a.Status||'ready').toLowerCase();
-  const B=(b.Status||'ready').toLowerCase();
-
-  if(order[A]!==order[B]) return order[A]-order[B];
-  return parseHarga(a.Harga)-parseHarga(b.Harga);
- });
-
  data.forEach(a=>{
-  const imgs=(a.Gambar||'').split(',');
-  const firstImg=imgs[0];
+  const img=(a.Gambar||'').split(',')[0];
   const status=(a.Status||'ready').toLowerCase();
   const label=(a.Label||'').toLowerCase();
 
@@ -212,16 +251,15 @@ function render(data){
   }
 
   let labelHTML='';
-  if(label==='hot') labelHTML='<div class="badge-right hot">HOT</div>';
   if(label==='promo') labelHTML='<div class="badge-right promo">PROMO</div>';
 
   grid.innerHTML+=`
   <div class="card ${status}" onclick='handleClick(${JSON.stringify(a)})'>
     <div class="badge ${status}">${status.toUpperCase()}</div>
     ${labelHTML}
-    <img src="${firstImg}">
+    <img src="${img}">
     <h4>${a.Nama||'-'}</h4>
-    <div style="font-size:12px;color:#94a3b8">${a.Game||''}</div>
+    <div class="game">${a.Game||''}</div>
     <div class="price">${formatRupiah(harga)}</div>
     ${diskon}
   </div>`;
@@ -230,14 +268,7 @@ function render(data){
 
 function setGame(g,el){
  currentGame=g;
- document.querySelectorAll('#gameTabs .tab').forEach(t=>t.classList.remove('active'));
- el.classList.add('active');
- apply();
-}
-
-function setStatus(s,el){
- currentStatus=s;
- document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));
+ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
  el.classList.add('active');
  apply();
 }
@@ -247,22 +278,20 @@ function handleClick(a){
  const status=(a.Status||'ready').toLowerCase();
 
  if(status==='sold'){
-  popup.innerHTML=`<div class="popup-box"><h3>❌ Yah, akun ini sudah terjual 😢
-Coba lihat akun lainnya ya, masih banyak yang ready 🔥</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
+  popup.innerHTML=`<div class="popup-box">
+    <h3>❌ Yah, akun ini sudah terjual 😢</h3>
+    <button class="close-btn" onclick="tutup()">Tutup</button>
+  </div>`;
  }
- else if(status==='proses'){
-  popup.innerHTML=`<div class="popup-box"><h3>⏳ Akun ini sedang dalam tahap pengerjaan.<br>Silahkan cek akun lainnya ya 😊</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
- }
+
  else{
   const harga=parseHarga(a.Harga);
   const imgs=(a.Gambar||'').split(',');
 
-  const pesan=`Halo kak, saya mau beli akun:
-Nama: ${a.Nama}
-Game: ${a.Game}
-Harga: ${formatRupiah(harga)}`;
+  const wa=`https://wa.me/6285939286029?text=${encodeURIComponent(
+   `Halo kak, saya mau beli akun:\n${a.Nama}\n${formatRupiah(harga)}`
+  )}`;
 
-  const wa=`https://wa.me/6285939286029?text=${encodeURIComponent(pesan)}`;
   const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
 
   popup.innerHTML=`
@@ -273,7 +302,7 @@ Harga: ${formatRupiah(harga)}`;
     </div>
 
     <h3>${a.Nama}</h3>
-    <div style="font-size:12px;color:#94a3b8">${a.Game}</div>
+    <div class="game">${a.Game}</div>
     <div class="price">${formatRupiah(harga)}</div>
 
     <a href="${wa}" class="btn wa">⚡ Beli Cepat (Direct)</a>
