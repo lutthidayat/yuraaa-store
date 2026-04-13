@@ -40,10 +40,7 @@ h1{font-size:24px}
  padding:10px;
  cursor:pointer;
  border:1px solid #1e293b;
- transition:.2s;
 }
-.card:active{transform:scale(0.97)}
-
 .card img{
  width:100%;
  height:150px;
@@ -51,20 +48,26 @@ h1{font-size:24px}
  object-fit:cover;
 }
 
-/* SOLD ONLY */
+/* SOLD */
 .card.sold{
  opacity:0.5;
  filter:grayscale(0.4);
  cursor:not-allowed;
 }
-
-/* BEST DEAL */
-.card.best-deal{
- box-shadow:0 0 12px #22c55e55;
- border:1px solid #22c55e55;
+.card.sold::after{
+ content:"TERJUAL";
+ position:absolute;
+ top:50%;
+ left:50%;
+ transform:translate(-50%,-50%);
+ background:#ef4444;
+ padding:6px 12px;
+ border-radius:8px;
+ font-size:12px;
+ font-weight:bold;
 }
 
-/* BADGE (DIPISAH TOTAL) */
+/* BADGE */
 .badge{
  position:absolute;
  top:10px;
@@ -72,18 +75,9 @@ h1{font-size:24px}
  padding:4px 8px;
  border-radius:999px;
  font-size:10px;
- font-weight:600;
 }
-
-.badge.ready{
- background:#22c55e;
- color:black;
-}
-
-.badge.sold{
- background:#ef4444;
- color:white;
-}
+.badge.ready{background:#22c55e;color:black}
+.badge.sold{background:#ef4444;color:white}
 
 /* LABEL */
 .badge-right{
@@ -94,7 +88,6 @@ h1{font-size:24px}
  border-radius:999px;
  font-size:10px;
 }
-
 .hot{background:orange}
 .promo{background:gold;color:black}
 
@@ -103,15 +96,8 @@ h1{font-size:24px}
  color:#22c55e;
  font-weight:700;
  font-size:18px;
- margin-top:4px;
 }
-
-.old{
- text-decoration:line-through;
- font-size:12px;
- color:#64748b;
-}
-
+.old{ text-decoration:line-through;font-size:12px;color:#64748b}
 .discount{
  background:#ef4444;
  color:white;
@@ -121,6 +107,25 @@ h1{font-size:24px}
  display:inline-block;
  margin-top:4px;
 }
+
+/* LOADING */
+.loading{
+ text-align:center;
+ padding:30px;
+ color:#94a3b8;
+}
+.loading::after{
+ content:"";
+ display:block;
+ margin:10px auto;
+ width:30px;
+ height:30px;
+ border:4px solid #1e293b;
+ border-top:4px solid #22c55e;
+ border-radius:50%;
+ animation:spin 1s linear infinite;
+}
+@keyframes spin{100%{transform:rotate(360deg)}}
 
 /* POPUP */
 .popup{
@@ -135,32 +140,40 @@ h1{font-size:24px}
 }
 
 .popup-box{
- background:linear-gradient(145deg,#020617,#0f172a);
- padding:20px;
- border-radius:20px;
+ background:#020617;
+ padding:16px;
+ border-radius:16px;
  width:90%;
  max-width:320px;
  text-align:center;
 }
 
-.alert-box{
- background:#020617;
- padding:20px;
- border-radius:20px;
- text-align:center;
+/* SLIDER MANUAL */
+.slider{
+ display:flex;
+ gap:6px;
+ overflow-x:auto;
+ scroll-snap-type:x mandatory;
 }
-.alert-box h3{color:#ef4444}
+.slider img{
+ height:120px;
+ border-radius:10px;
+ scroll-snap-align:center;
+}
+
+/* CENTER IF 1 IMAGE */
+.slider.single{
+ justify-content:center;
+}
 
 /* BUTTON */
 .btn{
  display:block;
- margin:10px 0;
- padding:12px;
- border-radius:14px;
+ margin:8px 0;
+ padding:10px;
+ border-radius:10px;
  text-decoration:none;
- font-weight:600;
 }
-
 .wa{background:#22c55e;color:black}
 .fb{background:#3b82f6;color:white}
 
@@ -173,8 +186,6 @@ h1{font-size:24px}
  color:white;
  width:100%;
 }
-
-.footer{text-align:center;font-size:11px;padding:10px;color:#94a3b8}
 </style>
 </head>
 
@@ -203,6 +214,7 @@ h1{font-size:24px}
 <button onclick="toggleSold()">Hide SOLD</button>
 </div>
 
+<div id="loading" class="loading">Loading...</div>
 <div class="grid"></div>
 <div class="popup" id="popup"></div>
 
@@ -212,9 +224,14 @@ window.currentData=[];
 let currentGame='all';
 let hideSold=false;
 
+function formatRupiah(num){
+ return "Rp " + num.toLocaleString("id-ID");
+}
+
 document.addEventListener("DOMContentLoaded", async ()=>{
  const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1");
  allData=await res.json();
+ document.getElementById('loading').style.display='none';
  apply();
 });
 
@@ -224,15 +241,12 @@ function parseHarga(h){
 
 function apply(){
  let data=[...allData];
-
  if(currentGame!=='all'){
   data=data.filter(a=>(a.Game||'').toLowerCase()===currentGame);
  }
-
  if(hideSold){
   data=data.filter(a=>(a.Status||'').toLowerCase()!=='sold');
  }
-
  window.currentData=data;
  sortMurah();
 }
@@ -253,9 +267,8 @@ function render(data){
   const img=(a.Gambar||'').split(',')[0].trim();
   const status=(a.Status||'ready').toLowerCase();
   const label=(a.Label||'').toLowerCase();
-
-  const normal=parseHarga(a.Diskon);
   const harga=parseHarga(a.Harga);
+  const normal=parseHarga(a.Diskon);
 
   let diskon='';
   if(normal && harga && normal>harga){
@@ -268,48 +281,51 @@ function render(data){
   if(label==='hot') labelHTML='<div class="badge-right hot">HOT</div>';
   if(label==='promo') labelHTML='<div class="badge-right promo">PROMO</div>';
 
-  let extraClass='';
-  if(harga < 150000){
-    extraClass='best-deal';
-  }
-
   grid.innerHTML+=`
-  <div class="card ${extraClass} ${status==='sold'?'sold':''}" onclick='handleClick(${JSON.stringify(a)})'>
+  <div class="card ${status==='sold'?'sold':''}" onclick='handleClick(${JSON.stringify(a)})'>
     <div class="badge ${status}">${status.toUpperCase()}</div>
     ${labelHTML}
     <img src="${img}">
     <h4>${a.Nama||'-'}</h4>
-    <div class="price">${a.Harga||'-'}</div>
+    <div class="price">${formatRupiah(harga)}</div>
     ${diskon}
   </div>`;
  });
 }
 
+// POPUP DETAIL
 function handleClick(a){
  const popup=document.getElementById('popup');
 
  if((a.Status||'').toLowerCase()==='sold'){
-  popup.innerHTML=`
-  <div class="alert-box">
+  popup.innerHTML=`<div class="popup-box">
     <h3>❌ Akun Sudah SOLD</h3>
-    <p> Pilih akun lain ya 😊 </p>
     <button class="close-btn" onclick="tutup()">Tutup</button>
   </div>`;
   popup.style.display='flex';
   return;
  }
 
- const pesan=`Halo kak, saya mau beli akun:\n${a.Nama}\nHarga: ${a.Harga}`;
- const wa=`https://wa.me/6285939286029?text=${encodeURIComponent(pesan)}`;
- const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
+ const imgs=(a.Gambar||'').split(',');
+ const single = imgs.length === 1 ? 'single' : '';
 
  popup.innerHTML=`
  <div class="popup-box">
-   <h3>Pilih Metode</h3>
-   <a href="${wa}" class="btn wa">Direct (WA)</a>
-   <a href="${fb}" class="btn fb">Middleman (FB)</a>
+
+   <div class="slider ${single}">
+     ${imgs.map(img=>`<img src="${img.trim()}">`).join('')}
+   </div>
+
+   <h3>${a.Nama}</h3>
+   <div class="price">${formatRupiah(parseHarga(a.Harga))}</div>
+   <p style="font-size:12px;color:#94a3b8">${a.Deskripsi||''}</p>
+
+   <a href="https://wa.me/6285939286029?text=${encodeURIComponent(a.Nama)}" class="btn wa">Direct</a>
+   <a href="https://www.facebook.com/share/1Nk4kQ2FXJ/" class="btn fb">Middleman</a>
+
    <button class="close-btn" onclick="tutup()">Tutup</button>
  </div>`;
+
  popup.style.display='flex';
 }
 
@@ -320,30 +336,20 @@ function tutup(){
 function sortMurah(){
  render([...window.currentData].sort((a,b)=>parseHarga(a.Harga)-parseHarga(b.Harga)));
 }
-
 function sortMahal(){
  render([...window.currentData].sort((a,b)=>parseHarga(b.Harga)-parseHarga(a.Harga)));
 }
-
 function filterGame(g,el){
  currentGame=g;
  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
  el.classList.add('active');
  apply();
 }
-
 function toggleSold(){
  hideSold=!hideSold;
  apply();
 }
-
-document.getElementById('search').addEventListener('input',e=>{
- const val=e.target.value.toLowerCase();
- render(window.currentData.filter(a=>(a.Nama||'').toLowerCase().includes(val)));
-});
 </script>
-
-<div class="footer">© Yuraaa Store</div>
 
 </body>
 </html>
