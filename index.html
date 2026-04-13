@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -32,7 +33,10 @@ h1{font-size:24px}
  padding:10px;
  border:1px solid #1e293b;
  cursor:pointer;
+ transition:.2s;
 }
+.card:hover{transform:translateY(-4px)}
+
 .card img{
  width:100%;
  height:150px;
@@ -91,9 +95,7 @@ h1{font-size:24px}
  overflow-x:auto;
  margin-bottom:10px;
 }
-.slider.center{
- justify-content:center;
-}
+.slider.center{justify-content:center}
 .slider img{
  height:120px;
  border-radius:10px;
@@ -107,24 +109,35 @@ h1{font-size:24px}
  justify-content:center;align-items:center;
 }
 .popup-box{
- background:#020617;padding:16px;border-radius:16px;width:90%;max-width:320px;text-align:center;
+ background:#020617;
+ padding:16px;
+ border-radius:16px;
+ width:90%;
+ max-width:320px;
+ text-align:center;
 }
 
 /* BUTTON */
 .btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none}
 .wa{background:#22c55e;color:black}
 .fb{background:#3b82f6;color:white}
-.close-btn{margin-top:8px;padding:8px;border:none;border-radius:10px;background:#1e293b;color:white;width:100%}
-/* BLUR BACKGROUND SAAT POPUP */
+.close-btn{
+ margin-top:8px;
+ padding:8px;
+ border:none;
+ border-radius:10px;
+ background:#1e293b;
+ color:white;
+ width:100%;
+}
+
+/* BLUR */
 body.popup-active .grid{
  filter:blur(4px);
  pointer-events:none;
 }
-.card:hover{
- transform:translateY(-4px);
- transition:0.2s;
-}
 </style>
+
 </head>
 
 <body>
@@ -134,18 +147,19 @@ body.popup-active .grid{
 <p class="subtitle">Akun Game Murah • Trusted</p>
 </header>
 
-<!-- FILTER GAME -->
+<!-- GAME -->
+
 <div class="tabs" id="gameTabs">
 <button onclick="setGame('all',this)" class="tab active">Semua</button>
 <button onclick="setGame('honkai star rail',this)" class="tab">HSR</button>
 <button onclick="setGame('solo leveling',this)" class="tab">Solo</button>
 <button onclick="setGame('mobile legend',this)" class="tab">ML</button>
 <button onclick="setGame('arena breakout',this)" class="tab">Arena</button>
-<button onclick="setGame('arknight endfield',this)"
-class="tab">Endfield</button>
+<button onclick="setGame('arknight endfield',this)" class="tab">Endfield</button>
 </div>
 
-<!-- FILTER STATUS -->
+<!-- READY BUTTON -->
+
 <div style="text-align:center;margin:10px">
 <button onclick="showReady()"
 style="padding:10px 16px;border:none;border-radius:12px;background:#22c55e;color:black;font-weight:bold">
@@ -153,7 +167,8 @@ style="padding:10px 16px;border:none;border-radius:12px;background:#22c55e;color
 </button>
 </div>
 
-<!-- FILTER STATUS -->
+<!-- STATUS -->
+
 <div class="tabs" id="statusTabs">
 <button onclick="setStatus('all',this)" class="tab active">Semua</button>
 <button onclick="setStatus('ready',this)" class="tab">Ready</button>
@@ -188,9 +203,6 @@ function parseHarga(h){
 function apply(){
  let data=[...allData];
 
- function apply(){
- let data=[...allData];
-
  if(currentGame!=='all'){
   data=data.filter(a=>(a.Game||'').toLowerCase().includes(currentGame));
  }
@@ -198,9 +210,6 @@ function apply(){
  if(currentStatus!=='all'){
   data=data.filter(a=>(a.Status||'').toLowerCase()===currentStatus);
  }
-
- render(data);
-}
 
  render(data);
 }
@@ -276,10 +285,10 @@ function handleClick(a){
    <p style="font-size:12px;color:#94a3b8">
    Tapi tenang, masih banyak akun bagus lainnya yang siap kamu ambil 🔥
    </p>
-   <button class="close-btn" onclick="tutup()">Lihat akun lain</button>
+   <button class="close-btn" onclick="showReadyByGame('${a.Game}')">Lihat akun lain</button>
  </div>`;
-}
-else if(status==='proses'){
+ }
+ else if(status==='proses'){
  popup.innerHTML=`
  <div class="popup-box">
    <h3>⏳ Akun sedang diproses</h3>
@@ -288,7 +297,7 @@ else if(status==='proses'){
    </p>
    <button class="close-btn" onclick="tutup()">Lihat akun lain</button>
  </div>`;
-}
+ }
  else{
   const harga=parseHarga(a.Harga);
   const imgs=(a.Gambar||'').split(',');
@@ -303,11 +312,9 @@ Harga: ${formatRupiah(harga)}`;
 
   popup.innerHTML=`
   <div class="popup-box">
-
     <div class="slider ${imgs.length===1?'center':''}">
       ${imgs.map(i=>`<img src="${i.trim()}">`).join('')}
     </div>
-
     <h3>${a.Nama}</h3>
     <div style="font-size:12px;color:#94a3b8">${a.Game}</div>
     <div class="price">${formatRupiah(harga)}</div>
@@ -320,26 +327,33 @@ Harga: ${formatRupiah(harga)}`;
  }
 
  popup.style.display='flex';
-document.body.classList.add('popup-active');
+ document.body.classList.add('popup-active');
 }
 
 function tutup(){
  document.getElementById('popup').style.display='none';
  document.body.classList.remove('popup-active');
 }
+
 function showReady(){
+ currentStatus='ready';
+ apply();
+}
+
+function showReadyByGame(game){
  const readyData = allData.filter(a =>
   (a.Status||'').toLowerCase()==='ready' &&
-  (currentGame==='all' || (a.Game||'').toLowerCase().includes(currentGame))
+  (a.Game||'').toLowerCase().includes(game.toLowerCase())
  );
 
+ const popup=document.getElementById('popup');
+
  if(readyData.length === 0){
-  const popup=document.getElementById('popup');
   popup.innerHTML=`
   <div class="popup-box">
-    <h3>😢 Stok sedang kosong</h3>
+    <h3>😢 Akun ${game} belum tersedia</h3>
     <p style="font-size:12px;color:#94a3b8">
-    Untuk game ini belum ada akun ready, coba cek game lain ya 🔥
+    Saat ini belum ada akun ready untuk game ini, coba cek game lain ya 🔥
     </p>
     <button class="close-btn" onclick="tutup()">Tutup</button>
   </div>`;
@@ -348,15 +362,9 @@ function showReady(){
   return;
  }
 
+ currentGame=game;
  currentStatus='ready';
-
- document.querySelectorAll('#statusTabs .tab')
- .forEach(t=>t.classList.remove('active'));
-
- document.querySelector('#statusTabs .tab:nth-child(2)')
- .classList.add('active');
-
- render(readyData);
+ apply();
 }
 </script>
 
