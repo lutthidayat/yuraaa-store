@@ -9,63 +9,55 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{
- --bg:#060b1a;
- --card:#0f172a;
- --card2:#020617;
- --primary:#22c55e;
- --accent:#3b82f6;
- --danger:#ef4444;
- --text:#e5e7eb;
- --sub:#94a3b8;
-}
+body{font-family:'Poppins',sans-serif;background:#020617;color:#e5e7eb}
 
-body{font-family:'Poppins',sans-serif;background:linear-gradient(180deg,var(--bg),#020617);color:var(--text)}
-
-header{padding:18px;text-align:center}
-h1{font-size:26px}
-.subtitle{font-size:12px;color:var(--sub)}
+header{text-align:center;padding:16px}
+h1{font-size:24px}
+.subtitle{font-size:12px;color:#94a3b8}
 
 .search-box{width:92%;margin:10px auto}
-.search-box input{width:100%;padding:12px;border-radius:12px;border:none;background:#0f172a;color:white}
+.search-box input{width:100%;padding:10px;border-radius:10px;border:none;background:#0f172a;color:white}
 
 .tabs{display:flex;gap:8px;justify-content:center;margin:10px}
-.tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:var(--sub);font-size:12px;border:1px solid #1e293b}
-.tab.active{background:var(--primary);color:black}
+.tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:#94a3b8;font-size:12px}
+.tab.active{background:#22c55e;color:black}
 
-.toolbar{display:flex;gap:10px;justify-content:center;margin:10px}
-.toolbar button{padding:8px 12px;border-radius:10px;border:none}
+.toolbar{text-align:center;margin:10px}
+.toolbar button{margin:5px;padding:8px 12px;border-radius:10px;border:none}
 
-.grid{display:grid;gap:16px;padding:12px}
+.grid{display:grid;gap:14px;padding:12px}
 
 .card{position:relative;background:#0f172a;border-radius:16px;padding:10px}
-.card img{width:100%;height:160px;object-fit:cover;border-radius:12px}
+.card img{width:100%;height:150px;border-radius:12px;object-fit:cover}
 
-.badge{position:absolute;top:10px;left:10px;padding:4px 10px;border-radius:999px;font-size:10px;font-weight:700}
-.ready{background:var(--primary);color:black}
-.sold{background:var(--danger);color:white}
+/* STATUS */
+.badge{position:absolute;top:10px;left:10px;padding:4px 8px;border-radius:999px;font-size:10px}
+.ready{background:#22c55e;color:black}
+.sold{background:#ef4444;color:white}
 
-/* 🔥 BADGE KANAN */
-.badge-right{
- position:absolute;
- top:10px;
- right:10px;
- padding:4px 10px;
- border-radius:999px;
- font-size:10px;
- font-weight:700;
-}
-
-.hot{background:orange;color:black}
-.best{background:var(--accent);color:black}
+/* LABEL */
+.badge-right{position:absolute;top:10px;right:10px;padding:4px 8px;border-radius:999px;font-size:10px}
+.hot{background:orange}
 .promo{background:gold;color:black}
-.rare{background:purple;color:white}
+.best{background:#3b82f6}
+.rare{background:purple}
 
-.price{color:var(--primary);font-weight:700}
-.old{text-decoration:line-through;font-size:11px;color:var(--sub)}
-.discount{background:var(--danger);padding:3px 6px;border-radius:6px;font-size:10px}
+/* NEW */
+.new{background:#22c55e;color:black;top:40px;right:10px}
 
-.footer{text-align:center;font-size:11px;padding:10px;color:var(--sub)}
+/* PRICE */
+.price{color:#22c55e;font-weight:bold}
+.old{text-decoration:line-through;font-size:11px;color:#94a3b8}
+.discount{background:red;padding:2px 5px;border-radius:6px;font-size:10px}
+
+/* POPUP */
+.popup{position:fixed;top:0;left:0;width:100%;height:100%;display:none;background:rgba(0,0,0,.8);justify-content:center;align-items:center}
+.popup-box{background:#020617;padding:16px;border-radius:16px;width:90%;max-width:300px;text-align:center}
+.btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none}
+.wa{background:#22c55e;color:black}
+.fb{background:#1877f2;color:white}
+
+.footer{text-align:center;font-size:11px;padding:10px;color:#94a3b8}
 </style>
 </head>
 
@@ -73,7 +65,7 @@ h1{font-size:26px}
 
 <header>
 <h1>YURAAA STORE 🎮</h1>
-<p class="subtitle">Akun Game Murah • Aman • Trusted</p>
+<p class="subtitle">Akun Game Murah • Trusted</p>
 </header>
 
 <div class="search-box">
@@ -95,6 +87,7 @@ h1{font-size:26px}
 </div>
 
 <div class="grid"></div>
+<div class="popup" id="popup"></div>
 
 <script>
 document.addEventListener("DOMContentLoaded", ()=>{
@@ -111,6 +104,14 @@ async function loadData(){
 
 function parseHarga(h){
  return parseInt((h||'').replace(/[^0-9]/g,''))||0;
+}
+
+function isNew(tanggal){
+ if(!tanggal) return false;
+ const today=new Date();
+ const tgl=new Date(tanggal);
+ const diff=(today - tgl)/(1000*60*60*24);
+ return diff <= 2; // NEW kalau ≤2 hari
 }
 
 function apply(){
@@ -142,38 +143,27 @@ function render(data){
 
  data.forEach((a,i)=>{
   const img=(a.Gambar||'').split(',')[0].trim();
-
-  const normal=parseHarga(a.Diskon);
-  const harga=parseHarga(a.Harga);
-
-  let diskon='';
-  if(normal && harga && normal>harga){
-    const persen=Math.round((normal-harga)/normal*100);
-    diskon=`<div class="old">${a.Diskon}</div><div class="discount">-${persen}%</div>`;
-  }
-
   const status=(a.Status||'ready').toLowerCase();
   const label=(a.Label||'').toLowerCase();
 
-  // 🔥 LABEL KANAN (TIDAK NIMPA STATUS)
   let labelHTML='';
-  if(label==='hot'){
-    labelHTML='<div class="badge-right hot">HOT</div>';
-  }else if(label==='best'){
-    labelHTML='<div class="badge-right best">BEST</div>';
-  }else if(label==='promo'){
-    labelHTML='<div class="badge-right promo">PROMO</div>';
-  }else if(label==='rare'){
-    labelHTML='<div class="badge-right rare">RARE</div>';
+  if(label==='hot') labelHTML='<div class="badge-right hot">HOT</div>';
+  if(label==='promo') labelHTML='<div class="badge-right promo">PROMO</div>';
+  if(label==='best') labelHTML='<div class="badge-right best">BEST</div>';
+  if(label==='rare') labelHTML='<div class="badge-right rare">RARE</div>';
+
+  let newHTML='';
+  if(isNew(a.Tanggal)){
+    newHTML='<div class="badge-right new">NEW</div>';
   }
 
   grid.innerHTML+=`
-  <div class="card">
+  <div class="card" onclick="beli(${i})">
     <div class="badge ${status}">${status.toUpperCase()}</div>
     ${labelHTML}
-    <img src="${img||'https://via.placeholder.com/300'}">
+    ${newHTML}
+    <img src="${img}">
     <h4>${a.Nama||'-'}</h4>
-    ${diskon}
     <div class="price">${a.Harga||'-'}</div>
   </div>`;
  });
@@ -192,6 +182,30 @@ function filterGame(g,el){
 function toggleSold(){
  hideSold=!hideSold;
  apply();
+}
+
+function beli(i){
+ const a=currentData[i];
+ const popup=document.getElementById('popup');
+
+ const pesan=`Halo kak, saya mau beli akun:\n${a.Nama}\nHarga: ${a.Harga}`;
+
+ const wa=`https://wa.me/6285939286029?text=${encodeURIComponent(pesan)}`;
+ const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
+
+ popup.innerHTML=`
+ <div class="popup-box">
+   <h3>Pilih Metode</h3>
+   <a href="${wa}" class="btn wa">Direct (WA)</a>
+   <a href="${fb}" class="btn fb">Middleman (FB)</a>
+   <button onclick="tutup()">Tutup</button>
+ </div>`;
+
+ popup.style.display='flex';
+}
+
+function tutup(){
+ document.getElementById('popup').style.display='none';
 }
 
 document.getElementById('search').addEventListener('input',e=>{
