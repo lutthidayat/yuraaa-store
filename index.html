@@ -204,7 +204,7 @@ function apply(){
  let data=[...allData];
 
  if(currentGame!=='all'){
-  data=data.filter(a=>(a.Game||'').toLowerCase().includes(currentGame));
+  data=data.filter(a=>(a.Game||'').toLowerCase().trim() === currentGame)
  }
 
  if(currentStatus!=='all'){
@@ -341,9 +341,11 @@ function showReady(){
 }
 
 function showReadyByGame(game){
+ const gameFix = (game||'').toLowerCase().trim();
+
  const readyData = allData.filter(a =>
   (a.Status||'').toLowerCase()==='ready' &&
-  (a.Game||'').toLowerCase().includes(game.toLowerCase())
+  (a.Game||'').toLowerCase().trim() === gameFix
  );
 
  const popup=document.getElementById('popup');
@@ -362,9 +364,11 @@ function showReadyByGame(game){
   return;
  }
 
- currentGame=game;
- currentStatus='ready';
+ currentGame = gameFix;
+ currentStatus = 'ready';
+
  apply();
+}
 }
 </script>
 
