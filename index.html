@@ -120,6 +120,10 @@ body.popup-active .grid{
  filter:blur(4px);
  pointer-events:none;
 }
+.card:hover{
+ transform:translateY(-4px);
+ transition:0.2s;
+}
 </style>
 </head>
 
@@ -142,6 +146,14 @@ class="tab">Endfield</button>
 </div>
 
 <!-- FILTER STATUS -->
+<div style="text-align:center;margin:10px">
+<button onclick="showReady()"
+style="padding:10px 16px;border:none;border-radius:12px;background:#22c55e;color:black;font-weight:bold">
+🔥 Lihat Akun Ready
+</button>
+</div>
+
+<!-- FILTER STATUS -->
 <div class="tabs" id="statusTabs">
 <button onclick="setStatus('all',this)" class="tab active">Semua</button>
 <button onclick="setStatus('ready',this)" class="tab">Ready</button>
@@ -159,7 +171,7 @@ let currentGame='all';
 let currentStatus='all';
 
 function formatRupiah(num){
- return "Rp " + num.toLocaleString("id-ID");
+ return "Rp " + num.toLocaleString("id-ID").replace(/,/g,'.');
 }
 
 document.addEventListener("DOMContentLoaded", async ()=>{
@@ -176,13 +188,19 @@ function parseHarga(h){
 function apply(){
  let data=[...allData];
 
+ function apply(){
+ let data=[...allData];
+
  if(currentGame!=='all'){
-  data=data.filter(a=>(a.Game||'').toLowerCase()===currentGame);
+  data=data.filter(a=>(a.Game||'').toLowerCase().includes(currentGame));
  }
 
  if(currentStatus!=='all'){
-  data=data.filter(a=>(a.Status||'ready').toLowerCase()===currentStatus);
+  data=data.filter(a=>(a.Status||'').toLowerCase()===currentStatus);
  }
+
+ render(data);
+}
 
  render(data);
 }
@@ -252,17 +270,25 @@ function handleClick(a){
  const status=(a.Status||'ready').toLowerCase();
 
  if(status==='sold'){
-  popup.innerHTML=`<div class="popup-box"><h3>❌ Akun sudah terjual</h3>
-<p style="font-size:12px;color:#94a3b8">
-Silakan cek akun lainnya ya🔥
-</p></h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
- }
- else if(status==='proses'){
-  popup.innerHTML=`<div class="popup-box"><h3><h3>⏳ Akun sedang diproses</h3>
-<p style="font-size:12px;color:#94a3b8">
-Silakan cek akun lainnya ya, masih banyak yang ready 🔥
-</p></h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
- }
+ popup.innerHTML=`
+ <div class="popup-box">
+   <h3>❌ Yah, akun ini sudah diambil 😢</h3>
+   <p style="font-size:12px;color:#94a3b8">
+   Tapi tenang, masih banyak akun bagus lainnya yang siap kamu ambil 🔥
+   </p>
+   <button class="close-btn" onclick="tutup()">Lihat akun lain</button>
+ </div>`;
+}
+else if(status==='proses'){
+ popup.innerHTML=`
+ <div class="popup-box">
+   <h3>⏳ Akun sedang diproses</h3>
+   <p style="font-size:12px;color:#94a3b8">
+   Silakan cek akun lainnya ya, masih banyak yang ready 🔥
+   </p>
+   <button class="close-btn" onclick="tutup()">Lihat akun lain</button>
+ </div>`;
+}
  else{
   const harga=parseHarga(a.Harga);
   const imgs=(a.Gambar||'').split(',');
@@ -300,6 +326,37 @@ document.body.classList.add('popup-active');
 function tutup(){
  document.getElementById('popup').style.display='none';
  document.body.classList.remove('popup-active');
+}
+function showReady(){
+ const readyData = allData.filter(a =>
+  (a.Status||'').toLowerCase()==='ready' &&
+  (currentGame==='all' || (a.Game||'').toLowerCase().includes(currentGame))
+ );
+
+ if(readyData.length === 0){
+  const popup=document.getElementById('popup');
+  popup.innerHTML=`
+  <div class="popup-box">
+    <h3>😢 Stok sedang kosong</h3>
+    <p style="font-size:12px;color:#94a3b8">
+    Untuk game ini belum ada akun ready, coba cek game lain ya 🔥
+    </p>
+    <button class="close-btn" onclick="tutup()">Tutup</button>
+  </div>`;
+  popup.style.display='flex';
+  document.body.classList.add('popup-active');
+  return;
+ }
+
+ currentStatus='ready';
+
+ document.querySelectorAll('#statusTabs .tab')
+ .forEach(t=>t.classList.remove('active'));
+
+ document.querySelector('#statusTabs .tab:nth-child(2)')
+ .classList.add('active');
+
+ render(readyData);
 }
 </script>
 
