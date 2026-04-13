@@ -128,10 +128,12 @@ h1{font-size:24px}
 <!-- FILTER GAME -->
 <div class="tabs" id="gameTabs">
 <button onclick="setGame('all',this)" class="tab active">Semua</button>
-<button onclick="setGame('hsr',this)" class="tab">HSR</button>
-<button onclick="setGame('solo',this)" class="tab">Solo</button>
-<button onclick="setGame('ml',this)" class="tab">ML</button>
-<button onclick="setGame('arena',this)" class="tab">Arena</button>
+<button onclick="setGame('honkai star rail',this)" class="tab">Honkai star rail</button>
+<button onclick="setGame('solo leveling',this)" class="tab">Solo Leveling</button>
+<button onclick="setGame('mobile legend',this)" class="tab">Mobile Legend</button>
+<button onclick="setGame('arena breakout',this)" class="tab">Arena Breakout</button>
+<button onclick="setGame('arknight endfield',this)"
+class="tab">Arknight Endfield</button>
 </div>
 
 <!-- FILTER STATUS -->
@@ -245,7 +247,8 @@ function handleClick(a){
  const status=(a.Status||'ready').toLowerCase();
 
  if(status==='sold'){
-  popup.innerHTML=`<div class="popup-box"><h3>❌ Maaf Akun Sudah Sold</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
+  popup.innerHTML=`<div class="popup-box"><h3>❌ Yah, akun ini sudah terjual 😢
+Coba lihat akun lainnya ya, masih banyak yang ready 🔥</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
  }
  else if(status==='proses'){
   popup.innerHTML=`<div class="popup-box"><h3>⏳ Akun ini sedang dalam tahap pengerjaan.<br>Silahkan cek akun lainnya ya 😊</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
