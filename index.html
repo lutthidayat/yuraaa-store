@@ -18,8 +18,9 @@ h1{font-size:24px}
 
 /* TAB */
 .tabs{display:flex;gap:8px;justify-content:center;margin:10px;flex-wrap:wrap}
-.tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:#94a3b8;font-size:12px}
+.tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:#94a3b8;font-size:12px;transition:.2s}
 .tab.active{background:#22c55e;color:black}
+.tab:hover{background:#1e293b}
 
 /* GRID */
 .grid{display:grid;gap:14px;padding:12px}
@@ -32,9 +33,12 @@ h1{font-size:24px}
  padding:10px;
  border:1px solid #1e293b;
  cursor:pointer;
- transition:.2s;
+ transition:.25s;
 }
-.card:hover{transform:translateY(-4px)}
+.card:hover{
+ transform:translateY(-6px) scale(1.02);
+ box-shadow:0 10px 30px rgba(0,0,0,0.6);
+}
 
 .card img{
  width:100%;
@@ -72,7 +76,7 @@ h1{font-size:24px}
 .promo{background:gold;color:black}
 
 /* PRICE */
-.price{color:#22c55e;font-weight:bold}
+.price{color:#22c55e;font-weight:bold;margin-top:4px}
 .old{text-decoration:line-through;font-size:12px;color:#64748b}
 
 /* DISKON */
@@ -92,6 +96,7 @@ h1{font-size:24px}
  display:flex;
  gap:8px;
  overflow-x:auto;
+ scroll-snap-type:x mandatory;
  margin-bottom:10px;
 }
 .slider.center{justify-content:center}
@@ -99,14 +104,19 @@ h1{font-size:24px}
  height:120px;
  border-radius:10px;
  object-fit:cover;
+ scroll-snap-align:start;
 }
 
 /* POPUP */
 .popup{
  position:fixed;top:0;left:0;width:100%;height:100%;
- display:none;background:rgba(0,0,0,0.6);
+ display:none;background:rgba(0,0,0,0.7);
  justify-content:center;align-items:center;
+ opacity:0;
+ transition:.2s;
 }
+.popup.show{opacity:1}
+
 .popup-box{
  background:#020617;
  padding:16px;
@@ -117,8 +127,9 @@ h1{font-size:24px}
 }
 
 /* BUTTON */
-.btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none}
+.btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none;transition:.2s}
 .wa{background:#22c55e;color:black}
+.wa:hover{transform:scale(1.05);box-shadow:0 0 15px #22c55e}
 .fb{background:#3b82f6;color:white}
 .close-btn{
  margin-top:8px;
@@ -147,21 +158,22 @@ body.popup-active .grid{
   .grid{grid-template-columns:repeat(4,1fr);max-width:1300px}
 }
 
-/* 🔥 POPUP 2 KOLOM */
+/* 🔥 POPUP BESAR + 2 KOLOM */
 @media (min-width:1024px){
   .popup-box{
     display:flex;
-    gap:20px;
-    max-width:800px;
-    height:80vh;
+    gap:24px;
+    max-width:950px;
+    height:85vh;
+    padding:24px;
     text-align:left;
+    box-shadow:0 30px 80px rgba(0,0,0,0.8);
   }
 
   .popup-left{
     flex:1;
     position:sticky;
     top:0;
-    align-self:flex-start;
   }
 
   .popup-left .slider{
@@ -288,20 +300,6 @@ function render(data){
  });
 }
 
-function setGame(g,el){
- currentGame=g;
- document.querySelectorAll('#gameTabs .tab').forEach(t=>t.classList.remove('active'));
- el.classList.add('active');
- apply();
-}
-
-function setStatus(s,el){
- currentStatus=s;
- document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));
- el.classList.add('active');
- apply();
-}
-
 function handleClick(a){
  const popup=document.getElementById('popup');
  const status=(a.Status||'ready').toLowerCase();
@@ -323,7 +321,7 @@ function handleClick(a){
   <div class="popup-box">
 
     <div class="popup-left">
-      <div class="slider">
+      <div class="slider ${imgs.length===1?'center':''}">
         ${imgs.map(i=>`<img src="${i.trim()}">`).join('')}
       </div>
     </div>
@@ -335,7 +333,7 @@ function handleClick(a){
 
       <p style="margin-top:6px">${a.Ket||''}</p>
 
-      <a href="${wa}" class="btn wa">⚡ Beli Cepat</a>
+      <a href="${wa}" class="btn wa">⚡ Beli Cepat ( Direct )</a>
       <a href="${fb}" class="btn fb">🔒 Aman via Middleman</a>
 
       <button class="close-btn" onclick="tutup()">Tutup</button>
@@ -345,12 +343,17 @@ function handleClick(a){
  }
 
  popup.style.display='flex';
+ setTimeout(()=>popup.classList.add('show'),10);
  document.body.classList.add('popup-active');
 }
 
 function tutup(){
- document.getElementById('popup').style.display='none';
- document.body.classList.remove('popup-active');
+ const popup=document.getElementById('popup');
+ popup.classList.remove('show');
+ setTimeout(()=>{
+  popup.style.display='none';
+  document.body.classList.remove('popup-active');
+ },200);
 }
 </script>
 
