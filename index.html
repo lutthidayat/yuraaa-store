@@ -137,7 +137,7 @@ body.popup-active .grid{
 }
 
 /* ===================== */
-/* 🔥 DESKTOP UPGRADE 🔥 */
+/* 🔥 DESKTOP RESPONSIVE */
 /* ===================== */
 
 @media (min-width: 768px){
@@ -152,7 +152,14 @@ body.popup-active .grid{
 
   .card img{height:180px}
 
-  .popup-box{max-width:500px}
+  .popup-box{
+    max-width:500px;
+    padding:20px;
+  }
+
+  .slider img{
+    height:150px;
+  }
 
   .tab{
     font-size:14px;
@@ -166,7 +173,7 @@ body.popup-active .grid{
     max-width: 1100px;
   }
 
-  .popup-box{max-width:600px}
+  .popup-box{max-width:650px}
 }
 
 @media (min-width: 1400px){
@@ -174,28 +181,8 @@ body.popup-active .grid{
     grid-template-columns: repeat(4, 1fr);
     max-width: 1300px;
   }
-}
-@media (min-width: 768px){
-  .popup-box{
-    max-width:500px;
-    padding:20px;
-  }
 
-  .slider img{
-    height:150px;
-  }
-}
-
-@media (min-width: 1024px){
-  .popup-box{
-    max-width:650px;
-  }
-}
-
-@media (min-width: 1400px){
-  .popup-box{
-    max-width:750px;
-  }
+  .popup-box{max-width:750px}
 }
 
 </style>
@@ -276,7 +263,7 @@ function render(data){
 
  data.forEach(a=>{
   const imgs=(a.Gambar||'').split(',');
-  const firstImg=imgs[0];
+  const firstImg = imgs[0] || 'https://via.placeholder.com/300x150?text=No+Image';
   const status=(a.Status||'ready').toLowerCase();
   const label=(a.Label||'').toLowerCase();
 
@@ -365,6 +352,10 @@ Harga: ${formatRupiah(harga)}`;
     <h3>${a.Nama}</h3>
     <div style="font-size:12px;color:#94a3b8">${a.Game}</div>
     <div class="price">${formatRupiah(harga)}</div>
+
+    <p style="font-size:12px;color:#cbd5f5;margin-top:6px">
+      ${a.Ket || ''}
+    </p>
 
     <a href="${wa}" class="btn wa">⚡ Beli Cepat (Direct)</a>
     <a href="${fb}" class="btn fb">🔒 Aman via Middleman</a>
