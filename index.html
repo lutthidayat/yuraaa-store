@@ -194,7 +194,8 @@ body.popup-active .grid{
   .popup-box{
     max-width:1100px !important;   /* BESAR */
     width:92%;
-    height:88vh;                  /* hampir fullscreen */
+    height:auto;
+    max-height:90vh;                  /* hampir fullscreen */
     padding:28px;
     border-radius:20px;
     box-shadow:0 40px 100px rgba(0,0,0,0.9);
@@ -213,16 +214,10 @@ body.popup-active .grid{
     text-align:left;
   }
 
-  .popup-left{
-    flex:1;
-    position:sticky;
-    top:0;
-  }
-
   .popup-left .slider{
-    flex-direction:column;
-  }
-
+  flex-direction:column;
+  gap:10px;
+}
   .popup-left img{
     width:100%;
     height:auto;
@@ -232,7 +227,7 @@ body.popup-active .grid{
   .popup-right{
     flex:1;
     overflow-y:auto;
-    padding-right:10px;
+    padding-left:5px;
   }
 
   .popup-right h3{
@@ -278,11 +273,46 @@ body.popup-active .grid{
   backdrop-filter:blur(6px);
 }
 
+/* 🔥 GAMBAR STICKY */
+@media (min-width:1024px){
+  .popup-left{
+    position:sticky;
+    top:20px;
+    align-self:flex-start;
+  }
+}
+
+.wa:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 15px #22c55e;
+}
+
+.popup-box{
+  border:1px solid #1e293b;
+}
+
+.btn{
+  transition:.2s;
+}
+
 </style>
 
 </head>
 
 <body>
+
+<div id="imgViewer" style="
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.9);
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
+  <img id="viewerImg" style="max-width:90%;max-height:90%;border-radius:12px">
+</div>
 
 <header>
 <h1>YURAAA STORE 🎮</h1>
@@ -314,19 +344,26 @@ let allData=[];
 let currentGame='all';
 let currentStatus='all';
 
+let gridEl;
+let popupEl;
+
 function formatRupiah(num){
  return "Rp " + num.toLocaleString("id-ID").replace(/,/g,'.');
 }
 
 document.addEventListener("DOMContentLoaded", async ()=>{
- const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1");
- allData=await res.json();
- document.getElementById('loading').style.display='none';
- apply();
+  gridEl = document.querySelector('.grid');
+  popupEl = document.getElementById('popup');
+
+  const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1");
+  allData = Object.freeze(await res.json());
+
+  document.getElementById('loading').style.display='none';
+  apply();
 });
 
 function parseHarga(h){
- return parseInt((h||'').replace(/[^0-9]/g,''))||0;
+ return Number((h||'').replace(/\D/g,'')) || 0;
 }
 
 function apply(){
@@ -344,18 +381,17 @@ function apply(){
 }
 
 function render(data){
- const grid=document.querySelector('.grid');
- grid.innerHTML='';
+ const grid = gridEl;
 
- data.sort((a,b)=>{
+ const html = data
+ .sort((a,b)=>{
   const order={ready:1, proses:2, sold:3};
   const A=(a.Status||'ready').toLowerCase();
   const B=(b.Status||'ready').toLowerCase();
   if(order[A]!==order[B]) return order[A]-order[B];
   return parseHarga(a.Harga)-parseHarga(b.Harga);
- });
-
- data.forEach(a=>{
+ })
+ .map(a=>{
   const imgs=(a.Gambar||'').split(',');
   const firstImg=imgs[0] || 'https://via.placeholder.com/300x150?text=No+Image';
   const status=(a.Status||'ready').toLowerCase();
@@ -375,7 +411,7 @@ function render(data){
   if(label==='hot') labelHTML='<div class="badge-right hot">HOT</div>';
   if(label==='promo') labelHTML='<div class="badge-right promo">PROMO</div>';
 
-  grid.innerHTML+=`
+  return `
   <div class="card ${status}" onclick='handleClick(${JSON.stringify(a)})'>
     <div class="badge ${status}">${status.toUpperCase()}</div>
     ${labelHTML}
@@ -385,7 +421,9 @@ function render(data){
     <div class="price">${formatRupiah(harga)}</div>
     ${diskon}
   </div>`;
- });
+ }).join('');
+
+ grid.innerHTML = html;
 }
 
 function setGame(g,el){
@@ -403,7 +441,7 @@ function setStatus(s,el){
 }
 
 function handleClick(a){
- const popup=document.getElementById('popup');
+ const popup = popupEl;
  const status=(a.Status||'ready').toLowerCase();
 
  if(status==='sold'){
@@ -441,19 +479,30 @@ Harga: ${formatRupiah(harga)}`;
   const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
 
   popup.innerHTML=`
-  <div class="popup-box">
+<div class="popup-box">
+
+  <div class="popup-left">
     <div class="slider ${imgs.length===1?'center':''}">
-      ${imgs.map(i=>`<img src="${i.trim()}">`).join('')}
+      ${imgs.map(i=>`<img src="${i.trim()}" onclick="openViewer('${i.trim()}')">`).join('')}
     </div>
+  </div>
+
+  <div class="popup-right">
     <h3>${a.Nama}</h3>
-    <div style="font-size:12px;color:#94a3b8">${a.Game}</div>
+    <div style="font-size:13px;color:#94a3b8">${a.Game}</div>
     <div class="price">${formatRupiah(harga)}</div>
+
+    <p style="margin-top:8px;font-size:13px;color:#cbd5f5">
+      ${a.Ket || ''}
+    </p>
 
     <a href="${wa}" class="btn wa">⚡ Beli Cepat (Direct)</a>
     <a href="${fb}" class="btn fb">🔒 Aman via Middleman</a>
 
     <button class="close-btn" onclick="tutup()">Tutup</button>
-  </div>`;
+  </div>
+
+</div>`;
  }
 
  popup.style.display='flex';
@@ -462,7 +511,7 @@ Harga: ${formatRupiah(harga)}`;
 }
 
 function tutup(){
- const popup=document.getElementById('popup');
+ const popup = popupEl;
  popup.classList.remove('show');
  setTimeout(()=>{
   popup.style.display='none';
@@ -481,7 +530,7 @@ function showReadyByGame(game){
   (a.Game||'').toLowerCase().includes(gameFix)
  );
 
- const popup=document.getElementById('popup');
+ const popup = popupEl;
 
  if(readyData.length === 0){
   popup.innerHTML=`
@@ -503,6 +552,18 @@ function showReadyByGame(game){
  apply();
  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+function openViewer(src){
+  const viewer=document.getElementById('imgViewer');
+  const img=document.getElementById('viewerImg');
+  img.src=src;
+  viewer.style.display='flex';
+}
+
+document.getElementById('imgViewer').onclick=function(){
+  this.style.display='none';
+}
+
 </script>
 
 </body>
