@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -18,9 +19,8 @@ h1{font-size:24px}
 
 /* TAB */
 .tabs{display:flex;gap:8px;justify-content:center;margin:10px;flex-wrap:wrap}
-.tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:#94a3b8;font-size:12px;transition:.2s}
+.tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:#94a3b8;font-size:12px}
 .tab.active{background:#22c55e;color:black}
-.tab:hover{background:#1e293b}
 
 /* GRID */
 .grid{display:grid;gap:14px;padding:12px}
@@ -33,12 +33,9 @@ h1{font-size:24px}
  padding:10px;
  border:1px solid #1e293b;
  cursor:pointer;
- transition:.25s;
+ transition:.2s;
 }
-.card:hover{
- transform:translateY(-6px) scale(1.02);
- box-shadow:0 10px 30px rgba(0,0,0,0.6);
-}
+.card:hover{transform:translateY(-4px)}
 
 .card img{
  width:100%;
@@ -76,7 +73,7 @@ h1{font-size:24px}
 .promo{background:gold;color:black}
 
 /* PRICE */
-.price{color:#22c55e;font-weight:bold;margin-top:4px}
+.price{color:#22c55e;font-weight:bold}
 .old{text-decoration:line-through;font-size:12px;color:#64748b}
 
 /* DISKON */
@@ -96,7 +93,6 @@ h1{font-size:24px}
  display:flex;
  gap:8px;
  overflow-x:auto;
- scroll-snap-type:x mandatory;
  margin-bottom:10px;
 }
 .slider.center{justify-content:center}
@@ -104,19 +100,14 @@ h1{font-size:24px}
  height:120px;
  border-radius:10px;
  object-fit:cover;
- scroll-snap-align:start;
 }
 
 /* POPUP */
 .popup{
  position:fixed;top:0;left:0;width:100%;height:100%;
- display:none;background:rgba(0,0,0,0.7);
+ display:none;background:rgba(0,0,0,0.6);
  justify-content:center;align-items:center;
- opacity:0;
- transition:.2s;
 }
-.popup.show{opacity:1}
-
 .popup-box{
  background:#020617;
  padding:16px;
@@ -127,9 +118,8 @@ h1{font-size:24px}
 }
 
 /* BUTTON */
-.btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none;transition:.2s}
+.btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none}
 .wa{background:#22c55e;color:black}
-.wa:hover{transform:scale(1.05);box-shadow:0 0 15px #22c55e}
 .fb{background:#3b82f6;color:white}
 .close-btn{
  margin-top:8px;
@@ -146,60 +136,18 @@ body.popup-active .grid{
  filter:blur(4px);
  pointer-events:none;
 }
-
-/* DESKTOP GRID */
-@media (min-width:768px){
-  .grid{grid-template-columns:repeat(2,1fr);max-width:900px;margin:auto}
-}
-@media (min-width:1024px){
-  .grid{grid-template-columns:repeat(3,1fr);max-width:1100px}
-}
-@media (min-width:1400px){
-  .grid{grid-template-columns:repeat(4,1fr);max-width:1300px}
-}
-
-/* 🔥 POPUP BESAR + 2 KOLOM */
-@media (min-width:1024px){
-  .popup-box{
-    display:flex;
-    gap:24px;
-    max-width:950px;
-    height:85vh;
-    padding:24px;
-    text-align:left;
-    box-shadow:0 30px 80px rgba(0,0,0,0.8);
-  }
-
-  .popup-left{
-    flex:1;
-    position:sticky;
-    top:0;
-  }
-
-  .popup-left .slider{
-    flex-direction:column;
-  }
-
-  .popup-left img{
-    width:100%;
-    height:auto;
-  }
-
-  .popup-right{
-    flex:1;
-    overflow-y:auto;
-    padding-right:10px;
-  }
-}
 </style>
+
 </head>
 
 <body>
 
 <header>
-<h1>YURAAA STORE 🎮</h1>
-<p class="subtitle">Akun Game Murah • Trusted</p>
+<h1>YURAAA STORE ðŸŽ®</h1>
+<p class="subtitle">Akun Game Murah â€¢ Trusted</p>
 </header>
+
+<!-- GAME -->
 
 <div class="tabs" id="gameTabs">
 <button onclick="setGame('all',this)" class="tab active">Semua</button>
@@ -210,6 +158,8 @@ body.popup-active .grid{
 <button onclick="setGame('arknight endfield',this)" class="tab">Endfield</button>
 </div>
 
+<!-- STATUS -->
+
 <div class="tabs" id="statusTabs">
 <button onclick="setStatus('all',this)" class="tab active">Semua</button>
 <button onclick="setStatus('ready',this)" class="tab">Ready</button>
@@ -217,7 +167,7 @@ body.popup-active .grid{
 <button onclick="setStatus('sold',this)" class="tab">Sold</button>
 </div>
 
-<div id="loading" style="text-align:center;padding:20px">⏳ Memuat akun terbaik...</div>
+<div id="loading" style="text-align:center;padding:20px">â³ Memuat akun terbaik...</div>
 <div class="grid"></div>
 <div class="popup" id="popup"></div>
 
@@ -269,7 +219,7 @@ function render(data){
 
  data.forEach(a=>{
   const imgs=(a.Gambar||'').split(',');
-  const firstImg = imgs[0] || 'https://via.placeholder.com/300x150?text=No+Image';
+  const firstImg=imgs[0];
   const status=(a.Status||'ready').toLowerCase();
   const label=(a.Label||'').toLowerCase();
 
@@ -280,7 +230,7 @@ function render(data){
   if(normal && harga && normal>harga){
     const persen=Math.round((normal-harga)/normal*100);
     diskon=`<div class="old">${a.Diskon}</div>
-            <div class="discount">🔥 -${persen}%</div>`;
+            <div class="discount">ðŸ”¥ -${persen}%</div>`;
   }
 
   let labelHTML='';
@@ -300,60 +250,119 @@ function render(data){
  });
 }
 
+function setGame(g,el){
+ currentGame=g;
+ document.querySelectorAll('#gameTabs .tab').forEach(t=>t.classList.remove('active'));
+ el.classList.add('active');
+ apply();
+}
+
+function setStatus(s,el){
+ currentStatus=s;
+ document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));
+ el.classList.add('active');
+ apply();
+}
+
 function handleClick(a){
  const popup=document.getElementById('popup');
  const status=(a.Status||'ready').toLowerCase();
 
  if(status==='sold'){
- popup.innerHTML=`<div class="popup-box"><h3>❌ Yah, akun ini sudah diambil 😢</h3><button class="close-btn" onclick="showReadyByGame('${a.Game}')">Lihat akun lain</button></div>`;
+ popup.innerHTML=`
+ <div class="popup-box">
+   <h3>âŒ Yah, akun ini sudah diambil ðŸ˜¢</h3>
+   <p style="font-size:12px;color:#94a3b8">
+   Tapi tenang, masih banyak akun bagus lainnya yang siap kamu ambil ðŸ”¥
+   </p>
+   <button class="close-btn" onclick="showReadyByGame('${a.Game}')">Lihat akun lain</button>
+ </div>`;
  }
  else if(status==='proses'){
- popup.innerHTML=`<div class="popup-box"><h3>⏳ Akun sedang diproses</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
+ popup.innerHTML=`
+ <div class="popup-box">
+   <h3>â³ Akun sedang diproses</h3>
+   <p style="font-size:12px;color:#94a3b8">
+   Silakan cek akun lainnya ya ðŸ”¥
+   </p>
+   <button class="close-btn" onclick="tutup()">Lihat akun lain</button>
+ </div>`;
  }
  else{
   const harga=parseHarga(a.Harga);
   const imgs=(a.Gambar||'').split(',');
 
-  const wa=`https://wa.me/6285808741017?text=${encodeURIComponent(a.Nama)}`;
+  const pesan=`Halo kak, saya mau beli akun:
+Nama: ${a.Nama}
+Game: ${a.Game}
+Harga: ${formatRupiah(harga)}`;
+
+  const wa=`https://wa.me/6285808741017?text=${encodeURIComponent(pesan)}`;
   const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
 
   popup.innerHTML=`
   <div class="popup-box">
-
-    <div class="popup-left">
-      <div class="slider ${imgs.length===1?'center':''}">
-        ${imgs.map(i=>`<img src="${i.trim()}">`).join('')}
-      </div>
+    <div class="slider ${imgs.length===1?'center':''}">
+      ${imgs.map(i=>`<img src="${i.trim()}">`).join('')}
     </div>
+    <h3>${a.Nama}</h3>
+    <div style="font-size:12px;color:#94a3b8">${a.Game}</div>
+    <div class="price">${formatRupiah(harga)}</div>
 
-    <div class="popup-right">
-      <h3>${a.Nama}</h3>
-      <div style="font-size:12px;color:#94a3b8">${a.Game}</div>
-      <div class="price">${formatRupiah(harga)}</div>
+    <a href="${wa}" class="btn wa">âš¡ Beli Cepat (Direct)</a>
+    <a href="${fb}" class="btn fb">ðŸ”’ Aman via Middleman</a>
 
-      <p style="margin-top:6px">${a.Ket||''}</p>
-
-      <a href="${wa}" class="btn wa">⚡ Beli Cepat ( Direct )</a>
-      <a href="${fb}" class="btn fb">🔒 Aman via Middleman</a>
-
-      <button class="close-btn" onclick="tutup()">Tutup</button>
-    </div>
-
+    <button class="close-btn" onclick="tutup()">Tutup</button>
   </div>`;
  }
 
  popup.style.display='flex';
- setTimeout(()=>popup.classList.add('show'),10);
  document.body.classList.add('popup-active');
 }
 
 function tutup(){
+ document.getElementById('popup').style.display='none';
+ document.body.classList.remove('popup-active');
+}
+
+function showReady(){
+ currentStatus='ready';
+ apply();
+}
+
+function showReadyByGame(game){
+
+ // ðŸ”¥ TUTUP POPUP DULU
+ document.getElementById('popup').style.display='none';
+ document.body.classList.remove('popup-active');
+
+ const gameFix = (game||'').toLowerCase().trim();
+
+ const readyData = allData.filter(a =>
+  (a.Status||'').toLowerCase()==='ready' &&
+  (a.Game||'').toLowerCase().includes(gameFix)
+ );
+
  const popup=document.getElementById('popup');
- popup.classList.remove('show');
- setTimeout(()=>{
-  popup.style.display='none';
-  document.body.classList.remove('popup-active');
- },200);
+
+ if(readyData.length === 0){
+  popup.innerHTML=`
+  <div class="popup-box">
+    <h3>ðŸ˜¢ Akun ${game} belum tersedia</h3>
+    <p style="font-size:12px;color:#94a3b8">
+    Saat ini belum ada akun ready untuk game ini, coba cek game lain ya ðŸ”¥
+    </p>
+    <button class="close-btn" onclick="tutup()">Tutup</button>
+  </div>`;
+  popup.style.display='flex';
+  document.body.classList.add('popup-active');
+  return;
+ }
+
+ currentGame = gameFix;
+ currentStatus = 'ready';
+
+ apply();window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 
