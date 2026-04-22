@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -19,8 +18,14 @@ h1{font-size:24px}
 
 /* TAB */
 .tabs{display:flex;gap:8px;justify-content:center;margin:10px;flex-wrap:wrap}
-.tab{padding:8px 14px;border-radius:999px;background:#0f172a;color:#94a3b8;font-size:12px}
+.tab{
+ padding:8px 14px;border-radius:999px;
+ background:#0f172a;color:#94a3b8;
+ font-size:12px;
+ transition:.2s;
+}
 .tab.active{background:#22c55e;color:black}
+.tab:hover{background:#1e293b}
 
 /* GRID */
 .grid{display:grid;gap:14px;padding:12px}
@@ -33,9 +38,12 @@ h1{font-size:24px}
  padding:10px;
  border:1px solid #1e293b;
  cursor:pointer;
- transition:.2s;
+ transition:.25s;
 }
-.card:hover{transform:translateY(-4px)}
+.card:hover{
+ transform:translateY(-5px);
+ box-shadow:0 10px 25px rgba(0,0,0,0.6);
+}
 
 .card img{
  width:100%;
@@ -107,7 +115,11 @@ h1{font-size:24px}
  position:fixed;top:0;left:0;width:100%;height:100%;
  display:none;background:rgba(0,0,0,0.6);
  justify-content:center;align-items:center;
+ opacity:0;
+ transition:.2s;
 }
+.popup.show{opacity:1}
+
 .popup-box{
  background:#020617;
  padding:16px;
@@ -115,6 +127,16 @@ h1{font-size:24px}
  width:90%;
  max-width:320px;
  text-align:center;
+}
+
+/* 🔥 POPUP BESAR DESKTOP */
+@media (min-width:1024px){
+  .popup-box{
+    max-width:900px;
+    width:90%;
+    padding:24px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.8);
+  }
 }
 
 /* BUTTON */
@@ -143,11 +165,9 @@ body.popup-active .grid{
 <body>
 
 <header>
-<h1>YURAAA STORE ðŸŽ®</h1>
-<p class="subtitle">Akun Game Murah â€¢ Trusted</p>
+<h1>YURAAA STORE 🎮</h1>
+<p class="subtitle">Akun Game Murah • Trusted</p>
 </header>
-
-<!-- GAME -->
 
 <div class="tabs" id="gameTabs">
 <button onclick="setGame('all',this)" class="tab active">Semua</button>
@@ -158,8 +178,6 @@ body.popup-active .grid{
 <button onclick="setGame('arknight endfield',this)" class="tab">Endfield</button>
 </div>
 
-<!-- STATUS -->
-
 <div class="tabs" id="statusTabs">
 <button onclick="setStatus('all',this)" class="tab active">Semua</button>
 <button onclick="setStatus('ready',this)" class="tab">Ready</button>
@@ -167,7 +185,7 @@ body.popup-active .grid{
 <button onclick="setStatus('sold',this)" class="tab">Sold</button>
 </div>
 
-<div id="loading" style="text-align:center;padding:20px">â³ Memuat akun terbaik...</div>
+<div id="loading" style="text-align:center;padding:20px">⏳ Memuat akun terbaik...</div>
 <div class="grid"></div>
 <div class="popup" id="popup"></div>
 
@@ -219,7 +237,7 @@ function render(data){
 
  data.forEach(a=>{
   const imgs=(a.Gambar||'').split(',');
-  const firstImg=imgs[0];
+  const firstImg=imgs[0] || 'https://via.placeholder.com/300x150?text=No+Image';
   const status=(a.Status||'ready').toLowerCase();
   const label=(a.Label||'').toLowerCase();
 
@@ -230,7 +248,7 @@ function render(data){
   if(normal && harga && normal>harga){
     const persen=Math.round((normal-harga)/normal*100);
     diskon=`<div class="old">${a.Diskon}</div>
-            <div class="discount">ðŸ”¥ -${persen}%</div>`;
+            <div class="discount">🔥 -${persen}%</div>`;
   }
 
   let labelHTML='';
@@ -271,9 +289,9 @@ function handleClick(a){
  if(status==='sold'){
  popup.innerHTML=`
  <div class="popup-box">
-   <h3>âŒ Yah, akun ini sudah diambil ðŸ˜¢</h3>
+   <h3>❌ Yah, akun ini sudah diambil 😢</h3>
    <p style="font-size:12px;color:#94a3b8">
-   Tapi tenang, masih banyak akun bagus lainnya yang siap kamu ambil ðŸ”¥
+   Tapi tenang, masih banyak akun bagus lainnya yang siap kamu ambil 🔥
    </p>
    <button class="close-btn" onclick="showReadyByGame('${a.Game}')">Lihat akun lain</button>
  </div>`;
@@ -281,9 +299,9 @@ function handleClick(a){
  else if(status==='proses'){
  popup.innerHTML=`
  <div class="popup-box">
-   <h3>â³ Akun sedang diproses</h3>
+   <h3>⏳ Akun sedang diproses</h3>
    <p style="font-size:12px;color:#94a3b8">
-   Silakan cek akun lainnya ya ðŸ”¥
+   Silakan cek akun lainnya ya 🔥
    </p>
    <button class="close-btn" onclick="tutup()">Lihat akun lain</button>
  </div>`;
@@ -309,30 +327,28 @@ Harga: ${formatRupiah(harga)}`;
     <div style="font-size:12px;color:#94a3b8">${a.Game}</div>
     <div class="price">${formatRupiah(harga)}</div>
 
-    <a href="${wa}" class="btn wa">âš¡ Beli Cepat (Direct)</a>
-    <a href="${fb}" class="btn fb">ðŸ”’ Aman via Middleman</a>
+    <a href="${wa}" class="btn wa">⚡ Beli Cepat (Direct)</a>
+    <a href="${fb}" class="btn fb">🔒 Aman via Middleman</a>
 
     <button class="close-btn" onclick="tutup()">Tutup</button>
   </div>`;
  }
 
  popup.style.display='flex';
+ setTimeout(()=>popup.classList.add('show'),10);
  document.body.classList.add('popup-active');
 }
 
 function tutup(){
- document.getElementById('popup').style.display='none';
- document.body.classList.remove('popup-active');
-}
-
-function showReady(){
- currentStatus='ready';
- apply();
+ const popup=document.getElementById('popup');
+ popup.classList.remove('show');
+ setTimeout(()=>{
+  popup.style.display='none';
+  document.body.classList.remove('popup-active');
+ },200);
 }
 
 function showReadyByGame(game){
-
- // ðŸ”¥ TUTUP POPUP DULU
  document.getElementById('popup').style.display='none';
  document.body.classList.remove('popup-active');
 
@@ -348,9 +364,9 @@ function showReadyByGame(game){
  if(readyData.length === 0){
   popup.innerHTML=`
   <div class="popup-box">
-    <h3>ðŸ˜¢ Akun ${game} belum tersedia</h3>
+    <h3>😢 Akun ${game} belum tersedia</h3>
     <p style="font-size:12px;color:#94a3b8">
-    Saat ini belum ada akun ready untuk game ini, coba cek game lain ya ðŸ”¥
+    Saat ini belum ada akun ready untuk game ini, coba cek game lain ya 🔥
     </p>
     <button class="close-btn" onclick="tutup()">Tutup</button>
   </div>`;
@@ -362,7 +378,8 @@ function showReadyByGame(game){
  currentGame = gameFix;
  currentStatus = 'ready';
 
- apply();window.scrollTo({ top: 0, behavior: 'smooth' });
+ apply();
+ window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 
