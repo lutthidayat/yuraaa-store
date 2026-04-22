@@ -158,6 +158,126 @@ body.popup-active .grid{
  filter:blur(4px);
  pointer-events:none;
 }
+
+/* ===================== */
+/* 🔥 DESKTOP IMPROVEMENT */
+/* ===================== */
+
+/* GRID LEBIH RAPI */
+@media (min-width:1024px){
+  .grid{
+    grid-template-columns:repeat(3,1fr);
+    max-width:1100px;
+    margin:auto;
+  }
+}
+
+@media (min-width:1400px){
+  .grid{
+    grid-template-columns:repeat(4,1fr);
+    max-width:1300px;
+  }
+}
+
+/* CARD LEBIH PROPORSIONAL */
+@media (min-width:1024px){
+  .card img{
+    height:180px;
+  }
+}
+
+/* ===================== */
+/* 🔥 POPUP LEBIH BESAR */
+/* ===================== */
+
+@media (min-width:1024px){
+  .popup-box{
+    max-width:1100px !important;   /* BESAR */
+    width:92%;
+    height:88vh;                  /* hampir fullscreen */
+    padding:28px;
+    border-radius:20px;
+    box-shadow:0 40px 100px rgba(0,0,0,0.9);
+  }
+}
+
+/* ===================== */
+/* 🔥 JIKA SUDAH 2 KOLOM */
+/* (AUTO AKTIF TANPA RUSAK) */
+/* ===================== */
+
+@media (min-width:1024px){
+  .popup-box{
+    display:flex;
+    gap:28px;
+    text-align:left;
+  }
+
+  .popup-left{
+    flex:1;
+    position:sticky;
+    top:0;
+  }
+
+  .popup-left .slider{
+    flex-direction:column;
+  }
+
+  .popup-left img{
+    width:100%;
+    height:auto;
+    border-radius:14px;
+  }
+
+  .popup-right{
+    flex:1;
+    overflow-y:auto;
+    padding-right:10px;
+  }
+
+  .popup-right h3{
+    font-size:22px;
+  }
+
+  .popup-right .price{
+    font-size:20px;
+    margin:8px 0;
+  }
+
+  .popup-right .btn{
+    padding:12px;
+    font-size:14px;
+  }
+}
+
+/* ===================== */
+/* 🔥 SCROLL LEBIH HALUS */
+/* ===================== */
+
+.popup-right::-webkit-scrollbar{
+  width:6px;
+}
+.popup-right::-webkit-scrollbar-thumb{
+  background:#334155;
+  border-radius:10px;
+}
+
+/* ===================== */
+/* 🔥 SMOOTH EXPERIENCE */
+/* ===================== */
+
+.card{
+  transition:.25s;
+}
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 12px 35px rgba(0,0,0,0.7);
+}
+
+.popup{
+  backdrop-filter:blur(6px);
+}
+
 </style>
 
 </head>
@@ -303,9 +423,11 @@ function handleClick(a){
    <p style="font-size:12px;color:#94a3b8">
    Silakan cek akun lainnya ya 🔥
    </p>
-   <button class="close-btn" onclick="tutup()">Lihat akun lain</button>
+   <button class="close-btn" onclick="showReadyByGame('${a.Game}')">
+     Lihat akun lain
+   </button>
  </div>`;
- }
+}
  else{
   const harga=parseHarga(a.Harga);
   const imgs=(a.Gambar||'').split(',');
