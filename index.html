@@ -107,6 +107,7 @@ h1{font-size:24px}
  display:none;background:rgba(0,0,0,0.6);
  justify-content:center;align-items:center;
 }
+
 .popup-box{
  background:#020617;
  padding:16px;
@@ -137,54 +138,52 @@ body.popup-active .grid{
 }
 
 /* ===================== */
-/* 🔥 DESKTOP RESPONSIVE */
+/* DESKTOP GRID */
 /* ===================== */
+@media (min-width:768px){
+  .grid{grid-template-columns:repeat(2,1fr);max-width:900px;margin:auto}
+}
+@media (min-width:1024px){
+  .grid{grid-template-columns:repeat(3,1fr);max-width:1100px}
+}
+@media (min-width:1400px){
+  .grid{grid-template-columns:repeat(4,1fr);max-width:1300px}
+}
 
-@media (min-width: 768px){
-  .grid{
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 900px;
-    margin: auto;
-  }
-
-  h1{font-size:32px}
-  .subtitle{font-size:14px}
-
-  .card img{height:180px}
-
+/* ===================== */
+/* 🔥 POPUP 2 KOLOM DESKTOP */
+/* ===================== */
+@media (min-width:1024px){
   .popup-box{
-    max-width:500px;
-    padding:20px;
+    display:flex;
+    gap:20px;
+    max-width:800px;
+    height:80vh;
+    text-align:left;
   }
 
-  .slider img{
-    height:150px;
+  .popup-left{
+    flex:1;
+    position:sticky;
+    top:0;
+    align-self:flex-start;
   }
 
-  .tab{
-    font-size:14px;
-    padding:10px 18px;
+  .popup-left .slider{
+    flex-direction:column;
+  }
+
+  .popup-left img{
+    width:100%;
+    height:auto;
+  }
+
+  .popup-right{
+    flex:1;
+    overflow-y:auto;
+    padding-right:10px;
   }
 }
-
-@media (min-width: 1024px){
-  .grid{
-    grid-template-columns: repeat(3, 1fr);
-    max-width: 1100px;
-  }
-
-  .popup-box{max-width:650px}
-}
-
-@media (min-width: 1400px){
-  .grid{
-    grid-template-columns: repeat(4, 1fr);
-    max-width: 1300px;
-  }
-
-  .popup-box{max-width:750px}
-}
-
 </style>
 </head>
 
@@ -294,73 +293,42 @@ function render(data){
  });
 }
 
-function setGame(g,el){
- currentGame=g;
- document.querySelectorAll('#gameTabs .tab').forEach(t=>t.classList.remove('active'));
- el.classList.add('active');
- apply();
-}
-
-function setStatus(s,el){
- currentStatus=s;
- document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));
- el.classList.add('active');
- apply();
-}
-
 function handleClick(a){
  const popup=document.getElementById('popup');
  const status=(a.Status||'ready').toLowerCase();
 
  if(status==='sold'){
- popup.innerHTML=`
- <div class="popup-box">
-   <h3>❌ Yah, akun ini sudah diambil 😢</h3>
-   <p style="font-size:12px;color:#94a3b8">
-   Tapi tenang, masih banyak akun bagus lainnya yang siap kamu ambil 🔥
-   </p>
-   <button class="close-btn" onclick="showReadyByGame('${a.Game}')">Lihat akun lain</button>
- </div>`;
+ popup.innerHTML=`<div class="popup-box"><h3>❌ Sudah diambil</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
  }
  else if(status==='proses'){
- popup.innerHTML=`
- <div class="popup-box">
-   <h3>⏳ Akun sedang diproses</h3>
-   <p style="font-size:12px;color:#94a3b8">
-   Silakan cek akun lainnya ya 🔥
-   </p>
-   <button class="close-btn" onclick="tutup()">Lihat akun lain</button>
- </div>`;
+ popup.innerHTML=`<div class="popup-box"><h3>⏳ Sedang diproses</h3><button class="close-btn" onclick="tutup()">Tutup</button></div>`;
  }
  else{
   const harga=parseHarga(a.Harga);
   const imgs=(a.Gambar||'').split(',');
 
-  const pesan=`Halo kak, saya mau beli akun:
-Nama: ${a.Nama}
-Game: ${a.Game}
-Harga: ${formatRupiah(harga)}`;
-
-  const wa=`https://wa.me/6285808741017?text=${encodeURIComponent(pesan)}`;
-  const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
+  const wa=`https://wa.me/6285808741017`;
 
   popup.innerHTML=`
   <div class="popup-box">
-    <div class="slider ${imgs.length===1?'center':''}">
-      ${imgs.map(i=>`<img src="${i.trim()}">`).join('')}
+
+    <div class="popup-left">
+      <div class="slider">
+        ${imgs.map(i=>`<img src="${i.trim()}">`).join('')}
+      </div>
     </div>
-    <h3>${a.Nama}</h3>
-    <div style="font-size:12px;color:#94a3b8">${a.Game}</div>
-    <div class="price">${formatRupiah(harga)}</div>
 
-    <p style="font-size:12px;color:#cbd5f5;margin-top:6px">
-      ${a.Ket || ''}
-    </p>
+    <div class="popup-right">
+      <h3>${a.Nama}</h3>
+      <div style="font-size:12px;color:#94a3b8">${a.Game}</div>
+      <div class="price">${formatRupiah(harga)}</div>
 
-    <a href="${wa}" class="btn wa">⚡ Beli Cepat (Direct)</a>
-    <a href="${fb}" class="btn fb">🔒 Aman via Middleman</a>
+      <p style="margin-top:6px">${a.Ket||''}</p>
 
-    <button class="close-btn" onclick="tutup()">Tutup</button>
+      <a href="${wa}" class="btn wa">⚡ Beli Cepat</a>
+      <button class="close-btn" onclick="tutup()">Tutup</button>
+    </div>
+
   </div>`;
  }
 
@@ -371,45 +339,6 @@ Harga: ${formatRupiah(harga)}`;
 function tutup(){
  document.getElementById('popup').style.display='none';
  document.body.classList.remove('popup-active');
-}
-
-function showReady(){
- currentStatus='ready';
- apply();
-}
-
-function showReadyByGame(game){
- document.getElementById('popup').style.display='none';
- document.body.classList.remove('popup-active');
-
- const gameFix = (game||'').toLowerCase().trim();
-
- const readyData = allData.filter(a =>
-  (a.Status||'').toLowerCase()==='ready' &&
-  (a.Game||'').toLowerCase().includes(gameFix)
- );
-
- const popup=document.getElementById('popup');
-
- if(readyData.length === 0){
-  popup.innerHTML=`
-  <div class="popup-box">
-    <h3>😢 Akun ${game} belum tersedia</h3>
-    <p style="font-size:12px;color:#94a3b8">
-    Saat ini belum ada akun ready untuk game ini, coba cek game lain ya 🔥
-    </p>
-    <button class="close-btn" onclick="tutup()">Tutup</button>
-  </div>`;
-  popup.style.display='flex';
-  document.body.classList.add('popup-active');
-  return;
- }
-
- currentGame = gameFix;
- currentStatus = 'ready';
-
- apply();
- window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 
