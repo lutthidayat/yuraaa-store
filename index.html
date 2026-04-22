@@ -168,48 +168,6 @@ body.popup-active .grid{
   }
 }
 
-/* ===================== */
-/* 🔥 JIKA SUDAH 2 KOLOM */
-/* (AUTO AKTIF TANPA RUSAK) */
-/* ===================== */
-
-@media (min-width:1024px){
-  .popup-box{
-    display:flex;
-    gap:28px;
-    text-align:left;
-  }
-
-  .popup-left .slider{
-  flex-direction:column;
-  gap:10px;
-}
-  .popup-left img{
-    width:100%;
-    height:auto;
-    border-radius:14px;
-  }
-
-  .popup-right{
-    flex:1;
-    overflow-y:auto;
-    padding-left:5px;
-  }
-
-  .popup-right h3{
-    font-size:22px;
-  }
-
-  .popup-right .price{
-    font-size:20px;
-    margin:8px 0;
-  }
-
-  .popup-right .btn{
-    padding:12px;
-    font-size:14px;
-  }
-}
 
 /* ===================== */
 /* 🔥 SCROLL LEBIH HALUS */
@@ -239,46 +197,50 @@ body.popup-active .grid{
   backdrop-filter:blur(6px);
 }
 
-/* 🔥 GAMBAR STICKY */
-@media (min-width:1024px){
-  .popup-left{
-    position:sticky;
-    top:20px;
-    align-self:flex-start;
-  }
-}
-
-.wa:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 15px #22c55e;
-}
-
-.popup-box{
-  border:1px solid #1e293b;
-}
-
-.btn{
-  transition:.2s;
-}
-
-.card{
-  overflow:hidden;
-}
+/* ===================== */
+/* 🔥 FIX POPUP DESKTOP */
+/* ===================== */
 
 @media (min-width:1024px){
 
   .popup-box{
-    width:90%;
-    max-width:1100px; /* INI YANG BIKIN BESAR */
-
-    padding:30px;
-    border-radius:20px;
+    width:95%;
+    max-width:1100px;
 
     display:flex;
     gap:30px;
 
+    padding:30px;
+    border-radius:20px;
+
     text-align:left;
     max-height:90vh;
+  }
+
+  .popup-left{
+    flex:1;
+    min-width:0;
+    position:sticky;
+    top:20px;
+  }
+
+  .popup-left .slider{
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .popup-left img{
+    width:100%;
+    height:240px;
+    object-fit:cover;
+    border-radius:14px;
+  }
+
+  .popup-right{
+    flex:1;
+    min-width:0;
+    overflow-y:auto;
+    padding-left:10px;
   }
 
 }
