@@ -305,7 +305,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
   gridEl = document.querySelector('.grid');
   popupEl = document.getElementById('popup');
 
-  const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1");
+  const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List");
   allData = Object.freeze(await res.json());
 
   document.getElementById('loading').style.display='none';
