@@ -11,58 +11,20 @@ body{margin:0;font-family:sans-serif;background:#020617;color:white}
 
 /* LOGIN */
 #loginPage{
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:#020617;
-display:flex;
-align-items:center;
-justify-content:center;
-z-index:9999;
+position:fixed;top:0;left:0;width:100%;height:100%;
+background:#020617;display:flex;align-items:center;justify-content:center;z-index:9999;
 }
-
-.login-box{
-background:#0f172a;
-padding:25px;
-border-radius:16px;
-width:90%;
-max-width:300px;
-text-align:center;
-}
+.login-box{background:#0f172a;padding:25px;border-radius:16px;width:90%;max-width:300px;text-align:center}
 
 /* CARD */
-.card{
-margin:12px;
-padding:16px;
-border-radius:16px;
-background:rgba(255,255,255,0.05);
-}
-
-.balance{
-font-size:26px;
-color:#22c55e;
-font-weight:bold;
-}
+.card{margin:12px;padding:16px;border-radius:16px;background:rgba(255,255,255,0.05)}
+.balance{font-size:26px;color:#22c55e;font-weight:bold}
 
 /* LIST */
-.item{
-display:flex;
-justify-content:space-between;
-padding:10px;
-margin-top:8px;
-background:rgba(255,255,255,0.05);
-border-radius:10px;
-}
+.item{display:flex;justify-content:space-between;padding:10px;margin-top:8px;background:rgba(255,255,255,0.05);border-radius:10px}
 
 /* INPUT */
-input,select,button{
-width:100%;
-padding:10px;
-margin-top:8px;
-border-radius:10px;
-border:none;
-}
-
+input,select,button{width:100%;padding:10px;margin-top:8px;border-radius:10px;border:none}
 button{background:#22c55e;color:white}
 
 /* TAB */
@@ -71,57 +33,29 @@ button{background:#22c55e;color:white}
 
 /* NAV */
 .nav{
-position:fixed;
-bottom:0;
-width:100%;
-display:flex;
-justify-content:space-around;
-background:#020617;
-padding:10px;
+position:fixed;bottom:0;width:100%;
+display:flex;justify-content:space-around;
+background:#020617;padding:10px;border-top:1px solid rgba(255,255,255,0.1)
 }
-
-/* FAB */
-.fab{
-position:fixed;
-bottom:80px;
-right:20px;
-width:60px;height:60px;
-border-radius:50%;
-background:#22c55e;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:30px;
-}
+.nav div{opacity:0.5}
+.nav .active{opacity:1;color:#22c55e}
 
 /* PROGRESS */
 .progress{
-width:150px;height:150px;
-border-radius:50%;
-margin:auto;
-display:flex;
-align-items:center;
-justify-content:center;
-background:conic-gradient(#22c55e 0%,#1e293b 0%);
+width:150px;height:150px;border-radius:50%;
+margin:auto;display:flex;align-items:center;justify-content:center;
+background:conic-gradient(#22c55e 0%,#1e293b 0%)
 }
 
-/* MODAL */
-.modal{
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:rgba(0,0,0,0.7);
-display:none;
-align-items:center;
-justify-content:center;
+/* FILTER */
+.filter{
+display:flex;gap:8px;margin-top:10px
 }
-
-.modal-box{
-background:#111827;
-padding:20px;
-border-radius:15px;
-width:90%;
+.filter button{
+flex:1;
+background:#1e293b
 }
+.filter .active{background:#22c55e}
 </style>
 </head>
 
@@ -130,39 +64,52 @@ width:90%;
 <!-- LOGIN -->
 <div id="loginPage">
 <div class="login-box">
-<h2>🔐 Admin Login</h2>
+<h2>🔐 Admin</h2>
 <input id="passwordInput" type="password" placeholder="Password">
 <button onclick="checkLogin()">Masuk</button>
-<p id="errorText" style="color:red;display:none">Password salah!</p>
+<p id="errorText" style="color:red;display:none">Password salah</p>
 </div>
 </div>
 
-<!-- DASHBOARD -->
+<!-- BALANCE -->
 <div class="card">
 <div class="balance" id="balance">Rp0</div>
 </div>
 
+<!-- HOME -->
 <div id="home" class="tab active">
 <div class="card">
 <canvas id="chart"></canvas>
 </div>
+</div>
 
+<!-- LIST -->
+<div id="listTab" class="tab">
 <div class="card">
 <h3>Riwayat</h3>
+
+<div class="filter">
+<button onclick="setFilter('all',this)" class="active">Semua</button>
+<button onclick="setFilter('income',this)">Masuk</button>
+<button onclick="setFilter('expense',this)">Keluar</button>
+</div>
+
 <div id="list"></div>
+
 </div>
 </div>
 
+<!-- TARGET -->
 <div id="targetTab" class="tab">
-<div class="card">
-<input id="target" placeholder="Target uang">
+<div class="card" style="text-align:center">
+<h3>🎯 Target</h3>
+<input id="target" placeholder="Target">
 <div class="progress" id="progress">0%</div>
 </div>
 </div>
 
-<!-- MODAL -->
-<div class="modal" id="modal">
-<div class="modal-box">
+<!-- FORM -->
+<div class="card">
 
 <select id="type">
 <option value="income">Pemasukan</option>
@@ -170,69 +117,64 @@ width:90%;
 </select>
 
 <input id="desc" placeholder="Deskripsi">
-<input id="amount" type="number" placeholder="Jumlah">
-
-<select id="category">
-<option>Jual Akun</option>
-<option>Topup</option>
-<option>Pribadi</option>
-</select>
+<input id="amount" type="number" placeholder="Nominal">
 
 <button onclick="addData()">Simpan</button>
-<button onclick="closeModal()">Tutup</button>
 
 </div>
-</div>
 
-<div class="fab" onclick="openModal()">+</div>
-
+<!-- NAV -->
 <div class="nav">
-<div onclick="switchTab('home')">🏠</div>
-<div onclick="switchTab('targetTab')">🎯</div>
+<div class="active" onclick="switchTab('home',this)">🏠</div>
+<div onclick="switchTab('listTab',this)">📋</div>
+<div onclick="switchTab('targetTab',this)">🎯</div>
 </div>
 
 <script>
 
 // LOGIN
 function checkLogin(){
-    let pass = document.getElementById("passwordInput").value;
-
-    if(pass === "123"){ // ganti password
-        document.getElementById("loginPage").style.display="none";
-    }else{
-        document.getElementById("errorText").style.display="block";
-        setTimeout(()=>{
-            window.location.href="index.html";
-        },1500);
-    }
+let pass=document.getElementById("passwordInput").value;
+if(pass==="123"){
+document.getElementById("loginPage").style.display="none";
+}else{
+errorText.style.display="block";
+setTimeout(()=>window.location.href="index.html",1500);
+}
 }
 
 // DATA
-let data = JSON.parse(localStorage.getItem("data")) || [];
-let targetVal = localStorage.getItem("target") || 0;
+let data=JSON.parse(localStorage.getItem("data"))||[];
+let targetVal=localStorage.getItem("target")||0;
+let filter="all";
 
-const list = document.getElementById("list");
-const balance = document.getElementById("balance");
-const progress = document.getElementById("progress");
-const targetInput = document.getElementById("target");
-const chartCanvas = document.getElementById("chart");
+const list=document.getElementById("list");
+const balance=document.getElementById("balance");
+const progress=document.getElementById("progress");
+const targetInput=document.getElementById("target");
+const chartCanvas=document.getElementById("chart");
 
-targetInput.value = targetVal;
+targetInput.value=targetVal;
 
 // TAB
-function switchTab(id){
+function switchTab(id,el){
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
 document.getElementById(id).classList.add("active");
+
+document.querySelectorAll(".nav div").forEach(n=>n.classList.remove("active"));
+el.classList.add("active");
 }
 
-// MODAL
-function openModal(){modal.style.display="flex";}
-function closeModal(){modal.style.display="none";}
+// FILTER
+function setFilter(f,el){
+filter=f;
+document.querySelectorAll(".filter button").forEach(b=>b.classList.remove("active"));
+el.classList.add("active");
+render();
+}
 
 // FORMAT
-function rp(x){
-return "Rp"+(x||0).toLocaleString("id-ID");
-}
+function rp(x){return "Rp"+(x||0).toLocaleString("id-ID");}
 
 // RENDER
 function render(){
@@ -243,14 +185,15 @@ data.forEach(d=>{
 if(d.type=="income") income+=d.amount;
 else expense+=d.amount;
 
+if(filter==="all" || filter===d.type){
 let el=document.createElement("div");
 el.className="item";
 el.innerHTML=
-"<div><b>"+d.desc+"</b><br><small>"+d.category+"</small></div>"
+"<div>"+d.desc+"</div>"
 +"<div style='color:"+(d.type=="income"?"#22c55e":"#ef4444")+"'>"
 +(d.type=="income"?"+":"-")+" "+rp(d.amount)+"</div>";
-
 list.appendChild(el);
+}
 });
 
 let total=income-expense;
@@ -261,7 +204,7 @@ if(window.chart) chart.destroy();
 window.chart=new Chart(chartCanvas,{
 type:"bar",
 data:{
-labels:["Masuk","Keluar"],
+labels:["Pemasukan","Pengeluaran"],
 datasets:[{data:[income,expense]}]
 }
 });
@@ -282,14 +225,14 @@ function addData(){
 let d={
 type:type.value,
 desc:desc.value,
-amount:parseInt(amount.value),
-category:category.value
+amount:parseInt(amount.value)
 };
 
 if(!d.desc||!d.amount)return alert("Isi dulu!");
 
 data.push(d);
-closeModal();
+desc.value="";
+amount.value="";
 render();
 }
 
