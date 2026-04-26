@@ -4,31 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Yuraaa Finance</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 body{background:#020617;color:white}
 
+/* LOGIN */
+#loginPage{
+position:fixed;top:0;left:0;width:100%;height:100%;
+display:flex;align-items:center;justify-content:center;
+background:#020617;z-index:9999;
+}
+.login-box{
+background:#0f172a;padding:25px;border-radius:16px;
+width:90%;max-width:300px;text-align:center;
+}
+
 /* CARD */
 .card{
-margin:12px;
-padding:15px;
-border-radius:16px;
+margin:12px;padding:15px;border-radius:16px;
 background:rgba(255,255,255,0.05);
-backdrop-filter:blur(10px);
 }
 
 /* BUTTON */
 button{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:none;
-border-radius:10px;
-background:linear-gradient(135deg,#22c55e,#16a34a);
-color:black;
-font-weight:bold;
+width:100%;padding:12px;margin-top:10px;
+border:none;border-radius:10px;
+background:#22c55e;color:black;font-weight:bold;
 }
 
 /* NAV */
@@ -46,12 +48,9 @@ background:#020617;padding:10px;
 
 /* LIST */
 .item{
-display:flex;
-justify-content:space-between;
-padding:12px;
-margin-top:8px;
-background:#0f172a;
-border-radius:10px;
+display:flex;justify-content:space-between;
+padding:12px;margin-top:8px;
+background:#0f172a;border-radius:10px;
 }
 
 /* TARGET */
@@ -63,78 +62,57 @@ margin-top:10px;
 }
 
 .progress-bar{
-height:6px;
-background:#1e293b;
-border-radius:10px;
-margin-top:6px;
+height:6px;background:#1e293b;
+border-radius:10px;margin-top:6px;
 overflow:hidden;
 }
 .progress-fill{
-height:100%;
-background:#22c55e;
+height:100%;background:#22c55e;
 }
 
 /* SUMMARY */
 .summary{
-display:flex;
-justify-content:space-between;
-margin-bottom:10px;
+display:flex;justify-content:space-between;margin-bottom:10px;
 }
 .summary div{
-background:#0f172a;
-padding:10px;
-border-radius:10px;
-width:32%;
-text-align:center;
-font-size:12px;
+background:#0f172a;padding:10px;border-radius:10px;
+width:32%;text-align:center;font-size:12px;
 }
 
 /* MODAL */
 #modal{
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
+position:fixed;top:0;left:0;width:100%;height:100%;
 background:rgba(0,0,0,0.6);
-display:none;
-align-items:center;
-justify-content:center;
+display:none;align-items:center;justify-content:center;
 z-index:999;
 }
 .modal-box{
-background:#0f172a;
-padding:20px;
-border-radius:15px;
-width:85%;
-max-width:320px;
-animation:fade 0.3s;
-}
-@keyframes fade{
-from{opacity:0;transform:translateY(20px)}
-to{opacity:1}
+background:#0f172a;padding:20px;border-radius:15px;
+width:85%;max-width:320px;
 }
 
 input,select{
-width:100%;
-padding:10px;
-margin-top:10px;
-border-radius:10px;
-border:none;
-background:#020617;
-color:white;
-outline:none;
+width:100%;padding:10px;margin-top:10px;
+border-radius:10px;border:none;
+background:#020617;color:white;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HOME -->
-<div id="home" class="tab active">
-<div class="card">
-<h3>📊 Statistik</h3>
-<canvas id="chart"></canvas>
+<!-- LOGIN -->
+<div id="loginPage">
+<div class="login-box">
+<h2>🔐 Admin</h2>
+<input id="passwordInput" type="password" placeholder="Password">
+<button onclick="login()">Masuk</button>
+<p id="error" style="color:red;display:none">Salah</p>
+</div>
 </div>
 
+<!-- HOME -->
+<div id="home" class="tab active">
 <div class="card">
 <select id="type">
 <option value="income">Pemasukan</option>
@@ -185,7 +163,7 @@ outline:none;
 
 <h3 id="modalTitle"></h3>
 
-<input id="modalName" placeholder="Nama (optional)">
+<input id="modalName" placeholder="Nama (opsional)">
 <input id="modalInput" type="number" placeholder="Nominal">
 
 <button onclick="submitModal()">Simpan</button>
@@ -195,6 +173,13 @@ outline:none;
 </div>
 
 <script>
+
+// LOGIN
+function login(){
+if(passwordInput.value==="123"){
+loginPage.style.display="none";
+}else error.style.display="block";
+}
 
 // DATA
 let data=JSON.parse(localStorage.getItem("data"))||[];
@@ -231,15 +216,12 @@ modal.style.display="none";
 function submitModal(){
 let val=parseInt(modalInput.value);
 let name=modalName.value;
-
 if(!val)return;
-
 modalCallback(val,name);
 closeModal();
 }
 
-// ================= DATA =================
-
+// DATA INPUT
 function addData(){
 let d={
 type:type.value,
@@ -252,8 +234,7 @@ desc.value="";amount.value="";
 render();
 }
 
-// ================= TARGET =================
-
+// TARGET
 function openAddTarget(){
 openModal("Tambah Target",(val,name)=>{
 targets.push({
@@ -274,6 +255,14 @@ renderTargets();
 });
 }
 
+function deleteTarget(i){
+if(confirm("Hapus target ini?")){
+targets.splice(i,1);
+saveTargets();
+renderTargets();
+}
+}
+
 function saveTargets(){
 localStorage.setItem("targets",JSON.stringify(targets));
 }
@@ -289,7 +278,10 @@ el.className="target-box";
 el.innerHTML=`
 <div style="display:flex;justify-content:space-between">
 <b>${t.name}</b>
-<span onclick="event.stopPropagation();addMoney(${i})" style="color:#22c55e;font-size:18px">+</span>
+<div>
+<span onclick="event.stopPropagation();addMoney(${i})" style="margin-right:10px;color:#22c55e">➕</span>
+<span onclick="event.stopPropagation();deleteTarget(${i})" style="color:#ef4444">🗑</span>
+</div>
 </div>
 
 <small>${rp(t.current)} / ${rp(t.target)} (${Math.floor(percent)}%)</small>
@@ -303,8 +295,7 @@ targetList.appendChild(el);
 });
 }
 
-// ================= RENDER =================
-
+// RENDER
 function render(){
 
 let income=0,expense=0;
@@ -327,20 +318,6 @@ list.appendChild(el);
 sumIncome.innerHTML=rp(income)+"<br>Masuk";
 sumExpense.innerHTML=rp(expense)+"<br>Keluar";
 sumTotal.innerHTML=rp(income-expense)+"<br>Saldo";
-
-// chart
-if(window.chart) chart.destroy();
-window.chart=new Chart(chart,{
-type:"bar",
-data:{
-labels:["Masuk","Keluar"],
-datasets:[{
-data:[income,expense],
-backgroundColor:["#22c55e","#ef4444"]
-}]
-},
-options:{plugins:{legend:{display:false}}}
-});
 
 localStorage.setItem("data",JSON.stringify(data));
 }
