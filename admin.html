@@ -10,25 +10,13 @@
 body{background:#020617;color:white}
 
 /* BACK */
-.back{position:fixed;top:15px;left:15px;z-index:999;}
+.back{position:fixed;top:12px;left:12px;z-index:1000;}
 .back button{
-background:#1e293b;color:white;border:none;
-padding:8px 12px;border-radius:10px;font-size:12px;opacity:0.9;
+background:rgba(30,41,59,0.8);
+backdrop-filter:blur(10px);
+color:white;border:none;padding:6px 10px;
+border-radius:8px;font-size:11px;
 }
-
-/* LOGOUT */
-.logout{
-position:fixed;
-top:15px;
-right:15px;
-z-index:999;
-background:#1e293b;
-padding:8px;
-border-radius:10px;
-font-size:12px;
-opacity:0.7;
-}
-.logout:active{opacity:0.4}
 
 /* LOGIN */
 #loginPage{
@@ -40,18 +28,26 @@ background:#020617;z-index:9999;
 background:#0f172a;padding:25px;border-radius:16px;
 width:90%;max-width:300px;text-align:center;
 }
-
-/* PIN */
 .pin-input{
-text-align:center;
-font-size:22px;
-letter-spacing:8px;
+text-align:center;font-size:22px;letter-spacing:8px;
 }
 
 /* CARD */
 .card{
 margin:12px;padding:15px;border-radius:16px;
 background:rgba(255,255,255,0.05);
+position:relative;
+}
+
+/* LOGOUT (ONLY HOME) */
+.logout{
+position:absolute;
+top:10px;
+right:10px;
+background:#1e293b;
+padding:6px 10px;
+border-radius:8px;
+font-size:11px;
 }
 
 /* INPUT */
@@ -99,23 +95,13 @@ background:#0f172a;border-radius:10px;
 
 /* SUMMARY */
 .summary-box{
-display:flex;
-gap:10px;
-margin:10px;
+display:flex;gap:10px;margin:10px;
 }
 .summary-item{
-flex:1;
-background:#0f172a;
-padding:12px;
-border-radius:12px;
-text-align:center;
-font-size:12px;
+flex:1;background:#0f172a;padding:12px;
+border-radius:12px;text-align:center;font-size:12px;
 }
-.summary-item b{
-display:block;
-font-size:14px;
-margin-bottom:4px;
-}
+.summary-item b{display:block;font-size:14px;margin-bottom:4px;}
 .income{color:#22c55e;}
 .expense{color:#ef4444;}
 .balance-txt{color:#38bdf8;}
@@ -127,39 +113,25 @@ background:#0f172a;padding:12px;border-radius:12px;margin-top:10px;
 .progress-bar{
 height:6px;background:#1e293b;border-radius:10px;margin-top:6px;overflow:hidden;
 }
-.progress-fill{
-height:100%;background:#22c55e;
-}
+.progress-fill{height:100%;background:#22c55e;}
 
 /* MODAL */
 #modal{
 position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.6);
+background:rgba(0,0,0,0.5);
+backdrop-filter:blur(6px);
 display:none;align-items:center;justify-content:center;
-animation:fadeIn 0.2s;
 }
 .modal-box{
-background:#0f172a;
-padding:20px;
-border-radius:16px;
-width:85%;
-max-width:320px;
-animation:scaleUp 0.2s;
+background:rgba(15,23,42,0.9);
+padding:20px;border-radius:16px;
+width:85%;max-width:320px;
 }
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes scaleUp{from{transform:scale(0.9)}to{transform:scale(1)}}
 </style>
 </head>
 
 <body>
 
-<!-- BACK -->
-<div class="back">
-<button onclick="goBack()">⬅ Kembali</button>
-</div>
-
-<!-- LOGOUT -->
-<div class="logout" id="logoutBtn" onclick="logout()">⎋</div>
 
 <!-- LOGIN -->
 <div id="loginPage">
@@ -172,9 +144,12 @@ animation:scaleUp 0.2s;
 
 <!-- HOME -->
 <div id="home" class="tab active">
-<div class="balance" id="balance">Rp 0</div>
 
 <div class="card">
+<div class="logout" onclick="logout()">⎋</div>
+
+<div class="balance" id="balance">Rp 0</div>
+
 <select id="type">
 <option value="income">Pemasukan</option>
 <option value="expense">Pengeluaran</option>
@@ -190,7 +165,8 @@ animation:scaleUp 0.2s;
 <!-- TARGET -->
 <div id="targetTab" class="tab">
 <div class="card">
-<h3>🎯 Target</h3>
+<h3>🎯 Target Tabungan</h3>
+
 <div id="targetList"></div>
 <button onclick="openAddTarget()">+ Tambah Target</button>
 </div>
@@ -201,18 +177,13 @@ animation:scaleUp 0.2s;
 
 <div class="summary-box">
 <div class="summary-item income">
-<b id="sumIncome">Rp 0</b>
-Masuk
+<b id="sumIncome">Rp 0</b>Masuk
 </div>
-
 <div class="summary-item expense">
-<b id="sumExpense">Rp 0</b>
-Keluar
+<b id="sumExpense">Rp 0</b>Keluar
 </div>
-
 <div class="summary-item balance-txt">
-<b id="sumBalance">Rp 0</b>
-Saldo
+<b id="sumBalance">Rp 0</b>Saldo
 </div>
 </div>
 
@@ -220,10 +191,8 @@ Saldo
 <div id="list"></div>
 <button class="reset" onclick="resetAll()">Reset Semua</button>
 </div>
-
 </div>
 
-<!-- NAV -->
 <div class="nav">
 <div class="active" onclick="switchTab('home',this)">🏠</div>
 <div onclick="switchTab('targetTab',this)">🎯</div>
@@ -234,43 +203,40 @@ Saldo
 <div id="modal">
 <div class="modal-box">
 <h3 id="modalTitle"></h3>
+
+<input id="modalName" placeholder="Tujuan">
 <input id="modalInput" placeholder="Rp 0">
-<div style="display:flex;gap:10px;margin-top:10px">
-<button id="confirmBtn" style="background:#ef4444;color:white">Konfirmasi</button>
+
+<button id="confirmBtn">Simpan</button>
 <button onclick="closeModal()" style="background:#1e293b;color:white">Batal</button>
-</div>
 </div>
 </div>
 
 <script>
 
-const SHOP_URL = "index.html";
+const SHOP_URL="index.html";
 
-// LOGIN
 function login(){
 if(pin.value==="1234"){
 loginPage.style.display="none";
 }else{
-window.location.href = SHOP_URL;
+window.location.href=SHOP_URL;
 }
 }
 
-// BACK
-function goBack(){ window.location.href = SHOP_URL; }
+function goBack(){window.location.href=SHOP_URL;}
+function logout(){loginPage.style.display="flex";}
 
-// LOGOUT
-function logout(){ loginPage.style.display="flex"; }
-
-// FORMAT Rp
+// FORMAT
 function formatRp(v){
 v=v.replace(/[^0-9]/g,"");
-return "Rp " + (v?parseInt(v).toLocaleString("id-ID"):"0");
+return "Rp "+(v?parseInt(v).toLocaleString("id-ID"):"0");
 }
 function getNum(v){
 return parseInt(v.replace(/[^0-9]/g,""))||0;
 }
 function rp(x){
-return "Rp " + (x||0).toLocaleString("id-ID");
+return "Rp "+(x||0).toLocaleString("id-ID");
 }
 
 amount.oninput=()=>amount.value=formatRp(amount.value);
@@ -289,29 +255,26 @@ document.getElementById(id).classList.add("active");
 
 document.querySelectorAll(".nav div").forEach(n=>n.classList.remove("active"));
 el.classList.add("active");
-
-updateLogout();
-}
-
-// SHOW LOGOUT ONLY ON HOME
-function updateLogout(){
-let activeTab=document.querySelector(".tab.active").id;
-logoutBtn.style.display = (activeTab==="home") ? "block" : "none";
 }
 
 // MODAL
-function openModal(title){
+function openModal(title, withName=false){
 modal.style.display="flex";
 modalTitle.innerText=title;
+
 modalInput.value="";
-modalInput.style.display="block";
+modalName.value="";
+
+modalName.style.display = withName ? "block" : "none";
 }
+
 function closeModal(){modal.style.display="none";}
 
 // RESET
 function resetAll(){
 mode="reset";
 openModal("Reset semua data?");
+modalName.style.display="none";
 modalInput.style.display="none";
 }
 
@@ -330,7 +293,11 @@ renderTargets();
 }
 
 if(mode==="addTarget"){
-targets.push({name:"Target "+(targets.length+1),target:getNum(modalInput.value),current:0});
+targets.push({
+name: modalName.value || "Target",
+target:getNum(modalInput.value),
+current:0
+});
 renderTargets();
 }
 
@@ -340,11 +307,32 @@ renderTargets();
 }
 
 closeModal();
+};
+
+// TARGET
+function openAddTarget(){
+mode="addTarget";
+openModal("Tambah Target", true);
 }
 
-// DATA
+function addMoney(i){
+mode="addMoney";
+selectedIndex=i;
+openModal("Tambah uang");
+modalName.style.display="none";
+}
+
+function deleteTarget(i){
+mode="delete";
+selectedIndex=i;
+openModal("Hapus target?");
+modalName.style.display="none";
+modalInput.style.display="none";
+}
+
+// ADD DATA
 function addData(){
-if(!desc.value || !amount.value)return;
+if(!desc.value||!amount.value)return;
 data.push({
 type:type.value,
 desc:desc.value,
@@ -354,42 +342,31 @@ desc.value="";amount.value="";
 render();
 }
 
-// TARGET
-function openAddTarget(){
-mode="addTarget";
-openModal("Tambah Target");
-}
-function addMoney(i){
-mode="addMoney";
-selectedIndex=i;
-openModal("Tambah Uang");
-}
-function deleteTarget(i){
-mode="delete";
-selectedIndex=i;
-openModal("Hapus target?");
-modalInput.style.display="none";
-}
-
 // RENDER TARGET
 function renderTargets(){
 targetList.innerHTML="";
 targets.forEach((t,i)=>{
 let p=Math.min((t.current/t.target)*100,100);
+
 targetList.innerHTML+=`
 <div class="target-box">
 <div style="display:flex;justify-content:space-between">
-<b>${t.name}</b>
 <div>
-<span onclick="addMoney(${i})">➕</span>
-<span onclick="deleteTarget(${i})">🗑</span>
-</div>
-</div>
+<b>${t.name}</b>
 <small>${rp(t.current)} / ${rp(t.target)}</small>
+</div>
+
+<div style="display:flex;gap:5px">
+<button onclick="addMoney(${i})" style="background:#22c55e">+</button>
+<button onclick="deleteTarget(${i})" style="background:#ef4444">×</button>
+</div>
+</div>
+
 <div class="progress-bar">
 <div class="progress-fill" style="width:${p}%"></div>
 </div>
-</div>`;
+</div>
+`;
 });
 localStorage.setItem("targets",JSON.stringify(targets));
 }
@@ -415,7 +392,6 @@ ${d.type=="income"?"+":"-"} ${rp(d.amount)}
 sumIncome.innerText=rp(income);
 sumExpense.innerText=rp(expense);
 sumBalance.innerText=rp(income-expense);
-
 balance.innerText=rp(income-expense);
 
 localStorage.setItem("data",JSON.stringify(data));
@@ -424,7 +400,6 @@ localStorage.setItem("data",JSON.stringify(data));
 // INIT
 render();
 renderTargets();
-updateLogout();
 
 </script>
 
