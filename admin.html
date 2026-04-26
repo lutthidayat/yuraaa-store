@@ -97,6 +97,29 @@ padding:12px;margin-top:8px;
 background:#0f172a;border-radius:10px;
 }
 
+/* SUMMARY */
+.summary-box{
+display:flex;
+gap:10px;
+margin:10px;
+}
+.summary-item{
+flex:1;
+background:#0f172a;
+padding:12px;
+border-radius:12px;
+text-align:center;
+font-size:12px;
+}
+.summary-item b{
+display:block;
+font-size:14px;
+margin-bottom:4px;
+}
+.income{color:#22c55e;}
+.expense{color:#ef4444;}
+.balance-txt{color:#38bdf8;}
+
 /* TARGET */
 .target-box{
 background:#0f172a;padding:12px;border-radius:12px;margin-top:10px;
@@ -136,7 +159,7 @@ animation:scaleUp 0.2s;
 </div>
 
 <!-- LOGOUT -->
-<div class="logout" onclick="logout()">⎋</div>
+<div class="logout" id="logoutBtn" onclick="logout()">⎋</div>
 
 <!-- LOGIN -->
 <div id="loginPage">
@@ -175,10 +198,29 @@ animation:scaleUp 0.2s;
 
 <!-- LIST -->
 <div id="listTab" class="tab">
+
+<div class="summary-box">
+<div class="summary-item income">
+<b id="sumIncome">Rp 0</b>
+Masuk
+</div>
+
+<div class="summary-item expense">
+<b id="sumExpense">Rp 0</b>
+Keluar
+</div>
+
+<div class="summary-item balance-txt">
+<b id="sumBalance">Rp 0</b>
+Saldo
+</div>
+</div>
+
 <div class="card">
 <div id="list"></div>
 <button class="reset" onclick="resetAll()">Reset Semua</button>
 </div>
+
 </div>
 
 <!-- NAV -->
@@ -192,9 +234,7 @@ animation:scaleUp 0.2s;
 <div id="modal">
 <div class="modal-box">
 <h3 id="modalTitle"></h3>
-
 <input id="modalInput" placeholder="Rp 0">
-
 <div style="display:flex;gap:10px;margin-top:10px">
 <button id="confirmBtn" style="background:#ef4444;color:white">Konfirmasi</button>
 <button onclick="closeModal()" style="background:#1e293b;color:white">Batal</button>
@@ -216,14 +256,10 @@ window.location.href = SHOP_URL;
 }
 
 // BACK
-function goBack(){
-window.location.href = SHOP_URL;
-}
+function goBack(){ window.location.href = SHOP_URL; }
 
 // LOGOUT
-function logout(){
-loginPage.style.display="flex";
-}
+function logout(){ loginPage.style.display="flex"; }
 
 // FORMAT Rp
 function formatRp(v){
@@ -250,8 +286,17 @@ let mode=null,selectedIndex=null;
 function switchTab(id,el){
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
 document.getElementById(id).classList.add("active");
+
 document.querySelectorAll(".nav div").forEach(n=>n.classList.remove("active"));
 el.classList.add("active");
+
+updateLogout();
+}
+
+// SHOW LOGOUT ONLY ON HOME
+function updateLogout(){
+let activeTab=document.querySelector(".tab.active").id;
+logoutBtn.style.display = (activeTab==="home") ? "block" : "none";
 }
 
 // MODAL
@@ -314,13 +359,11 @@ function openAddTarget(){
 mode="addTarget";
 openModal("Tambah Target");
 }
-
 function addMoney(i){
 mode="addMoney";
 selectedIndex=i;
 openModal("Tambah Uang");
 }
-
 function deleteTarget(i){
 mode="delete";
 selectedIndex=i;
@@ -355,6 +398,7 @@ localStorage.setItem("targets",JSON.stringify(targets));
 function render(){
 let income=0,expense=0;
 list.innerHTML="";
+
 data.forEach(d=>{
 if(d.type=="income") income+=d.amount;
 else expense+=d.amount;
@@ -368,13 +412,19 @@ ${d.type=="income"?"+":"-"} ${rp(d.amount)}
 </div>`;
 });
 
+sumIncome.innerText=rp(income);
+sumExpense.innerText=rp(expense);
+sumBalance.innerText=rp(income-expense);
+
 balance.innerText=rp(income-expense);
+
 localStorage.setItem("data",JSON.stringify(data));
 }
 
 // INIT
 render();
 renderTargets();
+updateLogout();
 
 </script>
 
