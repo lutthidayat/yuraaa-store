@@ -8,11 +8,7 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
-
-body{
-background:radial-gradient(circle at top,#0f172a,#020617);
-color:white;
-}
+body{background:#020617;color:white}
 
 /* LOGIN */
 #loginPage{
@@ -20,63 +16,28 @@ position:fixed;top:0;left:0;width:100%;height:100%;
 display:flex;align-items:center;justify-content:center;
 background:#020617;z-index:9999;
 }
-
 .login-box{
-background:rgba(255,255,255,0.05);
-padding:25px;border-radius:16px;
-width:90%;max-width:300px;
-backdrop-filter:blur(10px);
-box-shadow:0 0 30px rgba(34,197,94,0.2);
+background:#0f172a;padding:25px;border-radius:16px;width:90%;max-width:300px;text-align:center;
 }
 
 /* BALANCE */
 .balance{
-text-align:center;
-font-size:32px;
-margin:15px 0;
-color:#22c55e;
-text-shadow:0 0 20px rgba(34,197,94,0.7);
+text-align:center;font-size:30px;color:#22c55e;margin:15px;
+text-shadow:0 0 15px #22c55e;
 }
 
 /* CARD */
 .card{
-margin:12px;
-padding:15px;
-border-radius:16px;
-background:rgba(255,255,255,0.04);
-border:1px solid rgba(34,197,94,0.2);
-backdrop-filter:blur(10px);
-}
-
-/* INPUT */
-input,select{
-width:100%;
-padding:10px;
-margin-top:8px;
-border-radius:10px;
-border:none;
-background:#0f172a;
-color:white;
-outline:none;
-}
-
-input:focus{
-box-shadow:0 0 10px #22c55e;
+margin:12px;padding:15px;border-radius:16px;
+background:rgba(255,255,255,0.05);
 }
 
 /* BUTTON */
 button{
-width:100%;
-padding:12px;
-margin-top:10px;
-border-radius:10px;
-border:none;
-background:linear-gradient(135deg,#22c55e,#38bdf8);
-color:black;
-font-weight:bold;
-box-shadow:0 0 15px rgba(34,197,94,0.6);
+width:100%;padding:10px;margin-top:10px;
+border:none;border-radius:10px;
+background:#22c55e;color:black;font-weight:bold;
 }
-button:active{transform:scale(0.95)}
 
 /* TAB */
 .tab{display:none}
@@ -84,69 +45,27 @@ button:active{transform:scale(0.95)}
 
 /* NAV */
 .nav{
-position:fixed;
-bottom:0;width:100%;
+position:fixed;bottom:0;width:100%;
 display:flex;justify-content:space-around;
-background:#020617;
-padding:10px;
-border-top:1px solid #1e293b;
+background:#020617;padding:10px;
+}
+.nav div{opacity:0.5}
+.nav .active{opacity:1;color:#22c55e}
+
+/* TARGET LIST */
+.target-item{
+background:#0f172a;padding:10px;border-radius:10px;margin-top:8px;
+display:flex;justify-content:space-between;
 }
 
-.nav div{
-opacity:0.5;
-font-size:18px;
-}
-
-.nav .active{
-opacity:1;
-color:#22c55e;
-text-shadow:0 0 10px #22c55e;
-}
-
-/* LIST */
-.item{
-display:flex;
-justify-content:space-between;
-padding:10px;
-margin-top:8px;
-background:#0f172a;
-border-left:3px solid #22c55e;
-border-radius:8px;
-font-size:14px;
-animation:fade 0.3s ease;
-}
-
-/* FILTER */
-.filter{
-display:flex;gap:8px;margin-top:10px;
-}
-
-.filter button{
-flex:1;background:#1e293b;
-}
-
-.filter .active{
-background:#22c55e;color:black;
-}
-
-/* PROGRESS */
+/* HUD */
 .progress{
-width:170px;height:170px;
-border-radius:50%;
+width:180px;height:180px;border-radius:50%;
 margin:20px auto;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:22px;
-font-weight:bold;
+display:flex;align-items:center;justify-content:center;
+font-size:20px;
 background:conic-gradient(#22c55e 0%,#1e293b 0%);
-box-shadow:0 0 30px rgba(34,197,94,0.7);
-}
-
-/* ANIMATION */
-@keyframes fade{
-from{opacity:0;transform:translateY(10px);}
-to{opacity:1;transform:translateY(0);}
+box-shadow:0 0 25px #22c55e;
 }
 </style>
 </head>
@@ -158,186 +77,144 @@ to{opacity:1;transform:translateY(0);}
 <div class="login-box">
 <h2>🔐 ADMIN</h2>
 <input id="passwordInput" type="password" placeholder="Password">
-<button onclick="checkLogin()">Masuk</button>
-<p id="errorText" style="color:red;display:none">Password salah</p>
+<button onclick="login()">Masuk</button>
 </div>
 </div>
 
 <!-- BALANCE -->
 <div class="balance" id="balance">Rp0</div>
 
-<!-- HOME -->
-<div id="home" class="tab active">
+<!-- TARGET LIST -->
+<div id="targetList" class="tab active">
 <div class="card">
-<canvas id="chart"></canvas>
-</div>
+<h3>🎯 Tabungan</h3>
 
-<div class="card">
-<select id="type">
-<option value="income">Pemasukan</option>
-<option value="expense">Pengeluaran</option>
-</select>
+<div id="targets"></div>
 
-<input id="desc" placeholder="Deskripsi">
-<input id="amount" type="number" placeholder="Nominal">
-
-<button onclick="addData()">Simpan</button>
+<button onclick="addTarget()">+ Tambah Tabungan</button>
 </div>
 </div>
 
-<!-- TARGET -->
-<div id="targetTab" class="tab">
+<!-- DETAIL -->
+<div id="targetDetail" class="tab">
+
 <div class="card" style="text-align:center">
-<h3>🎯 TARGET</h3>
-<input id="target" placeholder="Target">
-<div class="progress" id="progress">0%</div>
-</div>
+<h3 id="tName">Nama</h3>
+
+<div class="progress" id="circle">Rp0</div>
+
+<p id="tInfo"></p>
+
+<button onclick="addMoney()">+ Tambah Uang</button>
+<button onclick="back()">Kembali</button>
+
 </div>
 
-<!-- LIST -->
-<div id="listTab" class="tab">
-<div class="card">
-<h3>📋 LOG</h3>
-
-<div class="filter">
-<button onclick="setFilter('all',this)" class="active">ALL</button>
-<button onclick="setFilter('income',this)">+</button>
-<button onclick="setFilter('expense',this)">-</button>
-</div>
-
-<div id="list"></div>
-</div>
 </div>
 
 <!-- NAV -->
 <div class="nav">
-<div class="active" onclick="switchTab('home',this)">🏠</div>
-<div onclick="switchTab('targetTab',this)">🎯</div>
-<div onclick="switchTab('listTab',this)">📋</div>
+<div class="active" onclick="showTab('targetList',this)">🎯</div>
 </div>
 
 <script>
 
 // LOGIN
-function checkLogin(){
-let pass=passwordInput.value;
-if(pass==="123"){
+function login(){
+if(passwordInput.value==="123"){
 loginPage.style.display="none";
-}else{
-errorText.style.display="block";
-setTimeout(()=>window.location.href="index.html",1500);
-}
+}else alert("Salah");
 }
 
 // DATA
-let data=JSON.parse(localStorage.getItem("data"))||[];
-let targetVal=localStorage.getItem("target")||0;
-let filter="all";
-
-target.value=targetVal;
-
-// TAB
-function switchTab(id,el){
-document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-let tab=document.getElementById(id);
-tab.classList.add("active");
-tab.classList.add("fade");
-document.querySelectorAll(".nav div").forEach(n=>n.classList.remove("active"));
-el.classList.add("active");
-}
-
-// FILTER
-function setFilter(f,el){
-filter=f;
-document.querySelectorAll(".filter button").forEach(b=>b.classList.remove("active"));
-el.classList.add("active");
-render();
-}
+let targets=JSON.parse(localStorage.getItem("targets"))||[];
+let currentIndex=null;
 
 // FORMAT
 function rp(x){return "Rp"+(x||0).toLocaleString("id-ID");}
 
-// ANIMATE VALUE
-function animateValue(el,start,end,duration){
-let startTime=null;
-function step(ts){
-if(!startTime)startTime=ts;
-let progress=Math.min((ts-startTime)/duration,1);
-let val=Math.floor(progress*(end-start)+start);
-el.innerText="Rp"+val.toLocaleString("id-ID");
-if(progress<1)requestAnimationFrame(step);
-}
-requestAnimationFrame(step);
-}
-
-// RENDER
-function render(){
-list.innerHTML="";
-let income=0,expense=0;
-
-data.forEach(d=>{
-if(d.type=="income") income+=d.amount;
-else expense+=d.amount;
-
-if(filter==="all"||filter===d.type){
+// RENDER LIST
+function renderTargets(){
+targetsDiv.innerHTML="";
+targets.forEach((t,i)=>{
 let el=document.createElement("div");
-el.className="item";
+el.className="target-item";
 el.innerHTML=
-"<div>▶ "+d.desc+"</div>"+
-"<div style='color:"+(d.type=="income"?"#22c55e":"#ef4444")+"'>"+
-(d.type=="income"?"+":"-")+" "+rp(d.amount)+"</div>";
-list.appendChild(el);
+"<div>"+t.name+"</div>"+
+"<div>"+rp(t.current)+"</div>";
+el.onclick=()=>openDetail(i);
+targetsDiv.appendChild(el);
+});
+localStorage.setItem("targets",JSON.stringify(targets));
 }
+
+// ADD TARGET
+function addTarget(){
+let name=prompt("Nama tabungan:");
+let target=prompt("Target uang:");
+if(!name||!target)return;
+
+targets.push({
+name:name,
+target:parseInt(target),
+current:0
 });
 
-let total=income-expense;
-animateValue(balance,0,total,500);
-
-// chart
-if(window.chart) chart.destroy();
-window.chart=new Chart(chart,{
-type:"bar",
-data:{
-labels:["Masuk","Keluar"],
-datasets:[{
-data:[income,expense],
-backgroundColor:["#22c55e","#ef4444"]
-}]
-},
-options:{plugins:{legend:{display:false}}}
-});
-
-// progress anim
-let t=parseInt(target.value)||0;
-let targetPercent=t?Math.min((total/t)*100,100):0;
-
-let start=0;
-let interval=setInterval(()=>{
-start+=2;
-if(start>=targetPercent){
-start=targetPercent;
-clearInterval(interval);
-}
-progress.innerText=start+"%";
-progress.style.background="conic-gradient(#22c55e "+start+"%,#1e293b 0%)";
-},10);
-
-localStorage.setItem("data",JSON.stringify(data));
-localStorage.setItem("target",t);
+renderTargets();
 }
 
-// ADD
-function addData(){
-let d={type:type.value,desc:desc.value,amount:parseInt(amount.value)};
-if(!d.desc||!d.amount)return alert("Isi dulu!");
-data.push(d);
-desc.value="";amount.value="";
-render();
+// DETAIL
+function openDetail(i){
+currentIndex=i;
+let t=targets[i];
+
+tName.innerText=t.name;
+
+updateDetail();
+
+targetList.classList.remove("active");
+targetDetail.classList.add("active");
 }
 
-target.addEventListener("input",render);
+// UPDATE DETAIL
+function updateDetail(){
+let t=targets[currentIndex];
 
-render();
+let percent=Math.min((t.current/t.target)*100,100);
+
+circle.innerText=rp(t.current);
+circle.style.background="conic-gradient(#22c55e "+percent+"%,#1e293b 0%)";
+
+tInfo.innerText="Target: "+rp(t.target)+" ("+Math.floor(percent)+"%)";
+
+renderBalance();
+}
+
+// ADD MONEY
+function addMoney(){
+let val=prompt("Tambah uang:");
+if(!val)return;
+
+targets[currentIndex].current+=parseInt(val);
+updateDetail();
+renderTargets();
+}
+
+// BACK
+function back(){
+targetDetail.classList.remove("active");
+targetList.classList.add("active");
+}
+
+// BALANCE
+function renderBalance(){
+let total=targets.reduce((a,b)=>a+b.current,0);
+balance.innerText=rp(total);
+}
+
+// INIT
+renderTargets();
+renderBalance();
 
 </script>
 
