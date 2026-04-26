@@ -40,7 +40,6 @@ border:none;border-radius:10px;
 background:#22c55e;color:black;font-weight:bold;
 }
 
-/* RESET BUTTON */
 .reset{
 background:#ef4444 !important;
 color:white;
@@ -174,7 +173,7 @@ width:85%;max-width:320px;
 <input id="modalInput" placeholder="Rp 0">
 
 <div style="display:flex;gap:10px;margin-top:10px">
-<button id="deleteBtn" onclick="confirmDelete()" style="background:#ef4444;color:white;display:none">Hapus</button>
+<button id="confirmBtn" style="background:#ef4444;color:white">Konfirmasi</button>
 <button onclick="closeModal()" style="background:#1e293b;color:white">Batal</button>
 </div>
 
@@ -192,7 +191,7 @@ loginPage.style.display="none";
 }
 }
 
-// FORMAT
+// FORMAT RP
 function formatRp(value){
 value=value.replace(/[^0-9]/g,"");
 return "Rp "+(value?parseInt(value).toLocaleString("id-ID"):"0");
@@ -201,13 +200,15 @@ function getNumber(value){
 return parseInt(value.replace(/[^0-9]/g,""))||0;
 }
 
-amount.addEventListener("input",()=>amount.value=formatRp(amount.value));
-modalInput.addEventListener("input",()=>modalInput.value=formatRp(modalInput.value));
+amount.oninput=()=>amount.value=formatRp(amount.value);
+modalInput.oninput=()=>modalInput.value=formatRp(modalInput.value);
 
 // DATA
 let data=JSON.parse(localStorage.getItem("data"))||[];
 let targets=JSON.parse(localStorage.getItem("targets"))||[];
-let deleteIndex=null;
+
+let mode=null;
+let selectedIndex=null;
 
 function rp(x){return "Rp"+(x||0).toLocaleString("id-ID");}
 
@@ -220,15 +221,16 @@ el.classList.add("active");
 }
 
 // MODAL
-let modalCallback=null;
+let callback=null;
 
-function openModal(title,callback){
+function openModal(title,cb){
 modal.style.display="flex";
 modalTitle.innerText=title;
 modalInput.value="";
+modalInput.style.display="block";
 modalSubmit.style.display="block";
-deleteBtn.style.display="none";
-modalCallback=callback;
+confirmBtn.style.display="none";
+callback=cb;
 }
 
 function closeModal(){
@@ -238,37 +240,40 @@ modal.style.display="none";
 function submitModal(){
 let val=getNumber(modalInput.value);
 if(!val)return;
-modalCallback(val);
+callback(val);
 closeModal();
-}
-
-// DELETE
-function deleteTarget(i){
-deleteIndex=i;
-modal.style.display="flex";
-modalTitle.innerText="Hapus Target?";
-modalInput.style.display="none";
-modalSubmit.style.display="none";
-deleteBtn.style.display="block";
-}
-
-function confirmDelete(){
-targets.splice(deleteIndex,1);
-saveTargets();
-renderTargets();
-closeModal();
-modalInput.style.display="block";
 }
 
 // RESET
 function resetAll(){
-if(confirm("Reset semua data?")){
+mode="reset";
+
+modal.style.display="flex";
+modalTitle.innerText="Reset semua data?";
+modalInput.style.display="none";
+modalSubmit.style.display="none";
+confirmBtn.style.display="block";
+}
+
+confirmBtn.onclick=function(){
+
+if(mode==="reset"){
 data=[];
 targets=[];
 localStorage.clear();
 render();
 renderTargets();
 }
+
+if(mode==="delete"){
+targets.splice(selectedIndex,1);
+saveTargets();
+renderTargets();
+}
+
+mode=null;
+closeModal();
+modalInput.style.display="block";
 }
 
 // DATA INPUT
@@ -306,10 +311,23 @@ renderTargets();
 });
 }
 
+function deleteTarget(i){
+mode="delete";
+selectedIndex=i;
+
+modal.style.display="flex";
+modalTitle.innerText="Hapus target?";
+modalInput.style.display="none";
+modalSubmit.style.display="none";
+confirmBtn.style.display="block";
+}
+
+// SAVE
 function saveTargets(){
 localStorage.setItem("targets",JSON.stringify(targets));
 }
 
+// RENDER TARGET
 function renderTargets(){
 targetList.innerHTML="";
 
