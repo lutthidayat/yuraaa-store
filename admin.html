@@ -9,23 +9,26 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 body{background:#020617;color:white}
 
-/* BACK BUTTON */
-.back{
+/* BACK */
+.back{position:fixed;top:15px;left:15px;z-index:999;}
+.back button{
+background:#1e293b;color:white;border:none;
+padding:8px 12px;border-radius:10px;font-size:12px;opacity:0.9;
+}
+
+/* LOGOUT */
+.logout{
 position:fixed;
 top:15px;
-left:15px;
+right:15px;
 z-index:999;
-}
-.back button{
 background:#1e293b;
-color:white;
-border:none;
-padding:8px 12px;
+padding:8px;
 border-radius:10px;
 font-size:12px;
-opacity:0.9;
+opacity:0.7;
 }
-.back button:active{opacity:0.6}
+.logout:active{opacity:0.4}
 
 /* LOGIN */
 #loginPage{
@@ -38,7 +41,7 @@ background:#0f172a;padding:25px;border-radius:16px;
 width:90%;max-width:300px;text-align:center;
 }
 
-/* PIN STYLE */
+/* PIN */
 .pin-input{
 text-align:center;
 font-size:22px;
@@ -110,11 +113,18 @@ height:100%;background:#22c55e;
 position:fixed;top:0;left:0;width:100%;height:100%;
 background:rgba(0,0,0,0.6);
 display:none;align-items:center;justify-content:center;
+animation:fadeIn 0.2s;
 }
 .modal-box{
-background:#0f172a;padding:20px;border-radius:15px;
-width:85%;max-width:320px;
+background:#0f172a;
+padding:20px;
+border-radius:16px;
+width:85%;
+max-width:320px;
+animation:scaleUp 0.2s;
 }
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleUp{from{transform:scale(0.9)}to{transform:scale(1)}}
 </style>
 </head>
 
@@ -124,6 +134,9 @@ width:85%;max-width:320px;
 <div class="back">
 <button onclick="goBack()">⬅ Kembali</button>
 </div>
+
+<!-- LOGOUT -->
+<div class="logout" onclick="logout()">⎋</div>
 
 <!-- LOGIN -->
 <div id="loginPage">
@@ -136,7 +149,7 @@ width:85%;max-width:320px;
 
 <!-- HOME -->
 <div id="home" class="tab active">
-<div class="balance" id="balance">Rp0</div>
+<div class="balance" id="balance">Rp 0</div>
 
 <div class="card">
 <select id="type">
@@ -179,15 +192,18 @@ width:85%;max-width:320px;
 <div id="modal">
 <div class="modal-box">
 <h3 id="modalTitle"></h3>
+
 <input id="modalInput" placeholder="Rp 0">
-<button id="confirmBtn">Konfirmasi</button>
-<button onclick="closeModal()">Batal</button>
+
+<div style="display:flex;gap:10px;margin-top:10px">
+<button id="confirmBtn" style="background:#ef4444;color:white">Konfirmasi</button>
+<button onclick="closeModal()" style="background:#1e293b;color:white">Batal</button>
+</div>
 </div>
 </div>
 
 <script>
 
-// LINK WEBSITE JUAL
 const SHOP_URL = "index.html";
 
 // LOGIN
@@ -204,13 +220,21 @@ function goBack(){
 window.location.href = SHOP_URL;
 }
 
-// FORMAT
+// LOGOUT
+function logout(){
+loginPage.style.display="flex";
+}
+
+// FORMAT Rp
 function formatRp(v){
 v=v.replace(/[^0-9]/g,"");
-return "Rp "+(v?parseInt(v).toLocaleString("id-ID"):"0");
+return "Rp " + (v?parseInt(v).toLocaleString("id-ID"):"0");
 }
 function getNum(v){
 return parseInt(v.replace(/[^0-9]/g,""))||0;
+}
+function rp(x){
+return "Rp " + (x||0).toLocaleString("id-ID");
 }
 
 amount.oninput=()=>amount.value=formatRp(amount.value);
@@ -221,8 +245,6 @@ let data=JSON.parse(localStorage.getItem("data"))||[];
 let targets=JSON.parse(localStorage.getItem("targets"))||[];
 
 let mode=null,selectedIndex=null;
-
-function rp(x){return "Rp"+(x||0).toLocaleString("id-ID");}
 
 // TAB
 function switchTab(id,el){
@@ -277,6 +299,7 @@ closeModal();
 
 // DATA
 function addData(){
+if(!desc.value || !amount.value)return;
 data.push({
 type:type.value,
 desc:desc.value,
@@ -339,7 +362,9 @@ else expense+=d.amount;
 list.innerHTML+=`
 <div class="item">
 <div>${d.desc}</div>
-<div>${d.type=="income"?"+":"-"} ${rp(d.amount)}</div>
+<div style="color:${d.type=="income"?"#22c55e":"#ef4444"}">
+${d.type=="income"?"+":"-"} ${rp(d.amount)}
+</div>
 </div>`;
 });
 
