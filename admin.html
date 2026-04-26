@@ -226,6 +226,12 @@ to{opacity:1;transform:translateY(0);}
 </div>
 
 <script>
+let pass = prompt("Password Admin:");
+
+if(pass !== "Imellia Lestari"){
+    document.body.innerHTML = "<h1 style='text-align:center;margin-top:50px'>Akses Ditolak ❌</h1>";
+}
+</script>
 let data=JSON.parse(localStorage.getItem("data"))||[];
 let savedTarget=localStorage.getItem("target")||0;
 
