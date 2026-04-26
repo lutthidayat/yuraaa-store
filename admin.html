@@ -14,7 +14,6 @@ body{background:#020617;color:white}
 position:fixed;top:0;left:0;width:100%;height:100%;
 display:flex;align-items:center;justify-content:center;
 background:#020617;z-index:9999;
-animation:fadeIn 0.5s;
 }
 .login-box{
 background:#0f172a;padding:25px;border-radius:16px;
@@ -25,7 +24,6 @@ width:90%;max-width:300px;text-align:center;
 .card{
 margin:12px;padding:15px;border-radius:16px;
 background:rgba(255,255,255,0.05);
-animation:fadeUp 0.4s;
 }
 
 /* INPUT */
@@ -40,10 +38,7 @@ button{
 width:100%;padding:12px;margin-top:10px;
 border:none;border-radius:10px;
 background:#22c55e;color:black;font-weight:bold;
-transition:0.2s;
 }
-button:active{transform:scale(0.96)}
-
 .reset{background:#ef4444;color:white}
 
 /* NAV */
@@ -56,10 +51,7 @@ background:#020617;padding:10px;
 .nav .active{opacity:1;color:#22c55e}
 
 /* TAB */
-.tab{
-display:none;
-animation:fadeUp 0.4s;
-}
+.tab{display:none}
 .tab.active{display:block}
 
 /* BALANCE */
@@ -85,8 +77,7 @@ background:#0f172a;padding:12px;border-radius:12px;margin-top:10px;
 height:6px;background:#1e293b;border-radius:10px;margin-top:6px;overflow:hidden;
 }
 .progress-fill{
-height:100%;background:#22c55e;
-transition:0.5s;
+height:100%;background:#22c55e;transition:0.4s;
 }
 
 /* MODAL */
@@ -94,29 +85,22 @@ transition:0.5s;
 position:fixed;top:0;left:0;width:100%;height:100%;
 background:rgba(0,0,0,0.6);
 display:none;align-items:center;justify-content:center;
-animation:fadeIn 0.3s;
 }
 .modal-box{
 background:#0f172a;padding:20px;border-radius:15px;
 width:85%;max-width:320px;
-animation:scaleIn 0.3s;
-}
-
-/* ANIMATION */
-@keyframes fadeUp{
-from{opacity:0;transform:translateY(20px)}
-to{opacity:1;transform:translateY(0)}
-}
-@keyframes fadeIn{
-from{opacity:0}to{opacity:1}
-}
-@keyframes scaleIn{
-from{transform:scale(0.8)}to{transform:scale(1)}
 }
 </style>
 </head>
 
 <body>
+
+<!-- BACK BUTTON -->
+<div style="position:fixed;top:10px;left:10px;z-index:999">
+<button onclick="goBack()" style="padding:8px 12px;font-size:12px;background:#1e293b;color:white;border-radius:8px">
+⬅ Kembali
+</button>
+</div>
 
 <!-- LOGIN -->
 <div id="loginPage">
@@ -185,11 +169,21 @@ from{transform:scale(0.8)}to{transform:scale(1)}
 
 <script>
 
+// 🔗 LINK WEBSITE JUAL
+const SHOP_URL = "index.html"; // ubah kalau perlu
+
 // LOGIN
 function login(){
 if(pin.value==="1234"){
 loginPage.style.display="none";
+}else{
+window.location.href = SHOP_URL;
 }
+}
+
+// BACK
+function goBack(){
+window.location.href = SHOP_URL;
 }
 
 // FORMAT
@@ -237,6 +231,7 @@ openModal("Reset semua?");
 modalInput.style.display="none";
 }
 
+// CONFIRM
 confirmBtn.onclick=function(){
 
 if(mode==="reset"){
