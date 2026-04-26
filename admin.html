@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Final Boss</title>
+<title>Yuraaa Finance</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 body{background:#020617;color:white}
 
-/* LOGIN PIN */
+/* LOGIN */
 #loginPage{
 position:fixed;top:0;left:0;width:100%;height:100%;
 display:flex;align-items:center;justify-content:center;
@@ -17,7 +17,7 @@ background:#020617;z-index:9999;
 }
 .login-box{
 background:#0f172a;padding:25px;border-radius:16px;
-text-align:center;width:90%;max-width:300px;
+width:90%;max-width:300px;text-align:center;
 }
 
 /* CARD */
@@ -28,7 +28,7 @@ background:rgba(255,255,255,0.05);
 
 /* INPUT */
 input,select{
-width:100%;padding:12px;margin-top:10px;
+width:100%;padding:10px;margin-top:10px;
 border-radius:10px;border:none;
 background:#020617;color:white;
 }
@@ -39,7 +39,12 @@ width:100%;padding:12px;margin-top:10px;
 border:none;border-radius:10px;
 background:#22c55e;color:black;font-weight:bold;
 }
-.reset{background:#ef4444;color:white}
+
+/* RESET BUTTON */
+.reset{
+background:#ef4444 !important;
+color:white;
+}
 
 /* NAV */
 .nav{
@@ -63,13 +68,17 @@ background:#0f172a;border-radius:10px;
 
 /* TARGET */
 .target-box{
-background:#0f172a;padding:12px;border-radius:12px;margin-top:10px;
+background:#0f172a;
+padding:12px;border-radius:12px;
+margin-top:10px;
 }
 .progress-bar{
-height:6px;background:#1e293b;border-radius:10px;margin-top:6px;overflow:hidden;
+height:6px;background:#1e293b;
+border-radius:10px;margin-top:6px;
+overflow:hidden;
 }
 .progress-fill{
-height:100%;background:#22c55e;transition:0.4s;
+height:100%;background:#22c55e;
 }
 
 /* SUMMARY */
@@ -86,6 +95,7 @@ width:32%;text-align:center;font-size:12px;
 position:fixed;top:0;left:0;width:100%;height:100%;
 background:rgba(0,0,0,0.6);
 display:none;align-items:center;justify-content:center;
+z-index:999;
 }
 .modal-box{
 background:#0f172a;padding:20px;border-radius:15px;
@@ -99,8 +109,8 @@ width:85%;max-width:320px;
 <!-- LOGIN -->
 <div id="loginPage">
 <div class="login-box">
-<h2>🔐 PIN</h2>
-<input id="pin" type="number" placeholder="Masukkan PIN">
+<h2>🔐 Admin</h2>
+<input id="passwordInput" type="password" placeholder="Password">
 <button onclick="login()">Masuk</button>
 </div>
 </div>
@@ -108,12 +118,6 @@ width:85%;max-width:320px;
 <!-- HOME -->
 <div id="home" class="tab active">
 <div class="card">
-
-<div class="summary">
-<div id="todayIncome">Rp0<br>Hari ini</div>
-<div id="sumExpense">Rp0<br>Keluar</div>
-<div id="sumTotal">Rp0<br>Saldo</div>
-</div>
 
 <select id="type">
 <option value="income">Pemasukan</option>
@@ -131,7 +135,7 @@ width:85%;max-width:320px;
 <!-- TARGET -->
 <div id="targetTab" class="tab">
 <div class="card">
-<h3>🎯 Target</h3>
+<h3>🎯 Target Tabungan</h3>
 <div id="targetList"></div>
 <button onclick="openAddTarget()">+ Tambah Target</button>
 </div>
@@ -141,11 +145,15 @@ width:85%;max-width:320px;
 <div id="listTab" class="tab">
 <div class="card">
 
+<div class="summary">
+<div id="sumIncome">Rp0<br>Masuk</div>
+<div id="sumExpense">Rp0<br>Keluar</div>
+<div id="sumTotal">Rp0<br>Saldo</div>
+</div>
+
 <div id="list"></div>
 
-<button onclick="resetAll()" class="reset">Reset Semua</button>
-<button onclick="exportData()">Export</button>
-<input type="file" onchange="importData(event)">
+<button class="reset" onclick="resetAll()">Reset Semua</button>
 
 </div>
 </div>
@@ -160,10 +168,18 @@ width:85%;max-width:320px;
 <!-- MODAL -->
 <div id="modal">
 <div class="modal-box">
+
 <h3 id="modalTitle"></h3>
+
 <input id="modalInput" placeholder="Rp 0">
-<button onclick="submitModal()">Simpan</button>
-<button onclick="closeModal()">Batal</button>
+
+<div style="display:flex;gap:10px;margin-top:10px">
+<button id="deleteBtn" onclick="confirmDelete()" style="background:#ef4444;color:white;display:none">Hapus</button>
+<button onclick="closeModal()" style="background:#1e293b;color:white">Batal</button>
+</div>
+
+<button id="modalSubmit" onclick="submitModal()">Simpan</button>
+
 </div>
 </div>
 
@@ -171,26 +187,29 @@ width:85%;max-width:320px;
 
 // LOGIN
 function login(){
-if(pin.value==="1234"){
+if(passwordInput.value==="123"){
 loginPage.style.display="none";
 }
 }
 
 // FORMAT
-function formatRp(v){
-v=v.replace(/[^0-9]/g,"");
-return "Rp "+(v?parseInt(v).toLocaleString("id-ID"):"0");
+function formatRp(value){
+value=value.replace(/[^0-9]/g,"");
+return "Rp "+(value?parseInt(value).toLocaleString("id-ID"):"0");
 }
-function getNum(v){
-return parseInt(v.replace(/[^0-9]/g,""))||0;
+function getNumber(value){
+return parseInt(value.replace(/[^0-9]/g,""))||0;
 }
 
-amount.oninput=()=>amount.value=formatRp(amount.value);
-modalInput.oninput=()=>modalInput.value=formatRp(modalInput.value);
+amount.addEventListener("input",()=>amount.value=formatRp(amount.value));
+modalInput.addEventListener("input",()=>modalInput.value=formatRp(modalInput.value));
 
 // DATA
 let data=JSON.parse(localStorage.getItem("data"))||[];
 let targets=JSON.parse(localStorage.getItem("targets"))||[];
+let deleteIndex=null;
+
+function rp(x){return "Rp"+(x||0).toLocaleString("id-ID");}
 
 // TAB
 function switchTab(id,el){
@@ -201,129 +220,153 @@ el.classList.add("active");
 }
 
 // MODAL
-let cb=null;
+let modalCallback=null;
+
 function openModal(title,callback){
 modal.style.display="flex";
 modalTitle.innerText=title;
 modalInput.value="";
-cb=callback;
+modalSubmit.style.display="block";
+deleteBtn.style.display="none";
+modalCallback=callback;
 }
-function closeModal(){modal.style.display="none";}
+
+function closeModal(){
+modal.style.display="none";
+}
+
 function submitModal(){
-let val=getNum(modalInput.value);
+let val=getNumber(modalInput.value);
 if(!val)return;
-cb(val);
+modalCallback(val);
 closeModal();
 }
 
-// DATA
+// DELETE
+function deleteTarget(i){
+deleteIndex=i;
+modal.style.display="flex";
+modalTitle.innerText="Hapus Target?";
+modalInput.style.display="none";
+modalSubmit.style.display="none";
+deleteBtn.style.display="block";
+}
+
+function confirmDelete(){
+targets.splice(deleteIndex,1);
+saveTargets();
+renderTargets();
+closeModal();
+modalInput.style.display="block";
+}
+
+// RESET
+function resetAll(){
+if(confirm("Reset semua data?")){
+data=[];
+targets=[];
+localStorage.clear();
+render();
+renderTargets();
+}
+}
+
+// DATA INPUT
 function addData(){
-data.push({
+let d={
 type:type.value,
 desc:desc.value,
-amount:getNum(amount.value),
-date:new Date().toDateString()
-});
-desc.value="";amount.value="";
+amount:getNumber(amount.value)
+};
+if(!d.desc||!d.amount)return alert("Isi dulu!");
+data.push(d);
+desc.value="";
+amount.value="";
 render();
 }
 
 // TARGET
 function openAddTarget(){
-openModal("Target",(val)=>{
-targets.push({name:"Target "+(targets.length+1),target:val,current:0});
-saveTargets();renderTargets();
+openModal("Tambah Target",(val)=>{
+targets.push({
+name:"Target "+(targets.length+1),
+target:val,
+current:0
 });
-}
-function addMoney(i){
-openModal("Tambah",(val)=>{
-targets[i].current+=val;
-saveTargets();renderTargets();
+saveTargets();
+renderTargets();
 });
 }
 
-// SAVE
+function addMoney(i){
+openModal("Tambah Uang",(val)=>{
+targets[i].current+=val;
+saveTargets();
+renderTargets();
+});
+}
+
 function saveTargets(){
 localStorage.setItem("targets",JSON.stringify(targets));
 }
 
-// RENDER TARGET
 function renderTargets(){
 targetList.innerHTML="";
+
 targets.forEach((t,i)=>{
-let p=Math.min((t.current/t.target)*100,100);
-targetList.innerHTML+=`
-<div class="target-box">
+let percent=Math.min((t.current/t.target)*100,100);
+
+let el=document.createElement("div");
+el.className="target-box";
+el.innerHTML=`
 <div style="display:flex;justify-content:space-between">
 <b>${t.name}</b>
-<span onclick="addMoney(${i})">➕</span>
+<div>
+<span onclick="event.stopPropagation();addMoney(${i})">➕</span>
+<span onclick="event.stopPropagation();deleteTarget(${i})" style="margin-left:10px;color:#ef4444">🗑</span>
 </div>
-<small>Rp${t.current} / Rp${t.target}</small>
+</div>
+
+<small>${rp(t.current)} / ${rp(t.target)} (${Math.floor(percent)}%)</small>
+
 <div class="progress-bar">
-<div class="progress-fill" style="width:${p}%"></div>
+<div class="progress-fill" style="width:${percent}%"></div>
 </div>
-</div>`;
+`;
+
+targetList.appendChild(el);
 });
 }
 
 // RENDER
 function render(){
-let income=0,expense=0,today=0;
+let income=0,expense=0;
 list.innerHTML="";
 
 data.forEach(d=>{
 if(d.type=="income") income+=d.amount;
 else expense+=d.amount;
 
-if(d.date===new Date().toDateString()) today+=d.amount;
+let el=document.createElement("div");
+el.className="item";
+el.innerHTML=
+"<div>"+d.desc+"</div>"+
+"<div style='color:"+(d.type=="income"?"#22c55e":"#ef4444")+"'>"+
+(d.type=="income"?"+":"-")+" "+rp(d.amount)+"</div>";
 
-list.innerHTML+=`
-<div class="item">
-<div>${d.desc}</div>
-<div>${d.type=="income"?"+":"-"} Rp${d.amount}</div>
-</div>`;
+list.appendChild(el);
 });
 
-todayIncome.innerHTML="Rp"+today+"<br>Hari ini";
-sumExpense.innerHTML="Rp"+expense+"<br>Keluar";
-sumTotal.innerHTML="Rp"+(income-expense)+"<br>Saldo";
+sumIncome.innerHTML=rp(income)+"<br>Masuk";
+sumExpense.innerHTML=rp(expense)+"<br>Keluar";
+sumTotal.innerHTML=rp(income-expense)+"<br>Saldo";
 
 localStorage.setItem("data",JSON.stringify(data));
 }
 
-// RESET
-function resetAll(){
-if(confirm("Reset semua?")){
-data=[];targets=[];
-localStorage.clear();
-render();renderTargets();
-}
-}
-
-// EXPORT
-function exportData(){
-let blob=new Blob([JSON.stringify({data,targets})]);
-let a=document.createElement("a");
-a.href=URL.createObjectURL(blob);
-a.download="backup.json";
-a.click();
-}
-
-// IMPORT
-function importData(e){
-let file=e.target.files[0];
-let reader=new FileReader();
-reader.onload=function(){
-let d=JSON.parse(reader.result);
-data=d.data||[];
-targets=d.targets||[];
-render();renderTargets();
-}
-reader.readAsText(file);
-}
-
 // INIT
-render();renderTargets();
+render();
+renderTargets();
 
 </script>
 
