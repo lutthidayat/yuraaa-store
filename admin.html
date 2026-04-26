@@ -26,6 +26,13 @@ margin:12px;padding:15px;border-radius:16px;
 background:rgba(255,255,255,0.05);
 }
 
+/* INPUT */
+input,select{
+width:100%;padding:10px;margin-top:10px;
+border-radius:10px;border:none;
+background:#020617;color:white;
+}
+
 /* BUTTON */
 button{
 width:100%;padding:12px;margin-top:10px;
@@ -56,11 +63,9 @@ background:#0f172a;border-radius:10px;
 /* TARGET */
 .target-box{
 background:#0f172a;
-padding:12px;
-border-radius:12px;
+padding:12px;border-radius:12px;
 margin-top:10px;
 }
-
 .progress-bar{
 height:6px;background:#1e293b;
 border-radius:10px;margin-top:6px;
@@ -90,12 +95,6 @@ z-index:999;
 background:#0f172a;padding:20px;border-radius:15px;
 width:85%;max-width:320px;
 }
-
-input,select{
-width:100%;padding:10px;margin-top:10px;
-border-radius:10px;border:none;
-background:#020617;color:white;
-}
 </style>
 </head>
 
@@ -107,20 +106,20 @@ background:#020617;color:white;
 <h2>🔐 Admin</h2>
 <input id="passwordInput" type="password" placeholder="Password">
 <button onclick="login()">Masuk</button>
-<p id="error" style="color:red;display:none">Salah</p>
 </div>
 </div>
 
 <!-- HOME -->
 <div id="home" class="tab active">
 <div class="card">
+
 <select id="type">
 <option value="income">Pemasukan</option>
 <option value="expense">Pengeluaran</option>
 </select>
 
 <input id="desc" placeholder="Deskripsi">
-<input id="amount" type="number" placeholder="Nominal">
+<input id="amount" placeholder="Rp 0">
 
 <button onclick="addData()">Simpan</button>
 </div>
@@ -164,10 +163,14 @@ background:#020617;color:white;
 <h3 id="modalTitle"></h3>
 
 <input id="modalName" placeholder="Nama (opsional)">
-<input id="modalInput" type="number" placeholder="Nominal">
+<input id="modalInput" placeholder="Rp 0">
 
-<button onclick="submitModal()">Simpan</button>
+<div style="display:flex;gap:10px;margin-top:10px">
+<button id="deleteBtn" onclick="confirmDelete()" style="background:#ef4444;color:white;display:none">Hapus</button>
 <button onclick="closeModal()" style="background:#1e293b;color:white">Batal</button>
+</div>
+
+<button id="modalSubmit" onclick="submitModal()">Simpan</button>
 
 </div>
 </div>
@@ -178,21 +181,35 @@ background:#020617;color:white;
 function login(){
 if(passwordInput.value==="123"){
 loginPage.style.display="none";
-}else error.style.display="block";
 }
+}
+
+// FORMAT RP
+function formatRp(value){
+value = value.replace(/[^0-9]/g,"");
+return "Rp " + (value ? parseInt(value).toLocaleString("id-ID") : "0");
+}
+
+function getNumber(value){
+return parseInt(value.replace(/[^0-9]/g,"")) || 0;
+}
+
+// AUTO FORMAT INPUT
+amount.addEventListener("input",()=> amount.value = formatRp(amount.value));
+modalInput.addEventListener("input",()=> modalInput.value = formatRp(modalInput.value));
 
 // DATA
 let data=JSON.parse(localStorage.getItem("data"))||[];
 let targets=JSON.parse(localStorage.getItem("targets"))||[];
+let deleteIndex=null;
 
-// FORMAT
+// FORMAT DISPLAY
 function rp(x){return "Rp"+(x||0).toLocaleString("id-ID");}
 
 // TAB
 function switchTab(id,el){
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
 document.getElementById(id).classList.add("active");
-
 document.querySelectorAll(".nav div").forEach(n=>n.classList.remove("active"));
 el.classList.add("active");
 }
@@ -203,10 +220,14 @@ let modalCallback=null;
 function openModal(title,callback){
 modal.style.display="flex";
 modalTitle.innerText=title;
+modalName.style.display="block";
+modalInput.style.display="block";
+modalSubmit.style.display="block";
+deleteBtn.style.display="none";
+
 modalName.value="";
 modalInput.value="";
 modalCallback=callback;
-modalInput.focus();
 }
 
 function closeModal(){
@@ -214,10 +235,28 @@ modal.style.display="none";
 }
 
 function submitModal(){
-let val=parseInt(modalInput.value);
+let val=getNumber(modalInput.value);
 let name=modalName.value;
 if(!val)return;
 modalCallback(val,name);
+closeModal();
+}
+
+// DELETE MODAL
+function deleteTarget(i){
+deleteIndex=i;
+modal.style.display="flex";
+modalTitle.innerText="Hapus Target?";
+modalName.style.display="none";
+modalInput.style.display="none";
+modalSubmit.style.display="none";
+deleteBtn.style.display="block";
+}
+
+function confirmDelete(){
+targets.splice(deleteIndex,1);
+saveTargets();
+renderTargets();
 closeModal();
 }
 
@@ -226,11 +265,12 @@ function addData(){
 let d={
 type:type.value,
 desc:desc.value,
-amount:parseInt(amount.value)
+amount:getNumber(amount.value)
 };
 if(!d.desc||!d.amount)return alert("Isi dulu!");
 data.push(d);
-desc.value="";amount.value="";
+desc.value="";
+amount.value="";
 render();
 }
 
@@ -255,14 +295,6 @@ renderTargets();
 });
 }
 
-function deleteTarget(i){
-if(confirm("Hapus target ini?")){
-targets.splice(i,1);
-saveTargets();
-renderTargets();
-}
-}
-
 function saveTargets(){
 localStorage.setItem("targets",JSON.stringify(targets));
 }
@@ -279,8 +311,8 @@ el.innerHTML=`
 <div style="display:flex;justify-content:space-between">
 <b>${t.name}</b>
 <div>
-<span onclick="event.stopPropagation();addMoney(${i})" style="margin-right:10px;color:#22c55e">➕</span>
-<span onclick="event.stopPropagation();deleteTarget(${i})" style="color:#ef4444">🗑</span>
+<span onclick="event.stopPropagation();addMoney(${i})">➕</span>
+<span onclick="event.stopPropagation();deleteTarget(${i})" style="margin-left:10px;color:#ef4444">🗑</span>
 </div>
 </div>
 
@@ -297,7 +329,6 @@ targetList.appendChild(el);
 
 // RENDER
 function render(){
-
 let income=0,expense=0;
 list.innerHTML="";
 
