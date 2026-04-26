@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Dashboard</title>
+<title>Yuraaa Finance</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -16,6 +16,7 @@ margin:12px;
 padding:15px;
 border-radius:16px;
 background:rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
 }
 
 /* BUTTON */
@@ -25,19 +26,16 @@ padding:12px;
 margin-top:10px;
 border:none;
 border-radius:10px;
-background:#22c55e;
+background:linear-gradient(135deg,#22c55e,#16a34a);
 color:black;
 font-weight:bold;
 }
 
 /* NAV */
 .nav{
-position:fixed;
-bottom:0;width:100%;
-display:flex;
-justify-content:space-around;
-background:#020617;
-padding:10px;
+position:fixed;bottom:0;width:100%;
+display:flex;justify-content:space-around;
+background:#020617;padding:10px;
 }
 .nav div{opacity:0.5}
 .nav .active{opacity:1;color:#22c55e}
@@ -71,7 +69,6 @@ border-radius:10px;
 margin-top:6px;
 overflow:hidden;
 }
-
 .progress-fill{
 height:100%;
 background:#22c55e;
@@ -91,6 +88,41 @@ width:32%;
 text-align:center;
 font-size:12px;
 }
+
+/* MODAL */
+#modal{
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.6);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:999;
+}
+.modal-box{
+background:#0f172a;
+padding:20px;
+border-radius:15px;
+width:85%;
+max-width:320px;
+animation:fade 0.3s;
+}
+@keyframes fade{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1}
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:10px;
+border:none;
+background:#020617;
+color:white;
+outline:none;
+}
 </style>
 </head>
 
@@ -99,6 +131,7 @@ font-size:12px;
 <!-- HOME -->
 <div id="home" class="tab active">
 <div class="card">
+<h3>📊 Statistik</h3>
 <canvas id="chart"></canvas>
 </div>
 
@@ -119,10 +152,8 @@ font-size:12px;
 <div id="targetTab" class="tab">
 <div class="card">
 <h3>🎯 Target Tabungan</h3>
-
 <div id="targetList"></div>
-
-<button onclick="addTarget()">+ Tambah Target</button>
+<button onclick="openAddTarget()">+ Tambah Target</button>
 </div>
 </div>
 
@@ -148,6 +179,21 @@ font-size:12px;
 <div onclick="switchTab('listTab',this)">📋</div>
 </div>
 
+<!-- MODAL -->
+<div id="modal">
+<div class="modal-box">
+
+<h3 id="modalTitle"></h3>
+
+<input id="modalName" placeholder="Nama (optional)">
+<input id="modalInput" type="number" placeholder="Nominal">
+
+<button onclick="submitModal()">Simpan</button>
+<button onclick="closeModal()" style="background:#1e293b;color:white">Batal</button>
+
+</div>
+</div>
+
 <script>
 
 // DATA
@@ -166,7 +212,99 @@ document.querySelectorAll(".nav div").forEach(n=>n.classList.remove("active"));
 el.classList.add("active");
 }
 
-// RENDER
+// MODAL
+let modalCallback=null;
+
+function openModal(title,callback){
+modal.style.display="flex";
+modalTitle.innerText=title;
+modalName.value="";
+modalInput.value="";
+modalCallback=callback;
+modalInput.focus();
+}
+
+function closeModal(){
+modal.style.display="none";
+}
+
+function submitModal(){
+let val=parseInt(modalInput.value);
+let name=modalName.value;
+
+if(!val)return;
+
+modalCallback(val,name);
+closeModal();
+}
+
+// ================= DATA =================
+
+function addData(){
+let d={
+type:type.value,
+desc:desc.value,
+amount:parseInt(amount.value)
+};
+if(!d.desc||!d.amount)return alert("Isi dulu!");
+data.push(d);
+desc.value="";amount.value="";
+render();
+}
+
+// ================= TARGET =================
+
+function openAddTarget(){
+openModal("Tambah Target",(val,name)=>{
+targets.push({
+name:name||("Target "+(targets.length+1)),
+target:val,
+current:0
+});
+saveTargets();
+renderTargets();
+});
+}
+
+function addMoney(i){
+openModal("Tambah Uang",(val)=>{
+targets[i].current+=val;
+saveTargets();
+renderTargets();
+});
+}
+
+function saveTargets(){
+localStorage.setItem("targets",JSON.stringify(targets));
+}
+
+function renderTargets(){
+targetList.innerHTML="";
+
+targets.forEach((t,i)=>{
+let percent=Math.min((t.current/t.target)*100,100);
+
+let el=document.createElement("div");
+el.className="target-box";
+el.innerHTML=`
+<div style="display:flex;justify-content:space-between">
+<b>${t.name}</b>
+<span onclick="event.stopPropagation();addMoney(${i})" style="color:#22c55e;font-size:18px">+</span>
+</div>
+
+<small>${rp(t.current)} / ${rp(t.target)} (${Math.floor(percent)}%)</small>
+
+<div class="progress-bar">
+<div class="progress-fill" style="width:${percent}%"></div>
+</div>
+`;
+
+targetList.appendChild(el);
+});
+}
+
+// ================= RENDER =================
+
 function render(){
 
 let income=0,expense=0;
@@ -205,75 +343,6 @@ options:{plugins:{legend:{display:false}}}
 });
 
 localStorage.setItem("data",JSON.stringify(data));
-}
-
-// ADD DATA
-function addData(){
-let d={
-type:type.value,
-desc:desc.value,
-amount:parseInt(amount.value)
-};
-if(!d.desc||!d.amount)return alert("Isi dulu!");
-data.push(d);
-desc.value="";amount.value="";
-render();
-}
-
-// TARGET =================
-
-function addTarget(){
-let name=prompt("Nama target:");
-let amount=prompt("Target uang:");
-if(!name||!amount)return;
-
-targets.push({
-name:name,
-target:parseInt(amount),
-current:0
-});
-
-saveTargets();
-renderTargets();
-}
-
-function addMoney(i){
-let val=prompt("Tambah uang:");
-if(!val)return;
-
-targets[i].current+=parseInt(val);
-
-saveTargets();
-renderTargets();
-}
-
-function saveTargets(){
-localStorage.setItem("targets",JSON.stringify(targets));
-}
-
-function renderTargets(){
-targetList.innerHTML="";
-
-targets.forEach((t,i)=>{
-let percent=Math.min((t.current/t.target)*100,100);
-
-let el=document.createElement("div");
-el.className="target-box";
-el.innerHTML=`
-<div style="display:flex;justify-content:space-between">
-<b>${t.name}</b>
-<span onclick="event.stopPropagation();addMoney(${i})" style="color:#22c55e;font-size:18px">+</span>
-</div>
-
-<small>${rp(t.current)} / ${rp(t.target)} (${Math.floor(percent)}%)</small>
-
-<div class="progress-bar">
-<div class="progress-fill" style="width:${percent}%"></div>
-</div>
-`;
-
-targetList.appendChild(el);
-});
 }
 
 // INIT
