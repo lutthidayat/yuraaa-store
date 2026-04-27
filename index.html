@@ -917,7 +917,7 @@
       <div class="profile-card">
         <div class="avatar-wrap">
           <img class="avatar" src="https://i.imgur.com/1X6VQvR.png" alt="Profile">
-          <div class="verified">✓</div>
+          <div class="verified">âœ“</div>
         </div>
         <div class="profile-name">Yuraaa Store</div>
         <div class="profile-sub">Trusted Seller</div>
@@ -937,14 +937,14 @@
     <section class="content">
       <header class="topbar">
         <div class="topbar-left">
-          <button class="hamburger" id="toggleSidebar" title="Admin">☰</button>
+          <button class="hamburger" id="toggleSidebar" title="Admin">â˜°</button>
           <div class="page-title">
             <h1><span>Yuraaa</span> Store</h1>
             <p id="subtitle">Ringkasan akun, filter status, dan notifikasi</p>
           </div>
         </div>
         <div class="top-actions">
-          <button class="icon-btn icon-badge" id="notifyBtn" title="Notifikasi">🔔</button>
+          <button class="icon-btn icon-badge" id="notifyBtn" title="Notifikasi">ðŸ””</button>
         </div>
       </header>
 
@@ -957,7 +957,7 @@
                 <span class="label" id="gameBtnText">Semua Game</span>
                 <span class="sub">Filter berdasarkan game</span>
               </span>
-              <span class="caret">⌄</span>
+              <span class="caret">âŒ„</span>
             </button>
             <div class="dd-menu" id="gameMenu" aria-label="Filter game"></div>
           </div>
@@ -968,7 +968,7 @@
                 <span class="label" id="statusBtnText">Semua Status</span>
                 <span class="sub">Pilih status akun</span>
               </span>
-              <span class="caret">⌄</span>
+              <span class="caret">âŒ„</span>
             </button>
             <div class="dd-menu" id="statusMenu" aria-label="Filter status"></div>
           </div>
@@ -979,7 +979,7 @@
                 <span class="label" id="sortBtnText">Terbaru</span>
                 <span class="sub">Urutkan daftar</span>
               </span>
-              <span class="caret">⌄</span>
+              <span class="caret">âŒ„</span>
             </button>
             <div class="dd-menu" id="sortMenu" aria-label="Urutkan data"></div>
           </div>
@@ -1016,7 +1016,7 @@
           <h3 id="notifTitle">Notifikasi Marketplace</h3>
           <p id="notifSub">Akun baru ditambahkan dan akun yang sudah sold.</p>
         </div>
-        <button class="close-btn" id="closeNotif" aria-label="Tutup notifikasi">✕</button>
+        <button class="close-btn" id="closeNotif" aria-label="Tutup notifikasi">âœ•</button>
       </div>
 
       <div class="notif-stats" id="notifStats"></div>
@@ -1033,7 +1033,7 @@
             <p id="modalSubtitle">Geser foto untuk melihat detail akun.</p>
           </div>
           <div class="modal-head-actions">
-            <button class="close-btn" id="closeModal" aria-label="Tutup">✕</button>
+            <button class="close-btn" id="closeModal" aria-label="Tutup">âœ•</button>
           </div>
         </div>
 
@@ -1065,8 +1065,8 @@
         <div class="detail-desc" id="modalKet"></div>
 
         <div class="detail-actions" id="detailActions">
-          <a class="detail-btn detail-wa" id="modalWa" href="#" target="_blank" rel="noopener">⚡ Beli Cepat (Direct)</a>
-          <a class="detail-btn detail-fb" id="modalFb" href="#" target="_blank" rel="noopener">🔒 Aman via Middleman</a>
+          <a class="detail-btn detail-wa" id="modalWa" href="#" target="_blank" rel="noopener">âš¡ Beli Cepat (Direct)</a>
+          <a class="detail-btn detail-fb" id="modalFb" href="#" target="_blank" rel="noopener">ðŸ”’ Aman via Middleman</a>
         </div>
       </div>
     </div>
@@ -1080,7 +1080,7 @@
           <h3 id="purchaseTitle">Konfirmasi Pembelian</h3>
           <p id="purchaseMeta">Nama akun dan harga akan ditampilkan di sini.</p>
         </div>
-        <button class="close-btn" id="closePurchase" aria-label="Tutup">✕</button>
+        <button class="close-btn" id="closePurchase" aria-label="Tutup">âœ•</button>
       </div>
 
       <div class="purchase-card">
@@ -1575,7 +1575,7 @@
       const prevDisabled = currentPage <= 1;
       const nextDisabled = currentPage >= totalPages;
 
-      buttons.push(`<button class="page-btn" ${prevDisabled ? 'disabled' : ''} data-page="prev">←</button>`);
+      buttons.push(`<button class="page-btn" ${prevDisabled ? 'disabled' : ''} data-page="prev">â†</button>`);
 
       const pages = [];
       if (totalPages <= 6){
@@ -1597,7 +1597,7 @@
         else buttons.push(`<button class="page-btn ${p === currentPage ? 'active' : ''}" data-page="${p}">${p}</button>`);
       });
 
-      buttons.push(`<button class="page-btn" ${nextDisabled ? 'disabled' : ''} data-page="next">→</button>`);
+      buttons.push(`<button class="page-btn" ${nextDisabled ? 'disabled' : ''} data-page="next">â†’</button>`);
       els.pagination.innerHTML = buttons.join('');
     }
 
@@ -1645,8 +1645,8 @@
       els.modalFb.classList.remove('disabled');
       els.modalWa.setAttribute('aria-disabled', 'false');
       els.modalFb.setAttribute('aria-disabled', 'false');
-      els.modalWa.textContent = '⚡ Beli Cepat (Direct)';
-      els.modalFb.textContent = '🔒 Aman via Middleman';
+      els.modalWa.textContent = 'âš¡ Beli Cepat (Direct)';
+      els.modalFb.textContent = 'ðŸ”’ Aman via Middleman';
       els.modalSubtitle.textContent = 'Geser foto untuk melihat detail akun.';
     }
 
@@ -1834,7 +1834,7 @@
           <div class="left">
             <div class="title">${item.nama}</div>
             <div class="sub">
-              ${type === 'new' ? `Ditambahkan ${item.createdAt ? item.createdAt.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}` : `Sudah sold${item.createdAt ? ` • ${item.createdAt.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}` : ''}`}
+              ${type === 'new' ? `Ditambahkan ${item.createdAt ? item.createdAt.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}` : `Sudah sold${item.createdAt ? ` â€¢ ${item.createdAt.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}` : ''}`}
             </div>
           </div>
           <span class="tag">${type === 'new' ? 'New' : 'Sold'}</span>
