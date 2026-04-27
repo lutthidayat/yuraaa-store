@@ -1,517 +1,742 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Store</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yuraaa Finance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root{
+      --bg:#07101f;
+      --bg2:#0a1326;
+      --panel:rgba(10,19,38,.78);
+      --panel2:rgba(13,24,48,.9);
+      --stroke:rgba(148,163,184,.12);
+      --stroke-strong:rgba(148,163,184,.18);
+      --text:#e5eefc;
+      --muted:#8ea1c1;
+      --muted2:#6d7f9f;
+      --purple:#9c7cff;
+      --purple2:#7b61ff;
+      --cyan:#39e0d0;
+      --green:#4de29a;
+      --red:#ff7b86;
+      --amber:#ffca70;
+      --shadow:0 24px 80px rgba(0,0,0,.45);
+      --radius:22px;
+      --radius2:18px;
+      --radius3:14px;
+    }
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:'Poppins',sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(123,97,255,.13), transparent 55%),
+        radial-gradient(900px 600px at 80% 20%, rgba(57,224,208,.08), transparent 50%),
+        linear-gradient(180deg, #050b16 0%, #07101f 45%, #07101f 100%);
+      overflow-x:hidden;
+    }
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Poppins',sans-serif;background:#020617;color:#e5e7eb}
+    .app{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns: 300px 1fr;
+    }
 
-/* HEADER */
-header{text-align:center;padding:16px}
-h1{font-size:24px}
-.subtitle{font-size:12px;color:#94a3b8}
+    .sidebar{
+      position:relative;
+      padding:26px 20px 18px;
+      border-right:1px solid rgba(255,255,255,.06);
+      background:linear-gradient(180deg, rgba(6,11,23,.92), rgba(5,10,20,.96));
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
 
-/* TAB */
-.tabs{display:flex;gap:8px;justify-content:center;margin:10px;flex-wrap:wrap}
-.tab{
- padding:8px 14px;border-radius:999px;
- background:#0f172a;color:#94a3b8;
- font-size:12px;
- transition:.2s;
-}
-.tab.active{background:#22c55e;color:black}
-.tab:hover{background:#1e293b}
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      margin-bottom:18px;
+    }
+    .brand .name{
+      font-size:22px;
+      line-height:1;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .brand .name span{color:var(--purple)}
+    .brand .sub{
+      color:#d7dff2;
+      font-size:12px;
+      opacity:.9;
+    }
 
-/* GRID */
-.grid{display:grid;gap:14px;padding:12px}
+    .profile-card,
+    .support-card,
+    .side-section,
+    .nav-item,
+    .summary-card,
+    .main-panel,
+    .list-item,
+    .chip,
+    .top-pill,
+    .bottom-nav{
+      border:1px solid var(--stroke);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
 
-/* CARD */
-.card{
- position:relative;
- background:#0b1220;
- border-radius:18px;
- padding:10px;
- border:1px solid #1e293b;
- cursor:pointer;
- transition:.25s;
-}
-.card:hover{
- transform:translateY(-5px);
- box-shadow:0 10px 25px rgba(0,0,0,0.6);
-}
+    .profile-card{
+      background:linear-gradient(180deg, rgba(14,24,48,.88), rgba(9,17,34,.9));
+      border-radius:24px;
+      padding:18px 16px 16px;
+      margin-bottom:18px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+    }
+    .avatar-wrap{
+      position:relative;
+      width:88px;
+      height:88px;
+      margin-bottom:14px;
+      border-radius:50%;
+      padding:3px;
+      background:linear-gradient(135deg, rgba(156,124,255,.9), rgba(57,224,208,.8));
+      box-shadow:0 0 0 1px rgba(255,255,255,.06), 0 12px 40px rgba(123,97,255,.18);
+    }
+    .avatar{
+      width:100%;height:100%;border-radius:50%;
+      object-fit:cover;
+      display:block;
+      border:2px solid rgba(7,16,31,.92);
+    }
+    .badge-check{
+      position:absolute;right:-2px;top:0;
+      width:24px;height:24px;border-radius:50%;
+      background:#3c8dff;
+      display:grid;place-items:center;
+      border:2px solid #0a1326;
+      color:white;
+      box-shadow:0 8px 18px rgba(60,141,255,.32);
+    }
+    .badge-check svg{width:13px;height:13px}
 
-.card img{
-  width:100%;
-  aspect-ratio:16/9;
-  object-fit:cover;
-}
+    .profile-name{font-size:20px;font-weight:700;margin-top:2px}
+    .profile-tag{
+      margin-top:8px;
+      padding:7px 12px;
+      border-radius:999px;
+      background:rgba(123,97,255,.16);
+      color:#b7a6ff;
+      font-size:12px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-weight:600;
+    }
+    .profile-meta{
+      margin-top:12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      width:100%;
+      color:#dce6fb;
+      font-size:13px;
+    }
+    .meta-row{
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      color:#dce6fb;
+    }
+    .meta-row .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px rgba(77,226,154,.1)}
+    .meta-row .star{color:var(--amber)}
 
-/* STATUS */
-.card.sold{opacity:0.5;filter:grayscale(0.4)}
-.card.proses{opacity:0.7}
+    .menu-title,
+    .stats-title,
+    .contact-title{
+      font-size:12px;
+      letter-spacing:.12em;
+      color:rgba(180,196,224,.55);
+      margin:18px 4px 10px;
+      font-weight:700;
+    }
 
-.card.sold::after{
- content:"Terjual";
- position:absolute;top:50%;left:50%;
- transform:translate(-50%,-50%);
- background:#ef4444;padding:6px 12px;border-radius:8px;
-}
-.card.proses::after{
- content:"PROSES";
- position:absolute;top:50%;left:50%;
- transform:translate(-50%,-50%);
- background:#f59e0b;padding:6px 12px;border-radius:8px;
-}
+    .nav-list{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .nav-item{
+      border-radius:14px;
+      padding:13px 14px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      background:rgba(11,18,32,.45);
+      color:#d6e1f7;
+      cursor:pointer;
+      transition:.22s ease;
+    }
+    .nav-item:hover{transform:translateY(-1px);background:rgba(18,28,51,.92);border-color:rgba(156,124,255,.24)}
+    .nav-item.active{
+      background:linear-gradient(90deg, rgba(123,97,255,.24), rgba(57,224,208,.12));
+      border-color:rgba(156,124,255,.3);
+      box-shadow:0 14px 30px rgba(123,97,255,.08);
+    }
+    .nav-item i{width:18px;height:18px;opacity:.95}
+    .nav-item span{font-size:14px;font-weight:500}
 
-/* BADGE */
-.badge{position:absolute;top:10px;left:10px;padding:4px 8px;border-radius:999px;font-size:10px;z-index:2}
-.badge.ready{background:#22c55e;color:black}
-.badge.sold{background:#ef4444;color:white}
-.badge.proses{background:#f59e0b;color:black}
+    .stats-list{display:flex;flex-direction:column;gap:12px}
+    .stat-card{
+      display:flex;align-items:center;gap:12px;
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(11,18,32,.46);
+      border:1px solid rgba(255,255,255,.05);
+    }
+    .stat-ico{
+      width:38px;height:38px;border-radius:12px;
+      display:grid;place-items:center;
+      background:rgba(123,97,255,.16);
+      color:#b7a6ff;
+      flex:0 0 auto;
+    }
+    .stat-ico.cyan{background:rgba(57,224,208,.14);color:#7ef1e8}
+    .stat-ico.green{background:rgba(77,226,154,.12);color:#63f0ad}
+    .stat-ico.yellow{background:rgba(255,202,112,.12);color:#ffd66f}
+    .stat-copy{display:flex;flex-direction:column;gap:1px;min-width:0}
+    .stat-copy .label{font-size:12px;color:#dce6fb;opacity:.84}
+    .stat-copy .value{font-size:15px;font-weight:700;line-height:1.2}
+    .stat-copy .value.green{color:var(--green)}
+    .stat-copy .value.blue{color:#7db0ff}
+    .stat-copy .value.yellow{color:var(--amber)}
 
-/* LABEL */
-.badge-right{position:absolute;top:10px;right:10px;padding:4px 8px;border-radius:999px;font-size:10px;z-index:2}
-.hot{background:orange}
-.promo{background:gold;color:black}
+    .support-card{
+      margin-top:18px;
+      padding:18px 16px;
+      border-radius:22px;
+      background:linear-gradient(180deg, rgba(19,28,55,.92), rgba(10,16,32,.9));
+    }
+    .support-card h4{margin:0 0 8px;font-size:18px}
+    .support-card p{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.5}
+    .btn{
+      width:100%;
+      border:none;
+      border-radius:14px;
+      padding:13px 14px;
+      font-family:inherit;
+      font-weight:700;
+      cursor:pointer;
+      transition:.2s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      text-decoration:none;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:linear-gradient(135deg, rgba(123,97,255,1), rgba(96,73,255,1));color:white;box-shadow:0 18px 38px rgba(123,97,255,.22)}
+    .btn.wa{background:linear-gradient(135deg,#1f9a55,#147845);color:white}
+    .btn.fb{background:linear-gradient(135deg,#2f5fbf,#244b94);color:white}
 
-/* PRICE */
-.price{color:#22c55e;font-weight:bold}
-.old{text-decoration:line-through;font-size:12px;color:#64748b}
+    .contact-stack{display:flex;flex-direction:column;gap:10px}
 
-/* DISKON */
-.discount{
- background:linear-gradient(135deg,#ff3b3b,#ff0000);
- color:white;
- padding:4px 10px;
- border-radius:999px;
- font-size:11px;
- font-weight:bold;
- display:inline-block;
- margin-top:6px;
-}
+    .copyright{
+      margin-top:18px;
+      color:rgba(180,196,224,.45);
+      font-size:12px;
+      line-height:1.5;
+    }
 
-/* SLIDER */
-.slider{
- display:flex;
- gap:8px;
- overflow-x:auto;
- margin-bottom:10px;
-}
-.slider.center{justify-content:center}
-.slider img{
- height:120px;
- border-radius:10px;
- object-fit:cover;
-}
+    .main{
+      padding:22px 22px 84px;
+      min-width:0;
+    }
 
-/* POPUP */
-.popup{
- position:fixed;top:0;left:0;width:100%;height:100%;
- display:none;background:rgba(0,0,0,0.6);
- justify-content:center;align-items:center;
- opacity:0;
- transition:.2s;
-}
-.popup.show{opacity:1}
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:24px;
+    }
+    .top-left{display:flex;align-items:center;gap:14px;min-width:0}
+    .burger{
+      width:40px;height:40px;border-radius:12px;
+      display:grid;place-items:center;
+      background:rgba(15,23,42,.68);
+      border:1px solid rgba(255,255,255,.06);
+      color:#d8e4fb;
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+    .burger i{width:20px;height:20px}
+    .page-head{min-width:0}
+    .page-title{
+      margin:0;
+      font-size:28px;
+      line-height:1.1;
+      font-weight:800;
+      letter-spacing:.1px;
+      display:flex;
+      align-items:flex-end;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .page-title .accent{color:var(--purple)}
+    .page-sub{margin:6px 0 0;color:rgba(208,218,239,.74);font-size:13px}
+    .top-right{display:flex;align-items:center;gap:12px}
+    .icon-btn{
+      width:40px;height:40px;border-radius:50%;
+      display:grid;place-items:center;
+      background:rgba(15,23,42,.68);
+      border:1px solid rgba(255,255,255,.06);
+      color:#d8e4fb;
+      position:relative;
+    }
+    .icon-btn .dot{
+      position:absolute;top:7px;right:7px;
+      width:8px;height:8px;border-radius:50%;background:#ff5c70;box-shadow:0 0 0 6px rgba(255,92,112,.12)
+    }
 
-.popup-box{
- background:#020617;
- padding:16px;
- border-radius:16px;
- width:90%;
- max-width:320px;
- text-align:center;
-}
+    .trusted-pill{
+      padding:12px 16px;
+      border-radius:16px;
+      background:linear-gradient(180deg, rgba(17,31,54,.82), rgba(13,25,44,.82));
+      border:1px solid rgba(57,224,208,.2);
+      color:#7ef1e8;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      box-shadow:0 18px 32px rgba(57,224,208,.08);
+    }
+    .trusted-pill .shield{
+      width:18px;height:18px;border-radius:7px;background:rgba(57,224,208,.15);display:grid;place-items:center;
+    }
+    .trusted-pill .shield i{width:13px;height:13px}
 
-/* BUTTON */
-.btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none}
-.wa{background:#22c55e;color:black}
-.fb{background:#3b82f6;color:white}
-.close-btn{
- margin-top:8px;
- padding:8px;
- border:none;
- border-radius:10px;
- background:#1e293b;
- color:white;
- width:100%;
-}
+    .hero{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      margin-bottom:20px;
+      flex-wrap:wrap;
+    }
 
-/* BLUR */
-body.popup-active .grid{
- filter:blur(4px);
- pointer-events:none;
-}
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
 
-/* ===================== */
-/* 🔥 DESKTOP IMPROVEMENT */
-/* ===================== */
+    .summary-card{
+      border-radius:24px;
+      padding:22px;
+      background:linear-gradient(180deg, rgba(14,24,48,.92), rgba(8,16,33,.92));
+      position:relative;
+      overflow:hidden;
+      min-height:170px;
+    }
+    .summary-card::after{
+      content:"";
+      position:absolute;
+      inset:auto -40px -40px auto;
+      width:170px;height:170px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(123,97,255,.22), transparent 70%);
+      pointer-events:none;
+    }
+    .summary-head{display:flex;align-items:flex-start;gap:14px;position:relative;z-index:1}
+    .sum-ico{
+      width:56px;height:56px;border-radius:18px;
+      display:grid;place-items:center;
+      flex:0 0 auto;
+      background:rgba(123,97,255,.16);
+      color:#b7a6ff;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    .sum-ico.cyan{background:rgba(57,224,208,.15);color:#6ff0e7}
+    .sum-copy{min-width:0;flex:1}
+    .sum-label{font-size:14px;letter-spacing:.08em;color:#b5c1dc;opacity:.95}
+    .sum-value{font-size:28px;font-weight:800;margin-top:6px;line-height:1.15}
+    .sum-sub{font-size:13px;margin-top:2px;color:var(--muted)}
+    .delta{
+      display:inline-flex;align-items:center;gap:8px;
+      margin-top:16px;
+      padding:10px 12px;border-radius:14px;
+      background:rgba(255,255,255,.03);
+      color:#8ff0a6;
+      font-size:12px;font-weight:600;
+      position:relative;z-index:1;
+      width:max-content;
+    }
+    .delta.red{color:#ff9aa4}
+    .delta .arrow{
+      width:18px;height:18px;border-radius:50%;display:grid;place-items:center;
+      background:rgba(77,226,154,.08)
+    }
+    .delta.red .arrow{background:rgba(255,123,134,.08)}
+    .delta .muted{color:var(--muted);font-weight:500}
 
-/* GRID LEBIH RAPI */
-@media (min-width:1024px){
-  .grid{
-    grid-template-columns:repeat(2,1fr);
-    max-width:1100px;
-    margin:auto;
-  }
-}
+    .panel{
+      border-radius:24px;
+      background:linear-gradient(180deg, rgba(14,24,48,.88), rgba(8,16,33,.92));
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .panel-head{
+      padding:18px 18px 14px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    }
+    .panel-title{
+      display:flex;align-items:center;gap:10px;
+      font-weight:700;font-size:18px;
+    }
+    .panel-title i{width:20px;height:20px;color:#ae84ff}
+    .select-like{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:12px 14px;border-radius:14px;
+      background:rgba(15,23,42,.72);
+      border:1px solid rgba(255,255,255,.06);
+      color:#d9e4fa;font-size:13px;
+    }
 
-/* CARD LEBIH PROPORSIONAL */
-@media (min-width:1024px){
-  .card img{
-    height:180px;
-  }
-}
+    .transactions{padding:0 14px 18px}
+    .list-item{
+      display:flex;align-items:center;gap:14px;
+      padding:15px 14px;
+      border-radius:18px;
+      background:rgba(8,14,27,.52);
+      margin-bottom:10px;
+      border:1px solid rgba(255,255,255,.05);
+    }
+    .item-ico{
+      width:42px;height:42px;border-radius:14px;
+      display:grid;place-items:center;
+      flex:0 0 auto;
+      background:rgba(123,97,255,.16);
+      color:#b7a6ff;
+    }
+    .item-ico.crown{background:rgba(255,192,92,.14);color:#ffc46a}
+    .item-ico.sword{background:rgba(109,228,243,.14);color:#8ae8f5}
+    .item-ico.box{background:rgba(57,224,208,.12);color:#7ef1e8}
+    .item-copy{flex:1;min-width:0}
+    .item-name{font-size:17px;font-weight:500;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .item-cat{font-size:12px;color:#7f93b5;margin-top:3px}
+    .item-amount{
+      font-size:16px;
+      font-weight:700;
+      color:var(--green);
+      white-space:nowrap;
+    }
+    .item-amount.red{color:var(--red)}
+    .item-end{
+      width:40px;height:40px;border-radius:50%;
+      display:grid;place-items:center;
+      border:1px solid rgba(77,226,154,.15);
+      color:var(--green);
+      flex:0 0 auto;
+      background:rgba(77,226,154,.05);
+    }
+    .item-end.red{border-color:rgba(255,123,134,.15);color:var(--red);background:rgba(255,123,134,.05)}
 
+    .pagination{
+      padding:8px 18px 18px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    }
+    .pager-group{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .pager-btn,
+    .pager-num{
+      min-width:42px;height:42px;border-radius:12px;
+      display:inline-flex;align-items:center;justify-content:center;
+      background:rgba(15,23,42,.72);
+      border:1px solid rgba(255,255,255,.06);
+      color:#cfdaf0;
+      font-weight:600;font-family:inherit;
+    }
+    .pager-num.active{background:linear-gradient(135deg, rgba(123,97,255,1), rgba(111,88,255,1));color:white;border-color:transparent;box-shadow:0 12px 24px rgba(123,97,255,.2)}
+    .ellipsis{color:#7f93b5;font-weight:700;letter-spacing:.2em;padding:0 4px}
 
-/* ===================== */
-/* 🔥 SCROLL LEBIH HALUS */
-/* ===================== */
+    .mobile-nav{
+      display:none;
+      position:fixed;
+      left:12px;right:12px;bottom:12px;
+      z-index:50;
+      padding:12px;
+      border-radius:22px;
+      background:rgba(9,15,30,.9);
+      border:1px solid rgba(255,255,255,.07);
+      box-shadow:0 22px 60px rgba(0,0,0,.5);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .mobile-nav .row{
+      display:flex;align-items:center;justify-content:space-around;gap:10px;
+    }
+    .mobile-nav .mn-item{
+      flex:1;
+      border-radius:16px;
+      padding:10px 8px;
+      text-align:center;
+      color:#c9d5eb;
+      font-size:12px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+    }
+    .mobile-nav .mn-item.active{color:#b7a6ff}
+    .mobile-nav .mn-item i{width:18px;height:18px}
 
-.popup-right::-webkit-scrollbar{
-  width:6px;
-}
-.popup-right::-webkit-scrollbar-thumb{
-  background:#334155;
-  border-radius:10px;
-}
+    @media (max-width: 1180px){
+      .app{grid-template-columns: 1fr}
+      .sidebar{display:none}
+      .mobile-nav{display:block}
+      .main{padding-bottom:112px}
+    }
 
-/* ===================== */
-/* 🔥 SMOOTH EXPERIENCE */
-/* ===================== */
+    @media (max-width: 920px){
+      .grid{grid-template-columns: 1fr}
+      .page-title{font-size:24px}
+      .sum-value{font-size:24px}
+      .summary-card{min-height:unset}
+    }
 
-.card{
-  transition:.25s;
-}
-.card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 12px 35px rgba(0,0,0,0.7);
-}
-
-.popup{
-  backdrop-filter:blur(6px);
-}
-
-/* ===================== */
-/* 🔥 FIX POPUP DESKTOP */
-/* ===================== */
-
-@media (min-width:1024px){
-
-  .popup-box{
-    width:100%;
-    max-width:none;
-    height:100vh;
-    display:flex;
-    gap:30px;
-    padding:30px;
-    border-radius:0;
-    text-align:left;
-  }
-
-  .popup-left{
-    flex:2;
-    position:relative;
-  }
-
-  .popup-left .slider{
-    flex-direction:column;
-    gap:10px;
-  }
-
-  .popup-left img{
-    width:100%;
-    height:auto;
-    max-height:80vh;
-    object-fit:contain;
-  }
-
-  .popup-right{
-    flex:1;
-    overflow-y:auto;
-    padding-left:10px;
-  }
-}
-
-</style>
-
+    @media (max-width: 560px){
+      .main{padding:16px 14px 100px}
+      .topbar{align-items:flex-start}
+      .page-title{font-size:22px}
+      .hero{margin-bottom:16px}
+      .summary-card{padding:18px}
+      .panel-head{padding:16px 16px 12px}
+      .transactions{padding:0 10px 14px}
+      .list-item{padding:13px 12px}
+      .item-name{font-size:15px}
+      .pagination{padding:8px 14px 16px}
+      .pager-group{gap:8px}
+    }
+  </style>
 </head>
-
 <body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="name"><span>Yuraaa</span> Store</div>
+        <div class="sub">🎮 Akun Game Murah • Trusted</div>
+      </div>
 
-<div id="imgViewer" style="
-display:none;
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:rgba(0,0,0,0.9);
-justify-content:center;
-align-items:center;
-z-index:9999;
-">
-  <img id="viewerImg" style="max-width:90%;max-height:90%;border-radius:12px">
-</div>
+      <div class="profile-card">
+        <div class="avatar-wrap">
+          <img class="avatar" src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=300&q=80" alt="Profile">
+          <div class="badge-check" aria-label="verified">
+            <i data-lucide="check"></i>
+          </div>
+        </div>
+        <div class="profile-name">Yuraaa Store</div>
+        <div class="profile-tag"><i data-lucide="star"></i> Trusted Seller</div>
+        <div class="profile-meta">
+          <div class="meta-row"><span class="star">★</span> 4.9 (245+ Ulasan)</div>
+          <div class="meta-row"><span class="dot"></span> Online</div>
+        </div>
+      </div>
 
-<header>
-<h1>YURAAA STORE 🎮</h1>
-<p class="subtitle">Akun Game Murah • Trusted</p>
-</header>
+      <div class="menu-title">MENU</div>
+      <div class="nav-list">
+        <div class="nav-item active"><i data-lucide="layout-grid"></i><span>Dashboard</span></div>
+        <div class="nav-item"><i data-lucide="history"></i><span>Riwayat Transaksi</span></div>
+        <div class="nav-item"><i data-lucide="package"></i><span>Produk</span></div>
+        <div class="nav-item"><i data-lucide="message-circle-more"></i><span>Testimoni</span></div>
+        <div class="nav-item"><i data-lucide="receipt-text"></i><span>Bukti Transaksi</span></div>
+        <div class="nav-item"><i data-lucide="info"></i><span>Info Store</span></div>
+      </div>
 
-<div class="tabs" id="gameTabs">
-<button onclick="setGame('all',this)" class="tab active">Semua</button>
-<button onclick="setGame('honkai star rail',this)" class="tab">HSR</button>
-<button onclick="setGame('solo leveling',this)" class="tab">Solo</button>
-<button onclick="setGame('mobile legend',this)" class="tab">ML</button>
-<button onclick="setGame('arena breakout',this)" class="tab">Arena</button>
-<button onclick="setGame('arknight endfield',this)" class="tab">Endfield</button>
-</div>
+      <div class="stats-title">STATISTIK</div>
+      <div class="stats-list">
+        <div class="stat-card">
+          <div class="stat-ico green"><i data-lucide="arrow-up-right"></i></div>
+          <div class="stat-copy">
+            <div class="label">Total Transaksi</div>
+            <div class="value green">150+</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-ico blue"><i data-lucide="gamepad-2"></i></div>
+          <div class="stat-copy">
+            <div class="label">Akun Terjual</div>
+            <div class="value blue">150+</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-ico cyan"><i data-lucide="users"></i></div>
+          <div class="stat-copy">
+            <div class="label">Member Aktif</div>
+            <div class="value green">287+</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-ico yellow"><i data-lucide="star"></i></div>
+          <div class="stat-copy">
+            <div class="label">Rating Store</div>
+            <div class="value yellow">4.9 / 5</div>
+          </div>
+        </div>
+      </div>
 
-<div class="tabs" id="statusTabs">
-<button onclick="setStatus('all',this)" class="tab active">Semua</button>
-<button onclick="setStatus('ready',this)" class="tab">Ready</button>
-<button onclick="setStatus('proses',this)" class="tab">Proses</button>
-<button onclick="setStatus('sold',this)" class="tab">Sold</button>
-</div>
+      <div class="support-card">
+        <h4>Butuh Middleman?</h4>
+        <p>Gunakan jasa middleman kami untuk transaksi lebih aman & nyaman!</p>
+        <a class="btn primary" href="#">Gunakan Middleman</a>
+      </div>
 
-<div id="loading" style="text-align:center;padding:20px">⏳ Memuat akun terbaik...</div>
-<div class="grid"></div>
-<div class="popup" id="popup"></div>
+      <div class="contact-title">HUBUNGI KAMI</div>
+      <div class="contact-stack">
+        <a class="btn wa" href="#"><i data-lucide="message-circle"></i> WhatsApp</a>
+        <a class="btn fb" href="#"><i data-lucide="facebook"></i> Facebook</a>
+      </div>
 
-<script>
-let allData=[];
-let currentGame='all';
-let currentStatus='all';
+      <div class="copyright">© 2024 Yuraaa Store<br/>All Rights Reserved.</div>
+    </aside>
 
-let gridEl;
-let popupEl;
+    <main class="main">
+      <div class="topbar">
+        <div class="top-left">
+          <button class="burger" aria-label="menu"><i data-lucide="menu"></i></button>
+          <div class="page-head">
+            <h1 class="page-title"><span class="accent">Yuraaa</span> Finance</h1>
+            <p class="page-sub">Ringkasan keuangan & riwayat transaksi</p>
+          </div>
+        </div>
 
-function formatRupiah(num){
- return "Rp " + num.toLocaleString("id-ID").replace(/,/g,'.');
-}
+        <div class="top-right">
+          <button class="icon-btn" aria-label="notifications"><i data-lucide="bell"></i><span class="dot"></span></button>
+          <button class="icon-btn" aria-label="theme"><i data-lucide="moon-star"></i></button>
+        </div>
+      </div>
 
-document.addEventListener("DOMContentLoaded", async ()=>{
-  gridEl = document.querySelector('.grid');
-  popupEl = document.getElementById('popup');
+      <div class="hero">
+        <div></div>
+        <div class="trusted-pill"><span class="shield"><i data-lucide="shield-check"></i></span> Trusted</div>
+      </div>
 
-  const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List");
-  allData = Object.freeze(await res.json());
+      <section class="grid">
+        <div class="summary-card">
+          <div class="summary-head">
+            <div class="sum-ico"><i data-lucide="download"></i></div>
+            <div class="sum-copy">
+              <div class="sum-label">TOTAL MASUK</div>
+              <div class="sum-value">Rp 28.535.000</div>
+              <div class="sum-sub">Pemasukan</div>
+            </div>
+          </div>
+          <div class="delta"><span class="arrow"><i data-lucide="trending-up"></i></span> 12.5% <span class="muted">dari bulan lalu</span></div>
+        </div>
 
-  document.getElementById('loading').style.display='none';
-  apply();
-});
+        <div class="summary-card">
+          <div class="summary-head">
+            <div class="sum-ico cyan"><i data-lucide="share-2"></i></div>
+            <div class="sum-copy">
+              <div class="sum-label">TOTAL KELUAR</div>
+              <div class="sum-value">Rp 26.220.000</div>
+              <div class="sum-sub" style="color:#69f0e0">Pengeluaran</div>
+            </div>
+          </div>
+          <div class="delta red"><span class="arrow"><i data-lucide="trending-down"></i></span> 8.3% <span class="muted">dari bulan lalu</span></div>
+        </div>
+      </section>
 
-function parseHarga(h){
- return Number((h||'').replace(/\D/g,'')) || 0;
-}
+      <section class="panel">
+        <div class="panel-head">
+          <div class="panel-title"><i data-lucide="clock-3"></i> Riwayat Transaksi</div>
+          <div class="select-like">Semua Transaksi <i data-lucide="chevron-down"></i></div>
+        </div>
 
-function apply(){
- let data=[...allData];
+        <div class="transactions" id="transactions"></div>
 
- if(currentGame!=='all'){
-  data=data.filter(a=>(a.Game||'').toLowerCase().trim()===currentGame);
- }
+        <div class="pagination">
+          <div class="pager-group">
+            <div class="pager-btn"><i data-lucide="chevron-left"></i></div>
+            <div class="pager-btn" style="width:auto;padding:0 16px;gap:8px;display:inline-flex;align-items:center">Sebelumnya</div>
+          </div>
 
- if(currentStatus!=='all'){
-  data=data.filter(a=>(a.Status||'').toLowerCase().trim()===currentStatus);
- }
+          <div class="pager-group">
+            <div class="pager-num active">1</div>
+            <div class="pager-num">2</div>
+            <div class="pager-num">3</div>
+            <div class="ellipsis">...</div>
+            <div class="pager-num">12</div>
+          </div>
 
- render(data);
-}
+          <div class="pager-group">
+            <div class="pager-btn" style="width:auto;padding:0 16px;gap:8px;display:inline-flex;align-items:center">Selanjutnya</div>
+            <div class="pager-btn"><i data-lucide="chevron-right"></i></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
-function render(data){
- const grid = gridEl;
-
- const html = data
- .sort((a,b)=>{
-  const order={ready:1, proses:2, sold:3};
-  const A=(a.Status||'ready').toLowerCase();
-  const B=(b.Status||'ready').toLowerCase();
-  if(order[A]!==order[B]) return order[A]-order[B];
-  return parseHarga(a.Harga)-parseHarga(b.Harga);
- })
- .map(a=>{
-  const imgs=(a.Gambar||'').split(',');
-  const firstImg=imgs[0] || 'https://via.placeholder.com/300x150?text=No+Image';
-  const status=(a.Status||'ready').toLowerCase();
-  const label=(a.Label||'').toLowerCase();
-
-  const harga=parseHarga(a.Harga);
-  const normal=parseHarga(a.Diskon);
-
-  let diskon='';
-  if(normal && harga && normal>harga){
-    const persen=Math.round((normal-harga)/normal*100);
-    diskon=`<div class="old">${a.Diskon}</div>
-            <div class="discount">🔥 -${persen}%</div>`;
-  }
-
-  let labelHTML='';
-  if(label==='hot') labelHTML='<div class="badge-right hot">HOT</div>';
-  if(label==='promo') labelHTML='<div class="badge-right promo">PROMO</div>';
-
-  return `
-  <div class="card ${status}" onclick='handleClick(${JSON.stringify(a)})'>
-    <div class="badge ${status}">${status.toUpperCase()}</div>
-    ${labelHTML}
-    <img src="${firstImg}">
-    <h4>${a.Nama||'-'}</h4>
-    <div style="font-size:12px;color:#94a3b8">${a.Ket||''}</div>
-    <div class="price">${formatRupiah(harga)}</div>
-    ${diskon}
-  </div>`;
- }).join('');
-
- grid.innerHTML = html;
-}
-
-function setGame(g,el){
- currentGame=g;
- document.querySelectorAll('#gameTabs .tab').forEach(t=>t.classList.remove('active'));
- el.classList.add('active');
- apply();
-}
-
-function setStatus(s,el){
- currentStatus=s;
- document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));
- el.classList.add('active');
- apply();
-}
-
-function handleClick(a){
- const popup = popupEl;
- const status=(a.Status||'ready').toLowerCase();
-
- if(status==='sold'){
- popup.innerHTML=`
- <div class="popup-box">
-   <h3>❌ Yah, akun ini sudah diambil 😢</h3>
-   <p style="font-size:12px;color:#94a3b8">
-   Tapi tenang, masih banyak akun bagus lainnya yang siap kamu ambil 🔥
-   </p>
-   <button class="close-btn" onclick="showReadyByGame('${a.Game}')">Lihat akun lain</button>
- </div>`;
- }
- else if(status==='proses'){
- popup.innerHTML=`
- <div class="popup-box">
-   <h3>⏳ Akun sedang diproses</h3>
-   <p style="font-size:12px;color:#94a3b8">
-   Silakan cek akun lainnya ya 🔥
-   </p>
-   <button class="close-btn" onclick="showReadyByGame('${a.Game}')">
-     Lihat akun lain
-   </button>
- </div>`;
-}
- else{
-  const harga=parseHarga(a.Harga);
-  const imgs=(a.Gambar||'').split(',');
-
-  const pesan=`Halo kak, saya mau beli akun:
-Nama: ${a.Nama}
-Game: ${a.Game}
-Harga: ${formatRupiah(harga)}`;
-
-  const wa=`https://wa.me/6285808741017?text=${encodeURIComponent(pesan)}`;
-  const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
-
-  popup.innerHTML=`
-<div class="popup-box">
-
-  <div class="popup-left">
-    <div class="slider ${imgs.length===1?'center':''}">
-      ${imgs.map(i=>`<img src="${i.trim()}" onclick="openViewer('${i.trim()}')">`).join('')}
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <div class="row">
+      <div class="mn-item active"><i data-lucide="layout-grid"></i>Dashboard</div>
+      <div class="mn-item"><i data-lucide="bar-chart-3"></i>Laporan</div>
+      <div class="mn-item"><i data-lucide="history"></i>Riwayat</div>
     </div>
-  </div>
+  </nav>
 
-  <div class="popup-right">
-    <h3>${a.Nama}</h3>
-    <div style="font-size:13px;color:#94a3b8">${a.Game}</div>
-    <div class="price">${formatRupiah(harga)}</div>
+  <script>
+    const txData = [
+      { name: 'Akun Solo leveling', cat: 'Game Account', amount: 'Rp 200.000', type: 'in', icon: 'gamepad-2' },
+      { name: 'Akun Solo leveling', cat: 'Game Account', amount: 'Rp 195.000', type: 'in', icon: 'gamepad-2' },
+      { name: 'Akun HSR', cat: 'Game Account', amount: 'Rp 90.000', type: 'out', icon: 'crown' },
+      { name: 'Akun HSR', cat: 'Game Account', amount: 'Rp 70.000', type: 'out', icon: 'crown' },
+      { name: 'Akun HSR', cat: 'Game Account', amount: 'Rp 200.000', type: 'in', icon: 'gamepad-2' },
+      { name: 'Emas', cat: 'Item', amount: 'Rp 200.000', type: 'in', icon: 'package' },
+      { name: 'Arena breakout #1', cat: 'Game Account', amount: 'Rp 100.000', type: 'in', icon: 'sword' },
+      { name: 'Arena breakout #2', cat: 'Game Account', amount: 'Rp 100.000', type: 'in', icon: 'sword' },
+      { name: 'Arknight endfield #1', cat: 'Game Account', amount: 'Rp 100.000', type: 'in', icon: 'sword' },
+      { name: 'Arknight endfield #2', cat: 'Game Account', amount: 'Rp 100.000', type: 'in', icon: 'sword' },
+      { name: 'Honkai star rail #4', cat: 'Game Account', amount: 'Rp 250.000', type: 'in', icon: 'sparkles' },
+      { name: 'Honkai star rail #3', cat: 'Game Account', amount: 'Rp 150.000', type: 'in', icon: 'sparkles' }
+    ];
 
-    <p style="margin-top:8px;font-size:13px;color:#cbd5f5">
-      ${a.Ket || ''}
-    </p>
+    function renderTransactions(){
+      const el = document.getElementById('transactions');
+      el.innerHTML = txData.map((t, i) => {
+        const amountClass = t.type === 'out' ? 'red' : '';
+        const endClass = t.type === 'out' ? 'red' : '';
+        const iconClass = t.icon === 'crown' ? 'crown' : t.icon === 'sword' ? 'sword' : t.icon === 'package' ? 'box' : '';
+        const itemIcon = t.icon === 'crown' ? 'crown' : t.icon === 'sword' ? 'sword' : t.icon === 'package' ? 'box' : '';
+        const arrow = t.type === 'out' ? 'arrow-up' : 'arrow-down';
+        return `
+          <div class="list-item">
+            <div class="item-ico ${iconClass}"><i data-lucide="${t.icon === 'sparkles' ? 'sparkles' : t.icon}"></i></div>
+            <div class="item-copy">
+              <div class="item-name">${t.name}</div>
+              <div class="item-cat">${t.cat}</div>
+            </div>
+            <div class="item-amount ${amountClass}">${t.amount}</div>
+            <div class="item-end ${endClass}"><i data-lucide="${t.type === 'out' ? 'arrow-up' : 'arrow-down'}"></i></div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
 
-    <a href="${wa}" class="btn wa">⚡ Beli Cepat (Direct)</a>
-    <a href="${fb}" class="btn fb">🔒 Aman via Middleman</a>
-
-    <button class="close-btn" onclick="tutup()">Tutup</button>
-  </div>
-
-</div>`;
- }
-
- popup.style.display='flex';
- setTimeout(()=>popup.classList.add('show'),10);
- document.body.classList.add('popup-active');
-}
-
-function tutup(){
- const popup = popupEl;
- popup.classList.remove('show');
- setTimeout(()=>{
-  popup.style.display='none';
-  document.body.classList.remove('popup-active');
- },200);
-}
-
-function showReadyByGame(game){
- document.getElementById('popup').style.display='none';
- document.body.classList.remove('popup-active');
-
- const gameFix = (game||'').toLowerCase().trim();
-
- const readyData = allData.filter(a =>
-  (a.Status||'').toLowerCase()==='ready' &&
-  (a.Game||'').toLowerCase().includes(gameFix)
- );
-
- const popup = popupEl;
-
- if(readyData.length === 0){
-  popup.innerHTML=`
-  <div class="popup-box">
-    <h3>😢 Akun ${game} belum tersedia</h3>
-    <p style="font-size:12px;color:#94a3b8">
-    Saat ini belum ada akun ready untuk game ini, coba cek game lain ya 🔥
-    </p>
-    <button class="close-btn" onclick="tutup()">Tutup</button>
-  </div>`;
-  popup.style.display='flex';
-  document.body.classList.add('popup-active');
-  return;
- }
-
- currentGame = gameFix;
- currentStatus = 'ready';
-
- apply();
- window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function openViewer(src){
-  const viewer=document.getElementById('imgViewer');
-  const img=document.getElementById('viewerImg');
-  img.src=src;
-  viewer.style.display='flex';
-}
-
-document.getElementById('imgViewer').onclick=function(){
-  this.style.display='none';
-}
-
-</script>
-
-<a href="admin.html" style="position:fixed;bottom:10px;right:10px;opacity:0.1;">⚙️</a>
-
-</body>
-</html>
+    renderTransactions();
+    lucide.createIcons();
+  </script>
 </body>
 </html>
