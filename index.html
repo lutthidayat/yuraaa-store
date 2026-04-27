@@ -560,6 +560,7 @@
     .banner-title{font-size:18px;font-weight:900;margin:0 0 4px}
     .banner-text{margin:0;color:var(--muted);font-size:13px;line-height:1.6;max-width:580px}
     .banner-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .banner-note{color:var(--muted);font-size:13px;line-height:1.6;padding:10px 0}
     .big-btn{
       min-width:150px;height:46px;border:none;border-radius:14px;color:#fff;font:inherit;font-weight:900;cursor:pointer;
       display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:0 18px
@@ -640,39 +641,27 @@
     .modal-head p{margin:0;color:var(--muted);font-size:13px}
     .close-btn{flex:0 0 auto}
     .modal-swiper{
-      width:100%;border-radius:28px;overflow:hidden;border:1px solid rgba(148,163,184,.12);
-      background:linear-gradient(180deg, rgba(5,8,22,.96), rgba(11,17,34,.92));box-shadow:var(--shadow)
-    }
-    .modal-swiper .swiper-slide{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height:100%;
+      width:100%;border-radius:24px;overflow:hidden;border:1px solid rgba(148,163,184,.12);
+      background:#050816;box-shadow:var(--shadow)
     }
     .modal-frame{
       width:100%;
-      height:min(64vh, 620px);
+      height:clamp(340px, 58vh, 620px);
       display:grid;
       place-items:center;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(139,92,246,.12), transparent 38%),
-        linear-gradient(180deg, rgba(2,6,23,.94), rgba(8,13,28,.98));
+      background:linear-gradient(180deg, rgba(2,6,23,.92), rgba(8,13,28,.96));
+      overflow:hidden;
     }
     .modal-frame img{
-      max-width:100%;
-      max-height:100%;
-      width:auto;
-      height:auto;
-      object-fit:contain;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center center;
       display:block;
-      padding:10px;
-      border-radius:22px;
+      background:linear-gradient(180deg, rgba(2,6,23,.35), rgba(2,6,23,.35));
     }
-    .modal-frame.empty-frame{
-      background:
-        radial-gradient(circle at 50% 50%, rgba(139,92,246,.12), transparent 40%),
-        linear-gradient(180deg, rgba(2,6,23,.94), rgba(8,13,28,.98));
-    }
+    .modal-empty{display:grid;place-items:center}
+    .empty-media{color:var(--muted);font-size:13px;letter-spacing:.02em}
     .thumb-strip{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
     .thumb-chip{
       width:68px;height:54px;border-radius:12px;overflow:hidden;border:1px solid rgba(148,163,184,.14);
@@ -680,11 +669,6 @@
     }
     .thumb-chip.active{outline:2px solid rgba(139,92,246,.9);opacity:1}
     .thumb-chip img{width:100%;height:100%;object-fit:cover;display:block}
-    .thumb-empty{
-      background:
-        radial-gradient(circle at 30% 30%, rgba(139,92,246,.10), transparent 35%),
-        linear-gradient(180deg, rgba(15,23,42,.78), rgba(8,13,28,.92));
-    }
 
     .modal-info{padding:18px 18px 18px 4px;overflow:auto}
     .modal-info::-webkit-scrollbar{width:10px}
@@ -761,7 +745,76 @@
       .page-btn{min-width:42px;height:42px}
       .detail-name{font-size:22px}
       .detail-price{font-size:24px}
+      .modal-frame{height:clamp(300px, 46vh, 420px)}
     }
+  
+    /* UX overrides */
+    .modal-swiper .swiper-wrapper,
+    .modal-swiper .swiper-slide{height:100%}
+    .modal-frame{
+      padding:10px;
+      box-sizing:border-box;
+      height:clamp(280px, 54vh, 600px);
+    }
+    .modal-frame img{
+      object-fit:contain;
+      object-position:center center;
+    }
+    .thumb-strip{
+      flex-wrap:nowrap;
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+      padding-bottom:4px;
+    }
+    .thumb-strip::-webkit-scrollbar{display:none}
+    .swiper-button-prev,
+    .swiper-button-next{display:none !important}
+
+    @media (max-width: 980px){
+      .modal-card{
+        grid-template-columns:1fr;
+        max-height:calc(100dvh - 16px);
+      }
+      .modal-media{
+        padding:14px;
+        border-right:none;
+        border-bottom:1px solid var(--line);
+      }
+      .modal-head{margin-bottom:10px}
+      .modal-frame{
+        height:clamp(250px, 42dvh, 360px);
+      }
+      .thumb-chip{
+        width:60px;
+        height:48px;
+      }
+      .modal-info{
+        min-height:0;
+        padding:14px;
+      }
+      .detail-top{margin-bottom:10px}
+      .detail-name{font-size:22px}
+      .detail-price{font-size:24px}
+      .detail-desc{margin-top:14px}
+      .detail-actions{
+        position:sticky;
+        bottom:0;
+        z-index:2;
+        margin-top:14px;
+        padding:12px 0 calc(10px + env(safe-area-inset-bottom));
+        background:linear-gradient(180deg, rgba(11,17,34,0), rgba(11,17,34,.92) 20%, rgba(11,17,34,.98));
+        backdrop-filter:blur(10px);
+        flex-direction:column;
+      }
+      .detail-btn{
+        width:100%;
+        min-width:0;
+        height:52px;
+        font-size:15px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -855,6 +908,9 @@
               <p class="banner-text">Semua akun ditampilkan dengan detail lengkap. Klik card untuk membuka popup, lihat gambar dulu, lalu pilih direct atau middleman untuk akun ready.</p>
             </div>
           </div>
+          <div class="banner-actions">
+            <div class="banner-note">Tombol kontak hanya muncul di popup akun <b>ready</b>.</div>
+          </div>
         </div>
       </main>
     </section>
@@ -880,12 +936,13 @@
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-media">
         <div class="modal-head">
-          <button class="back-btn" id="backModal" aria-label="Kembali">←</button>
           <div class="tagline">
             <h2 id="modalTitle">Detail Akun</h2>
             <p id="modalSubtitle">Geser foto untuk melihat detail akun.</p>
           </div>
-          <button class="close-btn" id="closeModal" aria-label="Tutup">✕</button>
+          <div class="modal-head-actions">
+            <button class="close-btn" id="closeModal" aria-label="Tutup">✕</button>
+          </div>
         </div>
 
         <div class="modal-swiper swiper" id="modalSwiper">
@@ -995,7 +1052,6 @@
       notifStats: document.getElementById('notifStats'),
       notifList: document.getElementById('notifList'),
       modal: document.getElementById('modal'),
-      backModal: document.getElementById('backModal'),
       closeModal: document.getElementById('closeModal'),
       modalSlides: document.getElementById('modalSlides'),
       modalTitle: document.getElementById('modalTitle'),
@@ -1043,17 +1099,16 @@
     const parseImages = (raw) => {
       const txt = normalizeText(raw);
       if (!txt) return [];
-      return txt.split(',').map(s => s.trim()).filter(Boolean).filter(s => /^https?:\/\//i.test(s));
-    };
-
-    function buildIconMap(rows = []){
-      const map = new Map();
-      rows.forEach(row => {
-        const game = normalizeText(row.Game ?? row.game ?? row.GAME ?? row.namaGame ?? row.NamaGame ?? '');
-        const images = parseImages(row.Gambar ?? row.gambar ?? row.Image ?? row.image ?? '');
-        if (game && images.length) map.set(game.toLowerCase(), images);
+      const parts = txt
+        .split(/[\n,;|]+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+      const urls = [];
+      parts.forEach(part => {
+        const matches = part.match(/https?:\/\/[^\s"'<>]+/gi);
+        if (matches && matches.length) urls.push(...matches);
       });
-      return map;
+      return [...new Set(urls)];
     }
 
     function mergeIconImages(item, iconMap){
@@ -1256,8 +1311,11 @@
 
     function applyFilters(){
       let items = RAW_DATA.filter(item => {
+        const status = (item.status || '').toLowerCase();
+        if (currentTab === 'list' && status === 'sold') return false;
+        if (currentTab === 'riwayat' && status !== 'sold') return false;
         if (selectedGame && item.game !== selectedGame) return false;
-        if (selectedStatus && item.status !== selectedStatus) return false;
+        if (selectedStatus && status !== selectedStatus) return false;
         return true;
       });
 
@@ -1275,8 +1333,8 @@
     }
 
     function cardHTML(item){
-      const firstImg = (item.iconImages && item.iconImages[0]) || '';
-      const imgCount = item.iconImages ? item.iconImages.length : 0;
+      const previewImg = item.previewImages?.[0] || '';
+      const imgCount = item.images.length;
       const label = inferLabel(item);
       const tagClass = getTagClass(label);
       const statusClass = getStatusClass(item.status);
@@ -1288,12 +1346,12 @@
         : 'Klik card untuk detail premium dan slide foto.';
 
       return `
-        <article class="card" data-id="${item.id}">
+        <article class="card" data-id="${item.id}" role="button" tabindex="0" onclick="window.__openCard && window.__openCard('${item.id}')">
           ${label ? `<div class="card-badge ${tagClass}">${label}</div>` : ''}
-          <div class="thumb ${firstImg ? '' : 'thumb-empty'}">
-            ${firstImg ? `<img src="${firstImg}" alt="${item.nama}">` : ''}
-            ${imgCount > 1 ? `<div class="thumb-count">🖼 ${imgCount} foto</div>` : ''}
-          </div>
+          ${previewImg ? `
+          <div class="thumb">
+            <img src="${previewImg}" alt="${item.nama}" loading="lazy" decoding="async">
+          </div>` : `<div class="thumb" aria-hidden="true"></div>`}
 
           <div class="card-main">
             <div class="card-top">
@@ -1310,7 +1368,7 @@
 
             <div class="meta-row">
               <span class="pill">Klik card untuk detail & slide foto</span>
-              <span class="pill">${item.images.length} gambar</span>
+              <span class="pill">${imgCount} gambar</span>
             </div>
 
             <div class="desc">${item.ket || 'Tidak ada detail tambahan.'}</div>
@@ -1324,12 +1382,8 @@
           <div class="card-side">
             <div class="side-note">${contactHint}</div>
             <div class="mini-actions">
-  ${
-    item.status === 'ready'
-      ? `<button class="mini-btn mini-wa" data-open="${item.id}">Buka Detail</button>`
-      : ``
-  }
-</div>
+              <button class="mini-btn mini-wa" data-open="${item.id}">Buka Detail</button>
+            </div>
           </div>
         </article>
       `;
@@ -1383,14 +1437,29 @@
           openModal(btn.dataset.open);
         });
       });
-      document.querySelectorAll('.card').forEach(card => {
-        card.addEventListener('click', () => openModal(card.dataset.id));
+
+      document.querySelectorAll('.list').forEach(view => {
+        view.addEventListener('click', (e) => {
+          const card = e.target.closest('.card');
+          if (!card) return;
+          if (e.target.closest('[data-open]')) return;
+          openModal(card.dataset.id);
+        });
+
+        view.addEventListener('keydown', (e) => {
+          const card = e.target.closest('.card');
+          if (!card) return;
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal(card.dataset.id);
+          }
+        });
       });
     }
 
-    function setModalContactState(item, images = []){
-      const blocked = isContactBlocked(item);
-      if (blocked){
+    function setModalContactState(item){
+      const ready = (item.status || '').toLowerCase() === 'ready';
+      if (!ready){
         els.detailActions.classList.add('hidden');
         els.modalSubtitle.textContent = item.status === 'sold'
           ? 'Akun sudah sold. Detail tetap bisa dilihat, tetapi tombol kontak disembunyikan.'
@@ -1407,7 +1476,7 @@
       els.modalFb.setAttribute('aria-disabled', 'false');
       els.modalWa.textContent = '⚡ Beli Cepat (Direct)';
       els.modalFb.textContent = '🔒 Aman via Middleman';
-      els.modalSubtitle.textContent = images.length ? 'Geser foto untuk melihat detail akun.' : 'Akun ini tidak memiliki gambar pada spreadsheet.';
+      els.modalSubtitle.textContent = 'Geser foto untuk melihat detail akun.';
     }
 
     function openModal(id){
@@ -1418,11 +1487,7 @@
       const label = inferLabel(item);
       const disc = item.diskon > 0 ? item.diskon : 0;
       const oldPrice = disc > 0 ? Math.round(item.harga / (1 - disc/100)) : 0;
-      const images = item.images?.length
-  ? item.images
-  : item.iconImages?.length
-  ? item.iconImages
-  : [];
+      const images = item.images.length ? item.images : [];
 
       els.modalTitle.textContent = item.nama;
       els.modalGame.textContent = item.game;
@@ -1435,35 +1500,30 @@
       els.modalHarga.textContent = `Rp ${rupiah(item.harga)}`;
       els.modalSubprice.innerHTML = disc > 0
         ? `<span class="detail-old">Rp ${rupiah(oldPrice)}</span><span class="detail-disc">-${disc}%</span>`
-        : `<span>${item.createdAt ? 'Label otomatis dihitung dari tanggal spreadsheet.' : 'Harga sesuai data spreadsheet.'}</span>`;
+        : `<span>Harga sesuai data spreadsheet.</span>`;
       els.modalKet.textContent = item.ket || 'Tidak ada detail tambahan.';
 
       els.modalSlides.innerHTML = images.length ? images.map((src, idx) => `
         <div class="swiper-slide">
           <div class="modal-frame">
-            <img src="${src}" alt="gambar-${idx + 1}">
+            <img src="${src}" alt="gambar-${idx + 1}" loading="eager" decoding="async">
           </div>
         </div>
       `).join('') : `
         <div class="swiper-slide">
-          <div class="modal-frame empty-frame"></div>
+          <div class="modal-frame modal-empty">
+            <div class="empty-media">Tidak ada gambar detail</div>
+          </div>
         </div>
       `;
 
       els.thumbStrip.innerHTML = images.length ? images.map((src, idx) => `
         <button class="thumb-chip ${idx === 0 ? 'active' : ''}" data-thumb="${idx}">
-          <img src="${src}" alt="thumb-${idx + 1}">
+          <img src="${src}" alt="thumb-${idx + 1}" loading="lazy" decoding="async">
         </button>
       `).join('') : '';
 
-      setModalContactState(item, images);
-      const hasManyImages = images.length > 1;
-      const prevBtn = document.querySelector('.modal-swiper .swiper-button-prev');
-      const nextBtn = document.querySelector('.modal-swiper .swiper-button-next');
-      const pagEl = document.querySelector('.modal-swiper .swiper-pagination');
-      if (prevBtn) prevBtn.style.display = hasManyImages ? '' : 'none';
-      if (nextBtn) nextBtn.style.display = hasManyImages ? '' : 'none';
-      if (pagEl) pagEl.style.display = hasManyImages ? '' : 'none';
+      setModalContactState(item);
 
       els.modal.classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -1474,17 +1534,13 @@
           loop: images.length > 1,
           spaceBetween: 0,
           slidesPerView: 1,
-          centeredSlides: true,
-          autoHeight: true,
-          navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
           pagination: { el: '.swiper-pagination', clickable: true },
         });
 
-        const thumbButtons = els.thumbStrip.querySelectorAll('.thumb-chip');
-        thumbButtons.forEach(btn => {
+        els.thumbStrip.querySelectorAll('.thumb-chip').forEach(btn => {
           btn.addEventListener('click', () => {
             const index = Number(btn.dataset.thumb);
-            thumbButtons.forEach(b => b.classList.remove('active'));
+            els.thumbStrip.querySelectorAll('.thumb-chip').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             if (typeof modalSwiper.slideToLoop === 'function') modalSwiper.slideToLoop(index);
             else modalSwiper.slideTo(index);
@@ -1493,7 +1549,7 @@
 
         modalSwiper.on('slideChange', () => {
           const idx = modalSwiper.realIndex ?? modalSwiper.activeIndex;
-          thumbButtons.forEach((b, i) => b.classList.toggle('active', i === idx));
+          els.thumbStrip.querySelectorAll('.thumb-chip').forEach((b, i) => b.classList.toggle('active', i === idx));
         });
       });
     }
@@ -1506,6 +1562,8 @@
         modalSwiper = null;
       }
     }
+
+    window.__openCard = openModal;
 
     function loadGames(){
       const games = [...new Set(RAW_DATA.map(x => x.game).filter(Boolean))].sort((a,b) => a.localeCompare(b));
@@ -1546,14 +1604,6 @@
     function setContactLinks(){
       els.sidebarWa.href = `https://wa.me/${WA_NUMBER}`;
       els.sidebarFb.href = FB_LINK;
-      els.bottomWa.onclick = () => {
-        const first = getBestContactItem();
-        if (first) window.open(buildWhatsappLink(first), '_blank', 'noopener');
-      };
-      els.bottomFb.onclick = () => {
-        const first = getBestContactItem();
-        if (first) window.open(buildFbLink(first), '_blank', 'noopener');
-      };
     }
 
     function renderNotifications(){
@@ -1635,12 +1685,10 @@
 
         const iconMap = buildIconMap(Array.isArray(iconJson) ? iconJson : []);
         RAW_DATA = Array.isArray(listJson)
-          ? listJson.map(mapItem).map(item => {
-              const key = (item.game || '').toLowerCase();
-              const iconImages = iconMap.get(key) || [];
-              const detailImages = [...new Set([...(item.images || []), ...iconImages])];
-              return { ...item, iconImages, images: detailImages };
-            })
+          ? listJson.map(mapItem).map(item => ({
+              ...item,
+              previewImages: iconMap.get((item.game || '').toLowerCase()) || []
+            }))
           : [];
 
         loadGames();
@@ -1685,7 +1733,6 @@
       document.querySelector('.main').scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    els.backModal.addEventListener('click', closeModal);
     els.closeModal.addEventListener('click', closeModal);
     els.modal.addEventListener('click', (e) => {
       if (e.target === els.modal) closeModal();
