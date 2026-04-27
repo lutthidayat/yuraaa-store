@@ -3,360 +3,515 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Finance</title>
+<title>Yuraaa Store</title>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
-body{
-margin:0;
-background:#020617;
-color:white;
-font-family:sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Poppins',sans-serif;background:#020617;color:#e5e7eb}
 
-/* LOGIN */
-.login{
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-height:100vh;
-text-align:center;
-}
-.login input{
-padding:12px;
-border:none;
-border-radius:10px;
-margin-top:10px;
-background:#0f172a;
-color:white;
-text-align:center;
-}
-.login button{
-margin-top:10px;
-padding:12px;
-border:none;
-border-radius:10px;
-background:#22c55e;
-color:black;
-font-weight:bold;
-}
-
-/* APP */
-.app{display:none}
-
-/* NAV GLASS */
-.nav{
-position:fixed;
-bottom:10px;
-left:50%;
-transform:translateX(-50%);
-width:90%;
-display:flex;
-justify-content:space-around;
-
-background:rgba(15,23,42,0.4);
-backdrop-filter:blur(12px);
--webkit-backdrop-filter:blur(12px);
-
-padding:10px;
-border-radius:16px;
-border:1px solid rgba(255,255,255,0.05);
-}
-.nav div{
-opacity:.6;
-transition:.2s;
-}
-.nav .active{
-opacity:1;
-color:#22c55e;
-transform:scale(1.1);
-}
+/* HEADER */
+header{text-align:center;padding:16px}
+h1{font-size:24px}
+.subtitle{font-size:12px;color:#94a3b8}
 
 /* TAB */
+.tabs{display:flex;gap:8px;justify-content:center;margin:10px;flex-wrap:wrap}
 .tab{
-display:none;
-padding:14px;
-padding-bottom:90px;
+ padding:8px 14px;border-radius:999px;
+ background:#0f172a;color:#94a3b8;
+ font-size:12px;
+ transition:.2s;
 }
-.tab.active{display:block}
+.tab.active{background:#22c55e;color:black}
+.tab:hover{background:#1e293b}
+
+/* GRID */
+.grid{display:grid;gap:14px;padding:12px}
 
 /* CARD */
 .card{
-background:#0f172a;
-border-radius:14px;
-padding:16px;
-margin-top:12px;
+ position:relative;
+ background:#0b1220;
+ border-radius:18px;
+ padding:10px;
+ border:1px solid #1e293b;
+ cursor:pointer;
+ transition:.25s;
+}
+.card:hover{
+ transform:translateY(-5px);
+ box-shadow:0 10px 25px rgba(0,0,0,0.6);
 }
 
-/* INPUT */
-input,select{
-width:100%;
-padding:12px;
-margin-top:8px;
-border:none;
-border-radius:10px;
-background:#020617;
-color:white;
+.card img{
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+}
+
+/* STATUS */
+.card.sold{opacity:0.5;filter:grayscale(0.4)}
+.card.proses{opacity:0.7}
+
+.card.sold::after{
+ content:"Terjual";
+ position:absolute;top:50%;left:50%;
+ transform:translate(-50%,-50%);
+ background:#ef4444;padding:6px 12px;border-radius:8px;
+}
+.card.proses::after{
+ content:"PROSES";
+ position:absolute;top:50%;left:50%;
+ transform:translate(-50%,-50%);
+ background:#f59e0b;padding:6px 12px;border-radius:8px;
+}
+
+/* BADGE */
+.badge{position:absolute;top:10px;left:10px;padding:4px 8px;border-radius:999px;font-size:10px;z-index:2}
+.badge.ready{background:#22c55e;color:black}
+.badge.sold{background:#ef4444;color:white}
+.badge.proses{background:#f59e0b;color:black}
+
+/* LABEL */
+.badge-right{position:absolute;top:10px;right:10px;padding:4px 8px;border-radius:999px;font-size:10px;z-index:2}
+.hot{background:orange}
+.promo{background:gold;color:black}
+
+/* PRICE */
+.price{color:#22c55e;font-weight:bold}
+.old{text-decoration:line-through;font-size:12px;color:#64748b}
+
+/* DISKON */
+.discount{
+ background:linear-gradient(135deg,#ff3b3b,#ff0000);
+ color:white;
+ padding:4px 10px;
+ border-radius:999px;
+ font-size:11px;
+ font-weight:bold;
+ display:inline-block;
+ margin-top:6px;
+}
+
+/* SLIDER */
+.slider{
+ display:flex;
+ gap:8px;
+ overflow-x:auto;
+ margin-bottom:10px;
+}
+.slider.center{justify-content:center}
+.slider img{
+ height:120px;
+ border-radius:10px;
+ object-fit:cover;
+}
+
+/* POPUP */
+.popup{
+ position:fixed;top:0;left:0;width:100%;height:100%;
+ display:none;background:rgba(0,0,0,0.6);
+ justify-content:center;align-items:center;
+ opacity:0;
+ transition:.2s;
+}
+.popup.show{opacity:1}
+
+.popup-box{
+ background:#020617;
+ padding:16px;
+ border-radius:16px;
+ width:90%;
+ max-width:320px;
+ text-align:center;
 }
 
 /* BUTTON */
-button{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:none;
-border-radius:10px;
-font-weight:bold;
-}
-.green{background:#22c55e;color:black}
-.red{background:#ef4444;color:white}
-.gray{background:#334155;color:white}
-
-/* LIST */
-.item{
-display:flex;
-justify-content:space-between;
-padding:12px;
-margin-top:8px;
-background:#020617;
-border-radius:10px;
+.btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none}
+.wa{background:#22c55e;color:black}
+.fb{background:#3b82f6;color:white}
+.close-btn{
+ margin-top:8px;
+ padding:8px;
+ border:none;
+ border-radius:10px;
+ background:#1e293b;
+ color:white;
+ width:100%;
 }
 
-/* TOTAL */
-.total{
-display:flex;
-justify-content:space-between;
+/* BLUR */
+body.popup-active .grid{
+ filter:blur(4px);
+ pointer-events:none;
 }
 
-/* CHART */
-canvas{
-width:100%!important;
-height:240px!important;
+/* ===================== */
+/* 🔥 DESKTOP IMPROVEMENT */
+/* ===================== */
+
+/* GRID LEBIH RAPI */
+@media (min-width:1024px){
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+    max-width:1100px;
+    margin:auto;
+  }
 }
+
+/* CARD LEBIH PROPORSIONAL */
+@media (min-width:1024px){
+  .card img{
+    height:180px;
+  }
+}
+
+
+/* ===================== */
+/* 🔥 SCROLL LEBIH HALUS */
+/* ===================== */
+
+.popup-right::-webkit-scrollbar{
+  width:6px;
+}
+.popup-right::-webkit-scrollbar-thumb{
+  background:#334155;
+  border-radius:10px;
+}
+
+/* ===================== */
+/* 🔥 SMOOTH EXPERIENCE */
+/* ===================== */
+
+.card{
+  transition:.25s;
+}
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 12px 35px rgba(0,0,0,0.7);
+}
+
+.popup{
+  backdrop-filter:blur(6px);
+}
+
+/* ===================== */
+/* 🔥 FIX POPUP DESKTOP */
+/* ===================== */
+
+@media (min-width:1024px){
+
+  .popup-box{
+    width:100%;
+    max-width:none;
+    height:100vh;
+    display:flex;
+    gap:30px;
+    padding:30px;
+    border-radius:0;
+    text-align:left;
+  }
+
+  .popup-left{
+    flex:2;
+    position:relative;
+  }
+
+  .popup-left .slider{
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .popup-left img{
+    width:100%;
+    height:auto;
+    max-height:80vh;
+    object-fit:contain;
+  }
+
+  .popup-right{
+    flex:1;
+    overflow-y:auto;
+    padding-left:10px;
+  }
+}
+
 </style>
+
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div id="loginPage" class="login">
-<h2>🔐 Masukkan PIN</h2>
-<input id="pinInput" type="password" placeholder="PIN">
-<button onclick="checkPin()">Masuk</button>
+<div id="imgViewer" style="
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.9);
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
+  <img id="viewerImg" style="max-width:90%;max-height:90%;border-radius:12px">
 </div>
 
-<!-- APP -->
-<div id="app" class="app">
+<header>
+<h1>YURAAA STORE 🎮</h1>
+<p class="subtitle">Akun Game Murah • Trusted</p>
+</header>
 
-<div class="card">💰 Yuraaa Finance</div>
-
-<!-- TAB 1 -->
-<div id="home" class="tab active">
-<div class="card">
-
-<select id="type">
-<option value="income">Pemasukan</option>
-<option value="expense">Pengeluaran</option>
-</select>
-
-<input id="desc" placeholder="Deskripsi">
-<input id="amount" placeholder="Rp" oninput="formatRp(this)">
-
-<button class="green" onclick="addData()">Simpan</button>
-<button class="red" onclick="resetData()">Reset</button>
-<button class="gray" onclick="logout()">Logout</button>
-
-</div>
+<div class="tabs" id="gameTabs">
+<button onclick="setGame('all',this)" class="tab active">Semua</button>
+<button onclick="setGame('honkai star rail',this)" class="tab">HSR</button>
+<button onclick="setGame('solo leveling',this)" class="tab">Solo</button>
+<button onclick="setGame('mobile legend',this)" class="tab">ML</button>
+<button onclick="setGame('arena breakout',this)" class="tab">Arena</button>
+<button onclick="setGame('arknight endfield',this)" class="tab">Endfield</button>
 </div>
 
-<!-- TAB 2 -->
-<div id="dashboard" class="tab">
-
-<div class="card">
-<h3>📊 Grafik Penjualan</h3>
-<canvas id="chart"></canvas>
+<div class="tabs" id="statusTabs">
+<button onclick="setStatus('all',this)" class="tab active">Semua</button>
+<button onclick="setStatus('ready',this)" class="tab">Ready</button>
+<button onclick="setStatus('proses',this)" class="tab">Proses</button>
+<button onclick="setStatus('sold',this)" class="tab">Sold</button>
 </div>
 
-<div class="card">
-<h3>🛒 Akun Sold</h3>
-<div id="soldList">Loading...</div>
-</div>
-
-</div>
-
-<!-- TAB 3 -->
-<div id="history" class="tab">
-
-<div class="card total">
-<div>Masuk: <b id="income">0</b></div>
-<div>Keluar: <b id="expense">0</b></div>
-</div>
-
-<div class="card">
-<h3>📋 Riwayat</h3>
-<div id="list"></div>
-</div>
-
-</div>
-
-<!-- NAV -->
-<div class="nav">
-<div class="active" onclick="tab('home',this)">🏠</div>
-<div onclick="tab('dashboard',this)">📊</div>
-<div onclick="tab('history',this)">📋</div>
-</div>
-
-</div>
+<div id="loading" style="text-align:center;padding:20px">⏳ Memuat akun terbaik...</div>
+<div class="grid"></div>
+<div class="popup" id="popup"></div>
 
 <script>
+let allData=[];
+let currentGame='all';
+let currentStatus='all';
 
-// PIN
-const PIN="1234"
+let gridEl;
+let popupEl;
 
-function checkPin(){
-if(pinInput.value===PIN){
-loginPage.style.display="none"
-app.style.display="block"
-}else{
-alert("PIN salah")
-}
+function formatRupiah(num){
+ return "Rp " + num.toLocaleString("id-ID").replace(/,/g,'.');
 }
 
-function logout(){
-app.style.display="none"
-loginPage.style.display="flex"
-pinInput.value=""
+document.addEventListener("DOMContentLoaded", async ()=>{
+  gridEl = document.querySelector('.grid');
+  popupEl = document.getElementById('popup');
+
+  const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List");
+  allData = Object.freeze(await res.json());
+
+  document.getElementById('loading').style.display='none';
+  apply();
+});
+
+function parseHarga(h){
+ return Number((h||'').replace(/\D/g,'')) || 0;
 }
 
-// HELPER
-function rp(x){return "Rp "+(x||0).toLocaleString("id-ID")}
-function num(v){return parseInt((v||"").replace(/\D/g,''))||0}
+function apply(){
+ let data=[...allData];
 
-// FORMAT RP
-function formatRp(el){
-let val=el.value.replace(/\D/g,'')
-el.value=val?"Rp "+parseInt(val).toLocaleString("id-ID"):""
+ if(currentGame!=='all'){
+  data=data.filter(a=>(a.Game||'').toLowerCase().trim()===currentGame);
+ }
+
+ if(currentStatus!=='all'){
+  data=data.filter(a=>(a.Status||'').toLowerCase().trim()===currentStatus);
+ }
+
+ render(data);
 }
 
-// DATA
-let data=JSON.parse(localStorage.getItem("data"))||[]
+function render(data){
+ const grid = gridEl;
 
-// TAB
-function tab(id,el){
-document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
-document.getElementById(id).classList.add('active')
-document.querySelectorAll('.nav div').forEach(n=>n.classList.remove('active'))
-el.classList.add('active')
+ const html = data
+ .sort((a,b)=>{
+  const order={ready:1, proses:2, sold:3};
+  const A=(a.Status||'ready').toLowerCase();
+  const B=(b.Status||'ready').toLowerCase();
+  if(order[A]!==order[B]) return order[A]-order[B];
+  return parseHarga(a.Harga)-parseHarga(b.Harga);
+ })
+ .map(a=>{
+  const imgs=(a.Gambar||'').split(',');
+  const firstImg=imgs[0] || 'https://via.placeholder.com/300x150?text=No+Image';
+  const status=(a.Status||'ready').toLowerCase();
+  const label=(a.Label||'').toLowerCase();
+
+  const harga=parseHarga(a.Harga);
+  const normal=parseHarga(a.Diskon);
+
+  let diskon='';
+  if(normal && harga && normal>harga){
+    const persen=Math.round((normal-harga)/normal*100);
+    diskon=`<div class="old">${a.Diskon}</div>
+            <div class="discount">🔥 -${persen}%</div>`;
+  }
+
+  let labelHTML='';
+  if(label==='hot') labelHTML='<div class="badge-right hot">HOT</div>';
+  if(label==='promo') labelHTML='<div class="badge-right promo">PROMO</div>';
+
+  return `
+  <div class="card ${status}" onclick='handleClick(${JSON.stringify(a)})'>
+    <div class="badge ${status}">${status.toUpperCase()}</div>
+    ${labelHTML}
+    <img src="${firstImg}">
+    <h4>${a.Nama||'-'}</h4>
+    <div style="font-size:12px;color:#94a3b8">${a.Ket||''}</div>
+    <div class="price">${formatRupiah(harga)}</div>
+    ${diskon}
+  </div>`;
+ }).join('');
+
+ grid.innerHTML = html;
 }
 
-// ADD
-function addData(){
-if(!desc.value||!amount.value)return
-
-data.push({
-type:type.value,
-desc:desc.value,
-amount:num(amount.value)
-})
-
-desc.value=""
-amount.value=""
-
-render()
+function setGame(g,el){
+ currentGame=g;
+ document.querySelectorAll('#gameTabs .tab').forEach(t=>t.classList.remove('active'));
+ el.classList.add('active');
+ apply();
 }
 
-// RESET
-function resetData(){
-if(confirm("Hapus semua data?")){
-data=[]
-localStorage.removeItem("data")
-render()
-}
+function setStatus(s,el){
+ currentStatus=s;
+ document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));
+ el.classList.add('active');
+ apply();
 }
 
-// RENDER
-function render(){
-let inc=0,exp=0
-list.innerHTML=""
+function handleClick(a){
+ const popup = popupEl;
+ const status=(a.Status||'ready').toLowerCase();
 
-data.forEach(d=>{
-if(d.type==="income") inc+=d.amount
-else exp+=d.amount
+ if(status==='sold'){
+ popup.innerHTML=`
+ <div class="popup-box">
+   <h3>❌ Yah, akun ini sudah diambil 😢</h3>
+   <p style="font-size:12px;color:#94a3b8">
+   Tapi tenang, masih banyak akun bagus lainnya yang siap kamu ambil 🔥
+   </p>
+   <button class="close-btn" onclick="showReadyByGame('${a.Game}')">Lihat akun lain</button>
+ </div>`;
+ }
+ else if(status==='proses'){
+ popup.innerHTML=`
+ <div class="popup-box">
+   <h3>⏳ Akun sedang diproses</h3>
+   <p style="font-size:12px;color:#94a3b8">
+   Silakan cek akun lainnya ya 🔥
+   </p>
+   <button class="close-btn" onclick="showReadyByGame('${a.Game}')">
+     Lihat akun lain
+   </button>
+ </div>`;
+}
+ else{
+  const harga=parseHarga(a.Harga);
+  const imgs=(a.Gambar||'').split(',');
 
-list.innerHTML+=`
-<div class="item">
-<div>${d.desc}</div>
-<div style="color:${d.type==="income"?"#22c55e":"#ef4444"}">
-${rp(d.amount)}
-</div>
-</div>`
-})
+  const pesan=`Halo kak, saya mau beli akun:
+Nama: ${a.Nama}
+Game: ${a.Game}
+Harga: ${formatRupiah(harga)}`;
 
-income.innerText=rp(inc)
-expense.innerText=rp(exp)
+  const wa=`https://wa.me/6285808741017?text=${encodeURIComponent(pesan)}`;
+  const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
 
-localStorage.setItem("data",JSON.stringify(data))
+  popup.innerHTML=`
+<div class="popup-box">
+
+  <div class="popup-left">
+    <div class="slider ${imgs.length===1?'center':''}">
+      ${imgs.map(i=>`<img src="${i.trim()}" onclick="openViewer('${i.trim()}')">`).join('')}
+    </div>
+  </div>
+
+  <div class="popup-right">
+    <h3>${a.Nama}</h3>
+    <div style="font-size:13px;color:#94a3b8">${a.Game}</div>
+    <div class="price">${formatRupiah(harga)}</div>
+
+    <p style="margin-top:8px;font-size:13px;color:#cbd5f5">
+      ${a.Ket || ''}
+    </p>
+
+    <a href="${wa}" class="btn wa">⚡ Beli Cepat (Direct)</a>
+    <a href="${fb}" class="btn fb">🔒 Aman via Middleman</a>
+
+    <button class="close-btn" onclick="tutup()">Tutup</button>
+  </div>
+
+</div>`;
+ }
+
+ popup.style.display='flex';
+ setTimeout(()=>popup.classList.add('show'),10);
+ document.body.classList.add('popup-active');
 }
 
-// DASHBOARD
-async function loadDashboard(){
-
-try{
-const url="https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List"
-const res=await fetch(url)
-const sheet=await res.json()
-
-let map={}
-let html=""
-
-sheet.forEach(r=>{
-if((r.Status||"").toLowerCase()!=="sold") return
-
-let game=r.Game||"Lainnya"
-let harga=num(r.Harga)
-let nama=r.Nama||"Akun"
-
-map[game]=(map[game]||0)+harga
-
-html+=`
-<div class="item">
-<div>${nama}</div>
-<div>${rp(harga)}</div>
-</div>`
-})
-
-soldList.innerHTML=html||"<small>Belum ada data</small>"
-
-let sorted=Object.entries(map).sort((a,b)=>b[1]-a[1])
-
-const ctx=document.getElementById("chart").getContext("2d")
-if(window.chart) chart.destroy()
-
-window.chart=new Chart(ctx,{
-type:"doughnut",
-data:{
-labels:sorted.map(x=>x[0]),
-datasets:[{
-data:sorted.map(x=>x[1]),
-backgroundColor:["#22c55e","#38bdf8","#f59e0b","#ef4444","#a78bfa"]
-}]
-},
-options:{plugins:{legend:{display:false}}}
-})
-
-}catch(e){
-soldList.innerHTML="Gagal load data"
-}
+function tutup(){
+ const popup = popupEl;
+ popup.classList.remove('show');
+ setTimeout(()=>{
+  popup.style.display='none';
+  document.body.classList.remove('popup-active');
+ },200);
 }
 
-// INIT
-render()
-loadDashboard()
-setInterval(loadDashboard,10000)
+function showReadyByGame(game){
+ document.getElementById('popup').style.display='none';
+ document.body.classList.remove('popup-active');
+
+ const gameFix = (game||'').toLowerCase().trim();
+
+ const readyData = allData.filter(a =>
+  (a.Status||'').toLowerCase()==='ready' &&
+  (a.Game||'').toLowerCase().includes(gameFix)
+ );
+
+ const popup = popupEl;
+
+ if(readyData.length === 0){
+  popup.innerHTML=`
+  <div class="popup-box">
+    <h3>😢 Akun ${game} belum tersedia</h3>
+    <p style="font-size:12px;color:#94a3b8">
+    Saat ini belum ada akun ready untuk game ini, coba cek game lain ya 🔥
+    </p>
+    <button class="close-btn" onclick="tutup()">Tutup</button>
+  </div>`;
+  popup.style.display='flex';
+  document.body.classList.add('popup-active');
+  return;
+ }
+
+ currentGame = gameFix;
+ currentStatus = 'ready';
+
+ apply();
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openViewer(src){
+  const viewer=document.getElementById('imgViewer');
+  const img=document.getElementById('viewerImg');
+  img.src=src;
+  viewer.style.display='flex';
+}
+
+document.getElementById('imgViewer').onclick=function(){
+  this.style.display='none';
+}
 
 </script>
 
+<a href="admin.html" style="position:fixed;bottom:10px;right:10px;opacity:0.1;">⚙️</a>
+
+</body>
+</html>
 </body>
 </html>
