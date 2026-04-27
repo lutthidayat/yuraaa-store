@@ -697,45 +697,75 @@
   </nav>
 
   <script>
-    const txData = [
-      { name: 'Akun Solo leveling', cat: 'Game Account', amount: 'Rp 200.000', type: 'in', icon: 'gamepad-2' },
-      { name: 'Akun Solo leveling', cat: 'Game Account', amount: 'Rp 195.000', type: 'in', icon: 'gamepad-2' },
-      { name: 'Akun HSR', cat: 'Game Account', amount: 'Rp 90.000', type: 'out', icon: 'crown' },
-      { name: 'Akun HSR', cat: 'Game Account', amount: 'Rp 70.000', type: 'out', icon: 'crown' },
-      { name: 'Akun HSR', cat: 'Game Account', amount: 'Rp 200.000', type: 'in', icon: 'gamepad-2' },
-      { name: 'Emas', cat: 'Item', amount: 'Rp 200.000', type: 'in', icon: 'package' },
-      { name: 'Arena breakout #1', cat: 'Game Account', amount: 'Rp 100.000', type: 'in', icon: 'sword' },
-      { name: 'Arena breakout #2', cat: 'Game Account', amount: 'Rp 100.000', type: 'in', icon: 'sword' },
-      { name: 'Arknight endfield #1', cat: 'Game Account', amount: 'Rp 100.000', type: 'in', icon: 'sword' },
-      { name: 'Arknight endfield #2', cat: 'Game Account', amount: 'Rp 100.000', type: 'in', icon: 'sword' },
-      { name: 'Honkai star rail #4', cat: 'Game Account', amount: 'Rp 250.000', type: 'in', icon: 'sparkles' },
-      { name: 'Honkai star rail #3', cat: 'Game Account', amount: 'Rp 150.000', type: 'in', icon: 'sparkles' }
-    ];
+const API = "https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List";
 
-    function renderTransactions(){
-      const el = document.getElementById('transactions');
-      el.innerHTML = txData.map((t, i) => {
-        const amountClass = t.type === 'out' ? 'red' : '';
-        const endClass = t.type === 'out' ? 'red' : '';
-        const iconClass = t.icon === 'crown' ? 'crown' : t.icon === 'sword' ? 'sword' : t.icon === 'package' ? 'box' : '';
-        const itemIcon = t.icon === 'crown' ? 'crown' : t.icon === 'sword' ? 'sword' : t.icon === 'package' ? 'box' : '';
-        const arrow = t.type === 'out' ? 'arrow-up' : 'arrow-down';
-        return `
-          <div class="list-item">
-            <div class="item-ico ${iconClass}"><i data-lucide="${t.icon === 'sparkles' ? 'sparkles' : t.icon}"></i></div>
-            <div class="item-copy">
-              <div class="item-name">${t.name}</div>
-              <div class="item-cat">${t.cat}</div>
-            </div>
-            <div class="item-amount ${amountClass}">${t.amount}</div>
-            <div class="item-end ${endClass}"><i data-lucide="${t.type === 'out' ? 'arrow-up' : 'arrow-down'}"></i></div>
+function parseHarga(h){
+  return Number((h||'').replace(/\D/g,'')) || 0;
+}
+
+function formatRupiah(n){
+  return "Rp " + n.toLocaleString("id-ID");
+}
+
+async function loadData(){
+  try{
+    const res = await fetch(API);
+    const data = await res.json();
+
+    let masuk = 0;
+    let keluar = 0;
+    let totalSold = 0;
+
+    const html = data.map(d=>{
+      const harga = parseHarga(d.Harga);
+      const status = (d.Status||'').toLowerCase();
+
+      if(status === 'sold'){
+        masuk += harga;
+        totalSold++;
+      }else{
+        keluar += harga;
+      }
+
+      return `
+        <div class="list-item">
+          <div class="item-ico">
+            <i data-lucide="gamepad-2"></i>
           </div>
-        `;
-      }).join('');
-      lucide.createIcons();
-    }
 
-    renderTransactions();
+          <div class="item-copy">
+            <div class="item-name">${d.Nama || '-'}</div>
+            <div class="item-cat">${d.Game || 'Game Account'}</div>
+          </div>
+
+          <div class="item-amount ${status==='sold'?'':'red'}">
+            ${formatRupiah(harga)}
+          </div>
+
+          <div class="item-end ${status==='sold'?'':'red'}">
+            <i data-lucide="${status==='sold'?'arrow-down':'arrow-up'}"></i>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    document.getElementById("transactions").innerHTML = html;
+
+    const totals = document.querySelectorAll(".sum-value");
+    totals[0].innerText = formatRupiah(masuk);
+    totals[1].innerText = formatRupiah(keluar);
+
+    lucide.createIcons();
+
+  }catch(err){
+    document.getElementById("transactions").innerHTML =
+      '<div style="padding:20px;color:red">Error load data</div>';
+  }
+}
+
+loadData();
+lucide.createIcons();
+</script>
     lucide.createIcons();
   </script>
 </body>
