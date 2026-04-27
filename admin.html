@@ -70,10 +70,10 @@ padding:12px;
 margin-top:10px;
 border:none;
 border-radius:12px;
-background:linear-gradient(135deg,#22c55e,#4ade80);
-color:black;
 font-weight:bold;
 }
+.primary{background:linear-gradient(135deg,#22c55e,#4ade80);color:black}
+.danger{background:#ef4444;color:white}
 
 /* LIST */
 .item{
@@ -92,15 +92,20 @@ justify-content:space-between;
 font-size:14px;
 }
 
-/* CHART CENTER */
-.chart-card{position:relative;text-align:center}
+/* CHART */
+canvas{
+width:100%!important;
+height:260px!important;
+}
+
+/* CENTER TEXT */
+.chart-card{position:relative}
 .chart-center{
 position:absolute;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-font-size:14px;
-color:#94a3b8;
+text-align:center;
 }
 
 /* PROGRESS */
@@ -112,7 +117,7 @@ margin-top:4px;
 }
 .fill{
 height:100%;
-background:#22c55e;
+background:linear-gradient(90deg,#22c55e,#4ade80);
 border-radius:10px;
 }
 
@@ -130,22 +135,18 @@ opacity:0;
 transition:.4s;
 }
 .popup.show{top:20px;opacity:1}
-
-canvas{
-filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.6));
-}
 </style>
 </head>
 
 <body>
 
 <div class="popup" id="popup"></div>
-
 <div class="header">Yuraaa Finance</div>
 
 <!-- TAB 1 -->
 <div id="home" class="tab active">
 <div class="card">
+
 <h3>Tambah Transaksi</h3>
 
 <select id="type">
@@ -154,9 +155,11 @@ filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.6));
 </select>
 
 <input id="desc" placeholder="Deskripsi">
-<input id="amount" placeholder="Rp">
+<input id="amount" placeholder="Rp 0" oninput="formatRp(this)">
 
-<button onclick="addData()">Simpan</button>
+<button class="primary" onclick="addData()">Simpan</button>
+<button class="danger" onclick="resetData()">Reset Semua</button>
+
 </div>
 </div>
 
@@ -203,17 +206,27 @@ filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.6));
 
 <script>
 
+// ===== HELPER =====
 function rp(x){return "Rp "+(x||0).toLocaleString("id-ID")}
 function num(v){return parseInt((v||"").replace(/\D/g,''))||0}
 
+// ===== FORMAT RP INPUT =====
+function formatRp(el){
+let val = el.value.replace(/\D/g,'')
+el.value = val ? "Rp " + parseInt(val).toLocaleString("id-ID") : ""
+}
+
+// ===== DATA =====
 let data=JSON.parse(localStorage.getItem("data"))||[]
 
+// ===== POPUP =====
 function showPopup(t){
 popup.innerText=t
 popup.classList.add("show")
 setTimeout(()=>popup.classList.remove("show"),1500)
 }
 
+// ===== TAB =====
 function tab(id,el){
 document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
 document.getElementById(id).classList.add('active')
@@ -221,6 +234,7 @@ document.querySelectorAll('.nav div').forEach(n=>n.classList.remove('active'))
 el.classList.add('active')
 }
 
+// ===== ADD =====
 function addData(){
 if(!desc.value||!amount.value)return
 
@@ -239,9 +253,24 @@ renderHistory()
 showPopup("Tersimpan ✔")
 }
 
+// ===== RESET =====
+function resetData(){
+if(confirm("Hapus semua transaksi?")){
+data=[]
+localStorage.removeItem("data")
+renderHistory()
+showPopup("Data dihapus")
+}
+}
+
+// ===== HISTORY =====
 function renderHistory(){
 let inc=0,exp=0
 list.innerHTML=""
+
+if(data.length===0){
+list.innerHTML="<small>Belum ada data</small>"
+}
 
 data.forEach(d=>{
 if(d.type=="income") inc+=d.amount
@@ -262,32 +291,10 @@ expense.innerText=rp(exp)
 localStorage.setItem("data",JSON.stringify(data))
 }
 
-async function syncSold(){
-const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List")
-const sheet=await res.json()
-
-let saved=new Set(data.map(d=>d.desc))
-
-sheet.forEach(a=>{
-if((a.Status||"").toLowerCase()!=="sold") return
-
-let name="Jual Akun - "+(a.Nama||"Item")
-
-if(saved.has(name)) return
-
-data.push({
-id:Date.now()+Math.random(),
-type:"income",
-desc:name,
-amount:num(a.Harga),
-date:new Date().toLocaleDateString()
-})
-})
-
-renderHistory()
-}
-
+// ===== DASHBOARD =====
 async function loadDashboard(){
+
+chartCenter.innerHTML="Loading..."
 
 const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List")
 const sheet=await res.json()
@@ -296,19 +303,21 @@ let map={}, total=0
 
 sheet.forEach(a=>{
 if((a.Status||"").toLowerCase()!=="sold") return
-
 let game=a.Game||"Lainnya"
 let harga=num(a.Harga)
-
 map[game]=(map[game]||0)+harga
 total+=harga
 })
 
 let sorted=Object.entries(map).sort((a,b)=>b[1]-a[1])
 
-if(window.chart) chart.destroy()
+if(sorted.length===0){
+chartCenter.innerHTML="Belum ada data"
+return
+}
 
 const ctx=document.getElementById("chart").getContext("2d")
+if(window.chart) chart.destroy()
 
 window.chart=new Chart(ctx,{
 type:"doughnut",
@@ -316,28 +325,23 @@ data:{
 labels:sorted.map(x=>x[0]),
 datasets:[{
 data:sorted.map(x=>x[1]),
-backgroundColor:[
-"#22c55e","#38bdf8","#f59e0b",
-"#ef4444","#a78bfa","#14b8a6"
-],
+backgroundColor:["#22c55e","#38bdf8","#f59e0b","#ef4444","#a78bfa"],
 borderWidth:2,
-borderColor:"#020617",
-hoverOffset:12
+borderColor:"#020617"
 }]
 },
-options:{
-cutout:"75%",
-plugins:{legend:{display:false}}
-}
+options:{cutout:"75%",plugins:{legend:{display:false}}}
 })
 
+// center text
 chartCenter.innerHTML=`<b>${rp(total)}</b><br><small>Total Omzet</small>`
 
+// top
 topList.innerHTML=sorted.map(g=>{
 let percent=(g[1]/total*100)||0
 return `
 <div style="margin-top:10px">
-<div style="display:flex;justify-content:space-between;font-size:13px">
+<div style="display:flex;justify-content:space-between">
 <span>${g[0]}</span>
 <b>${rp(g[1])}</b>
 </div>
@@ -347,16 +351,15 @@ return `
 </div>`
 }).join("")
 
-let top=sorted[0]?.[0]||"-"
-let val=sorted[0]?.[1]||0
+let top=sorted[0][0]
+let val=sorted[0][1]
 
-insight.innerHTML=`🔥 <b>${top}</b> paling cuan <br>${rp(val)}`
+insight.innerHTML=`🔥 <b>${top}</b> paling cuan<br>${rp(val)}`
 }
 
+// INIT
 renderHistory()
 loadDashboard()
-syncSold()
-setInterval(syncSold,10000)
 
 </script>
 
