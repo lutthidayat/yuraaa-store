@@ -855,10 +855,6 @@
               <p class="banner-text">Semua akun ditampilkan dengan detail lengkap. Klik card untuk membuka popup, lihat gambar dulu, lalu pilih direct atau middleman untuk akun ready.</p>
             </div>
           </div>
-          <div class="banner-actions">
-            <button class="big-btn big-wa" id="bottomWa">⚡ Beli Cepat (Direct)</button>
-            <button class="big-btn big-fb" id="bottomFb">🔒 Aman via Middleman</button>
-          </div>
         </div>
       </main>
     </section>
@@ -1328,8 +1324,12 @@
           <div class="card-side">
             <div class="side-note">${contactHint}</div>
             <div class="mini-actions">
-              <button class="mini-btn mini-wa" data-open="${item.id}">Buka Detail</button>
-            </div>
+  ${
+    item.status === 'ready'
+      ? `<button class="mini-btn mini-wa" data-open="${item.id}">Buka Detail</button>`
+      : ``
+  }
+</div>
           </div>
         </article>
       `;
@@ -1388,7 +1388,7 @@
       });
     }
 
-    function setModalContactState(item){
+    function setModalContactState(item, images = []){
       const blocked = isContactBlocked(item);
       if (blocked){
         els.detailActions.classList.add('hidden');
@@ -1418,7 +1418,11 @@
       const label = inferLabel(item);
       const disc = item.diskon > 0 ? item.diskon : 0;
       const oldPrice = disc > 0 ? Math.round(item.harga / (1 - disc/100)) : 0;
-      const images = item.images.length ? item.images : [];
+      const images = item.images?.length
+  ? item.images
+  : item.iconImages?.length
+  ? item.iconImages
+  : [];
 
       els.modalTitle.textContent = item.nama;
       els.modalGame.textContent = item.game;
@@ -1452,7 +1456,7 @@
         </button>
       `).join('') : '';
 
-      setModalContactState(item);
+      setModalContactState(item, images);
       const hasManyImages = images.length > 1;
       const prevBtn = document.querySelector('.modal-swiper .swiper-button-prev');
       const nextBtn = document.querySelector('.modal-swiper .swiper-button-next');
