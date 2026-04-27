@@ -1,764 +1,390 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yuraaa Finance</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    :root{
-      --bg:#07101f;
-      --bg2:#0a1326;
-      --panel:rgba(10,19,38,.78);
-      --panel2:rgba(13,24,48,.9);
-      --stroke:rgba(148,163,184,.12);
-      --stroke-strong:rgba(148,163,184,.18);
-      --text:#e5eefc;
-      --muted:#8ea1c1;
-      --muted2:#6d7f9f;
-      --purple:#9c7cff;
-      --purple2:#7b61ff;
-      --cyan:#39e0d0;
-      --green:#4de29a;
-      --red:#ff7b86;
-      --amber:#ffca70;
-      --shadow:0 24px 80px rgba(0,0,0,.45);
-      --radius:22px;
-      --radius2:18px;
-      --radius3:14px;
-    }
+<meta charset="UTF-8">
+<title>Yuraaa Store</title>
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:'Poppins',sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(1200px 700px at 20% 10%, rgba(123,97,255,.13), transparent 55%),
-        radial-gradient(900px 600px at 80% 20%, rgba(57,224,208,.08), transparent 50%),
-        linear-gradient(180deg, #050b16 0%, #07101f 45%, #07101f 100%);
-      overflow-x:hidden;
-    }
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
-    .app{
-      min-height:100vh;
-      display:grid;
-      grid-template-columns: 300px 1fr;
-    }
+<style>
 
-    .sidebar{
-      position:relative;
-      padding:26px 20px 18px;
-      border-right:1px solid rgba(255,255,255,.06);
-      background:linear-gradient(180deg, rgba(6,11,23,.92), rgba(5,10,20,.96));
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
+/* ===== GLOBAL ===== */
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family: Inter, sans-serif;
+  background: radial-gradient(circle at top,#0b1225,#020617);
+  color:#e5e7eb;
+  display:flex;
+}
 
-    .brand{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      margin-bottom:18px;
-    }
-    .brand .name{
-      font-size:22px;
-      line-height:1;
-      font-weight:800;
-      letter-spacing:.2px;
-    }
-    .brand .name span{color:var(--purple)}
-    .brand .sub{
-      color:#d7dff2;
-      font-size:12px;
-      opacity:.9;
-    }
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width:260px;
+  background:linear-gradient(180deg,#020617,#0b1225);
+  border-right:1px solid #1e293b;
+  padding:20px;
+  height:100vh;
+}
 
-    .profile-card,
-    .support-card,
-    .side-section,
-    .nav-item,
-    .summary-card,
-    .main-panel,
-    .list-item,
-    .chip,
-    .top-pill,
-    .bottom-nav{
-      border:1px solid var(--stroke);
-      box-shadow:var(--shadow);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
+.logo{
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:20px;
+}
 
-    .profile-card{
-      background:linear-gradient(180deg, rgba(14,24,48,.88), rgba(9,17,34,.9));
-      border-radius:24px;
-      padding:18px 16px 16px;
-      margin-bottom:18px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      text-align:center;
-    }
-    .avatar-wrap{
-      position:relative;
-      width:88px;
-      height:88px;
-      margin-bottom:14px;
-      border-radius:50%;
-      padding:3px;
-      background:linear-gradient(135deg, rgba(156,124,255,.9), rgba(57,224,208,.8));
-      box-shadow:0 0 0 1px rgba(255,255,255,.06), 0 12px 40px rgba(123,97,255,.18);
-    }
-    .avatar{
-      width:100%;height:100%;border-radius:50%;
-      object-fit:cover;
-      display:block;
-      border:2px solid rgba(7,16,31,.92);
-    }
-    .badge-check{
-      position:absolute;right:-2px;top:0;
-      width:24px;height:24px;border-radius:50%;
-      background:#3c8dff;
-      display:grid;place-items:center;
-      border:2px solid #0a1326;
-      color:white;
-      box-shadow:0 8px 18px rgba(60,141,255,.32);
-    }
-    .badge-check svg{width:13px;height:13px}
+.profile{
+  background:#0f172a;
+  padding:15px;
+  border-radius:16px;
+  text-align:center;
+  box-shadow:0 0 20px rgba(124,58,237,.2);
+}
+.profile img{
+  width:70px;
+  border-radius:50%;
+}
+.trusted{
+  background:#7c3aed;
+  padding:4px 10px;
+  border-radius:10px;
+  font-size:12px;
+  display:inline-block;
+  margin-top:5px;
+}
 
-    .profile-name{font-size:20px;font-weight:700;margin-top:2px}
-    .profile-tag{
-      margin-top:8px;
-      padding:7px 12px;
-      border-radius:999px;
-      background:rgba(123,97,255,.16);
-      color:#b7a6ff;
-      font-size:12px;
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      font-weight:600;
-    }
-    .profile-meta{
-      margin-top:12px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      width:100%;
-      color:#dce6fb;
-      font-size:13px;
-    }
-    .meta-row{
-      display:flex;align-items:center;justify-content:center;gap:8px;
-      color:#dce6fb;
-    }
-    .meta-row .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px rgba(77,226,154,.1)}
-    .meta-row .star{color:var(--amber)}
+.menu{
+  margin-top:25px;
+}
+.menu div{
+  padding:12px;
+  border-radius:12px;
+  cursor:pointer;
+  margin-bottom:8px;
+  transition:.2s;
+}
+.menu div:hover{
+  background:#1e293b;
+}
 
-    .menu-title,
-    .stats-title,
-    .contact-title{
-      font-size:12px;
-      letter-spacing:.12em;
-      color:rgba(180,196,224,.55);
-      margin:18px 4px 10px;
-      font-weight:700;
-    }
+/* ===== MAIN ===== */
+.main{
+  flex:1;
+  padding:25px 40px;
+}
 
-    .nav-list{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-    .nav-item{
-      border-radius:14px;
-      padding:13px 14px;
-      display:flex;
-      align-items:center;
-      gap:12px;
-      background:rgba(11,18,32,.45);
-      color:#d6e1f7;
-      cursor:pointer;
-      transition:.22s ease;
-    }
-    .nav-item:hover{transform:translateY(-1px);background:rgba(18,28,51,.92);border-color:rgba(156,124,255,.24)}
-    .nav-item.active{
-      background:linear-gradient(90deg, rgba(123,97,255,.24), rgba(57,224,208,.12));
-      border-color:rgba(156,124,255,.3);
-      box-shadow:0 14px 30px rgba(123,97,255,.08);
-    }
-    .nav-item i{width:18px;height:18px;opacity:.95}
-    .nav-item span{font-size:14px;font-weight:500}
+/* HEADER */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
 
-    .stats-list{display:flex;flex-direction:column;gap:12px}
-    .stat-card{
-      display:flex;align-items:center;gap:12px;
-      padding:10px 12px;
-      border-radius:14px;
-      background:rgba(11,18,32,.46);
-      border:1px solid rgba(255,255,255,.05);
-    }
-    .stat-ico{
-      width:38px;height:38px;border-radius:12px;
-      display:grid;place-items:center;
-      background:rgba(123,97,255,.16);
-      color:#b7a6ff;
-      flex:0 0 auto;
-    }
-    .stat-ico.cyan{background:rgba(57,224,208,.14);color:#7ef1e8}
-    .stat-ico.green{background:rgba(77,226,154,.12);color:#63f0ad}
-    .stat-ico.yellow{background:rgba(255,202,112,.12);color:#ffd66f}
-    .stat-copy{display:flex;flex-direction:column;gap:1px;min-width:0}
-    .stat-copy .label{font-size:12px;color:#dce6fb;opacity:.84}
-    .stat-copy .value{font-size:15px;font-weight:700;line-height:1.2}
-    .stat-copy .value.green{color:var(--green)}
-    .stat-copy .value.blue{color:#7db0ff}
-    .stat-copy .value.yellow{color:var(--amber)}
+/* TAB */
+.tabs{
+  display:flex;
+  gap:25px;
+  margin-bottom:20px;
+}
+.tab{
+  cursor:pointer;
+  opacity:.5;
+}
+.tab.active{
+  opacity:1;
+  border-bottom:2px solid #7c3aed;
+}
 
-    .support-card{
-      margin-top:18px;
-      padding:18px 16px;
-      border-radius:22px;
-      background:linear-gradient(180deg, rgba(19,28,55,.92), rgba(10,16,32,.9));
-    }
-    .support-card h4{margin:0 0 8px;font-size:18px}
-    .support-card p{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.5}
-    .btn{
-      width:100%;
-      border:none;
-      border-radius:14px;
-      padding:13px 14px;
-      font-family:inherit;
-      font-weight:700;
-      cursor:pointer;
-      transition:.2s ease;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      text-decoration:none;
-    }
-    .btn:hover{transform:translateY(-1px)}
-    .btn.primary{background:linear-gradient(135deg, rgba(123,97,255,1), rgba(96,73,255,1));color:white;box-shadow:0 18px 38px rgba(123,97,255,.22)}
-    .btn.wa{background:linear-gradient(135deg,#1f9a55,#147845);color:white}
-    .btn.fb{background:linear-gradient(135deg,#2f5fbf,#244b94);color:white}
+/* FILTER */
+.filters{
+  display:flex;
+  gap:10px;
+  margin-bottom:15px;
+}
+select,input{
+  padding:10px 12px;
+  border-radius:10px;
+  background:#0f172a;
+  border:1px solid #1e293b;
+  color:white;
+}
 
-    .contact-stack{display:flex;flex-direction:column;gap:10px}
+/* TAG */
+.tags{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+.tag{
+  padding:6px 14px;
+  border-radius:20px;
+  background:#0f172a;
+  cursor:pointer;
+}
+.tag.active{
+  background:#7c3aed;
+}
 
-    .copyright{
-      margin-top:18px;
-      color:rgba(180,196,224,.45);
-      font-size:12px;
-      line-height:1.5;
-    }
+/* CARD */
+.card{
+  display:flex;
+  gap:15px;
+  background:#0b1225;
+  border:1px solid #1e293b;
+  padding:15px;
+  border-radius:18px;
+  margin-bottom:15px;
+  position:relative;
+  transition:.2s;
+}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 30px rgba(124,58,237,.2);
+}
 
-    .main{
-      padding:22px 22px 84px;
-      min-width:0;
-    }
+/* TAG BADGE */
+.topTag{
+  position:absolute;
+  right:10px;
+  top:10px;
+  background:#ef4444;
+  padding:4px 10px;
+  border-radius:10px;
+  font-size:12px;
+}
 
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:24px;
-    }
-    .top-left{display:flex;align-items:center;gap:14px;min-width:0}
-    .burger{
-      width:40px;height:40px;border-radius:12px;
-      display:grid;place-items:center;
-      background:rgba(15,23,42,.68);
-      border:1px solid rgba(255,255,255,.06);
-      color:#d8e4fb;
-      cursor:pointer;
-      flex:0 0 auto;
-    }
-    .burger i{width:20px;height:20px}
-    .page-head{min-width:0}
-    .page-title{
-      margin:0;
-      font-size:28px;
-      line-height:1.1;
-      font-weight:800;
-      letter-spacing:.1px;
-      display:flex;
-      align-items:flex-end;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-    .page-title .accent{color:var(--purple)}
-    .page-sub{margin:6px 0 0;color:rgba(208,218,239,.74);font-size:13px}
-    .top-right{display:flex;align-items:center;gap:12px}
-    .icon-btn{
-      width:40px;height:40px;border-radius:50%;
-      display:grid;place-items:center;
-      background:rgba(15,23,42,.68);
-      border:1px solid rgba(255,255,255,.06);
-      color:#d8e4fb;
-      position:relative;
-    }
-    .icon-btn .dot{
-      position:absolute;top:7px;right:7px;
-      width:8px;height:8px;border-radius:50%;background:#ff5c70;box-shadow:0 0 0 6px rgba(255,92,112,.12)
-    }
+/* SLIDER */
+.swiper{
+  width:150px;
+  height:150px;
+  border-radius:12px;
+  overflow:hidden;
+}
+.swiper img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
 
-    .trusted-pill{
-      padding:12px 16px;
-      border-radius:16px;
-      background:linear-gradient(180deg, rgba(17,31,54,.82), rgba(13,25,44,.82));
-      border:1px solid rgba(57,224,208,.2);
-      color:#7ef1e8;
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      font-weight:700;
-      box-shadow:0 18px 32px rgba(57,224,208,.08);
-    }
-    .trusted-pill .shield{
-      width:18px;height:18px;border-radius:7px;background:rgba(57,224,208,.15);display:grid;place-items:center;
-    }
-    .trusted-pill .shield i{width:13px;height:13px}
+/* INFO */
+.info{
+  flex:1;
+}
+.price{
+  color:#22c55e;
+  font-weight:bold;
+}
+.old{
+  text-decoration:line-through;
+  color:#6b7280;
+  font-size:12px;
+}
+.discount{
+  color:#ef4444;
+  font-size:12px;
+  margin-left:5px;
+}
 
-    .hero{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:14px;
-      margin-bottom:20px;
-      flex-wrap:wrap;
-    }
+/* STATUS */
+.badge{
+  padding:4px 10px;
+  border-radius:10px;
+  font-size:12px;
+}
+.ready{background:#16a34a}
+.sold{background:#dc2626}
+.proses{background:#eab308}
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:18px;
-      margin-bottom:18px;
-    }
+/* ACTION */
+.actions{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.btn{
+  padding:10px;
+  border-radius:10px;
+  text-align:center;
+  font-size:13px;
+}
+.wa{background:#16a34a}
+.fb{background:#1877f2}
 
-    .summary-card{
-      border-radius:24px;
-      padding:22px;
-      background:linear-gradient(180deg, rgba(14,24,48,.92), rgba(8,16,33,.92));
-      position:relative;
-      overflow:hidden;
-      min-height:170px;
-    }
-    .summary-card::after{
-      content:"";
-      position:absolute;
-      inset:auto -40px -40px auto;
-      width:170px;height:170px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(123,97,255,.22), transparent 70%);
-      pointer-events:none;
-    }
-    .summary-head{display:flex;align-items:flex-start;gap:14px;position:relative;z-index:1}
-    .sum-ico{
-      width:56px;height:56px;border-radius:18px;
-      display:grid;place-items:center;
-      flex:0 0 auto;
-      background:rgba(123,97,255,.16);
-      color:#b7a6ff;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
-    }
-    .sum-ico.cyan{background:rgba(57,224,208,.15);color:#6ff0e7}
-    .sum-copy{min-width:0;flex:1}
-    .sum-label{font-size:14px;letter-spacing:.08em;color:#b5c1dc;opacity:.95}
-    .sum-value{font-size:28px;font-weight:800;margin-top:6px;line-height:1.15}
-    .sum-sub{font-size:13px;margin-top:2px;color:var(--muted)}
-    .delta{
-      display:inline-flex;align-items:center;gap:8px;
-      margin-top:16px;
-      padding:10px 12px;border-radius:14px;
-      background:rgba(255,255,255,.03);
-      color:#8ff0a6;
-      font-size:12px;font-weight:600;
-      position:relative;z-index:1;
-      width:max-content;
-    }
-    .delta.red{color:#ff9aa4}
-    .delta .arrow{
-      width:18px;height:18px;border-radius:50%;display:grid;place-items:center;
-      background:rgba(77,226,154,.08)
-    }
-    .delta.red .arrow{background:rgba(255,123,134,.08)}
-    .delta .muted{color:var(--muted);font-weight:500}
+/* FOOTER BOX */
+.footerBox{
+  margin-top:30px;
+  padding:20px;
+  background:#0f172a;
+  border-radius:15px;
+  display:flex;
+  justify-content:space-between;
+}
 
-    .panel{
-      border-radius:24px;
-      background:linear-gradient(180deg, rgba(14,24,48,.88), rgba(8,16,33,.92));
-      border:1px solid rgba(255,255,255,.06);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .panel-head{
-      padding:18px 18px 14px;
-      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
-    }
-    .panel-title{
-      display:flex;align-items:center;gap:10px;
-      font-weight:700;font-size:18px;
-    }
-    .panel-title i{width:20px;height:20px;color:#ae84ff}
-    .select-like{
-      display:inline-flex;align-items:center;gap:10px;
-      padding:12px 14px;border-radius:14px;
-      background:rgba(15,23,42,.72);
-      border:1px solid rgba(255,255,255,.06);
-      color:#d9e4fa;font-size:13px;
-    }
+/* HIDE */
+.hidden{display:none}
 
-    .transactions{padding:0 14px 18px}
-    .list-item{
-      display:flex;align-items:center;gap:14px;
-      padding:15px 14px;
-      border-radius:18px;
-      background:rgba(8,14,27,.52);
-      margin-bottom:10px;
-      border:1px solid rgba(255,255,255,.05);
-    }
-    .item-ico{
-      width:42px;height:42px;border-radius:14px;
-      display:grid;place-items:center;
-      flex:0 0 auto;
-      background:rgba(123,97,255,.16);
-      color:#b7a6ff;
-    }
-    .item-ico.crown{background:rgba(255,192,92,.14);color:#ffc46a}
-    .item-ico.sword{background:rgba(109,228,243,.14);color:#8ae8f5}
-    .item-ico.box{background:rgba(57,224,208,.12);color:#7ef1e8}
-    .item-copy{flex:1;min-width:0}
-    .item-name{font-size:17px;font-weight:500;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .item-cat{font-size:12px;color:#7f93b5;margin-top:3px}
-    .item-amount{
-      font-size:16px;
-      font-weight:700;
-      color:var(--green);
-      white-space:nowrap;
-    }
-    .item-amount.red{color:var(--red)}
-    .item-end{
-      width:40px;height:40px;border-radius:50%;
-      display:grid;place-items:center;
-      border:1px solid rgba(77,226,154,.15);
-      color:var(--green);
-      flex:0 0 auto;
-      background:rgba(77,226,154,.05);
-    }
-    .item-end.red{border-color:rgba(255,123,134,.15);color:var(--red);background:rgba(255,123,134,.05)}
-
-    .pagination{
-      padding:8px 18px 18px;
-      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
-    }
-    .pager-group{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-    .pager-btn,
-    .pager-num{
-      min-width:42px;height:42px;border-radius:12px;
-      display:inline-flex;align-items:center;justify-content:center;
-      background:rgba(15,23,42,.72);
-      border:1px solid rgba(255,255,255,.06);
-      color:#cfdaf0;
-      font-weight:600;font-family:inherit;
-    }
-    .pager-num.active{background:linear-gradient(135deg, rgba(123,97,255,1), rgba(111,88,255,1));color:white;border-color:transparent;box-shadow:0 12px 24px rgba(123,97,255,.2)}
-    .ellipsis{color:#7f93b5;font-weight:700;letter-spacing:.2em;padding:0 4px}
-
-    .mobile-nav{
-      display:none;
-      position:fixed;
-      left:12px;right:12px;bottom:12px;
-      z-index:50;
-      padding:12px;
-      border-radius:22px;
-      background:rgba(9,15,30,.9);
-      border:1px solid rgba(255,255,255,.07);
-      box-shadow:0 22px 60px rgba(0,0,0,.5);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
-    .mobile-nav .row{
-      display:flex;align-items:center;justify-content:space-around;gap:10px;
-    }
-    .mobile-nav .mn-item{
-      flex:1;
-      border-radius:16px;
-      padding:10px 8px;
-      text-align:center;
-      color:#c9d5eb;
-      font-size:12px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:6px;
-    }
-    .mobile-nav .mn-item.active{color:#b7a6ff}
-    .mobile-nav .mn-item i{width:18px;height:18px}
-
-    @media (max-width: 1180px){
-      .app{grid-template-columns: 1fr}
-      .sidebar{display:none}
-      .mobile-nav{display:block}
-      .main{padding-bottom:112px}
-    }
-
-    @media (max-width: 920px){
-      .grid{grid-template-columns: 1fr}
-      .page-title{font-size:24px}
-      .sum-value{font-size:24px}
-      .summary-card{min-height:unset}
-    }
-
-    @media (max-width: 560px){
-      .main{padding:16px 14px 100px}
-      .topbar{align-items:flex-start}
-      .page-title{font-size:22px}
-      .hero{margin-bottom:16px}
-      .summary-card{padding:18px}
-      .panel-head{padding:16px 16px 12px}
-      .transactions{padding:0 10px 14px}
-      .list-item{padding:13px 12px}
-      .item-name{font-size:15px}
-      .pagination{padding:8px 14px 16px}
-      .pager-group{gap:8px}
-    }
-  </style>
+</style>
 </head>
+
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="name"><span>Yuraaa</span> Store</div>
-        <div class="sub">🎮 Akun Game Murah • Trusted</div>
-      </div>
 
-      <div class="profile-card">
-        <div class="avatar-wrap">
-          <img class="avatar" src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=300&q=80" alt="Profile">
-          <div class="badge-check" aria-label="verified">
-            <i data-lucide="check"></i>
-          </div>
-        </div>
-        <div class="profile-name">Yuraaa Store</div>
-        <div class="profile-tag"><i data-lucide="star"></i> Trusted Seller</div>
-        <div class="profile-meta">
-          <div class="meta-row"><span class="star">★</span> 4.9 (245+ Ulasan)</div>
-          <div class="meta-row"><span class="dot"></span> Online</div>
-        </div>
-      </div>
+<div class="sidebar">
+  <div class="logo">YURAAA STORE</div>
 
-      <div class="menu-title">MENU</div>
-      <div class="nav-list">
-        <div class="nav-item active"><i data-lucide="layout-grid"></i><span>Dashboard</span></div>
-        <div class="nav-item"><i data-lucide="history"></i><span>Riwayat Transaksi</span></div>
-        <div class="nav-item"><i data-lucide="package"></i><span>Produk</span></div>
-        <div class="nav-item"><i data-lucide="message-circle-more"></i><span>Testimoni</span></div>
-        <div class="nav-item"><i data-lucide="receipt-text"></i><span>Bukti Transaksi</span></div>
-        <div class="nav-item"><i data-lucide="info"></i><span>Info Store</span></div>
-      </div>
-
-      <div class="stats-title">STATISTIK</div>
-      <div class="stats-list">
-        <div class="stat-card">
-          <div class="stat-ico green"><i data-lucide="arrow-up-right"></i></div>
-          <div class="stat-copy">
-            <div class="label">Total Transaksi</div>
-            <div class="value green">150+</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-ico blue"><i data-lucide="gamepad-2"></i></div>
-          <div class="stat-copy">
-            <div class="label">Akun Terjual</div>
-            <div class="value blue">150+</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-ico cyan"><i data-lucide="users"></i></div>
-          <div class="stat-copy">
-            <div class="label">Member Aktif</div>
-            <div class="value green">287+</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-ico yellow"><i data-lucide="star"></i></div>
-          <div class="stat-copy">
-            <div class="label">Rating Store</div>
-            <div class="value yellow">4.9 / 5</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="support-card">
-        <h4>Butuh Middleman?</h4>
-        <p>Gunakan jasa middleman kami untuk transaksi lebih aman & nyaman!</p>
-        <a class="btn primary" href="#">Gunakan Middleman</a>
-      </div>
-
-      <div class="contact-title">HUBUNGI KAMI</div>
-      <div class="contact-stack">
-        <a class="btn wa" href="#"><i data-lucide="message-circle"></i> WhatsApp</a>
-        <a class="btn fb" href="#"><i data-lucide="facebook"></i> Facebook</a>
-      </div>
-
-      <div class="copyright">© 2024 Yuraaa Store<br/>All Rights Reserved.</div>
-    </aside>
-
-    <main class="main">
-      <!-- DASHBOARD (PRODUK) -->
-      <div id="dashboardPage">
-        <div class="topbar">
-          <div class="top-left">
-            <div class="page-head">
-              <h1 class="page-title"><span class="accent">Yuraaa</span> Store</h1>
-              <p class="page-sub">List akun tersedia 🔥</p>
-            </div>
-          </div>
-        </div>
-
-        <div id="produkList" style="display:flex;gap:12px;overflow-x:auto;padding-bottom:10px"></div>
-      </div>
-
-      <!-- LAPORAN (DASHBOARD LAMA) -->
-      <div id="laporanPage" style="display:none">
-
-        <div class="topbar">
-          <div class="top-left">
-            <div class="page-head">
-              <h1 class="page-title"><span class="accent">Yuraaa</span> Finance</h1>
-              <p class="page-sub">Ringkasan keuangan & riwayat transaksi</p>
-            </div>
-          </div>
-        </div>
-
-        <section class="grid">
-          <div class="summary-card">
-            <div class="summary-head">
-              <div class="sum-ico"><i data-lucide="download"></i></div>
-              <div class="sum-copy">
-                <div class="sum-label">TOTAL MASUK</div>
-                <div class="sum-value">Rp 0</div>
-                <div class="sum-sub">Pemasukan</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="summary-card">
-            <div class="summary-head">
-              <div class="sum-ico cyan"><i data-lucide="share-2"></i></div>
-              <div class="sum-copy">
-                <div class="sum-label">TOTAL KELUAR</div>
-                <div class="sum-value">Rp 0</div>
-                <div class="sum-sub">Pengeluaran</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel">
-          <div class="panel-head">
-            <div class="panel-title">Riwayat Transaksi</div>
-          </div>
-          <div class="transactions" id="transactions"></div>
-        </section>
-
-      </div>
-
-    </main>
+  <div class="profile">
+    <img src="https://i.imgur.com/1X6VQvR.png">
+    <h3>Yuraaa Store</h3>
+    <span class="trusted">Trusted Seller</span>
+    <p>⭐ 4.9</p>
   </div>
 
-  <nav class="mobile-nav" aria-label="Mobile navigation">
-    <div class="row">
-      <div class="mn-item active"><i data-lucide="layout-grid"></i>Dashboard</div>
-      <div class="mn-item"><i data-lucide="bar-chart-3"></i>Laporan</div>
-      <div class="mn-item"><i data-lucide="history"></i>Riwayat</div>
+  <div class="menu">
+    <div onclick="switchTab('list')">🎮 List Akun</div>
+    <div onclick="switchTab('riwayat')">📜 Riwayat</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="header">
+    <h2>Yuraaa Dashboard</h2>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('list')">LIST AKUN</div>
+    <div class="tab" onclick="switchTab('riwayat')">RIWAYAT</div>
+  </div>
+
+  <div id="filterArea" class="filters">
+    <select id="gameFilter"></select>
+    <select id="statusFilter">
+      <option value="">Semua Status</option>
+      <option value="ready">Ready</option>
+      <option value="sold">Sold</option>
+      <option value="proses">Proses</option>
+    </select>
+    <input id="search" placeholder="Cari akun...">
+  </div>
+
+  <div class="tags">
+    <div class="tag active" onclick="setTag('')">Semua</div>
+    <div class="tag" onclick="setTag('hot')">🔥 Hot</div>
+    <div class="tag" onclick="setTag('new')">New</div>
+    <div class="tag" onclick="setTag('promo')">Promo</div>
+  </div>
+
+  <div id="listTab"></div>
+  <div id="riwayatTab" class="hidden"></div>
+
+  <div class="footerBox">
+    <div>
+      <h3>Aman & Terpercaya</h3>
+      <p>Semua akun dijamin aman & terpercaya.</p>
     </div>
-  </nav>
+    <div>
+      <div class="btn wa">Beli Direct</div>
+      <div class="btn fb">Beli Middleman</div>
+    </div>
+  </div>
 
- <script>
-const API = "https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List";
+</div>
 
-function parseHarga(h){
-  return Number((h||'').replace(/\D/g,'')) || 0;
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+
+const API="https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/Sheet1";
+const WA_NUMBER="628xxxx";
+const FB_LINK="https://facebook.com/xxxx";
+
+let DATA=[], currentTag="";
+
+fetch(API)
+.then(r=>r.json())
+.then(d=>{
+  DATA=d;
+  initFilter();
+  render();
+});
+
+function initFilter(){
+  const games=[...new Set(DATA.map(d=>d.game))];
+  gameFilter.innerHTML='<option value="">Semua Game</option>';
+  games.forEach(g=>gameFilter.innerHTML+=`<option>${g}</option>`);
 }
 
-function formatRupiah(n){
-  return "Rp " + n.toLocaleString("id-ID");
+function setTag(tag){
+  currentTag=tag;
+  document.querySelectorAll('.tag').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  render();
 }
 
-async function loadData(){
-  try{
-    const res = await fetch(API);
-    const data = await res.json();
-
-    let masuk = 0;
-    let keluar = 0;
-    let totalSold = 0;
-
-    const html = data.map(d=>{
-      const harga = parseHarga(d.Harga);
-      const status = (d.Status||'').toLowerCase();
-
-      if(status === 'sold'){
-        masuk += harga;
-        totalSold++;
-      }else{
-        keluar += harga;
-      }
-
-      return `
-        <div class="list-item">
-          <div class="item-ico">
-            <i data-lucide="gamepad-2"></i>
-          </div>
-
-          <div class="item-copy">
-            <div class="item-name">${d.Nama || '-'}</div>
-            <div class="item-cat">${d.Game || 'Game Account'}</div>
-          </div>
-
-          <div class="item-amount ${status==='sold'?'':'red'}">
-            ${formatRupiah(harga)}
-          </div>
-
-          <div class="item-end ${status==='sold'?'':'red'}">
-            <i data-lucide="${status==='sold'?'arrow-down':'arrow-up'}"></i>
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    document.getElementById("transactions").innerHTML = html;
-
-    // update total atas
-    const totals = document.querySelectorAll(".sum-value");
-    totals[0].innerText = formatRupiah(masuk);
-    totals[1].innerText = formatRupiah(keluar);
-
-    // update statistik sidebar
-    const statValues = document.querySelectorAll('.stat-copy .value');
-    if(statValues.length >= 2){
-      statValues[0].innerText = totalSold + '+';
-      statValues[1].innerText = totalSold + '+';
-    }
-
-    lucide.createIcons();
-
-  }catch(err){
-    document.getElementById("transactions").innerHTML =
-      '<div style="padding:20px;color:red">Error load data</div>';
-    console.error(err);
+function switchTab(tab){
+  if(tab==='list'){
+    listTab.classList.remove('hidden');
+    riwayatTab.classList.add('hidden');
+  }else{
+    listTab.classList.add('hidden');
+    riwayatTab.classList.remove('hidden');
   }
 }
 
-loadData();
-lucide.createIcons();
+function render(){
+  listTab.innerHTML='';
+  riwayatTab.innerHTML='';
+
+  DATA.forEach(item=>{
+    if(gameFilter.value && item.game!==gameFilter.value) return;
+    if(statusFilter.value && item.status!==statusFilter.value) return;
+    if(currentTag && item.tag!==currentTag) return;
+    if(search.value && !item.nama.toLowerCase().includes(search.value.toLowerCase())) return;
+
+    const diskon=item.harga_coret?
+      Math.round((1-item.harga/item.harga_coret)*100):0;
+
+    const imgs=[item.gambar1,item.gambar2,item.gambar3].filter(x=>x);
+
+    const card=`
+    <div class="card">
+      ${item.tag?`<div class="topTag">${item.tag}</div>`:''}
+
+      <div class="swiper">
+        <div class="swiper-wrapper">
+          ${imgs.map(i=>`<div class="swiper-slide"><img src="${i}"></div>`).join("")}
+        </div>
+      </div>
+
+      <div class="info">
+        <h3>${item.nama}</h3>
+        <small>${item.game}</small>
+
+        <p class="price">
+          Rp ${item.harga}
+          ${item.harga_coret?`<span class="old">Rp ${item.harga_coret}</span>
+          <span class="discount">-${diskon}%</span>`:''}
+        </p>
+
+        <span class="badge ${item.status}">${item.status}</span>
+      </div>
+
+      <div class="actions">
+        <a class="btn wa" href="https://wa.me/${WA_NUMBER}" target="_blank">WhatsApp</a>
+        <a class="btn fb" href="${FB_LINK}" target="_blank">Facebook</a>
+      </div>
+    </div>`;
+
+    if(item.status!=='sold') listTab.innerHTML+=card;
+    if(item.status==='sold') riwayatTab.innerHTML+=card;
+  });
+
+  setTimeout(()=> new Swiper('.swiper',{loop:true}),100);
+}
+
+gameFilter.onchange=render;
+statusFilter.onchange=render;
+search.oninput=render;
+
 </script>
 
 </body>
