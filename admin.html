@@ -3,104 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Pro Dashboard</title>
+<title>Yuraaa Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body{
-  margin:0;
-  background:#020617;
-  color:white;
-  font-family:sans-serif;
-}
+body{margin:0;background:#020617;color:white;font-family:sans-serif}
 
-/* LAYOUT */
-.wrapper{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:12px;
-  padding:12px;
+/* NAV */
+.nav{
+position:fixed;bottom:0;width:100%;
+display:flex;justify-content:space-around;
+background:#0f172a;padding:10px;
 }
+.nav div{opacity:0.5}
+.nav .active{opacity:1;color:#22c55e}
 
-/* DESKTOP */
-@media(min-width:900px){
-  .wrapper{
-    grid-template-columns:350px 1fr;
-  }
-}
+/* TAB */
+.tab{display:none;padding:12px}
+.tab.active{display:block}
 
 /* CARD */
 .card{
-  background:linear-gradient(145deg,#0f172a,#020617);
-  border-radius:18px;
-  padding:16px;
-  border:1px solid rgba(255,255,255,0.05);
-  box-shadow:0 10px 25px rgba(0,0,0,0.5);
+background:linear-gradient(145deg,#0f172a,#020617);
+border-radius:16px;padding:12px;margin-top:10px;
 }
 
-/* BALANCE */
-.balance{
-  background:linear-gradient(135deg,#22c55e,#4ade80);
-  color:black;
-  font-size:26px;
+/* INPUT */
+input,select{
+width:100%;padding:10px;margin-top:8px;
+border-radius:10px;border:none;background:#020617;color:white;
 }
 
-/* KPI */
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-.kpi small{color:#94a3b8}
-
-/* TOP */
-.topItem{
-  margin-top:10px;
-}
-.bar{
-  height:6px;
-  background:#1e293b;
-  border-radius:10px;
-}
-.fill{
-  height:100%;
-  background:#22c55e;
-  border-radius:10px;
+/* BUTTON */
+button{
+width:100%;padding:10px;margin-top:8px;
+border:none;border-radius:10px;
+background:#22c55e;color:black;font-weight:bold;
 }
 
-/* CHART */
-canvas{max-height:260px}
+/* LIST */
+.item{
+display:flex;justify-content:space-between;
+padding:10px;margin-top:6px;background:#0f172a;border-radius:10px;
+font-size:13px;
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="wrapper">
-
-<!-- LEFT -->
-<div>
-
-<div class="card balance" id="balance">Rp 0</div>
-
-<div class="grid">
-<div class="card"><small>Omzet</small><h3 id="omzet">0</h3></div>
-<div class="card"><small>Modal</small><h3 id="modal">0</h3></div>
-<div class="card"><small>Profit</small><h3 id="profit">0</h3></div>
-<div class="card"><small>ROI</small><h3 id="roi">0%</h3></div>
-</div>
-
-<div class="card" id="insight">🔥 Insight loading...</div>
+<!-- TAB 1 -->
+<div id="home" class="tab active">
 
 <div class="card">
-<h3>🏆 Top Game</h3>
-<div id="topList"></div>
-</div>
+<h3>Tambah Transaksi</h3>
+
+<select id="type">
+<option value="income">Pemasukan</option>
+<option value="expense">Pengeluaran</option>
+</select>
+
+<input id="desc" placeholder="Deskripsi">
+<input id="amount" placeholder="Rp">
+
+<button onclick="addData()">Simpan</button>
+
+<button onclick="window.location.href='index.html'" style="background:#ef4444;color:white">
+Keluar ke Website
+</button>
 
 </div>
 
-<!-- RIGHT -->
-<div>
+</div>
+
+<!-- TAB 2 -->
+<div id="dashboard" class="tab">
 
 <div class="card">
 <h3>📊 Omzet per Game</h3>
@@ -108,54 +87,117 @@ canvas{max-height:260px}
 </div>
 
 <div class="card">
-<h3>📈 Tren Profit</h3>
-<canvas id="line"></canvas>
+<h3>🏆 Top Game</h3>
+<div id="topList"></div>
+</div>
+
+<div class="card" id="insight"></div>
+
+</div>
+
+<!-- TAB 3 -->
+<div id="history" class="tab">
+
+<div class="card">
+<h3>Riwayat</h3>
+<div id="list"></div>
+</div>
+
+<div class="card">
+<b>Uang Masuk:</b> <span id="income">0</span><br>
+<b>Uang Keluar:</b> <span id="expense">0</span>
 </div>
 
 </div>
 
+<!-- NAV -->
+<div class="nav">
+<div class="active" onclick="tab('home',this)">🏠</div>
+<div onclick="tab('dashboard',this)">📊</div>
+<div onclick="tab('history',this)">📋</div>
 </div>
 
 <script>
 
+// ===== HELPER =====
 function rp(x){return "Rp "+(x||0).toLocaleString("id-ID")}
 function num(v){return parseInt((v||"").replace(/\D/g,''))||0}
 
-async function load(){
+// ===== DATA =====
+let data=JSON.parse(localStorage.getItem("data"))||[]
+
+// ===== TAB =====
+function tab(id,el){
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
+document.getElementById(id).classList.add('active')
+
+document.querySelectorAll('.nav div').forEach(n=>n.classList.remove('active'))
+el.classList.add('active')
+}
+
+// ===== ADD DATA =====
+function addData(){
+if(!desc.value||!amount.value)return
+
+data.push({
+id:Date.now(),
+type:type.value,
+desc:desc.value,
+amount:num(amount.value),
+date:new Date().toLocaleDateString()
+})
+
+desc.value=""
+amount.value=""
+
+renderHistory()
+}
+
+// ===== HISTORY =====
+function renderHistory(){
+
+let inc=0,exp=0
+list.innerHTML=""
+
+data.forEach(d=>{
+if(d.type=="income") inc+=d.amount
+else exp+=d.amount
+
+list.innerHTML+=`
+<div class="item">
+<div>${d.desc}</div>
+<div style="color:${d.type=="income"?"#22c55e":"#ef4444"}">
+${rp(d.amount)}
+</div>
+</div>`
+})
+
+income.innerText=rp(inc)
+expense.innerText=rp(exp)
+
+localStorage.setItem("data",JSON.stringify(data))
+}
+
+// ===== DASHBOARD =====
+async function loadDashboard(){
 
 const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List")
 const sheet=await res.json()
 
-let omzet=0,modal=0,profit=0
-let map={}, daily={}
+let map={}
 
 sheet.forEach(a=>{
 if((a.Status||"").toLowerCase()!=="sold") return
 
-let h=num(a.Harga)
-let m=num(a.Modal)
-
-omzet+=h
-modal+=m
-profit+=(h-m)
-
 let game=a.Game||"Lainnya"
-map[game]=(map[game]||0)+h
+let harga=num(a.Harga)
 
-let d=new Date().toLocaleDateString()
-daily[d]=(daily[d]||0)+(h-m)
+map[game]=(map[game]||0)+harga
 })
 
-balance.innerText=rp(omzet)
-omzet.innerText=rp(omzet)
-modal.innerText=rp(modal)
-profit.innerText=rp(profit)
-roi.innerText=modal?((profit/modal)*100).toFixed(1)+"%":"0%"
-
-/* SORT */
 let sorted=Object.entries(map).sort((a,b)=>b[1]-a[1])
 
-/* PIE */
+// PIE
 new Chart(pie,{
 type:'doughnut',
 data:{
@@ -167,60 +209,30 @@ backgroundColor:[
 "#ef4444","#a78bfa","#14b8a6"
 ]
 }]
-},
-options:{
-cutout:"70%",
-plugins:{
-legend:{position:'right'},
-tooltip:{
-callbacks:{
-label:(c)=>c.label+": "+rp(c.raw)
-}
-}
-}
 }
 })
 
-/* TOP */
+// TOP
 let html=""
 sorted.forEach(g=>{
-let p=(g[1]/omzet*100).toFixed(1)
 html+=`
-<div class="topItem">
-<b>${g[0]}</b> ${rp(g[1])}
-<div class="bar"><div class="fill" style="width:${p}%"></div></div>
+<div class="item">
+<div>${g[0]}</div>
+<div>${rp(g[1])}</div>
 </div>`
 })
 topList.innerHTML=html
 
-/* LINE */
-new Chart(line,{
-type:'line',
-data:{
-labels:Object.keys(daily),
-datasets:[{
-label:"Profit",
-data:Object.values(daily),
-tension:0.4,
-borderColor:"#22c55e",
-backgroundColor:"rgba(34,197,94,0.1)",
-fill:true
-}]
-},
-options:{
-plugins:{legend:{display:false}}
-}
-})
-
-/* INSIGHT */
+// INSIGHT
 let top=sorted[0]?.[0]||"-"
 let val=sorted[0]?.[1]||0
 
 insight.innerHTML=`🔥 Game paling cuan: <b>${top}</b><br>${rp(val)}`
-
 }
 
-load()
+// INIT
+renderHistory()
+loadDashboard()
 
 </script>
 
