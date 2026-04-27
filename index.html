@@ -611,80 +611,65 @@
     </aside>
 
     <main class="main">
-      <div class="topbar">
-        <div class="top-left">
-          <button class="burger" aria-label="menu"><i data-lucide="menu"></i></button>
-          <div class="page-head">
-            <h1 class="page-title"><span class="accent">Yuraaa</span> Finance</h1>
-            <p class="page-sub">Ringkasan keuangan & riwayat transaksi</p>
-          </div>
-        </div>
-
-        <div class="top-right">
-          <button class="icon-btn" aria-label="notifications"><i data-lucide="bell"></i><span class="dot"></span></button>
-          <button class="icon-btn" aria-label="theme"><i data-lucide="moon-star"></i></button>
-        </div>
-      </div>
-
-      <div class="hero">
-        <div></div>
-        <div class="trusted-pill"><span class="shield"><i data-lucide="shield-check"></i></span> Trusted</div>
-      </div>
-
-      <section class="grid">
-        <div class="summary-card">
-          <div class="summary-head">
-            <div class="sum-ico"><i data-lucide="download"></i></div>
-            <div class="sum-copy">
-              <div class="sum-label">TOTAL MASUK</div>
-              <div class="sum-value">Rp 28.535.000</div>
-              <div class="sum-sub">Pemasukan</div>
+      <!-- DASHBOARD (PRODUK) -->
+      <div id="dashboardPage">
+        <div class="topbar">
+          <div class="top-left">
+            <div class="page-head">
+              <h1 class="page-title"><span class="accent">Yuraaa</span> Store</h1>
+              <p class="page-sub">List akun tersedia 🔥</p>
             </div>
           </div>
-          <div class="delta"><span class="arrow"><i data-lucide="trending-up"></i></span> 12.5% <span class="muted">dari bulan lalu</span></div>
         </div>
 
-        <div class="summary-card">
-          <div class="summary-head">
-            <div class="sum-ico cyan"><i data-lucide="share-2"></i></div>
-            <div class="sum-copy">
-              <div class="sum-label">TOTAL KELUAR</div>
-              <div class="sum-value">Rp 26.220.000</div>
-              <div class="sum-sub" style="color:#69f0e0">Pengeluaran</div>
+        <div id="produkList" style="display:flex;gap:12px;overflow-x:auto;padding-bottom:10px"></div>
+      </div>
+
+      <!-- LAPORAN (DASHBOARD LAMA) -->
+      <div id="laporanPage" style="display:none">
+
+        <div class="topbar">
+          <div class="top-left">
+            <div class="page-head">
+              <h1 class="page-title"><span class="accent">Yuraaa</span> Finance</h1>
+              <p class="page-sub">Ringkasan keuangan & riwayat transaksi</p>
             </div>
           </div>
-          <div class="delta red"><span class="arrow"><i data-lucide="trending-down"></i></span> 8.3% <span class="muted">dari bulan lalu</span></div>
-        </div>
-      </section>
-
-      <section class="panel">
-        <div class="panel-head">
-          <div class="panel-title"><i data-lucide="clock-3"></i> Riwayat Transaksi</div>
-          <div class="select-like">Semua Transaksi <i data-lucide="chevron-down"></i></div>
         </div>
 
-        <div class="transactions" id="transactions"></div>
-
-        <div class="pagination">
-          <div class="pager-group">
-            <div class="pager-btn"><i data-lucide="chevron-left"></i></div>
-            <div class="pager-btn" style="width:auto;padding:0 16px;gap:8px;display:inline-flex;align-items:center">Sebelumnya</div>
+        <section class="grid">
+          <div class="summary-card">
+            <div class="summary-head">
+              <div class="sum-ico"><i data-lucide="download"></i></div>
+              <div class="sum-copy">
+                <div class="sum-label">TOTAL MASUK</div>
+                <div class="sum-value">Rp 0</div>
+                <div class="sum-sub">Pemasukan</div>
+              </div>
+            </div>
           </div>
 
-          <div class="pager-group">
-            <div class="pager-num active">1</div>
-            <div class="pager-num">2</div>
-            <div class="pager-num">3</div>
-            <div class="ellipsis">...</div>
-            <div class="pager-num">12</div>
+          <div class="summary-card">
+            <div class="summary-head">
+              <div class="sum-ico cyan"><i data-lucide="share-2"></i></div>
+              <div class="sum-copy">
+                <div class="sum-label">TOTAL KELUAR</div>
+                <div class="sum-value">Rp 0</div>
+                <div class="sum-sub">Pengeluaran</div>
+              </div>
+            </div>
           </div>
+        </section>
 
-          <div class="pager-group">
-            <div class="pager-btn" style="width:auto;padding:0 16px;gap:8px;display:inline-flex;align-items:center">Selanjutnya</div>
-            <div class="pager-btn"><i data-lucide="chevron-right"></i></div>
+        <section class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Riwayat Transaksi</div>
           </div>
-        </div>
-      </section>
+          <div class="transactions" id="transactions"></div>
+        </section>
+
+      </div>
+
     </main>
   </div>
 
@@ -696,7 +681,7 @@
     </div>
   </nav>
 
-  <script>
+ <script>
 const API = "https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List";
 
 function parseHarga(h){
@@ -751,22 +736,30 @@ async function loadData(){
 
     document.getElementById("transactions").innerHTML = html;
 
+    // update total atas
     const totals = document.querySelectorAll(".sum-value");
     totals[0].innerText = formatRupiah(masuk);
     totals[1].innerText = formatRupiah(keluar);
+
+    // update statistik sidebar
+    const statValues = document.querySelectorAll('.stat-copy .value');
+    if(statValues.length >= 2){
+      statValues[0].innerText = totalSold + '+';
+      statValues[1].innerText = totalSold + '+';
+    }
 
     lucide.createIcons();
 
   }catch(err){
     document.getElementById("transactions").innerHTML =
       '<div style="padding:20px;color:red">Error load data</div>';
+    console.error(err);
   }
 }
 
 loadData();
 lucide.createIcons();
 </script>
-    lucide.createIcons();
   </script>
 </body>
 </html>
