@@ -3,403 +3,326 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Finance</title>
+<title>Yuraaa Finance Pro</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 body{background:#020617;color:white}
 
-/* BACK */
-.back{position:fixed;top:12px;left:12px;z-index:1000;}
-.back button{
-background:rgba(30,41,59,0.8);
-backdrop-filter:blur(10px);
-color:white;border:none;padding:6px 10px;
-border-radius:8px;font-size:11px;
-}
+/* HEADER */
+.header{padding:20px}
+.header small{color:#94a3b8}
 
-/* LOGIN */
-#loginPage{
-position:fixed;top:0;left:0;width:100%;height:100%;
-display:flex;align-items:center;justify-content:center;
-background:#020617;z-index:9999;
-}
-.login-box{
-background:#0f172a;padding:25px;border-radius:16px;
-width:90%;max-width:300px;text-align:center;
-}
-.pin-input{
-text-align:center;font-size:22px;letter-spacing:8px;
+/* BALANCE */
+.balance-card{
+ margin:0 16px;
+ padding:20px;
+ border-radius:20px;
+ background:linear-gradient(135deg,#22c55e,#4ade80);
+ color:black;
 }
 
 /* CARD */
 .card{
-margin:12px;padding:15px;border-radius:16px;
-background:rgba(255,255,255,0.05);
-position:relative;
-}
-
-/* LOGOUT (ONLY HOME) */
-.logout{
-position:absolute;
-top:10px;
-right:10px;
-background:#1e293b;
-padding:6px 10px;
-border-radius:8px;
-font-size:11px;
+ margin:12px;
+ padding:14px;
+ border-radius:16px;
+ background:rgba(255,255,255,0.05);
+ backdrop-filter:blur(10px);
 }
 
 /* INPUT */
 input,select{
-width:100%;padding:12px;margin-top:10px;
-border-radius:10px;border:none;
-background:#020617;color:white;
+ width:100%;padding:10px;margin-top:6px;
+ border-radius:10px;border:none;
+ background:#020617;color:white;
 }
 
 /* BUTTON */
 button{
-width:100%;padding:12px;margin-top:10px;
-border:none;border-radius:10px;
-background:#22c55e;color:black;font-weight:bold;
+ width:100%;padding:10px;margin-top:8px;
+ border:none;border-radius:10px;
+ font-weight:bold;
 }
-.reset{background:#ef4444;color:white}
+.primary{background:#22c55e;color:black}
+
+/* LIST */
+.item{
+ display:flex;justify-content:space-between;
+ padding:10px;margin-top:6px;
+ background:#0f172a;border-radius:10px;
+}
+.item small{color:#94a3b8}
 
 /* NAV */
 .nav{
-position:fixed;bottom:0;width:100%;
-display:flex;justify-content:space-around;
-background:#020617;padding:10px;
+ position:fixed;bottom:10px;left:50%;
+ transform:translateX(-50%);
+ width:95%;display:flex;justify-content:space-around;
+ background:#0f172a;padding:10px;border-radius:20px;
 }
-.nav div{opacity:0.5}
+.nav div{font-size:12px;opacity:0.5;text-align:center}
 .nav .active{opacity:1;color:#22c55e}
 
 /* TAB */
 .tab{display:none}
 .tab.active{display:block}
 
-/* BALANCE */
-.balance{
-text-align:center;
-font-size:28px;
-color:#22c55e;
-margin:20px 0;
+/* KPI */
+.kpi-grid{
+ display:grid;grid-template-columns:repeat(2,1fr);gap:8px;
 }
+.kpi{
+ padding:12px;border-radius:12px;
+ background:rgba(255,255,255,0.05);
+}
+.kpi p{font-size:12px;color:#94a3b8}
 
-/* LIST */
-.item{
-display:flex;justify-content:space-between;
-padding:12px;margin-top:8px;
-background:#0f172a;border-radius:10px;
-}
-
-/* SUMMARY */
-.summary-box{
-display:flex;gap:10px;margin:10px;
-}
-.summary-item{
-flex:1;background:#0f172a;padding:12px;
-border-radius:12px;text-align:center;font-size:12px;
-}
-.summary-item b{display:block;font-size:14px;margin-bottom:4px;}
-.income{color:#22c55e;}
-.expense{color:#ef4444;}
-.balance-txt{color:#38bdf8;}
-
-/* TARGET */
-.target-box{
-background:#0f172a;padding:12px;border-radius:12px;margin-top:10px;
-}
-.progress-bar{
-height:6px;background:#1e293b;border-radius:10px;margin-top:6px;overflow:hidden;
-}
-.progress-fill{height:100%;background:#22c55e;}
-
-/* MODAL */
-#modal{
-position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.5);
-backdrop-filter:blur(6px);
-display:none;align-items:center;justify-content:center;
-}
-.modal-box{
-background:rgba(15,23,42,0.9);
-padding:20px;border-radius:16px;
-width:85%;max-width:320px;
+/* GRID */
+.grid2{
+ display:grid;grid-template-columns:1fr 1fr;gap:8px;
 }
 </style>
 </head>
 
 <body>
 
-
-<!-- LOGIN -->
-<div id="loginPage">
-<div class="login-box">
-<h2>🔐 PIN</h2>
-<input id="pin" type="password" placeholder="••••" class="pin-input">
-<button onclick="login()">Masuk</button>
+<div class="header">
+<h2>Yuraaa Finance</h2>
+<small>Dashboard Bisnis & Keuangan</small>
 </div>
+
+<div class="balance-card">
+<h2 id="balance">Rp 0</h2>
 </div>
 
 <!-- HOME -->
 <div id="home" class="tab active">
-
 <div class="card">
-<div class="logout" onclick="logout()">⎋</div>
-
-<div class="balance" id="balance">Rp 0</div>
 
 <select id="type">
-<option value="income">Pemasukan</option>
-<option value="expense">Pengeluaran</option>
+<option value="income">+ Pemasukan</option>
+<option value="expense">- Pengeluaran</option>
+</select>
+
+<select id="category">
+<option>Jual Akun</option>
+<option>Makanan</option>
+<option>Top Up</option>
+<option>Lainnya</option>
 </select>
 
 <input id="desc" placeholder="Deskripsi">
 <input id="amount" placeholder="Rp 0">
 
-<button onclick="addData()">Simpan</button>
-</div>
-</div>
+<button class="primary" onclick="addData()">Simpan</button>
+<button onclick="syncSheet()">🔄 Sync Sold</button>
 
-<!-- TARGET -->
-<div id="targetTab" class="tab">
-<div class="card">
-<h3>🎯 Target Tabungan</h3>
-
-<div id="targetList"></div>
-<button onclick="openAddTarget()">+ Tambah Target</button>
 </div>
 </div>
 
 <!-- LIST -->
 <div id="listTab" class="tab">
-
-<div class="summary-box">
-<div class="summary-item income">
-<b id="sumIncome">Rp 0</b>Masuk
-</div>
-<div class="summary-item expense">
-<b id="sumExpense">Rp 0</b>Keluar
-</div>
-<div class="summary-item balance-txt">
-<b id="sumBalance">Rp 0</b>Saldo
-</div>
+<div class="card"><div id="list"></div></div>
 </div>
 
-<div class="card">
-<div id="list"></div>
-<button class="reset" onclick="resetAll()">Reset Semua</button>
-</div>
+<!-- ANALYTICS -->
+<div id="analyticsTab" class="tab">
+<div class="card"><canvas id="pie"></canvas></div>
+<div class="card"><canvas id="bar"></canvas></div>
+<div class="card"><canvas id="line"></canvas></div>
 </div>
 
+<!-- BUSINESS -->
+<div id="businessTab" class="tab">
+
+<div class="kpi-grid">
+<div class="kpi"><p>Omzet</p><h3 id="omzet">0</h3></div>
+<div class="kpi"><p>Modal</p><h3 id="modal">0</h3></div>
+<div class="kpi"><p>Profit</p><h3 id="profit">0</h3></div>
+<div class="kpi"><p>ROI</p><h3 id="roi">0%</h3></div>
+</div>
+
+<div class="card"><canvas id="profitChart"></canvas></div>
+
+<div class="grid2">
+<div class="card"><canvas id="gameChart"></canvas></div>
+<div class="card"><p id="insight"></p></div>
+</div>
+
+</div>
+
+<!-- NAV -->
 <div class="nav">
-<div class="active" onclick="switchTab('home',this)">🏠</div>
-<div onclick="switchTab('targetTab',this)">🎯</div>
-<div onclick="switchTab('listTab',this)">📋</div>
-</div>
-
-<!-- MODAL -->
-<div id="modal">
-<div class="modal-box">
-<h3 id="modalTitle"></h3>
-
-<input id="modalName" placeholder="Tujuan">
-<input id="modalInput" placeholder="Rp 0">
-
-<button id="confirmBtn">Simpan</button>
-<button onclick="closeModal()" style="background:#1e293b;color:white">Batal</button>
-</div>
+<div class="active" onclick="tab('home',this)">🏠</div>
+<div onclick="tab('listTab',this)">📋</div>
+<div onclick="tab('analyticsTab',this)">📊</div>
+<div onclick="tab('businessTab',this)">💰</div>
 </div>
 
 <script>
 
-const SHOP_URL="index.html";
-
-function login(){
-if(pin.value==="1234"){
-loginPage.style.display="none";
-}else{
-window.location.href=SHOP_URL;
-}
-}
-
-function goBack(){window.location.href=SHOP_URL;}
-function logout(){loginPage.style.display="flex";}
-
 // FORMAT
-function formatRp(v){
-v=v.replace(/[^0-9]/g,"");
-return "Rp "+(v?parseInt(v).toLocaleString("id-ID"):"0");
-}
-function getNum(v){
-return parseInt(v.replace(/[^0-9]/g,""))||0;
-}
-function rp(x){
-return "Rp "+(x||0).toLocaleString("id-ID");
-}
-
-amount.oninput=()=>amount.value=formatRp(amount.value);
-modalInput.oninput=()=>modalInput.value=formatRp(modalInput.value);
+function rp(x){return "Rp "+(x||0).toLocaleString("id-ID")}
+function num(v){return parseInt(v.replace(/\D/g,''))||0}
+amount.oninput=()=>amount.value=rp(num(amount.value))
 
 // DATA
-let data=JSON.parse(localStorage.getItem("data"))||[];
-let targets=JSON.parse(localStorage.getItem("targets"))||[];
-
-let mode=null,selectedIndex=null;
+let data=JSON.parse(localStorage.getItem("data"))||[]
 
 // TAB
-function switchTab(id,el){
-document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-
-document.querySelectorAll(".nav div").forEach(n=>n.classList.remove("active"));
-el.classList.add("active");
+function tab(id,el){
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
+document.getElementById(id).classList.add('active')
+document.querySelectorAll('.nav div').forEach(n=>n.classList.remove('active'))
+el.classList.add('active')
 }
 
-// MODAL
-function openModal(title, withName=false){
-modal.style.display="flex";
-modalTitle.innerText=title;
-
-modalInput.value="";
-modalName.value="";
-
-modalName.style.display = withName ? "block" : "none";
-}
-
-function closeModal(){modal.style.display="none";}
-
-// RESET
-function resetAll(){
-mode="reset";
-openModal("Reset semua data?");
-modalName.style.display="none";
-modalInput.style.display="none";
-}
-
-// CONFIRM
-confirmBtn.onclick=function(){
-
-if(mode==="reset"){
-data=[];targets=[];
-localStorage.clear();
-render();renderTargets();
-}
-
-if(mode==="delete"){
-targets.splice(selectedIndex,1);
-renderTargets();
-}
-
-if(mode==="addTarget"){
-targets.push({
-name: modalName.value || "Target",
-target:getNum(modalInput.value),
-current:0
-});
-renderTargets();
-}
-
-if(mode==="addMoney"){
-targets[selectedIndex].current+=getNum(modalInput.value);
-renderTargets();
-}
-
-closeModal();
-};
-
-// TARGET
-function openAddTarget(){
-mode="addTarget";
-openModal("Tambah Target", true);
-}
-
-function addMoney(i){
-mode="addMoney";
-selectedIndex=i;
-openModal("Tambah uang");
-modalName.style.display="none";
-}
-
-function deleteTarget(i){
-mode="delete";
-selectedIndex=i;
-openModal("Hapus target?");
-modalName.style.display="none";
-modalInput.style.display="none";
-}
-
-// ADD DATA
+// ADD
 function addData(){
-if(!desc.value||!amount.value)return;
+if(!desc.value||!amount.value)return
 data.push({
+id:Date.now(),
 type:type.value,
 desc:desc.value,
-amount:getNum(amount.value)
-});
-desc.value="";amount.value="";
-render();
+amount:num(amount.value),
+category:category.value,
+date:new Date().toLocaleDateString("id-ID")
+})
+desc.value="";amount.value=""
+render()
 }
 
-// RENDER TARGET
-function renderTargets(){
-targetList.innerHTML="";
-targets.forEach((t,i)=>{
-let p=Math.min((t.current/t.target)*100,100);
+// DELETE
+function del(id){
+data=data.filter(d=>d.id!==id)
+render()
+}
 
-targetList.innerHTML+=`
-<div class="target-box">
-<div style="display:flex;justify-content:space-between">
-<div>
-<b>${t.name}</b>
-<small>${rp(t.current)} / ${rp(t.target)}</small>
-</div>
+// SYNC GOOGLE SHEET
+async function syncSheet(){
+const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List")
+const sheet=await res.json()
 
-<div style="display:flex;gap:5px">
-<button onclick="addMoney(${i})" style="background:#22c55e">+</button>
-<button onclick="deleteTarget(${i})" style="background:#ef4444">×</button>
-</div>
-</div>
+sheet.filter(a=>a.Status?.toLowerCase()=="sold")
+.forEach(a=>{
+let amount=num(a.Harga||"0")
+if(data.find(d=>d.desc==a.Nama))return
+data.push({
+id:Date.now()+Math.random(),
+type:"income",
+desc:a.Nama,
+amount:amount,
+category:"Jual Akun",
+date:new Date().toLocaleDateString("id-ID")
+})
+})
 
-<div class="progress-bar">
-<div class="progress-fill" style="width:${p}%"></div>
-</div>
-</div>
-`;
-});
-localStorage.setItem("targets",JSON.stringify(targets));
+render()
 }
 
 // RENDER
 function render(){
-let income=0,expense=0;
-list.innerHTML="";
+
+let income=0,expense=0
+list.innerHTML=""
 
 data.forEach(d=>{
-if(d.type=="income") income+=d.amount;
-else expense+=d.amount;
+if(d.type=="income") income+=d.amount
+else expense+=d.amount
 
 list.innerHTML+=`
 <div class="item">
-<div>${d.desc}</div>
-<div style="color:${d.type=="income"?"#22c55e":"#ef4444"}">
-${d.type=="income"?"+":"-"} ${rp(d.amount)}
+<div>
+<b>${d.desc}</b><br>
+<small>${d.category} • ${d.date}</small>
 </div>
-</div>`;
-});
+<div>
+${d.type=="income"?"+":"-"} ${rp(d.amount)}
+<button onclick="del(${d.id})">🗑</button>
+</div>
+</div>`
+})
 
-sumIncome.innerText=rp(income);
-sumExpense.innerText=rp(expense);
-sumBalance.innerText=rp(income-expense);
-balance.innerText=rp(income-expense);
+balance.innerText=rp(income-expense)
 
-localStorage.setItem("data",JSON.stringify(data));
+// SAVE
+localStorage.setItem("data",JSON.stringify(data))
+
+analytics()
+business()
+}
+
+// ANALYTICS
+function analytics(){
+
+let cat={},daily={},income=0,expense=0
+
+data.forEach(d=>{
+if(d.type=="expense"){
+cat[d.category]=(cat[d.category]||0)+d.amount
+expense+=d.amount
+}else income+=d.amount
+
+daily[d.date]=(daily[d.date]||0)+(d.type=="income"?d.amount:-d.amount)
+})
+
+if(window.pieChart) pieChart.destroy()
+if(window.barChart) barChart.destroy()
+if(window.lineChart) lineChart.destroy()
+
+window.pieChart=new Chart(pie,{type:'pie',data:{labels:Object.keys(cat),datasets:[{data:Object.values(cat)}]}})
+window.barChart=new Chart(bar,{type:'bar',data:{labels:["Income","Expense"],datasets:[{data:[income,expense]}]}})
+window.lineChart=new Chart(line,{type:'line',data:{labels:Object.keys(daily),datasets:[{data:Object.values(daily)}]}})
+}
+
+// BUSINESS
+async function business(){
+
+const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List")
+const sheet=await res.json()
+
+let omzet=0,modal=0,profit=0,game={},daily={}
+
+sheet.filter(a=>a.Status?.toLowerCase()=="sold")
+.forEach(a=>{
+let h=num(a.Harga||"0")
+let m=num(a.Modal||"0")
+
+omzet+=h
+modal+=m
+profit+=(h-m)
+
+game[a.Game]=(game[a.Game]||0)+1
+let d=new Date().toLocaleDateString("id-ID")
+daily[d]=(daily[d]||0)+(h-m)
+})
+
+omzetEl=omzet
+modalEl=modal
+profitEl=profit
+
+omzet.innerText=rp(omzet)
+modal.innerText=rp(modal)
+profit.innerText=rp(profit)
+
+let roiVal=modal?((profit/modal)*100).toFixed(1):0
+roi.innerText=roiVal+"%"
+
+insight.innerText=`🔥 Terlaris: ${Object.keys(game)[0]||'-'}`
+
+if(window.gc) gc.destroy()
+if(window.pc) pc.destroy()
+
+window.gc=new Chart(gameChart,{type:'bar',data:{labels:Object.keys(game),datasets:[{data:Object.values(game)}]}})
+window.pc=new Chart(profitChart,{type:'line',data:{labels:Object.keys(daily),datasets:[{data:Object.values(daily)}]}})
+
 }
 
 // INIT
-render();
-renderTargets();
+render()
 
 </script>
 
