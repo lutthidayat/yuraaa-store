@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Finance Pro</title>
+<title>Yuraaa Finance AI</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -16,19 +16,20 @@ body{background:#020617;color:white}
 .header small{color:#94a3b8}
 
 /* BALANCE */
-.balance-card{
- margin:0 16px;
+.balance{
+ margin:10px;
  padding:20px;
  border-radius:20px;
  background:linear-gradient(135deg,#22c55e,#4ade80);
  color:black;
+ font-size:26px;
 }
 
 /* CARD */
 .card{
- margin:12px;
- padding:14px;
- border-radius:16px;
+ margin:10px;
+ padding:12px;
+ border-radius:14px;
  background:rgba(255,255,255,0.05);
  backdrop-filter:blur(10px);
 }
@@ -36,7 +37,7 @@ body{background:#020617;color:white}
 /* INPUT */
 input,select{
  width:100%;padding:10px;margin-top:6px;
- border-radius:10px;border:none;
+ border:none;border-radius:10px;
  background:#020617;color:white;
 }
 
@@ -63,7 +64,7 @@ button{
  width:95%;display:flex;justify-content:space-around;
  background:#0f172a;padding:10px;border-radius:20px;
 }
-.nav div{font-size:12px;opacity:0.5;text-align:center}
+.nav div{opacity:0.5;font-size:12px}
 .nav .active{opacity:1;color:#22c55e}
 
 /* TAB */
@@ -71,7 +72,7 @@ button{
 .tab.active{display:block}
 
 /* KPI */
-.kpi-grid{
+.grid{
  display:grid;grid-template-columns:repeat(2,1fr);gap:8px;
 }
 .kpi{
@@ -79,11 +80,6 @@ button{
  background:rgba(255,255,255,0.05);
 }
 .kpi p{font-size:12px;color:#94a3b8}
-
-/* GRID */
-.grid2{
- display:grid;grid-template-columns:1fr 1fr;gap:8px;
-}
 </style>
 </head>
 
@@ -91,12 +87,10 @@ button{
 
 <div class="header">
 <h2>Yuraaa Finance</h2>
-<small>Dashboard Bisnis & Keuangan</small>
+<small>Auto Business Dashboard</small>
 </div>
 
-<div class="balance-card">
-<h2 id="balance">Rp 0</h2>
-</div>
+<div class="balance" id="balance">Rp 0</div>
 
 <!-- HOME -->
 <div id="home" class="tab active">
@@ -118,7 +112,6 @@ button{
 <input id="amount" placeholder="Rp 0">
 
 <button class="primary" onclick="addData()">Simpan</button>
-<button onclick="syncSheet()">🔄 Sync Sold</button>
 
 </div>
 </div>
@@ -138,7 +131,7 @@ button{
 <!-- BUSINESS -->
 <div id="businessTab" class="tab">
 
-<div class="kpi-grid">
+<div class="grid">
 <div class="kpi"><p>Omzet</p><h3 id="omzet">0</h3></div>
 <div class="kpi"><p>Modal</p><h3 id="modal">0</h3></div>
 <div class="kpi"><p>Profit</p><h3 id="profit">0</h3></div>
@@ -146,11 +139,8 @@ button{
 </div>
 
 <div class="card"><canvas id="profitChart"></canvas></div>
-
-<div class="grid2">
 <div class="card"><canvas id="gameChart"></canvas></div>
 <div class="card"><p id="insight"></p></div>
-</div>
 
 </div>
 
@@ -164,15 +154,18 @@ button{
 
 <script>
 
-// FORMAT
+// ===== HELPER =====
 function rp(x){return "Rp "+(x||0).toLocaleString("id-ID")}
-function num(v){return parseInt(v.replace(/\D/g,''))||0}
+function num(v){return parseInt((v||"").toString().replace(/\D/g,''))||0}
+function safe(v,def="Lainnya"){return v?v:def}
+
 amount.oninput=()=>amount.value=rp(num(amount.value))
 
-// DATA
+// ===== DATA =====
 let data=JSON.parse(localStorage.getItem("data"))||[]
+let syncedRef=new Set(data.map(d=>d.ref))
 
-// TAB
+// ===== TAB =====
 function tab(id,el){
 document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
 document.getElementById(id).classList.add('active')
@@ -180,7 +173,7 @@ document.querySelectorAll('.nav div').forEach(n=>n.classList.remove('active'))
 el.classList.add('active')
 }
 
-// ADD
+// ===== ADD =====
 function addData(){
 if(!desc.value||!amount.value)return
 data.push({
@@ -195,52 +188,63 @@ desc.value="";amount.value=""
 render()
 }
 
-// DELETE
+// ===== DELETE =====
 function del(id){
 data=data.filter(d=>d.id!==id)
 render()
 }
 
-// SYNC GOOGLE SHEET
-async function syncSheet(){
+// ===== AUTO SYNC =====
+async function autoSync(){
+
 const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List")
 const sheet=await res.json()
 
-sheet.filter(a=>a.Status?.toLowerCase()=="sold")
-.forEach(a=>{
-let amount=num(a.Harga||"0")
-if(data.find(d=>d.desc==a.Nama))return
+sheet.forEach(a=>{
+let status=(a.Status||"").toLowerCase()
+if(status!=="sold") return
+
+let name=safe(a.Nama,"Item")
+if(syncedRef.has(name)) return
+
+let harga=num(a.Harga)
+
 data.push({
 id:Date.now()+Math.random(),
 type:"income",
-desc:a.Nama,
-amount:amount,
+desc:name,
+amount:harga,
 category:"Jual Akun",
-date:new Date().toLocaleDateString("id-ID")
+date:new Date().toLocaleDateString("id-ID"),
+ref:name
 })
+
+syncedRef.add(name)
 })
 
 render()
 }
 
-// RENDER
+// ===== RENDER =====
 function render(){
 
 let income=0,expense=0
 list.innerHTML=""
 
 data.forEach(d=>{
-if(d.type=="income") income+=d.amount
-else expense+=d.amount
+let amt=num(d.amount)
+
+if(d.type==="income") income+=amt
+else expense+=amt
 
 list.innerHTML+=`
 <div class="item">
 <div>
-<b>${d.desc}</b><br>
-<small>${d.category} • ${d.date}</small>
+<b>${safe(d.desc,"-")}</b><br>
+<small>${safe(d.category)} • ${safe(d.date)}</small>
 </div>
 <div>
-${d.type=="income"?"+":"-"} ${rp(d.amount)}
+${d.type==="income"?"+":"-"} ${rp(amt)}
 <button onclick="del(${d.id})">🗑</button>
 </div>
 </div>`
@@ -248,61 +252,58 @@ ${d.type=="income"?"+":"-"} ${rp(d.amount)}
 
 balance.innerText=rp(income-expense)
 
-// SAVE
 localStorage.setItem("data",JSON.stringify(data))
 
 analytics()
 business()
 }
 
-// ANALYTICS
+// ===== ANALYTICS =====
 function analytics(){
 
 let cat={},daily={},income=0,expense=0
 
 data.forEach(d=>{
-if(d.type=="expense"){
-cat[d.category]=(cat[d.category]||0)+d.amount
-expense+=d.amount
-}else income+=d.amount
+let c=safe(d.category)
+let amt=num(d.amount)
 
-daily[d.date]=(daily[d.date]||0)+(d.type=="income"?d.amount:-d.amount)
+if(d.type==="expense"){
+cat[c]=(cat[c]||0)+amt
+expense+=amt
+}else income+=amt
+
+daily[d.date]=(daily[d.date]||0)+(d.type==="income"?amt:-amt)
 })
 
-if(window.pieChart) pieChart.destroy()
-if(window.barChart) barChart.destroy()
-if(window.lineChart) lineChart.destroy()
+if(window.pieC) pieC.destroy()
+if(window.barC) barC.destroy()
+if(window.lineC) lineC.destroy()
 
-window.pieChart=new Chart(pie,{type:'pie',data:{labels:Object.keys(cat),datasets:[{data:Object.values(cat)}]}})
-window.barChart=new Chart(bar,{type:'bar',data:{labels:["Income","Expense"],datasets:[{data:[income,expense]}]}})
-window.lineChart=new Chart(line,{type:'line',data:{labels:Object.keys(daily),datasets:[{data:Object.values(daily)}]}})
+window.pieC=new Chart(pie,{type:'pie',data:{labels:Object.keys(cat),datasets:[{data:Object.values(cat)}]}})
+window.barC=new Chart(bar,{type:'bar',data:{labels:["Income","Expense"],datasets:[{data:[income,expense]}]}})
+window.lineC=new Chart(line,{type:'line',data:{labels:Object.keys(daily),datasets:[{data:Object.values(daily)}]}})
 }
 
-// BUSINESS
+// ===== BUSINESS =====
 async function business(){
 
 const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List")
 const sheet=await res.json()
 
-let omzet=0,modal=0,profit=0,game={},daily={}
+let omzet=0,modal=0,profit=0,game={}
 
-sheet.filter(a=>a.Status?.toLowerCase()=="sold")
-.forEach(a=>{
-let h=num(a.Harga||"0")
-let m=num(a.Modal||"0")
+sheet.forEach(a=>{
+if((a.Status||"").toLowerCase()!=="sold") return
+
+let h=num(a.Harga)
+let m=num(a.Modal)
 
 omzet+=h
 modal+=m
 profit+=(h-m)
 
 game[a.Game]=(game[a.Game]||0)+1
-let d=new Date().toLocaleDateString("id-ID")
-daily[d]=(daily[d]||0)+(h-m)
 })
-
-omzetEl=omzet
-modalEl=modal
-profitEl=profit
 
 omzet.innerText=rp(omzet)
 modal.innerText=rp(modal)
@@ -311,18 +312,19 @@ profit.innerText=rp(profit)
 let roiVal=modal?((profit/modal)*100).toFixed(1):0
 roi.innerText=roiVal+"%"
 
-insight.innerText=`🔥 Terlaris: ${Object.keys(game)[0]||'-'}`
+insight.innerText=`🔥 Terlaris: ${Object.keys(game)[0]||"-"} | Profit ${rp(profit)}`
 
 if(window.gc) gc.destroy()
 if(window.pc) pc.destroy()
 
 window.gc=new Chart(gameChart,{type:'bar',data:{labels:Object.keys(game),datasets:[{data:Object.values(game)}]}})
-window.pc=new Chart(profitChart,{type:'line',data:{labels:Object.keys(daily),datasets:[{data:Object.values(daily)}]}})
-
+window.pc=new Chart(profitChart,{type:'line',data:{labels:["Hari Ini"],datasets:[{data:[profit]}]}})
 }
 
-// INIT
+// ===== INIT =====
 render()
+autoSync()
+setInterval(autoSync,10000) // sync tiap 10 detik
 
 </script>
 
