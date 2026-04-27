@@ -3,342 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Finance Pro</title>
+<title>Yuraaa Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
-body{background:#020617;color:white}
+body{
+  background:#020617;
+  color:white;
+  font-family:sans-serif;
+  padding:10px;
+}
 
-/* HEADER */
-.header{padding:20px}
-.header small{color:#94a3b8}
-
-/* BALANCE */
-.balance{
- margin:10px;
- padding:22px;
- border-radius:20px;
- background:linear-gradient(135deg,#22c55e,#4ade80);
- color:black;
- font-size:26px;
+/* GRID */
+.container{
+  display:grid;
+  gap:10px;
 }
 
 /* CARD */
 .card{
- margin:12px;
- padding:16px;
- border-radius:18px;
- background:linear-gradient(145deg,#0f172a,#020617);
- border:1px solid rgba(255,255,255,0.05);
- box-shadow:0 10px 25px rgba(0,0,0,0.4);
+  background:linear-gradient(145deg,#0f172a,#020617);
+  border-radius:16px;
+  padding:15px;
+  border:1px solid rgba(255,255,255,0.05);
 }
 
-/* INPUT */
-input,select{
- width:100%;padding:10px;margin-top:6px;
- border:none;border-radius:10px;
- background:#020617;color:white;
+/* BALANCE */
+.balance{
+  background:linear-gradient(135deg,#22c55e,#4ade80);
+  color:black;
+  font-size:24px;
 }
 
-/* BUTTON */
-button{
- width:100%;padding:10px;margin-top:8px;
- border:none;border-radius:10px;
- font-weight:bold;
+/* GRID 2 */
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
-.primary{background:#22c55e;color:black}
-
-/* LIST */
-.item{
- display:flex;justify-content:space-between;
- padding:10px;margin-top:6px;
- background:#0f172a;border-radius:10px;
-}
-.item small{color:#94a3b8}
-
-/* NAV */
-.nav{
- position:fixed;bottom:10px;left:50%;
- transform:translateX(-50%);
- width:95%;display:flex;justify-content:space-around;
- background:#0f172a;padding:10px;border-radius:20px;
-}
-.nav div{opacity:0.5;font-size:12px}
-.nav .active{opacity:1;color:#22c55e}
-
-/* TAB */
-.tab{display:none}
-.tab.active{display:block}
 
 /* KPI */
-.grid{
- display:grid;grid-template-columns:repeat(2,1fr);gap:8px;
-}
-.kpi{
- padding:14px;border-radius:14px;
- background:linear-gradient(135deg,#020617,#0f172a);
- border:1px solid rgba(255,255,255,0.05);
-}
-.kpi p{font-size:12px;color:#94a3b8}
+.kpi h3{margin-top:5px}
 
 /* TOP LIST */
-.topItem{
- display:flex;
- justify-content:space-between;
- padding:6px 0;
- font-size:13px;
+.top{
+  margin-top:8px;
+}
+.bar{
+  height:6px;
+  background:#1e293b;
+  border-radius:10px;
+  margin-top:3px;
+}
+.fill{
+  height:100%;
+  background:#22c55e;
+  border-radius:10px;
+}
+
+/* TABLE */
+.table{
+  font-size:12px;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 0;
+  border-bottom:1px solid rgba(255,255,255,0.05);
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-<h2>Yuraaa Finance</h2>
-<small>Auto Business Dashboard</small>
+<div class="container">
+
+<!-- BALANCE -->
+<div class="card balance" id="balance">Rp 0</div>
+
+<!-- KPI -->
+<div class="grid2">
+<div class="card kpi">Omzet<h3 id="omzet">0</h3></div>
+<div class="card kpi">Modal<h3 id="modal">0</h3></div>
+<div class="card kpi">Profit<h3 id="profit">0</h3></div>
+<div class="card kpi">ROI<h3 id="roi">0%</h3></div>
 </div>
 
-<div class="balance" id="balance">Rp 0</div>
-
-<!-- HOME -->
-<div id="home" class="tab active">
+<!-- PIE -->
 <div class="card">
-
-<select id="type">
-<option value="income">+ Pemasukan</option>
-<option value="expense">- Pengeluaran</option>
-</select>
-
-<select id="category">
-<option>Jual Akun</option>
-<option>Makanan</option>
-<option>Top Up</option>
-<option>Lainnya</option>
-</select>
-
-<input id="desc" placeholder="Deskripsi">
-<input id="amount" placeholder="Rp 0">
-
-<button class="primary" onclick="addData()">Simpan</button>
-
-</div>
-</div>
-
-<!-- LIST -->
-<div id="listTab" class="tab">
-<div class="card"><div id="list"></div></div>
-</div>
-
-<!-- ANALYTICS -->
-<div id="analyticsTab" class="tab">
-<div class="card">
-<h3>📊 Omzet per Game</h3>
+<h3>Omzet per Game</h3>
 <canvas id="pie"></canvas>
 </div>
 
+<!-- TOP GAME -->
 <div class="card">
-<h3>🏆 Top Game</h3>
+<h3>Top Game</h3>
 <div id="topList"></div>
 </div>
 
+<!-- LINE -->
 <div class="card">
-<h3>📈 Tren Profit</h3>
+<h3>Tren Profit</h3>
 <canvas id="line"></canvas>
 </div>
-</div>
 
-<!-- BUSINESS -->
-<div id="businessTab" class="tab">
-
-<div class="grid">
-<div class="kpi"><p>Omzet</p><h3 id="omzet">0</h3></div>
-<div class="kpi"><p>Modal</p><h3 id="modal">0</h3></div>
-<div class="kpi"><p>Profit</p><h3 id="profit">0</h3></div>
-<div class="kpi"><p>ROI</p><h3 id="roi">0%</h3></div>
-</div>
-
-<div class="card"><p id="insight"></p></div>
-
-</div>
-
-<!-- NAV -->
-<div class="nav">
-<div class="active" onclick="tab('home',this)">🏠</div>
-<div onclick="tab('listTab',this)">📋</div>
-<div onclick="tab('analyticsTab',this)">📊</div>
-<div onclick="tab('businessTab',this)">💰</div>
 </div>
 
 <script>
 
-// ===== HELPER =====
 function rp(x){return "Rp "+(x||0).toLocaleString("id-ID")}
 function num(v){return parseInt((v||"").toString().replace(/\D/g,''))||0}
-function safe(v,def="Lainnya"){return v?v:def}
 
-// ===== DATA =====
-let data=JSON.parse(localStorage.getItem("data"))||[]
-let synced=new Set(data.map(d=>d.ref))
-
-// ===== TAB =====
-function tab(id,el){
-document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
-document.getElementById(id).classList.add('active')
-document.querySelectorAll('.nav div').forEach(n=>n.classList.remove('active'))
-el.classList.add('active')
-}
-
-// ===== ADD =====
-function addData(){
-if(!desc.value||!amount.value)return
-data.push({
-id:Date.now(),
-type:type.value,
-desc:desc.value,
-amount:num(amount.value),
-category:category.value,
-date:new Date().toLocaleDateString("id-ID")
-})
-desc.value="";amount.value=""
-render()
-}
-
-// ===== DELETE =====
-function del(id){
-data=data.filter(d=>d.id!==id)
-render()
-}
-
-// ===== AUTO SYNC =====
-async function autoSync(){
-const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List")
-const sheet=await res.json()
-
-sheet.forEach(a=>{
-if((a.Status||"").toLowerCase()!=="sold") return
-
-let name=safe(a.Nama)
-if(synced.has(name)) return
-
-data.push({
-id:Date.now()+Math.random(),
-type:"income",
-desc:name,
-amount:num(a.Harga),
-category:"Jual Akun",
-date:new Date().toLocaleDateString("id-ID"),
-ref:name
-})
-
-synced.add(name)
-})
-
-render()
-}
-
-// ===== RENDER =====
-function render(){
-
-let income=0,expense=0
-list.innerHTML=""
-
-data.forEach(d=>{
-let amt=num(d.amount)
-
-if(d.type==="income") income+=amt
-else expense+=amt
-
-list.innerHTML+=`
-<div class="item">
-<div>
-<b>${safe(d.desc)}</b><br>
-<small>${safe(d.category)} • ${safe(d.date)}</small>
-</div>
-<div>
-${d.type==="income"?"+":"-"} ${rp(amt)}
-<button onclick="del(${d.id})">🗑</button>
-</div>
-</div>`
-})
-
-balance.innerText=rp(income-expense)
-
-localStorage.setItem("data",JSON.stringify(data))
-
-renderCharts()
-renderBusiness()
-}
-
-// ===== OMZET PER GAME =====
-async function renderCharts(){
-
-const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List")
-const sheet=await res.json()
-
-let map={}, daily={}
-
-sheet.forEach(a=>{
-if((a.Status||"").toLowerCase()!=="sold") return
-
-let game=safe(a.Game)
-let harga=num(a.Harga)
-
-map[game]=(map[game]||0)+harga
-
-let d=new Date().toLocaleDateString("id-ID")
-daily[d]=(daily[d]||0)+harga
-})
-
-// SORT
-let sorted=Object.entries(map).sort((a,b)=>b[1]-a[1])
-let labels=sorted.map(x=>x[0])
-let values=sorted.map(x=>x[1])
-
-// PIE
-if(window.pieC) pieC.destroy()
-window.pieC=new Chart(pie,{
-type:'doughnut',
-data:{
-labels:labels,
-datasets:[{
-data:values,
-backgroundColor:["#22c55e","#38bdf8","#f59e0b","#ef4444","#a78bfa","#14b8a6"]
-}]
-},
-options:{cutout:"65%"}
-})
-
-// TOP LIST
-let html=""
-sorted.slice(0,5).forEach((g,i)=>{
-html+=`<div class="topItem"><span>#${i+1} ${g[0]}</span><b>${rp(g[1])}</b></div>`
-})
-topList.innerHTML=html
-
-// LINE
-if(window.lineC) lineC.destroy()
-window.lineC=new Chart(line,{
-type:'line',
-data:{labels:Object.keys(daily),datasets:[{
-data:Object.values(daily),
-tension:0.4,
-borderColor:"#22c55e",
-fill:true,
-backgroundColor:"rgba(34,197,94,0.1)"
-}]}
-})
-
-}
-
-// ===== BUSINESS =====
-async function renderBusiness(){
+async function load(){
 
 const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List")
 const sheet=await res.json()
 
 let omzet=0,modal=0,profit=0
+let map={}, daily={}
 
 sheet.forEach(a=>{
 if((a.Status||"").toLowerCase()!=="sold") return
@@ -349,21 +132,64 @@ let m=num(a.Modal)
 omzet+=h
 modal+=m
 profit+=(h-m)
+
+let game=a.Game||"Lainnya"
+map[game]=(map[game]||0)+h
+
+let d=new Date().toLocaleDateString()
+daily[d]=(daily[d]||0)+(h-m)
 })
 
+balance.innerText=rp(omzet)
 omzet.innerText=rp(omzet)
 modal.innerText=rp(modal)
 profit.innerText=rp(profit)
-
 roi.innerText=modal?((profit/modal)*100).toFixed(1)+"%":"0%"
 
-insight.innerHTML=`🔥 Profit total <b>${rp(profit)}</b>`
+/* PIE */
+let sorted=Object.entries(map).sort((a,b)=>b[1]-a[1])
+
+new Chart(pie,{
+type:'doughnut',
+data:{
+labels:sorted.map(x=>x[0]),
+datasets:[{
+data:sorted.map(x=>x[1]),
+backgroundColor:["#22c55e","#38bdf8","#f59e0b","#ef4444","#a78bfa"]
+}]
+},
+options:{cutout:"65%"}
+})
+
+/* TOP */
+let html=""
+sorted.forEach(g=>{
+let percent=(g[1]/omzet*100).toFixed(1)
+html+=`
+<div class="top">
+${g[0]} - ${rp(g[1])}
+<div class="bar"><div class="fill" style="width:${percent}%"></div></div>
+</div>`
+})
+topList.innerHTML=html
+
+/* LINE */
+new Chart(line,{
+type:'line',
+data:{
+labels:Object.keys(daily),
+datasets:[{
+label:"Profit",
+data:Object.values(daily),
+borderColor:"#22c55e",
+tension:0.4
+}]
+}
+})
+
 }
 
-// INIT
-render()
-autoSync()
-setInterval(autoSync,10000)
+load()
 
 </script>
 
