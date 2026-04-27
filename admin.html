@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Finance AI</title>
+<title>Yuraaa Finance Pro</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -18,7 +18,7 @@ body{background:#020617;color:white}
 /* BALANCE */
 .balance{
  margin:10px;
- padding:20px;
+ padding:22px;
  border-radius:20px;
  background:linear-gradient(135deg,#22c55e,#4ade80);
  color:black;
@@ -27,11 +27,12 @@ body{background:#020617;color:white}
 
 /* CARD */
 .card{
- margin:10px;
- padding:12px;
- border-radius:14px;
- background:rgba(255,255,255,0.05);
- backdrop-filter:blur(10px);
+ margin:12px;
+ padding:16px;
+ border-radius:18px;
+ background:linear-gradient(145deg,#0f172a,#020617);
+ border:1px solid rgba(255,255,255,0.05);
+ box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
 
 /* INPUT */
@@ -76,10 +77,19 @@ button{
  display:grid;grid-template-columns:repeat(2,1fr);gap:8px;
 }
 .kpi{
- padding:12px;border-radius:12px;
- background:rgba(255,255,255,0.05);
+ padding:14px;border-radius:14px;
+ background:linear-gradient(135deg,#020617,#0f172a);
+ border:1px solid rgba(255,255,255,0.05);
 }
 .kpi p{font-size:12px;color:#94a3b8}
+
+/* TOP LIST */
+.topItem{
+ display:flex;
+ justify-content:space-between;
+ padding:6px 0;
+ font-size:13px;
+}
 </style>
 </head>
 
@@ -123,9 +133,20 @@ button{
 
 <!-- ANALYTICS -->
 <div id="analyticsTab" class="tab">
-<div class="card"><canvas id="pie"></canvas></div>
-<div class="card"><canvas id="bar"></canvas></div>
-<div class="card"><canvas id="line"></canvas></div>
+<div class="card">
+<h3>📊 Omzet per Game</h3>
+<canvas id="pie"></canvas>
+</div>
+
+<div class="card">
+<h3>🏆 Top Game</h3>
+<div id="topList"></div>
+</div>
+
+<div class="card">
+<h3>📈 Tren Profit</h3>
+<canvas id="line"></canvas>
+</div>
 </div>
 
 <!-- BUSINESS -->
@@ -138,8 +159,6 @@ button{
 <div class="kpi"><p>ROI</p><h3 id="roi">0%</h3></div>
 </div>
 
-<div class="card"><canvas id="profitChart"></canvas></div>
-<div class="card"><canvas id="gameChart"></canvas></div>
 <div class="card"><p id="insight"></p></div>
 
 </div>
@@ -159,11 +178,9 @@ function rp(x){return "Rp "+(x||0).toLocaleString("id-ID")}
 function num(v){return parseInt((v||"").toString().replace(/\D/g,''))||0}
 function safe(v,def="Lainnya"){return v?v:def}
 
-amount.oninput=()=>amount.value=rp(num(amount.value))
-
 // ===== DATA =====
 let data=JSON.parse(localStorage.getItem("data"))||[]
-let syncedRef=new Set(data.map(d=>d.ref))
+let synced=new Set(data.map(d=>d.ref))
 
 // ===== TAB =====
 function tab(id,el){
@@ -196,30 +213,26 @@ render()
 
 // ===== AUTO SYNC =====
 async function autoSync(){
-
 const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List")
 const sheet=await res.json()
 
 sheet.forEach(a=>{
-let status=(a.Status||"").toLowerCase()
-if(status!=="sold") return
+if((a.Status||"").toLowerCase()!=="sold") return
 
-let name=safe(a.Nama,"Item")
-if(syncedRef.has(name)) return
-
-let harga=num(a.Harga)
+let name=safe(a.Nama)
+if(synced.has(name)) return
 
 data.push({
 id:Date.now()+Math.random(),
 type:"income",
 desc:name,
-amount:harga,
+amount:num(a.Harga),
 category:"Jual Akun",
 date:new Date().toLocaleDateString("id-ID"),
 ref:name
 })
 
-syncedRef.add(name)
+synced.add(name)
 })
 
 render()
@@ -240,7 +253,7 @@ else expense+=amt
 list.innerHTML+=`
 <div class="item">
 <div>
-<b>${safe(d.desc,"-")}</b><br>
+<b>${safe(d.desc)}</b><br>
 <small>${safe(d.category)} • ${safe(d.date)}</small>
 </div>
 <div>
@@ -254,43 +267,78 @@ balance.innerText=rp(income-expense)
 
 localStorage.setItem("data",JSON.stringify(data))
 
-analytics()
-business()
+renderCharts()
+renderBusiness()
 }
 
-// ===== ANALYTICS =====
-function analytics(){
-
-let cat={},daily={},income=0,expense=0
-
-data.forEach(d=>{
-let c=safe(d.category)
-let amt=num(d.amount)
-
-if(d.type==="expense"){
-cat[c]=(cat[c]||0)+amt
-expense+=amt
-}else income+=amt
-
-daily[d.date]=(daily[d.date]||0)+(d.type==="income"?amt:-amt)
-})
-
-if(window.pieC) pieC.destroy()
-if(window.barC) barC.destroy()
-if(window.lineC) lineC.destroy()
-
-window.pieC=new Chart(pie,{type:'pie',data:{labels:Object.keys(cat),datasets:[{data:Object.values(cat)}]}})
-window.barC=new Chart(bar,{type:'bar',data:{labels:["Income","Expense"],datasets:[{data:[income,expense]}]}})
-window.lineC=new Chart(line,{type:'line',data:{labels:Object.keys(daily),datasets:[{data:Object.values(daily)}]}})
-}
-
-// ===== BUSINESS =====
-async function business(){
+// ===== OMZET PER GAME =====
+async function renderCharts(){
 
 const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List")
 const sheet=await res.json()
 
-let omzet=0,modal=0,profit=0,game={}
+let map={}, daily={}
+
+sheet.forEach(a=>{
+if((a.Status||"").toLowerCase()!=="sold") return
+
+let game=safe(a.Game)
+let harga=num(a.Harga)
+
+map[game]=(map[game]||0)+harga
+
+let d=new Date().toLocaleDateString("id-ID")
+daily[d]=(daily[d]||0)+harga
+})
+
+// SORT
+let sorted=Object.entries(map).sort((a,b)=>b[1]-a[1])
+let labels=sorted.map(x=>x[0])
+let values=sorted.map(x=>x[1])
+
+// PIE
+if(window.pieC) pieC.destroy()
+window.pieC=new Chart(pie,{
+type:'doughnut',
+data:{
+labels:labels,
+datasets:[{
+data:values,
+backgroundColor:["#22c55e","#38bdf8","#f59e0b","#ef4444","#a78bfa","#14b8a6"]
+}]
+},
+options:{cutout:"65%"}
+})
+
+// TOP LIST
+let html=""
+sorted.slice(0,5).forEach((g,i)=>{
+html+=`<div class="topItem"><span>#${i+1} ${g[0]}</span><b>${rp(g[1])}</b></div>`
+})
+topList.innerHTML=html
+
+// LINE
+if(window.lineC) lineC.destroy()
+window.lineC=new Chart(line,{
+type:'line',
+data:{labels:Object.keys(daily),datasets:[{
+data:Object.values(daily),
+tension:0.4,
+borderColor:"#22c55e",
+fill:true,
+backgroundColor:"rgba(34,197,94,0.1)"
+}]}
+})
+
+}
+
+// ===== BUSINESS =====
+async function renderBusiness(){
+
+const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List")
+const sheet=await res.json()
+
+let omzet=0,modal=0,profit=0
 
 sheet.forEach(a=>{
 if((a.Status||"").toLowerCase()!=="sold") return
@@ -301,30 +349,21 @@ let m=num(a.Modal)
 omzet+=h
 modal+=m
 profit+=(h-m)
-
-game[a.Game]=(game[a.Game]||0)+1
 })
 
 omzet.innerText=rp(omzet)
 modal.innerText=rp(modal)
 profit.innerText=rp(profit)
 
-let roiVal=modal?((profit/modal)*100).toFixed(1):0
-roi.innerText=roiVal+"%"
+roi.innerText=modal?((profit/modal)*100).toFixed(1)+"%":"0%"
 
-insight.innerText=`🔥 Terlaris: ${Object.keys(game)[0]||"-"} | Profit ${rp(profit)}`
-
-if(window.gc) gc.destroy()
-if(window.pc) pc.destroy()
-
-window.gc=new Chart(gameChart,{type:'bar',data:{labels:Object.keys(game),datasets:[{data:Object.values(game)}]}})
-window.pc=new Chart(profitChart,{type:'line',data:{labels:["Hari Ini"],datasets:[{data:[profit]}]}})
+insight.innerHTML=`🔥 Profit total <b>${rp(profit)}</b>`
 }
 
-// ===== INIT =====
+// INIT
 render()
 autoSync()
-setInterval(autoSync,10000) // sync tiap 10 detik
+setInterval(autoSync,10000)
 
 </script>
 
