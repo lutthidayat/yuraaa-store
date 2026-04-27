@@ -620,18 +620,21 @@
     .modal.open{display:flex}
     .modal-card{
       width:min(1160px, 100%);
-      max-height:min(92vh, 940px);
+      height:min(92dvh, 940px);
+      max-height:calc(100dvh - 20px);
       overflow:hidden;
       border-radius:30px;
       background:linear-gradient(180deg, rgba(11,17,34,.98), rgba(6,10,22,.98));
       border:1px solid rgba(148,163,184,.16);
       box-shadow:0 30px 100px rgba(0,0,0,.58);
-      display:grid;
-      grid-template-columns: 1.02fr .98fr;
+      display:flex;
+      flex-direction:column;
     }
     .modal-media{
-      padding:18px;border-right:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(15,23,42,.32), rgba(15,23,42,.08))
+      padding:18px;
+      border-right:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(15,23,42,.32), rgba(15,23,42,.08));
+      flex:0 0 auto;
     }
     .modal-head{
       display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px
@@ -646,7 +649,7 @@
     }
     .modal-frame{
       width:100%;
-      height:clamp(340px, 58vh, 620px);
+      height:clamp(320px, 54vh, 580px);
       display:grid;
       place-items:center;
       background:linear-gradient(180deg, rgba(2,6,23,.92), rgba(8,13,28,.96));
@@ -655,7 +658,7 @@
     .modal-frame img{
       width:100%;
       height:100%;
-      object-fit:cover;
+      object-fit:contain;
       object-position:center center;
       display:block;
       background:linear-gradient(180deg, rgba(2,6,23,.35), rgba(2,6,23,.35));
@@ -670,7 +673,13 @@
     .thumb-chip.active{outline:2px solid rgba(139,92,246,.9);opacity:1}
     .thumb-chip img{width:100%;height:100%;object-fit:cover;display:block}
 
-    .modal-info{padding:18px 18px 18px 4px;overflow:auto}
+    .modal-info{
+      padding:18px 18px 18px 4px;
+      overflow:auto;
+      flex:1 1 auto;
+      min-height:0;
+      padding-bottom:120px;
+    }
     .modal-info::-webkit-scrollbar{width:10px}
     .modal-info::-webkit-scrollbar-thumb{background:rgba(148,163,184,.28);border-radius:999px;background-clip:padding-box;border:2px solid transparent}
     .detail-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:12px}
@@ -685,12 +694,34 @@
       margin-top:16px;padding:16px;border-radius:20px;border:1px solid rgba(148,163,184,.12);
       background:rgba(15,23,42,.5);color:#dbeafe;line-height:1.75;font-size:13px;white-space:pre-wrap
     }
-    .detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    .detail-actions{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top:16px;
+      position:sticky;
+      bottom:0;
+      z-index:10;
+      padding:14px 0 calc(12px + env(safe-area-inset-bottom));
+      background:linear-gradient(180deg, rgba(10,15,30,0), rgba(10,15,30,.9) 35%, rgba(10,15,30,1));
+      backdrop-filter:blur(12px);
+    }
     .detail-btn{
-      min-width:170px;height:48px;border:none;border-radius:16px;color:#fff;
-      display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      font-weight:900;cursor:pointer;text-decoration:none;
-      transition:.18s ease
+      width:100%;
+      min-width:0;
+      height:56px;
+      border:none;
+      border-radius:18px;
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      font-weight:900;
+      cursor:pointer;
+      text-decoration:none;
+      transition:.18s ease;
+      box-shadow:0 10px 30px rgba(0,0,0,.28);
     }
     .detail-btn:hover{transform:translateY(-1px);filter:brightness(1.04)}
     .detail-wa{background:linear-gradient(180deg, #1f8f55, #17693f)}
@@ -700,6 +731,67 @@
       opacity:.55;
       filter:grayscale(.2);
     }
+
+
+    .purchase-modal{
+      position:fixed;
+      inset:0;
+      z-index:120;
+      background:rgba(2,6,23,.72);
+      backdrop-filter:blur(12px);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      padding:16px;
+    }
+    .purchase-modal.open{display:flex}
+    .purchase-panel{
+      width:min(720px, 100%);
+      border-radius:24px;
+      border:1px solid rgba(148,163,184,.16);
+      background:linear-gradient(180deg, rgba(11,17,34,.98), rgba(6,10,22,.98));
+      box-shadow:0 28px 90px rgba(0,0,0,.62);
+      padding:16px;
+      max-height:calc(100dvh - 32px);
+      overflow:auto;
+    }
+    .purchase-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .purchase-head h3{
+      margin:0;
+      font-size:20px;
+      font-weight:900;
+    }
+    .purchase-head p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .purchase-card{
+      border:1px solid rgba(148,163,184,.12);
+      background:rgba(15,23,42,.58);
+      border-radius:18px;
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-bottom:14px;
+    }
+    .purchase-row{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      font-size:14px;
+    }
+    .purchase-row span{color:var(--muted)}
+    .purchase-row strong{color:#fff;font-size:15px;word-break:break-word;text-align:right}
 
     /* Responsive */
     @media (max-width: 1180px){
@@ -774,7 +866,7 @@
     @media (max-width: 980px){
       .modal-card{
         grid-template-columns:1fr;
-        max-height:calc(100dvh - 16px);
+        max-height:calc(100dvh - 12px);
       }
       .modal-media{
         padding:14px;
@@ -800,17 +892,17 @@
       .detail-actions{
         position:sticky;
         bottom:0;
-        z-index:2;
+        z-index:3;
         margin-top:14px;
-        padding:12px 0 calc(10px + env(safe-area-inset-bottom));
-        background:linear-gradient(180deg, rgba(11,17,34,0), rgba(11,17,34,.92) 20%, rgba(11,17,34,.98));
-        backdrop-filter:blur(10px);
+        padding:14px 0 calc(12px + env(safe-area-inset-bottom));
+        background:linear-gradient(180deg, rgba(11,17,34,0), rgba(11,17,34,.88) 18%, rgba(11,17,34,.98));
+        backdrop-filter:blur(12px);
         flex-direction:column;
       }
       .detail-btn{
         width:100%;
         min-width:0;
-        height:52px;
+        height:56px;
         font-size:15px;
       }
     }
@@ -947,8 +1039,6 @@
 
         <div class="modal-swiper swiper" id="modalSwiper">
           <div class="swiper-wrapper" id="modalSlides"></div>
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
           <div class="swiper-pagination"></div>
         </div>
 
@@ -982,6 +1072,34 @@
     </div>
   </div>
 
+
+  <div class="purchase-modal hidden" id="purchaseModal" aria-hidden="true">
+    <div class="purchase-panel" role="dialog" aria-modal="true" aria-labelledby="purchaseTitle">
+      <div class="purchase-head">
+        <div>
+          <h3 id="purchaseTitle">Konfirmasi Pembelian</h3>
+          <p id="purchaseMeta">Nama akun dan harga akan ditampilkan di sini.</p>
+        </div>
+        <button class="close-btn" id="closePurchase" aria-label="Tutup">✕</button>
+      </div>
+
+      <div class="purchase-card">
+        <div class="purchase-row">
+          <span>Nama akun</span>
+          <strong id="purchaseName">-</strong>
+        </div>
+        <div class="purchase-row">
+          <span>Harga</span>
+          <strong id="purchasePrice">-</strong>
+        </div>
+      </div>
+
+      <div class="detail-actions" style="margin-top:0;">
+        <a class="detail-btn detail-wa" id="purchaseConfirm" href="#" target="_blank" rel="noopener">Buka WhatsApp</a>
+      </div>
+    </div>
+  </div>
+
   <template id="skeletonTemplate">
     <div class="skeleton-card">
       <div class="skel sk-thumb"></div>
@@ -1008,8 +1126,6 @@
     const SHEET_NAME = "List";
     const ICON_SHEET_NAME = "icon";
     const API = `https://opensheet.elk.sh/${SPREADSHEET_ID}/${encodeURIComponent(SHEET_NAME)}`;
-    const ICON_API = `const API = `https://opensheet.elk.sh/${SPREADSHEET_ID}/List`;
-
     const WA_NUMBER = "085939286029";
     const FB_LINK = "https://www.facebook.com/share/1DzBVVkDDF/";
     const PAGE_SIZE = 6;
@@ -1027,6 +1143,8 @@
     let selectedSort = "newest";
     let topGames = new Set();
     let openDropdownType = null;
+    let ICON_ROWS = [];
+    let ICON_MAP = new Map();
 
     const els = {
       sidebar: document.querySelector('.sidebar'),
@@ -1068,6 +1186,13 @@
       modalFb: document.getElementById('modalFb'),
       detailActions: document.getElementById('detailActions'),
       thumbStrip: document.getElementById('thumbStrip'),
+      purchaseModal: document.getElementById('purchaseModal'),
+      closePurchase: document.getElementById('closePurchase'),
+      purchaseTitle: document.getElementById('purchaseTitle'),
+      purchaseMeta: document.getElementById('purchaseMeta'),
+      purchaseName: document.getElementById('purchaseName'),
+      purchasePrice: document.getElementById('purchasePrice'),
+      purchaseConfirm: document.getElementById('purchaseConfirm'),
       sidebarWa: document.getElementById('sidebarWa'),
       sidebarFb: document.getElementById('sidebarFb'),
       bottomWa: document.getElementById('bottomWa'),
@@ -1109,6 +1234,39 @@
         if (matches && matches.length) urls.push(...matches);
       });
       return [...new Set(urls)];
+    };
+
+    function getUniqueGames(primaryRows = [], extraRows = []) {
+      const map = new Map();
+
+      const ingest = (rowOrGame) => {
+        const rawGame = typeof rowOrGame === 'string'
+          ? rowOrGame
+          : (rowOrGame?.game ?? rowOrGame?.Game ?? rowOrGame?.nama ?? rowOrGame?.Nama ?? rowOrGame?.Title ?? rowOrGame?.title ?? '');
+
+        const game = normalizeText(rawGame);
+        if (!game) return;
+        const key = game.toLowerCase();
+        if (!map.has(key)) map.set(key, game);
+      };
+
+      (Array.isArray(primaryRows) ? primaryRows : []).forEach(ingest);
+      (Array.isArray(extraRows) ? extraRows : []).forEach(ingest);
+
+      return [...map.values()].sort((a, b) => a.localeCompare(b));
+    }
+
+
+    function buildIconMap(rows){
+      const map = new Map();
+      (Array.isArray(rows) ? rows : []).forEach(row => {
+        const game = normalizeText(row.Game ?? row.game ?? row.Nama ?? row.nama ?? row.Title ?? row.title ?? '').toLowerCase();
+        if (!game) return;
+        const rawImages = row.Gambar ?? row.gambar ?? row.Image ?? row.image ?? row.Icon ?? row.icon ?? '';
+        const images = parseImages(rawImages);
+        if (images.length) map.set(game, images);
+      });
+      return map;
     }
 
     function mergeIconImages(item, iconMap){
@@ -1161,6 +1319,15 @@
         raw,
       };
     }
+    function getPromoMeta(item){
+      const value = Number(item?.diskon) || 0;
+      const hasPromo = value > 0;
+      const isPercent = hasPromo && value <= 100;
+      const oldPrice = isPercent ? Math.round(Number(item?.harga || 0) / (1 - value / 100)) : 0;
+      const badge = isPercent ? `-${value}%` : (hasPromo ? 'Promo' : '');
+      return { value, hasPromo, isPercent, oldPrice, badge };
+    }
+
 
     function getStatusClass(status){
       const s = (status || '').toLowerCase();
@@ -1196,7 +1363,7 @@
 
     function buildWhatsappLink(item){
       if (isContactBlocked(item)) return '#';
-      const text = encodeURIComponent(`Halo, saya ingin beli akun:\n\nNama: ${item.nama}\nGame: ${item.game}\nHarga: Rp ${rupiah(item.harga)}\nStatus: ${item.status}\nKet: ${item.ket}`);
+      const text = encodeURIComponent(`Halo, saya ingin beli akun ini:\n\nNama: ${item.nama}\nHarga: Rp ${rupiah(item.harga)}\nGame: ${item.game}`);
       return `https://wa.me/${WA_NUMBER}?text=${text}`;
     }
 
@@ -1281,7 +1448,9 @@
 
     function setActiveChip(chip){
       currentChip = chip;
-      [...els.chipsList.querySelectorAll('.chip')].forEach(c => c.classList.toggle('active', c.dataset.chip === chip));
+      if (els.chipsList) {
+        [...els.chipsList.querySelectorAll('.chip')].forEach(c => c.classList.toggle('active', c.dataset.chip === chip));
+      }
       currentPage = 1;
       applyFilters();
     }
@@ -1291,9 +1460,9 @@
       const isList = tab === 'list';
       if (els.tabList) els.tabList.classList.toggle('active', isList);
       if (els.tabRiwayat) els.tabRiwayat.classList.toggle('active', !isList);
-      els.navList.classList.toggle('active', isList);
-      els.navRiwayat.classList.toggle('active', !isList);
-      els.chipsList.classList.toggle('hidden', !isList);
+      if (els.navList) els.navList.classList.toggle('active', isList);
+      if (els.navRiwayat) els.navRiwayat.classList.toggle('active', !isList);
+      if (els.chipsList) els.chipsList.classList.toggle('hidden', !isList);
       els.listView.classList.toggle('hidden', !isList);
       els.riwayatView.classList.toggle('hidden', isList);
       currentPage = 1;
@@ -1333,13 +1502,12 @@
     }
 
     function cardHTML(item){
-      const previewImg = item.previewImages?.[0] || '';
-      const imgCount = item.images.length;
+      const previewImg = (item.previewImages && item.previewImages[0]) || (item.images && item.images[0]) || '';
+      const imgCount = Array.isArray(item.images) ? item.images.length : 0;
       const label = inferLabel(item);
       const tagClass = getTagClass(label);
       const statusClass = getStatusClass(item.status);
-      const disc = item.diskon > 0 ? item.diskon : 0;
-      const oldPrice = disc > 0 ? Math.round(item.harga / (1 - disc/100)) : 0;
+      const promo = getPromoMeta(item);
       const blocked = isContactBlocked(item);
       const contactHint = blocked
         ? (item.status === 'sold' ? 'Akun sold, tampil di riwayat saja.' : 'Sedang proses, kontak dinonaktifkan.')
@@ -1363,7 +1531,9 @@
 
             <div class="price-row">
               <div class="price">Rp ${rupiah(item.harga)}</div>
-              ${disc > 0 ? `<div class="old-price">Rp ${rupiah(oldPrice)}</div><div class="disc-pill">-${disc}%</div>` : ''}
+              ${promo.hasPromo ? (promo.isPercent
+                ? `<div class="old-price">Rp ${rupiah(promo.oldPrice)}</div><div class="disc-pill">-${promo.value}%</div>`
+                : `<div class="disc-pill">Promo</div>`) : ''}
             </div>
 
             <div class="meta-row">
@@ -1390,6 +1560,7 @@
     }
 
     function renderSkeleton(count = 6){
+
       els.listView.innerHTML = Array.from({length: count}, () => els.skeletonTemplate.content.firstElementChild.cloneNode(true)).map(node => {
         const wrap = document.createElement('div');
         wrap.appendChild(node);
@@ -1479,15 +1650,35 @@
       els.modalSubtitle.textContent = 'Geser foto untuk melihat detail akun.';
     }
 
+    function openPurchaseSheet(item){
+      if (!item) return;
+      const summary = `Nama akun: ${item.nama}\nHarga: Rp ${rupiah(item.harga)}`;
+      els.purchaseTitle.textContent = 'Konfirmasi Pembelian';
+      els.purchaseMeta.textContent = summary;
+      els.purchaseName.textContent = item.nama;
+      els.purchasePrice.textContent = `Rp ${rupiah(item.harga)}`;
+      els.purchaseConfirm.href = buildWhatsappLink(item);
+      els.purchaseModal.classList.remove('hidden');
+      els.purchaseModal.classList.add('open');
+      els.purchaseModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePurchaseSheet(){
+      els.purchaseModal.classList.add('hidden');
+      els.purchaseModal.classList.remove('open');
+      els.purchaseModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
     function openModal(id){
       const item = RAW_DATA.find(x => String(x.id) === String(id));
       if (!item) return;
       activeModalItem = item;
 
       const label = inferLabel(item);
-      const disc = item.diskon > 0 ? item.diskon : 0;
-      const oldPrice = disc > 0 ? Math.round(item.harga / (1 - disc/100)) : 0;
-      const images = item.images.length ? item.images : [];
+      const promo = getPromoMeta(item);
+      const images = [...new Set([...(item.images || []), ...((item.previewImages || []))])].filter(Boolean);
 
       els.modalTitle.textContent = item.nama;
       els.modalGame.textContent = item.game;
@@ -1498,8 +1689,10 @@
       els.modalStatusPill.innerHTML = `<span class="status-dot"></span>${item.status}`;
       els.modalPricePill.textContent = `Rp ${rupiah(item.harga)}`;
       els.modalHarga.textContent = `Rp ${rupiah(item.harga)}`;
-      els.modalSubprice.innerHTML = disc > 0
-        ? `<span class="detail-old">Rp ${rupiah(oldPrice)}</span><span class="detail-disc">-${disc}%</span>`
+      els.modalSubprice.innerHTML = promo.hasPromo
+        ? (promo.isPercent
+          ? `<span class="detail-old">Rp ${rupiah(promo.oldPrice)}</span><span class="detail-disc">-${promo.value}%</span>`
+          : `<span class="detail-disc">Promo</span>`)
         : `<span>Harga sesuai data spreadsheet.</span>`;
       els.modalKet.textContent = item.ket || 'Tidak ada detail tambahan.';
 
@@ -1534,6 +1727,7 @@
           loop: images.length > 1,
           spaceBetween: 0,
           slidesPerView: 1,
+          speed: 420,
           pagination: { el: '.swiper-pagination', clickable: true },
         });
 
@@ -1555,6 +1749,7 @@
     }
 
     function closeModal(){
+      closePurchaseSheet();
       els.modal.classList.remove('open');
       document.body.style.overflow = '';
       if (modalSwiper){
@@ -1566,10 +1761,16 @@
     window.__openCard = openModal;
 
     function loadGames(){
-      const games = [...new Set(RAW_DATA.map(x => x.game).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+      const games = getUniqueGames(
+        RAW_DATA,
+        ICON_ROWS.map(row => ({
+          game: row.Game ?? row.game ?? row.Nama ?? row.nama ?? row.Title ?? row.title ?? ''
+        }))
+      );
+
       const freq = new Map();
       RAW_DATA.forEach(item => {
-        const key = (item.game || '').toLowerCase();
+        const key = normalizeText(item.game).toLowerCase();
         if (!key) return;
         freq.set(key, (freq.get(key) || 0) + 1);
       });
@@ -1602,6 +1803,7 @@
     }
 
     function setContactLinks(){
+
       els.sidebarWa.href = `https://wa.me/${WA_NUMBER}`;
       els.sidebarFb.href = FB_LINK;
     }
@@ -1683,11 +1885,12 @@
           }
         }
 
-        const iconMap = buildIconMap(Array.isArray(iconJson) ? iconJson : []);
+        ICON_ROWS = Array.isArray(iconJson) ? iconJson : [];
+        ICON_MAP = buildIconMap(ICON_ROWS);
         RAW_DATA = Array.isArray(listJson)
           ? listJson.map(mapItem).map(item => ({
               ...item,
-              previewImages: iconMap.get((item.game || '').toLowerCase()) || []
+              previewImages: ICON_MAP.get((item.game || '').toLowerCase()) || []
             }))
           : [];
 
@@ -1736,6 +1939,18 @@
     els.closeModal.addEventListener('click', closeModal);
     els.modal.addEventListener('click', (e) => {
       if (e.target === els.modal) closeModal();
+    });
+
+    els.modalWa.addEventListener('click', (e) => {
+      if (!activeModalItem) return;
+      if ((activeModalItem.status || '').toLowerCase().trim() !== 'ready') return;
+      e.preventDefault();
+      openPurchaseSheet(activeModalItem);
+    });
+
+    els.closePurchase.addEventListener('click', closePurchaseSheet);
+    els.purchaseModal.addEventListener('click', (e) => {
+      if (e.target === els.purchaseModal) closePurchaseSheet();
     });
 
     document.addEventListener('click', (e) => {
