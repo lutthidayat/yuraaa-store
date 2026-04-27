@@ -3,58 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Dashboard</title>
+<title>Yuraaa Pro Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body{
+  margin:0;
   background:#020617;
   color:white;
   font-family:sans-serif;
-  padding:10px;
 }
 
-/* GRID */
-.container{
+/* LAYOUT */
+.wrapper{
   display:grid;
-  gap:10px;
+  grid-template-columns:1fr;
+  gap:12px;
+  padding:12px;
+}
+
+/* DESKTOP */
+@media(min-width:900px){
+  .wrapper{
+    grid-template-columns:350px 1fr;
+  }
 }
 
 /* CARD */
 .card{
   background:linear-gradient(145deg,#0f172a,#020617);
-  border-radius:16px;
-  padding:15px;
+  border-radius:18px;
+  padding:16px;
   border:1px solid rgba(255,255,255,0.05);
+  box-shadow:0 10px 25px rgba(0,0,0,0.5);
 }
 
 /* BALANCE */
 .balance{
   background:linear-gradient(135deg,#22c55e,#4ade80);
   color:black;
-  font-size:24px;
+  font-size:26px;
 }
 
-/* GRID 2 */
-.grid2{
+/* KPI */
+.grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
 }
+.kpi small{color:#94a3b8}
 
-/* KPI */
-.kpi h3{margin-top:5px}
-
-/* TOP LIST */
-.top{
-  margin-top:8px;
+/* TOP */
+.topItem{
+  margin-top:10px;
 }
 .bar{
   height:6px;
   background:#1e293b;
   border-radius:10px;
-  margin-top:3px;
 }
 .fill{
   height:100%;
@@ -62,50 +69,49 @@ body{
   border-radius:10px;
 }
 
-/* TABLE */
-.table{
-  font-size:12px;
-}
-.row{
-  display:flex;
-  justify-content:space-between;
-  padding:6px 0;
-  border-bottom:1px solid rgba(255,255,255,0.05);
-}
+/* CHART */
+canvas{max-height:260px}
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="wrapper">
 
-<!-- BALANCE -->
+<!-- LEFT -->
+<div>
+
 <div class="card balance" id="balance">Rp 0</div>
 
-<!-- KPI -->
-<div class="grid2">
-<div class="card kpi">Omzet<h3 id="omzet">0</h3></div>
-<div class="card kpi">Modal<h3 id="modal">0</h3></div>
-<div class="card kpi">Profit<h3 id="profit">0</h3></div>
-<div class="card kpi">ROI<h3 id="roi">0%</h3></div>
+<div class="grid">
+<div class="card"><small>Omzet</small><h3 id="omzet">0</h3></div>
+<div class="card"><small>Modal</small><h3 id="modal">0</h3></div>
+<div class="card"><small>Profit</small><h3 id="profit">0</h3></div>
+<div class="card"><small>ROI</small><h3 id="roi">0%</h3></div>
 </div>
 
-<!-- PIE -->
-<div class="card">
-<h3>Omzet per Game</h3>
-<canvas id="pie"></canvas>
-</div>
+<div class="card" id="insight">🔥 Insight loading...</div>
 
-<!-- TOP GAME -->
 <div class="card">
-<h3>Top Game</h3>
+<h3>🏆 Top Game</h3>
 <div id="topList"></div>
 </div>
 
-<!-- LINE -->
+</div>
+
+<!-- RIGHT -->
+<div>
+
 <div class="card">
-<h3>Tren Profit</h3>
+<h3>📊 Omzet per Game</h3>
+<canvas id="pie"></canvas>
+</div>
+
+<div class="card">
+<h3>📈 Tren Profit</h3>
 <canvas id="line"></canvas>
+</div>
+
 </div>
 
 </div>
@@ -113,7 +119,7 @@ body{
 <script>
 
 function rp(x){return "Rp "+(x||0).toLocaleString("id-ID")}
-function num(v){return parseInt((v||"").toString().replace(/\D/g,''))||0}
+function num(v){return parseInt((v||"").replace(/\D/g,''))||0}
 
 async function load(){
 
@@ -146,29 +152,43 @@ modal.innerText=rp(modal)
 profit.innerText=rp(profit)
 roi.innerText=modal?((profit/modal)*100).toFixed(1)+"%":"0%"
 
-/* PIE */
+/* SORT */
 let sorted=Object.entries(map).sort((a,b)=>b[1]-a[1])
 
+/* PIE */
 new Chart(pie,{
 type:'doughnut',
 data:{
 labels:sorted.map(x=>x[0]),
 datasets:[{
 data:sorted.map(x=>x[1]),
-backgroundColor:["#22c55e","#38bdf8","#f59e0b","#ef4444","#a78bfa"]
+backgroundColor:[
+"#22c55e","#38bdf8","#f59e0b",
+"#ef4444","#a78bfa","#14b8a6"
+]
 }]
 },
-options:{cutout:"65%"}
+options:{
+cutout:"70%",
+plugins:{
+legend:{position:'right'},
+tooltip:{
+callbacks:{
+label:(c)=>c.label+": "+rp(c.raw)
+}
+}
+}
+}
 })
 
 /* TOP */
 let html=""
 sorted.forEach(g=>{
-let percent=(g[1]/omzet*100).toFixed(1)
+let p=(g[1]/omzet*100).toFixed(1)
 html+=`
-<div class="top">
-${g[0]} - ${rp(g[1])}
-<div class="bar"><div class="fill" style="width:${percent}%"></div></div>
+<div class="topItem">
+<b>${g[0]}</b> ${rp(g[1])}
+<div class="bar"><div class="fill" style="width:${p}%"></div></div>
 </div>`
 })
 topList.innerHTML=html
@@ -181,11 +201,22 @@ labels:Object.keys(daily),
 datasets:[{
 label:"Profit",
 data:Object.values(daily),
+tension:0.4,
 borderColor:"#22c55e",
-tension:0.4
+backgroundColor:"rgba(34,197,94,0.1)",
+fill:true
 }]
+},
+options:{
+plugins:{legend:{display:false}}
 }
 })
+
+/* INSIGHT */
+let top=sorted[0]?.[0]||"-"
+let val=sorted[0]?.[1]||0
+
+insight.innerHTML=`🔥 Game paling cuan: <b>${top}</b><br>${rp(val)}`
 
 }
 
