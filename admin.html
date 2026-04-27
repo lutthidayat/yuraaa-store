@@ -3,515 +3,210 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Store</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>Yuraaa Finance</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Poppins',sans-serif;background:#020617;color:#e5e7eb}
-
-/* HEADER */
-header{text-align:center;padding:16px}
-h1{font-size:24px}
-.subtitle{font-size:12px;color:#94a3b8}
-
-/* TAB */
-.tabs{display:flex;gap:8px;justify-content:center;margin:10px;flex-wrap:wrap}
-.tab{
- padding:8px 14px;border-radius:999px;
- background:#0f172a;color:#94a3b8;
- font-size:12px;
- transition:.2s;
-}
-.tab.active{background:#22c55e;color:black}
-.tab:hover{background:#1e293b}
-
-/* GRID */
-.grid{display:grid;gap:14px;padding:12px}
-
-/* CARD */
-.card{
- position:relative;
- background:#0b1220;
- border-radius:18px;
- padding:10px;
- border:1px solid #1e293b;
- cursor:pointer;
- transition:.25s;
-}
-.card:hover{
- transform:translateY(-5px);
- box-shadow:0 10px 25px rgba(0,0,0,0.6);
+body{
+  margin:0;
+  font-family:system-ui;
+  background:#020617;
+  color:#fff;
 }
 
-.card img{
-  width:100%;
-  aspect-ratio:16/9;
-  object-fit:cover;
+/* ===== HEADER ===== */
+.finance-wrap{padding:20px;}
+
+.finance-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
 }
 
-/* STATUS */
-.card.sold{opacity:0.5;filter:grayscale(0.4)}
-.card.proses{opacity:0.7}
+.finance-head h2 span{color:#8b5cf6;}
 
-.card.sold::after{
- content:"Terjual";
- position:absolute;top:50%;left:50%;
- transform:translate(-50%,-50%);
- background:#ef4444;padding:6px 12px;border-radius:8px;
-}
-.card.proses::after{
- content:"PROSES";
- position:absolute;top:50%;left:50%;
- transform:translate(-50%,-50%);
- background:#f59e0b;padding:6px 12px;border-radius:8px;
+.trusted-badge{
+  background:rgba(16,185,129,.1);
+  border:1px solid rgba(16,185,129,.3);
+  padding:10px 16px;
+  border-radius:14px;
 }
 
-/* BADGE */
-.badge{position:absolute;top:10px;left:10px;padding:4px 8px;border-radius:999px;font-size:10px;z-index:2}
-.badge.ready{background:#22c55e;color:black}
-.badge.sold{background:#ef4444;color:white}
-.badge.proses{background:#f59e0b;color:black}
-
-/* LABEL */
-.badge-right{position:absolute;top:10px;right:10px;padding:4px 8px;border-radius:999px;font-size:10px;z-index:2}
-.hot{background:orange}
-.promo{background:gold;color:black}
-
-/* PRICE */
-.price{color:#22c55e;font-weight:bold}
-.old{text-decoration:line-through;font-size:12px;color:#64748b}
-
-/* DISKON */
-.discount{
- background:linear-gradient(135deg,#ff3b3b,#ff0000);
- color:white;
- padding:4px 10px;
- border-radius:999px;
- font-size:11px;
- font-weight:bold;
- display:inline-block;
- margin-top:6px;
+/* ===== CARD ===== */
+.f-card{
+  position:relative;
+  display:flex;
+  gap:16px;
+  padding:20px;
+  border-radius:24px;
+  background:rgba(15,23,42,.6);
+  border:1px solid rgba(255,255,255,.06);
+  backdrop-filter:blur(18px);
+  margin-bottom:16px;
 }
 
-/* SLIDER */
-.slider{
- display:flex;
- gap:8px;
- overflow-x:auto;
- margin-bottom:10px;
-}
-.slider.center{justify-content:center}
-.slider img{
- height:120px;
- border-radius:10px;
- object-fit:cover;
+.f-icon{
+  width:60px;height:60px;
+  border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
 }
 
-/* POPUP */
-.popup{
- position:fixed;top:0;left:0;width:100%;height:100%;
- display:none;background:rgba(0,0,0,0.6);
- justify-content:center;align-items:center;
- opacity:0;
- transition:.2s;
-}
-.popup.show{opacity:1}
+.purple .f-icon{background:#6d28d9;}
+.green .f-icon{background:#065f46;}
 
-.popup-box{
- background:#020617;
- padding:16px;
- border-radius:16px;
- width:90%;
- max-width:320px;
- text-align:center;
-}
+.f-label{font-size:12px;color:#94a3b8;}
+.f-value{font-size:30px;font-weight:900;}
+.f-sub{color:#34d399;}
+.f-growth{font-size:13px;margin-top:6px;}
+.up{color:#22c55e;}
+.down{color:#ef4444;}
 
-/* BUTTON */
-.btn{display:block;margin:8px 0;padding:10px;border-radius:10px;text-decoration:none}
-.wa{background:#22c55e;color:black}
-.fb{background:#3b82f6;color:white}
-.close-btn{
- margin-top:8px;
- padding:8px;
- border:none;
- border-radius:10px;
- background:#1e293b;
- color:white;
- width:100%;
+/* ===== HISTORY ===== */
+.history-box{
+  margin-top:20px;
+  background:rgba(15,23,42,.6);
+  border-radius:24px;
+  padding:16px;
 }
 
-/* BLUR */
-body.popup-active .grid{
- filter:blur(4px);
- pointer-events:none;
+.history-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px;
+  border-radius:14px;
+  opacity:0;
+  transform:translateY(10px);
+  transition:.3s;
 }
 
-/* ===================== */
-/* 🔥 DESKTOP IMPROVEMENT */
-/* ===================== */
-
-/* GRID LEBIH RAPI */
-@media (min-width:1024px){
-  .grid{
-    grid-template-columns:repeat(2,1fr);
-    max-width:1100px;
-    margin:auto;
-  }
+.history-item.show{
+  opacity:1;
+  transform:translateY(0);
 }
 
-/* CARD LEBIH PROPORSIONAL */
-@media (min-width:1024px){
-  .card img{
-    height:180px;
-  }
+.history-left{
+  display:flex;
+  gap:12px;
+  align-items:center;
 }
 
-
-/* ===================== */
-/* 🔥 SCROLL LEBIH HALUS */
-/* ===================== */
-
-.popup-right::-webkit-scrollbar{
-  width:6px;
-}
-.popup-right::-webkit-scrollbar-thumb{
-  background:#334155;
-  border-radius:10px;
+.history-icon{
+  width:45px;height:45px;
+  border-radius:12px;
+  background:#1e293b;
+  display:flex;align-items:center;justify-content:center;
 }
 
-/* ===================== */
-/* 🔥 SMOOTH EXPERIENCE */
-/* ===================== */
-
-.card{
-  transition:.25s;
+.history-price{
+  color:#22c55e;
+  font-weight:900;
 }
-.card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 12px 35px rgba(0,0,0,0.7);
-}
-
-.popup{
-  backdrop-filter:blur(6px);
-}
-
-/* ===================== */
-/* 🔥 FIX POPUP DESKTOP */
-/* ===================== */
-
-@media (min-width:1024px){
-
-  .popup-box{
-    width:100%;
-    max-width:none;
-    height:100vh;
-    display:flex;
-    gap:30px;
-    padding:30px;
-    border-radius:0;
-    text-align:left;
-  }
-
-  .popup-left{
-    flex:2;
-    position:relative;
-  }
-
-  .popup-left .slider{
-    flex-direction:column;
-    gap:10px;
-  }
-
-  .popup-left img{
-    width:100%;
-    height:auto;
-    max-height:80vh;
-    object-fit:contain;
-  }
-
-  .popup-right{
-    flex:1;
-    overflow-y:auto;
-    padding-left:10px;
-  }
-}
-
 </style>
-
 </head>
 
 <body>
 
-<div id="imgViewer" style="
-display:none;
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:rgba(0,0,0,0.9);
-justify-content:center;
-align-items:center;
-z-index:9999;
-">
-  <img id="viewerImg" style="max-width:90%;max-height:90%;border-radius:12px">
-</div>
+<div class="finance-wrap">
 
-<header>
-<h1>YURAAA STORE 🎮</h1>
-<p class="subtitle">Akun Game Murah • Trusted</p>
-</header>
+  <div class="finance-head">
+    <div>
+      <h2><span>Yuraaa</span> Finance</h2>
+      <p>Ringkasan keuangan & riwayat transaksi</p>
+    </div>
+    <div class="trusted-badge">✔ Trusted</div>
+  </div>
 
-<div class="tabs" id="gameTabs">
-<button onclick="setGame('all',this)" class="tab active">Semua</button>
-<button onclick="setGame('honkai star rail',this)" class="tab">HSR</button>
-<button onclick="setGame('solo leveling',this)" class="tab">Solo</button>
-<button onclick="setGame('mobile legend',this)" class="tab">ML</button>
-<button onclick="setGame('arena breakout',this)" class="tab">Arena</button>
-<button onclick="setGame('arknight endfield',this)" class="tab">Endfield</button>
-</div>
-
-<div class="tabs" id="statusTabs">
-<button onclick="setStatus('all',this)" class="tab active">Semua</button>
-<button onclick="setStatus('ready',this)" class="tab">Ready</button>
-<button onclick="setStatus('proses',this)" class="tab">Proses</button>
-<button onclick="setStatus('sold',this)" class="tab">Sold</button>
-</div>
-
-<div id="loading" style="text-align:center;padding:20px">⏳ Memuat akun terbaik...</div>
-<div class="grid"></div>
-<div class="popup" id="popup"></div>
-
-<script>
-let allData=[];
-let currentGame='all';
-let currentStatus='all';
-
-let gridEl;
-let popupEl;
-
-function formatRupiah(num){
- return "Rp " + num.toLocaleString("id-ID").replace(/,/g,'.');
-}
-
-document.addEventListener("DOMContentLoaded", async ()=>{
-  gridEl = document.querySelector('.grid');
-  popupEl = document.getElementById('popup');
-
-  const res=await fetch("https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List");
-  allData = Object.freeze(await res.json());
-
-  document.getElementById('loading').style.display='none';
-  apply();
-});
-
-function parseHarga(h){
- return Number((h||'').replace(/\D/g,'')) || 0;
-}
-
-function apply(){
- let data=[...allData];
-
- if(currentGame!=='all'){
-  data=data.filter(a=>(a.Game||'').toLowerCase().trim()===currentGame);
- }
-
- if(currentStatus!=='all'){
-  data=data.filter(a=>(a.Status||'').toLowerCase().trim()===currentStatus);
- }
-
- render(data);
-}
-
-function render(data){
- const grid = gridEl;
-
- const html = data
- .sort((a,b)=>{
-  const order={ready:1, proses:2, sold:3};
-  const A=(a.Status||'ready').toLowerCase();
-  const B=(b.Status||'ready').toLowerCase();
-  if(order[A]!==order[B]) return order[A]-order[B];
-  return parseHarga(a.Harga)-parseHarga(b.Harga);
- })
- .map(a=>{
-  const imgs=(a.Gambar||'').split(',');
-  const firstImg=imgs[0] || 'https://via.placeholder.com/300x150?text=No+Image';
-  const status=(a.Status||'ready').toLowerCase();
-  const label=(a.Label||'').toLowerCase();
-
-  const harga=parseHarga(a.Harga);
-  const normal=parseHarga(a.Diskon);
-
-  let diskon='';
-  if(normal && harga && normal>harga){
-    const persen=Math.round((normal-harga)/normal*100);
-    diskon=`<div class="old">${a.Diskon}</div>
-            <div class="discount">🔥 -${persen}%</div>`;
-  }
-
-  let labelHTML='';
-  if(label==='hot') labelHTML='<div class="badge-right hot">HOT</div>';
-  if(label==='promo') labelHTML='<div class="badge-right promo">PROMO</div>';
-
-  return `
-  <div class="card ${status}" onclick='handleClick(${JSON.stringify(a)})'>
-    <div class="badge ${status}">${status.toUpperCase()}</div>
-    ${labelHTML}
-    <img src="${firstImg}">
-    <h4>${a.Nama||'-'}</h4>
-    <div style="font-size:12px;color:#94a3b8">${a.Ket||''}</div>
-    <div class="price">${formatRupiah(harga)}</div>
-    ${diskon}
-  </div>`;
- }).join('');
-
- grid.innerHTML = html;
-}
-
-function setGame(g,el){
- currentGame=g;
- document.querySelectorAll('#gameTabs .tab').forEach(t=>t.classList.remove('active'));
- el.classList.add('active');
- apply();
-}
-
-function setStatus(s,el){
- currentStatus=s;
- document.querySelectorAll('#statusTabs .tab').forEach(t=>t.classList.remove('active'));
- el.classList.add('active');
- apply();
-}
-
-function handleClick(a){
- const popup = popupEl;
- const status=(a.Status||'ready').toLowerCase();
-
- if(status==='sold'){
- popup.innerHTML=`
- <div class="popup-box">
-   <h3>❌ Yah, akun ini sudah diambil 😢</h3>
-   <p style="font-size:12px;color:#94a3b8">
-   Tapi tenang, masih banyak akun bagus lainnya yang siap kamu ambil 🔥
-   </p>
-   <button class="close-btn" onclick="showReadyByGame('${a.Game}')">Lihat akun lain</button>
- </div>`;
- }
- else if(status==='proses'){
- popup.innerHTML=`
- <div class="popup-box">
-   <h3>⏳ Akun sedang diproses</h3>
-   <p style="font-size:12px;color:#94a3b8">
-   Silakan cek akun lainnya ya 🔥
-   </p>
-   <button class="close-btn" onclick="showReadyByGame('${a.Game}')">
-     Lihat akun lain
-   </button>
- </div>`;
-}
- else{
-  const harga=parseHarga(a.Harga);
-  const imgs=(a.Gambar||'').split(',');
-
-  const pesan=`Halo kak, saya mau beli akun:
-Nama: ${a.Nama}
-Game: ${a.Game}
-Harga: ${formatRupiah(harga)}`;
-
-  const wa=`https://wa.me/6285808741017?text=${encodeURIComponent(pesan)}`;
-  const fb=`https://www.facebook.com/share/1Nk4kQ2FXJ/`;
-
-  popup.innerHTML=`
-<div class="popup-box">
-
-  <div class="popup-left">
-    <div class="slider ${imgs.length===1?'center':''}">
-      ${imgs.map(i=>`<img src="${i.trim()}" onclick="openViewer('${i.trim()}')">`).join('')}
+  <!-- TOTAL MASUK -->
+  <div class="f-card purple">
+    <div class="f-icon">⬇</div>
+    <div>
+      <div class="f-label">TOTAL MASUK</div>
+      <div class="f-value" id="totalMasuk">Rp 0</div>
+      <div class="f-sub">Pemasukan</div>
+      <div class="f-growth up" id="growthMasuk">+0%</div>
     </div>
   </div>
 
-  <div class="popup-right">
-    <h3>${a.Nama}</h3>
-    <div style="font-size:13px;color:#94a3b8">${a.Game}</div>
-    <div class="price">${formatRupiah(harga)}</div>
-
-    <p style="margin-top:8px;font-size:13px;color:#cbd5f5">
-      ${a.Ket || ''}
-    </p>
-
-    <a href="${wa}" class="btn wa">⚡ Beli Cepat (Direct)</a>
-    <a href="${fb}" class="btn fb">🔒 Aman via Middleman</a>
-
-    <button class="close-btn" onclick="tutup()">Tutup</button>
+  <!-- RIWAYAT -->
+  <div class="history-box">
+    <h3>Riwayat Transaksi</h3>
+    <div id="historyList"></div>
   </div>
 
-</div>`;
- }
+</div>
 
- popup.style.display='flex';
- setTimeout(()=>popup.classList.add('show'),10);
- document.body.classList.add('popup-active');
+<script>
+// ================= API =================
+const API = "https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List";
+
+// ================= ANIMATION NUMBER =================
+function animateNumber(el, target){
+  let current = 0;
+  const step = target / 40;
+
+  const int = setInterval(()=>{
+    current += step;
+    if(current >= target){
+      current = target;
+      clearInterval(int);
+    }
+    el.textContent = "Rp " + Math.floor(current).toLocaleString("id-ID");
+  },20);
 }
 
-function tutup(){
- const popup = popupEl;
- popup.classList.remove('show');
- setTimeout(()=>{
-  popup.style.display='none';
-  document.body.classList.remove('popup-active');
- },200);
+// ================= STATUS FIX =================
+function fixStatus(v){
+  return (v||"").toLowerCase().replace(/[^a-z]/g,'');
 }
 
-function showReadyByGame(game){
- document.getElementById('popup').style.display='none';
- document.body.classList.remove('popup-active');
+// ================= RENDER =================
+function render(data){
 
- const gameFix = (game||'').toLowerCase().trim();
+  // ambil SOLD
+  const sold = data.filter(x => fixStatus(x.Status) === "sold");
 
- const readyData = allData.filter(a =>
-  (a.Status||'').toLowerCase()==='ready' &&
-  (a.Game||'').toLowerCase().includes(gameFix)
- );
+  // total
+  const total = sold.reduce((s,x)=>
+    s + Number((x.Harga||"").replace(/[^\d]/g,'')),0
+  );
 
- const popup = popupEl;
+  animateNumber(document.getElementById("totalMasuk"), total);
 
- if(readyData.length === 0){
-  popup.innerHTML=`
-  <div class="popup-box">
-    <h3>😢 Akun ${game} belum tersedia</h3>
-    <p style="font-size:12px;color:#94a3b8">
-    Saat ini belum ada akun ready untuk game ini, coba cek game lain ya 🔥
-    </p>
-    <button class="close-btn" onclick="tutup()">Tutup</button>
-  </div>`;
-  popup.style.display='flex';
-  document.body.classList.add('popup-active');
-  return;
- }
+  document.getElementById("growthMasuk").textContent =
+    "+" + (sold.length * 3) + "% dari bulan lalu";
 
- currentGame = gameFix;
- currentStatus = 'ready';
+  const list = document.getElementById("historyList");
 
- apply();
- window.scrollTo({ top: 0, behavior: 'smooth' });
+  list.innerHTML = sold.map((x,i)=>`
+    <div class="history-item" style="transition-delay:${i*0.05}s">
+      <div class="history-left">
+        <div class="history-icon">🎮</div>
+        <div>
+          <div>${x.Nama}</div>
+          <div style="font-size:12px;color:#94a3b8">${x.Game}</div>
+        </div>
+      </div>
+      <div class="history-price">
+        Rp ${Number((x.Harga||"").replace(/[^\d]/g,'')).toLocaleString("id-ID")}
+      </div>
+    </div>
+  `).join("");
+
+  // animasi masuk
+  setTimeout(()=>{
+    document.querySelectorAll(".history-item").forEach(el=>{
+      el.classList.add("show");
+    });
+  },100);
 }
 
-function openViewer(src){
-  const viewer=document.getElementById('imgViewer');
-  const img=document.getElementById('viewerImg');
-  img.src=src;
-  viewer.style.display='flex';
-}
-
-document.getElementById('imgViewer').onclick=function(){
-  this.style.display='none';
-}
-
+// ================= INIT =================
+fetch(API)
+  .then(res=>res.json())
+  .then(data=>render(data));
 </script>
 
-<a href="admin.html" style="position:fixed;bottom:10px;right:10px;opacity:0.1;">⚙️</a>
-
-</body>
-</html>
 </body>
 </html>
