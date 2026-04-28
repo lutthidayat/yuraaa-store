@@ -592,9 +592,10 @@
       position:absolute;inset:0;
       transform:translateX(-100%);
       background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
-      animation: shimmer 1.4s infinite;
+      animation: shimmer 1.6s ease-in-out infinite;
     }
     @keyframes shimmer{100%{transform:translateX(100%)}}
+    .loading-fade{opacity:.96;transition:opacity .2s ease}
     .sk-thumb{height:182px;border-radius:20px}
     .sk-line{height:16px;border-radius:999px}
     .sk-line.l1{width:65%}
@@ -986,7 +987,6 @@
         </div>
 
         <div id="listView" class="list"></div>
-        <div id="riwayatView" class="list hidden"></div>
 
         <div class="pagination-wrap" id="pagination"></div>
 
@@ -1145,6 +1145,8 @@
     let openDropdownType = null;
     let ICON_ROWS = [];
     let ICON_MAP = new Map();
+    let isLoading = false;
+    let refreshTimer = null;
 
     const els = {
       sidebar: document.querySelector('.sidebar'),
@@ -1463,8 +1465,8 @@
       if (els.navList) els.navList.classList.toggle('active', isList);
       if (els.navRiwayat) els.navRiwayat.classList.toggle('active', !isList);
       if (els.chipsList) els.chipsList.classList.toggle('hidden', !isList);
-      els.listView.classList.toggle('hidden', !isList);
-      els.riwayatView.classList.toggle('hidden', isList);
+      if (els.listView) els.listView.classList.remove('hidden');
+      if (els.riwayatView) els.riwayatView.classList.add('hidden');
       currentPage = 1;
       applyFilters();
     }
@@ -1481,10 +1483,9 @@
     function applyFilters(){
       let items = RAW_DATA.filter(item => {
         const status = (item.status || '').toLowerCase();
-        if (currentTab === 'list' && status === 'sold') return false;
-        if (currentTab === 'riwayat' && status !== 'sold') return false;
         if (selectedGame && item.game !== selectedGame) return false;
         if (selectedStatus && status !== selectedStatus) return false;
+        if (currentChip && inferLabel(item) !== currentChip) return false;
         return true;
       });
 
@@ -1510,7 +1511,7 @@
       const promo = getPromoMeta(item);
       const blocked = isContactBlocked(item);
       const contactHint = blocked
-        ? (item.status === 'sold' ? 'Akun sold, tampil di riwayat saja.' : 'Sedang proses, kontak dinonaktifkan.')
+        ? (item.status === 'sold' ? 'Akun sudah terjual.' : 'Sedang proses, kontak dinonaktifkan.')
         : 'Klik card untuk detail premium dan slide foto.';
 
       return `
@@ -1560,13 +1561,13 @@
     }
 
     function renderSkeleton(count = 6){
-
+      els.listView.classList.add('loading-fade');
       els.listView.innerHTML = Array.from({length: count}, () => els.skeletonTemplate.content.firstElementChild.cloneNode(true)).map(node => {
         const wrap = document.createElement('div');
         wrap.appendChild(node);
         return wrap.innerHTML;
       }).join('');
-      els.riwayatView.innerHTML = els.listView.innerHTML;
+      if (els.riwayatView) els.riwayatView.innerHTML = els.listView.innerHTML;
       els.pagination.innerHTML = '';
     }
 
@@ -1855,6 +1856,7 @@
 
     function render(){
       const { totalPages, pageItems } = paginate(FILTERED_DATA);
+      els.listView.classList.remove('loading-fade');
 
       if (!FILTERED_DATA.length){
         const empty = `<div class="empty">Data tidak ditemukan.</div>`;
@@ -1872,6 +1874,8 @@
     }
 
     async function loadData(){
+      if (isLoading) return;
+      isLoading = true;
       renderSkeleton(6);
       try{
         const listJson = await fetchSheetJson(SHEET_NAME);
@@ -1904,6 +1908,9 @@
         els.listView.innerHTML = message;
         if (els.riwayatView) els.riwayatView.innerHTML = message;
         els.pagination.innerHTML = '';
+      }finally{
+        isLoading = false;
+        els.listView.classList.remove('loading-fade');
       }
     }
 
@@ -1976,6 +1983,9 @@
     // init
     setContactLinks();
     loadData();
+    refreshTimer = setInterval(() => {
+      loadData();
+    }, 5 * 60 * 1000);
   </script>
 </body>
 </html>
