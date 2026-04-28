@@ -1,1196 +1,755 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Yuraaa | Tambah Akun Baru</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#040816;
-    --bg2:#0a1020;
-    --panel:rgba(15,23,42,.78);
-    --panel2:rgba(17,24,39,.88);
-    --line:rgba(148,163,184,.16);
-    --line2:rgba(139,92,246,.25);
-    --text:#e5e7eb;
-    --muted:#94a3b8;
-    --accent:#8b5cf6;
-    --accent2:#60a5fa;
-    --good:#22c55e;
-    --warn:#f59e0b;
-    --bad:#ef4444;
-    --shadow:0 24px 70px rgba(0,0,0,.45);
-    --radius:26px;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-    color:var(--text);
-    background:
-      radial-gradient(1200px 700px at 90% -10%, rgba(139,92,246,.18), transparent 45%),
-      radial-gradient(900px 500px at 5% 0%, rgba(96,165,250,.12), transparent 40%),
-      linear-gradient(180deg, #020617 0%, #050816 100%);
-    overflow-x:hidden;
-  }
-  .bg-grid{
-    position:fixed; inset:0; pointer-events:none; opacity:.18;
-    background-image:
-      linear-gradient(rgba(148,163,184,.12) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(148,163,184,.12) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(circle at 30% 10%, black 0, black 35%, transparent 72%);
-  }
-  .app{
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    position:relative;
-    z-index:1;
-  }
-  .topbar{
-    position:sticky; top:0; z-index:50;
-    display:flex; align-items:center; justify-content:space-between; gap:14px;
-    padding:14px 16px;
-    background:rgba(2,6,23,.66);
-    backdrop-filter: blur(18px);
-    border-bottom:1px solid rgba(148,163,184,.12);
-  }
-  .brand{
-    display:flex; align-items:center; gap:12px; min-width:0;
-  }
-  .brand-mark{
-    width:48px; height:48px; border-radius:16px; flex:0 0 auto;
-    display:grid; place-items:center;
-    background:linear-gradient(180deg, rgba(139,92,246,.28), rgba(59,130,246,.16));
-    border:1px solid rgba(167,139,250,.24);
-    box-shadow:var(--shadow);
-    font-size:20px;
-  }
-  .brand h1{
-    margin:0; font-size:20px; line-height:1.1; font-weight:900;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
-  .brand h1 span{color:var(--accent)}
-  .brand p{
-    margin:4px 0 0; color:var(--muted); font-size:12px;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
-  .top-actions{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end}
-  .btn{
-    border:none; cursor:pointer; font:inherit; font-weight:800;
-    border-radius:16px; height:44px; padding:0 16px;
-    display:inline-flex; align-items:center; justify-content:center; gap:8px;
-    transition:.18s ease;
-  }
-  .btn:hover{transform:translateY(-1px)}
-  .btn.secondary{
-    background:rgba(15,23,42,.72);
-    color:#fff; border:1px solid var(--line);
-  }
-  .btn.primary{
-    background:linear-gradient(180deg, #8b5cf6, #6d28d9);
-    color:#fff; border:1px solid rgba(167,139,250,.42);
-    box-shadow:0 12px 34px rgba(139,92,246,.18);
-  }
-  .btn.ghost{
-    background:transparent; color:#fff; border:1px solid var(--line);
-  }
-  .container{
-    width:min(1200px,100%);
-    margin:0 auto;
-    padding:16px;
-    flex:1;
-  }
-  .hero{
-    display:grid;
-    grid-template-columns:1.2fr .8fr;
-    gap:14px;
-    margin-bottom:14px;
-  }
-  .hero-card,.side-card,.section{
-    background:linear-gradient(180deg, rgba(15,23,42,.90), rgba(8,13,28,.96));
-    border:1px solid rgba(148,163,184,.14);
-    border-radius:28px;
-    box-shadow:var(--shadow);
-  }
-  .hero-card{
-    position:relative;
-    overflow:hidden;
-    padding:22px;
-    min-height:180px;
-  }
-  .hero-card::before{
-    content:"";
-    position:absolute; inset:-25% -20% auto auto;
-    width:260px; height:260px; border-radius:50%;
-    background:radial-gradient(circle, rgba(139,92,246,.18), transparent 65%);
-    pointer-events:none;
-  }
-  .eyebrow{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:8px 12px; border-radius:999px;
-    background:rgba(15,23,42,.78); border:1px solid rgba(148,163,184,.14);
-    color:#dbeafe; font-size:12px; font-weight:800;
-  }
-  .hero h2{
-    margin:14px 0 8px;
-    font-size:30px; line-height:1.08; font-weight:900;
-    letter-spacing:-.03em;
-  }
-  .hero h2 span{color:var(--accent)}
-  .hero p{
-    margin:0;
-    max-width:720px;
-    color:var(--muted);
-    line-height:1.7;
-    font-size:13px;
-  }
-  .hero-actions{
-    display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;
-  }
-  .hero-metrics{
-    display:grid; grid-template-columns:1fr 1fr; gap:12px;
-    padding:16px;
-  }
-  .metric{
-    padding:16px;
-    border-radius:22px;
-    background:rgba(2,6,23,.30);
-    border:1px solid rgba(148,163,184,.10);
-  }
-  .metric .label{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font-weight:800}
-  .metric .value{margin-top:8px; font-size:18px; font-weight:900}
-  .metric .sub{margin-top:6px; color:#cbd5e1; font-size:12px; line-height:1.5}
-  .section{
-    padding:16px;
-    margin-bottom:14px;
-  }
-  .section-head{
-    display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
-    margin-bottom:14px;
-  }
-  .section-head h3{
-    margin:0; font-size:18px; font-weight:900;
-  }
-  .section-head p{
-    margin:5px 0 0; color:var(--muted); font-size:12px; line-height:1.5;
-  }
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(2, minmax(0,1fr));
-    gap:12px;
-  }
-  .field{display:flex; flex-direction:column; gap:8px}
-  .field.full{grid-column:1 / -1}
-  .label{
-    font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);
-    font-weight:800;
-  }
-  .input, .select, .textarea{
-    width:100%;
-    border-radius:18px;
-    border:1px solid rgba(148,163,184,.16);
-    background:rgba(2,6,23,.38);
-    color:#fff;
-    outline:none;
-    font:inherit;
-    transition:.18s ease;
-  }
-  .input:focus, .select:focus, .textarea:focus{
-    border-color:rgba(139,92,246,.55);
-    box-shadow:0 0 0 4px rgba(139,92,246,.12);
-  }
-  .input, .select{height:54px; padding:0 14px; font-weight:700}
-  .textarea{
-    min-height:130px;
-    padding:14px;
-    resize:vertical;
-    line-height:1.6;
-    font-weight:600;
-  }
-  .hint{
-    color:var(--muted);
-    font-size:12px;
-    line-height:1.5;
-  }
-  .chips{display:flex; gap:10px; flex-wrap:wrap}
-  .chip{
-    padding:10px 12px;
-    border-radius:999px;
-    border:1px solid rgba(148,163,184,.14);
-    background:rgba(15,23,42,.68);
-    color:#fff;
-    font-size:12px;
-    font-weight:800;
-    cursor:pointer;
-    transition:.18s ease;
-  }
-  .chip:hover{transform:translateY(-1px); border-color:rgba(139,92,246,.35)}
-  .chip.active{
-    background:linear-gradient(180deg, rgba(139,92,246,.95), rgba(109,40,217,.95));
-    border-color:rgba(167,139,250,.55);
-  }
-  .preview-wrap{
-    display:grid;
-    grid-template-columns:1.1fr .9fr;
-    gap:12px;
-    align-items:start;
-  }
-  .preview-box{
-    padding:14px;
-    border-radius:22px;
-    background:rgba(2,6,23,.32);
-    border:1px solid rgba(148,163,184,.10);
-    min-height:220px;
-  }
-  .preview-head{
-    display:flex; justify-content:space-between; align-items:center; gap:10px;
-    margin-bottom:12px;
-  }
-  .preview-head strong{font-size:14px}
-  .preview-count{
-    padding:6px 10px; border-radius:999px; background:rgba(15,23,42,.7);
-    border:1px solid rgba(148,163,184,.12); color:#dbeafe; font-size:12px; font-weight:800;
-  }
-  .preview-grid{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:10px;
-  }
-  .preview-item{
-    position:relative;
-    aspect-ratio:1/1;
-    border-radius:18px;
-    overflow:hidden;
-    border:1px solid rgba(148,163,184,.10);
-    background:linear-gradient(180deg, rgba(15,23,42,.95), rgba(2,6,23,.95));
-  }
-  .preview-item img{
-    width:100%; height:100%; object-fit:cover; display:block;
-  }
-  .preview-item .badge{
-    position:absolute; left:10px; bottom:10px;
-    padding:6px 8px; border-radius:999px;
-    background:rgba(2,6,23,.66); border:1px solid rgba(255,255,255,.08);
-    font-size:11px; font-weight:800;
-    backdrop-filter: blur(8px);
-  }
-  .empty-state{
-    display:flex; align-items:center; justify-content:center;
-    min-height:180px; border-radius:18px;
-    border:1px dashed rgba(148,163,184,.22);
-    color:var(--muted); text-align:center; padding:16px;
-    background:rgba(2,6,23,.16);
-  }
-  .sidebar-box{
-    padding:14px;
-    border-radius:22px;
-    background:rgba(2,6,23,.28);
-    border:1px solid rgba(148,163,184,.10);
-    display:flex; flex-direction:column; gap:12px;
-  }
-  .status-pill{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:8px 12px; border-radius:999px;
-    border:1px solid rgba(34,197,94,.18);
-    background:rgba(34,197,94,.10);
-    color:#86efac;
-    font-size:12px; font-weight:800;
-    width:max-content;
-  }
-  .status-pill.warn{
-    border-color:rgba(245,158,11,.22);
-    background:rgba(245,158,11,.12);
-    color:#fcd34d;
-  }
-  .footer-actions{
-    display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;
-  }
-  .big-save{
-    min-height:58px;
-    width:100%;
-    border:none;
-    border-radius:20px;
-    background:linear-gradient(180deg, #8b5cf6, #6d28d9);
-    color:#fff;
-    font-size:16px;
-    font-weight:900;
-    cursor:pointer;
-    box-shadow:0 16px 40px rgba(139,92,246,.18);
-    transition:.18s ease;
-  }
-  .big-save:hover{transform:translateY(-1px); filter:brightness(1.03)}
-  .small-note{
-    font-size:12px; color:var(--muted); line-height:1.6;
-  }
-  .toast{
-    position:fixed; left:50%; bottom:18px; transform:translateX(-50%) translateY(20px);
-    padding:12px 14px;
-    border-radius:16px;
-    background:rgba(15,23,42,.96);
-    border:1px solid rgba(148,163,184,.16);
-    color:#fff;
-    box-shadow:var(--shadow);
-    opacity:0; pointer-events:none;
-    transition:.25s ease;
-    z-index:80;
-    max-width:min(92vw, 520px);
-    text-align:center;
-  }
-  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
-  .loader{
-    display:inline-flex; align-items:center; gap:10px;
-  }
-  .spinner{
-    width:16px; height:16px; border-radius:50%;
-    border:2px solid rgba(255,255,255,.22);
-    border-top-color:#fff;
-    animation:spin .9s linear infinite;
-  }
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .modal{
-    position:fixed; inset:0; z-index:90;
-    background:rgba(2,6,23,.72);
-    backdrop-filter:blur(14px);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:18px;
-  }
-  .modal.open{display:flex}
-  .modal-card{
-    width:min(720px,100%);
-    border-radius:28px;
-    background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(8,13,28,.98));
-    border:1px solid rgba(148,163,184,.16);
-    box-shadow:0 40px 120px rgba(0,0,0,.65);
-    padding:20px;
-  }
-  .modal-top{
-    display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
-    margin-bottom:14px;
-  }
-  .modal-top h3{margin:0; font-size:22px; font-weight:900}
-  .modal-top p{margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.5}
-  .close-x{
-    width:40px; height:40px; border-radius:14px; border:1px solid rgba(148,163,184,.16);
-    background:rgba(15,23,42,.8); color:#fff; cursor:pointer;
-    display:grid; place-items:center; font-size:18px;
-  }
-  .modal-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
-  .modal-actions .btn{flex:1 1 160px}
-
-  @media (max-width: 960px){
-    .hero, .preview-wrap{grid-template-columns:1fr}
-    .grid{grid-template-columns:1fr}
-    .preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  }
-  @media (max-width: 640px){
-    .topbar{padding:12px}
-    .container{padding:12px}
-    .brand h1{font-size:18px}
-    .hero h2{font-size:24px}
-    .preview-grid{grid-template-columns:1fr 1fr}
-    .btn{width:100%}
-    .top-actions{width:100%}
-    .top-actions .btn{flex:1 1 auto}
-  }
-
-  /* ===== Responsive polish overrides ===== */
-  html{scroll-behavior:smooth}
-  body{min-height:100dvh}
-  .app{max-width:1440px;margin:0 auto}
-  .topbar{
-    flex-wrap:wrap;
-    gap:12px;
-    padding:clamp(12px,1.6vw,18px);
-  }
-  .brand{flex:1 1 420px}
-  .top-actions{
-    width:100%;
-    justify-content:flex-end;
-    display:flex;
-  }
-  .top-actions .btn{min-width:132px}
-  .container{
-    width:min(1320px,100%);
-    padding:clamp(12px,1.6vw,22px);
-  }
-  .hero{
-    grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);
-    gap:16px;
-    align-items:stretch;
-  }
-  .hero-card{
-    padding:clamp(18px,2.2vw,28px);
-    min-height:240px;
-  }
-  .hero h2{
-    font-size:clamp(28px,3.5vw,46px);
-    max-width:14ch;
-  }
-  .hero p{
-    font-size:14px;
-    max-width:68ch;
-  }
-  .hero-actions .btn{
-    min-width:180px;
-    height:48px;
-  }
-  .hero-metrics{
-    grid-template-columns:1fr;
-    gap:12px;
-  }
-  .metric{
-    min-height:120px;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-  }
-  .section{
-    padding:clamp(14px,1.8vw,20px);
-    margin-bottom:16px;
-  }
-  .section-head{
-    gap:14px;
-    margin-bottom:16px;
-  }
-  .grid{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:14px;
-  }
-  .input,.select{
-    height:52px;
-  }
-  .textarea{
-    min-height:140px;
-  }
-  .preview-wrap{
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-    gap:14px;
-  }
-  .preview-box{
-    min-height:260px;
-  }
-  .preview-grid{
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:12px;
-  }
-  .chips{
-    gap:8px;
-    padding-bottom:2px;
-    overflow-x:auto;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-  }
-  .chips::-webkit-scrollbar{display:none}
-  .chip{white-space:nowrap}
-  .footer-actions{
-    gap:12px;
-  }
-  .footer-actions .btn{
-    flex:1 1 210px;
-  }
-  .big-save{
-    max-width:100%;
-  }
-  .modal-card{
-    width:min(760px,100%);
-    padding:22px;
-  }
-
-  @media (max-width: 960px){
-    .hero{grid-template-columns:1fr}
-    .preview-wrap{grid-template-columns:1fr}
-    .grid{grid-template-columns:1fr}
-    .preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .hero-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .top-actions{justify-content:flex-end}
-  }
-
-  @media (max-width: 720px){
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yuraaa | Tambah Akun Baru</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#040816; --bg2:#0a1020; --panel:rgba(15,23,42,.78); --panel2:rgba(17,24,39,.88);
+      --line:rgba(148,163,184,.16); --line2:rgba(139,92,246,.25); --text:#e5e7eb; --muted:#94a3b8;
+      --accent:#8b5cf6; --accent2:#60a5fa; --good:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+      --shadow:0 24px 70px rgba(0,0,0,.45); --radius:26px;
+    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{
+      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 90% -10%, rgba(139,92,246,.18), transparent 45%),
+        radial-gradient(900px 500px at 5% 0%, rgba(96,165,250,.12), transparent 40%),
+        linear-gradient(180deg, #020617 0%, #050816 100%);
+      overflow-x:hidden;
+    }
+    .bg-grid{position:fixed; inset:0; pointer-events:none; opacity:.18; background-image:linear-gradient(rgba(148,163,184,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.12) 1px, transparent 1px); background-size:48px 48px; mask-image:radial-gradient(circle at 30% 10%, black 0, black 35%, transparent 72%)}
+    .app{min-height:100vh; display:flex; flex-direction:column; position:relative; z-index:1; max-width:1440px; margin:0 auto}
     .topbar{
-      align-items:flex-start;
+      position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:14px 16px; background:rgba(2,6,23,.66); backdrop-filter:blur(18px); border-bottom:1px solid rgba(148,163,184,.12); flex-wrap:wrap;
     }
-    .brand{
-      flex:1 1 100%;
+    .brand{display:flex; align-items:center; gap:12px; min-width:0; flex:1 1 420px}
+    .brand-mark{width:48px; height:48px; border-radius:16px; flex:0 0 auto; display:grid; place-items:center; background:linear-gradient(180deg, rgba(139,92,246,.28), rgba(59,130,246,.16)); border:1px solid rgba(167,139,250,.24); box-shadow:var(--shadow); font-size:20px}
+    .brand h1{margin:0; font-size:20px; line-height:1.1; font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .brand h1 span{color:var(--accent)}
+    .brand p{margin:4px 0 0; color:var(--muted); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .top-actions{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; width:100%}
+    .btn{
+      border:none; cursor:pointer; font:inherit; font-weight:800; border-radius:16px; height:44px; padding:0 16px;
+      display:inline-flex; align-items:center; justify-content:center; gap:8px; transition:.18s ease;
     }
-    .brand h1{
-      font-size:18px;
+    .btn:hover{transform:translateY(-1px)}
+    .btn.secondary{background:rgba(15,23,42,.72); color:#fff; border:1px solid var(--line)}
+    .btn.primary{background:linear-gradient(180deg, #8b5cf6, #6d28d9); color:#fff; border:1px solid rgba(167,139,250,.42); box-shadow:0 12px 34px rgba(139,92,246,.18)}
+    .btn.ghost{background:transparent; color:#fff; border:1px solid var(--line)}
+    .container{width:min(1320px,100%); margin:0 auto; padding:16px; flex:1}
+    .hero{display:grid; grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr); gap:16px; margin-bottom:14px; align-items:stretch}
+    .hero-card,.side-card,.section{background:linear-gradient(180deg, rgba(15,23,42,.90), rgba(8,13,28,.96)); border:1px solid rgba(148,163,184,.14); border-radius:28px; box-shadow:var(--shadow)}
+    .hero-card{position:relative; overflow:hidden; padding:clamp(18px,2.2vw,28px); min-height:240px}
+    .hero-card::before{content:""; position:absolute; inset:-25% -20% auto auto; width:260px; height:260px; border-radius:50%; background:radial-gradient(circle, rgba(139,92,246,.18), transparent 65%); pointer-events:none}
+    .eyebrow{display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; background:rgba(15,23,42,.78); border:1px solid rgba(148,163,184,.14); color:#dbeafe; font-size:12px; font-weight:800}
+    .hero h2{margin:14px 0 8px; font-size:clamp(28px,3.5vw,46px); line-height:1.08; font-weight:900; letter-spacing:-.03em; max-width:14ch}
+    .hero h2 span{color:var(--accent)}
+    .hero p{margin:0; max-width:68ch; color:var(--muted); line-height:1.7; font-size:14px}
+    .hero-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px}
+    .hero-actions .btn{min-width:180px; height:48px}
+    .hero-metrics{display:grid; grid-template-columns:1fr; gap:12px; padding:16px}
+    .metric{padding:16px; border-radius:22px; background:rgba(2,6,23,.30); border:1px solid rgba(148,163,184,.10); min-height:120px; display:flex; flex-direction:column; justify-content:space-between}
+    .metric .label{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font-weight:800}
+    .metric .value{margin-top:8px; font-size:18px; font-weight:900}
+    .metric .sub{margin-top:6px; color:#cbd5e1; font-size:12px; line-height:1.5}
+    .section{padding:clamp(14px,1.8vw,20px); margin-bottom:16px}
+    .section-head{display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:16px}
+    .section-head h3{margin:0; font-size:18px; font-weight:900}
+    .section-head p{margin:5px 0 0; color:var(--muted); font-size:12px; line-height:1.5}
+    .grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px}
+    .field{display:flex; flex-direction:column; gap:8px}
+    .field.full{grid-column:1 / -1}
+    .label{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:800}
+    .input,.select,.textarea{width:100%; border-radius:18px; border:1px solid rgba(148,163,184,.16); background:rgba(2,6,23,.38); color:#fff; outline:none; font:inherit; transition:.18s ease}
+    .input:focus,.select:focus,.textarea:focus{border-color:rgba(139,92,246,.55); box-shadow:0 0 0 4px rgba(139,92,246,.12)}
+    .input,.select{height:52px; padding:0 14px; font-weight:700}
+    .textarea{min-height:140px; padding:14px; resize:vertical; line-height:1.6; font-weight:600}
+    .hint{color:var(--muted); font-size:12px; line-height:1.5}
+    .chips{display:flex; gap:8px; flex-wrap:wrap; padding-bottom:2px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none}
+    .chips::-webkit-scrollbar{display:none}
+    .chip{padding:10px 12px; border-radius:999px; border:1px solid rgba(148,163,184,.14); background:rgba(15,23,42,.68); color:#fff; font-size:12px; font-weight:800; cursor:pointer; transition:.18s ease; white-space:nowrap}
+    .chip:hover{transform:translateY(-1px); border-color:rgba(139,92,246,.35)}
+    .chip.active{background:linear-gradient(180deg, rgba(139,92,246,.95), rgba(109,40,217,.95)); border-color:rgba(167,139,250,.55)}
+    .preview-wrap{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px; align-items:start}
+    .preview-box{padding:14px; border-radius:22px; background:rgba(2,6,23,.32); border:1px solid rgba(148,163,184,.10); min-height:260px}
+    .preview-head{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px}
+    .preview-head strong{font-size:14px}
+    .preview-count{padding:6px 10px; border-radius:999px; background:rgba(15,23,42,.7); border:1px solid rgba(148,163,184,.12); color:#dbeafe; font-size:12px; font-weight:800}
+    .preview-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px}
+    .preview-item{position:relative; aspect-ratio:1/1; border-radius:18px; overflow:hidden; border:1px solid rgba(148,163,184,.10); background:linear-gradient(180deg, rgba(15,23,42,.95), rgba(2,6,23,.95))}
+    .preview-item img{width:100%; height:100%; object-fit:cover; display:block}
+    .preview-item .badge{position:absolute; left:10px; bottom:10px; padding:6px 8px; border-radius:999px; background:rgba(2,6,23,.66); border:1px solid rgba(255,255,255,.08); font-size:11px; font-weight:800; backdrop-filter:blur(8px)}
+    .empty-state{display:flex; align-items:center; justify-content:center; min-height:180px; border-radius:18px; border:1px dashed rgba(148,163,184,.22); color:var(--muted); text-align:center; padding:16px; background:rgba(2,6,23,.16)}
+    .sidebar-box{padding:14px; border-radius:22px; background:rgba(2,6,23,.28); border:1px solid rgba(148,163,184,.10); display:flex; flex-direction:column; gap:12px}
+    .status-pill{display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid rgba(34,197,94,.18); background:rgba(34,197,94,.10); color:#86efac; font-size:12px; font-weight:800; width:max-content}
+    .status-pill.warn{border-color:rgba(245,158,11,.22); background:rgba(245,158,11,.12); color:#fcd34d}
+    .footer-actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:14px}
+    .footer-actions .btn{flex:1 1 210px}
+    .big-save{min-height:58px; width:100%; border:none; border-radius:20px; background:linear-gradient(180deg, #8b5cf6, #6d28d9); color:#fff; font-size:16px; font-weight:900; cursor:pointer; box-shadow:0 16px 40px rgba(139,92,246,.18); transition:.18s ease}
+    .big-save:hover{transform:translateY(-1px); filter:brightness(1.03)}
+    .small-note{font-size:12px; color:var(--muted); line-height:1.6}
+    .toast{position:fixed; left:50%; bottom:18px; transform:translateX(-50%) translateY(20px); padding:12px 14px; border-radius:16px; background:rgba(15,23,42,.96); border:1px solid rgba(148,163,184,.16); color:#fff; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:.25s ease; z-index:80; max-width:min(92vw, 520px); text-align:center}
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+    .loader{display:inline-flex; align-items:center; gap:10px}
+    .spinner{width:16px; height:16px; border-radius:50%; border:2px solid rgba(255,255,255,.22); border-top-color:#fff; animation:spin .9s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .modal{position:fixed; inset:0; z-index:90; background:rgba(2,6,23,.72); backdrop-filter:blur(14px); display:none; align-items:center; justify-content:center; padding:18px}
+    .modal.open{display:flex}
+    .modal-card{width:min(760px,100%); border-radius:28px; background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(8,13,28,.98)); border:1px solid rgba(148,163,184,.16); box-shadow:0 40px 120px rgba(0,0,0,.65); padding:22px}
+    .modal-top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px}
+    .modal-top h3{margin:0; font-size:22px; font-weight:900}
+    .modal-top p{margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.5}
+    .close-x{width:40px; height:40px; border-radius:14px; border:1px solid rgba(148,163,184,.16); background:rgba(15,23,42,.8); color:#fff; cursor:pointer; display:grid; place-items:center; font-size:18px}
+    .modal-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
+    .modal-actions .btn{flex:1 1 160px}
+    html{scroll-behavior:smooth} body{min-height:100dvh}
+    @media (max-width: 960px){
+      .hero,.preview-wrap{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+      .preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .hero-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .top-actions{justify-content:flex-end}
     }
-    .brand p{
-      white-space:normal;
+    @media (max-width: 720px){
+      .topbar{align-items:flex-start; padding:12px}
+      .brand{flex:1 1 100%}
+      .brand h1{font-size:18px}
+      .brand p{white-space:normal}
+      .top-actions{width:100%; justify-content:stretch; display:grid; grid-template-columns:1fr 1fr}
+      .top-actions .btn{width:100%; min-width:0}
+      .hero-card{min-height:auto}
+      .hero h2{font-size:24px; max-width:none}
+      .hero-actions{flex-direction:column}
+      .hero-actions .btn{width:100%; min-width:0}
+      .hero-metrics{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+      .preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .section-head{flex-direction:column; align-items:flex-start}
+      .footer-actions{flex-direction:column}
+      .footer-actions .btn,.big-save{width:100%; flex:1 1 auto}
+      .modal-actions{flex-direction:column}
+      .modal-actions .btn{width:100%}
     }
-    .top-actions{
-      width:100%;
-      justify-content:stretch;
-      display:grid;
-      grid-template-columns:1fr 1fr;
+    @media (max-width: 480px){
+      .container{padding:10px}
+      .hero-card,.section,.preview-box,.sidebar-box,.modal-card{border-radius:22px}
+      .preview-grid{grid-template-columns:1fr}
+      .preview-item{aspect-ratio:16/10}
+      .hero-card::before{width:180px; height:180px}
+      .metric .value{font-size:17px}
+      .metric .sub{font-size:11px}
     }
-    .top-actions .btn{
-      width:100%;
-      min-width:0;
-    }
-    .hero-card{
-      min-height:auto;
-    }
-    .hero h2{
-      font-size:24px;
-      max-width:none;
-    }
-    .hero-actions{
-      flex-direction:column;
-    }
-    .hero-actions .btn{
-      width:100%;
-      min-width:0;
-    }
-    .hero-metrics{
-      grid-template-columns:1fr;
-    }
-    .grid{
-      grid-template-columns:1fr;
-    }
-    .preview-grid{
-      grid-template-columns:repeat(2,minmax(0,1fr));
-    }
-    .section-head{
-      flex-direction:column;
-      align-items:flex-start;
-    }
-    .section-head p{
-      max-width:unset;
-    }
-    .footer-actions{
-      flex-direction:column;
-    }
-    .footer-actions .btn,
-    .big-save{
-      width:100%;
-      flex:1 1 auto;
-    }
-    .modal-actions{
-      flex-direction:column;
-    }
-    .modal-actions .btn{
-      width:100%;
-    }
-  }
-
-  @media (max-width: 480px){
-    .container{
-      padding:10px;
-    }
-    .hero-card,
-    .section,
-    .preview-box,
-    .sidebar-box,
-    .modal-card{
-      border-radius:22px;
-    }
-    .preview-grid{
-      grid-template-columns:1fr;
-    }
-    .preview-item{
-      aspect-ratio:16/10;
-    }
-    .hero-card::before{
-      width:180px;
-      height:180px;
-    }
-    .metric .value{
-      font-size:17px;
-    }
-    .metric .sub{
-      font-size:11px;
-    }
-  }
-
-</style>
+  </style>
 </head>
 <body>
-<div class="bg-grid"></div>
-<div class="app">
-  <header class="topbar">
-    <div class="brand">
-      <button class="btn ghost" id="backBtn" title="Kembali">←</button>
-      <div class="brand-mark">✦</div>
-      <div style="min-width:0">
-        <h1><span>Yuraaa</span> | Tambah Akun</h1>
-        <p>Input akun baru ke format spreadsheet</p>
-      </div>
-    </div>
-    <div class="top-actions">
-      <button class="btn secondary" id="copyTemplateBtn">Salin Template</button>
-      <button class="btn primary" id="openHelpBtn">Panduan</button>
-    </div>
-  </header>
-
-  <main class="container">
-    <section class="hero">
-      <div class="hero-card">
-        <div class="eyebrow">UI seperti aplikasi • kompatibel dengan spreadsheet</div>
-        <h2>Buat akun baru <span>lebih cepat</span> dan lebih rapi.</h2>
-        <p>
-          Form ini mengikuti model spreadsheet kamu: <b>Nama, Harga, Diskon, Game, Gambar, Label, Status, Ket, Tanggal, DONE</b>.
-          Gambar bisa diisi URL Google Drive, multi-link, atau link biasa. Preview akan dibuat otomatis.
-        </p>
-        <div class="hero-actions">
-          <button class="btn primary" id="scrollToFormBtn">Isi Form Sekarang</button>
-          <button class="btn secondary" id="saveDraftBtn">Simpan Draft</button>
+  <div class="bg-grid"></div>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <button class="btn ghost" id="backBtn" title="Kembali">←</button>
+        <div class="brand-mark">✦</div>
+        <div style="min-width:0">
+          <h1><span>Yuraaa</span> | Tambah Akun</h1>
+          <p>Input akun baru ke format spreadsheet</p>
         </div>
       </div>
-      <div class="side-card">
-        <div class="hero-metrics">
-          <div class="metric">
-            <div class="label">Mode</div>
-            <div class="value">APK Style</div>
-            <div class="sub">Tampilan card, smooth, mobile friendly.</div>
-          </div>
-          <div class="metric">
-            <div class="label">Gambar</div>
-            <div class="value">Auto Preview</div>
-            <div class="sub">Bisa pakai URL Drive yang sudah kamu atur.</div>
+      <div class="top-actions">
+        <button class="btn secondary" id="copyTemplateBtn">Salin Template</button>
+        <button class="btn primary" id="openHelpBtn">Panduan</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div class="hero-card">
+          <div class="eyebrow">UI seperti aplikasi • kompatibel dengan spreadsheet</div>
+          <h2>Buat akun baru <span>lebih cepat</span> dan lebih rapi.</h2>
+          <p>
+            Form ini mengikuti model spreadsheet kamu: <b>Nama, Harga, Diskon, Game, Gambar, Label, Status, Ket, Tanggal, DONE</b>.
+            Gambar bisa diisi URL Google Drive, multi-link, atau link biasa. Preview akan dibuat otomatis.
+          </p>
+          <div class="hero-actions">
+            <button class="btn primary" id="scrollToFormBtn">Isi Form Sekarang</button>
+            <button class="btn secondary" id="saveDraftBtn">Simpan Draft</button>
           </div>
         </div>
-      </div>
-    </section>
-
-    <section class="section" id="sheetBox">
-      <div class="section-head">
-        <div>
-          <h3>Koneksi Spreadsheet</h3>
-          <p>Pilih endpoint tujuan. Paling cocok: Apps Script Web App yang menulis langsung ke Google Sheets.</p>
-        </div>
-        <div class="status-pill warn" id="connStatus">Belum tersambung</div>
-      </div>
-
-      <div class="grid">
-        <div class="field full">
-          <label class="label" for="endpoint">URL Endpoint / Apps Script Web App</label>
-          <input id="endpoint" class="input" placeholder="https://script.google.com/macros/s/....../exec">
-          <div class="hint">Simpan URL ini untuk submit otomatis. Kalau belum ada, form tetap bisa dipakai untuk menyiapkan data.</div>
-        </div>
-        <div class="field">
-          <label class="label" for="sheetId">Spreadsheet ID</label>
-          <input id="sheetId" class="input" readonly value="1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw">
-        </div>
-        <div class="field">
-          <label class="label" for="sheetName">Nama Sheet</label>
-          <input id="sheetName" class="input" readonly value="List">
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <div>
-          <h3>Data Akun</h3>
-          <p>Isi field utama dulu supaya struktur data tetap konsisten.</p>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="field">
-          <label class="label" for="nama">Nama</label>
-          <input id="nama" class="input" placeholder="Contoh: HSR Asia • Reroll SS">
-        </div>
-        <div class="field">
-          <label class="label" for="game">Game</label>
-          <input id="game" class="input" placeholder="Contoh: Honkai Star Rail">
-        </div>
-
-        <div class="field">
-          <label class="label" for="harga">Harga</label>
-          <input id="harga" class="input" inputmode="numeric" placeholder="Contoh: 150000">
-        </div>
-        <div class="field">
-          <label class="label" for="diskon">Diskon</label>
-          <input id="diskon" class="input" inputmode="numeric" placeholder="Contoh: 10 atau 10%">
-        </div>
-
-        <div class="field">
-          <label class="label" for="status">Status</label>
-          <select id="status" class="select">
-            <option value="ready">Ready</option>
-            <option value="proses">Proses</option>
-            <option value="sold">Sold</option>
-          </select>
-        </div>
-        <div class="field">
-          <label class="label" for="label">Label</label>
-          <select id="label" class="select">
-            <option value="">Kosong</option>
-            <option value="new">New</option>
-            <option value="hot">Hot</option>
-            <option value="promo">Promo</option>
-          </select>
-        </div>
-
-        <div class="field full">
-          <label class="label" for="ket">Keterangan</label>
-          <textarea id="ket" class="textarea" placeholder="Contoh: 5 limited, sudah email bind, server Asia, masih aman..."></textarea>
-        </div>
-      </div>
-
-      <div class="chips" style="margin-top:14px">
-        <button class="chip active" data-fill="ready">Ready</button>
-        <button class="chip" data-fill="proses">Proses</button>
-        <button class="chip" data-fill="sold">Sold</button>
-        <button class="chip" data-fill="new">New</button>
-        <button class="chip" data-fill="promo">Promo</button>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <div>
-          <h3>Gambar & Preview</h3>
-          <p>Isi dengan link gambar. Bisa lebih dari satu, pisahkan dengan koma, baris baru, atau titik koma.</p>
-        </div>
-      </div>
-
-      <div class="preview-wrap">
-        <div class="sidebar-box">
-          <div class="field">
-            <label class="label" for="gambar">Gambar</label>
-            <textarea id="gambar" class="textarea" placeholder="https://drive.google.com/uc?export=view&id=xxxx, https://..."></textarea>
-            <div class="hint">
-              Tips: kalau link Google Drive belum muncul, ubah jadi format <b>uc?export=view&id=</b>.  
-              Form ini otomatis mencoba membaca file ID dari link Drive umum.
+        <div class="side-card">
+          <div class="hero-metrics">
+            <div class="metric">
+              <div class="label">Mode</div>
+              <div class="value">APK Style</div>
+              <div class="sub">Tampilan card, smooth, mobile friendly.</div>
+            </div>
+            <div class="metric">
+              <div class="label">Gambar</div>
+              <div class="value">Auto Preview</div>
+              <div class="sub">Bisa pakai URL Drive yang sudah kamu atur.</div>
             </div>
           </div>
+        </div>
+      </section>
 
+      <section class="section" id="sheetBox">
+        <div class="section-head">
           <div>
-            <div class="status-pill" id="imageState">0 gambar terdeteksi</div>
-            <div class="small-note" style="margin-top:10px">
-              Kolom spreadsheet yang akan diisi: <b>Nama, Harga, Diskon, Game, Gambar, Label, Status, Ket, Tanggal, DONE</b>.
-              Tanggal otomatis diisi saat submit.
-            </div>
+            <h3>Koneksi Spreadsheet</h3>
+            <p>Pilih mode kirim. Kalau file ini dibuka dari Apps Script web app, form akan memakai <b>google.script.run</b> agar tidak kena masalah fetch/CORS.</p>
+          </div>
+          <div class="status-pill warn" id="connStatus">Belum tersambung</div>
+        </div>
+
+        <div class="grid">
+          <div class="field full">
+            <label class="label" for="endpoint">URL Endpoint / Apps Script Web App</label>
+            <input id="endpoint" class="input" placeholder="https://script.google.com/macros/s/....../exec">
+            <div class="hint">Opsional. Dipakai kalau form ini dibuka di luar Apps Script. Kalau kosong, data tetap bisa dikirim bila halaman dijalankan dari project Apps Script yang sama.</div>
+          </div>
+          <div class="field">
+            <label class="label" for="sheetId">Spreadsheet ID</label>
+            <input id="sheetId" class="input" readonly value="1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw">
+          </div>
+          <div class="field">
+            <label class="label" for="sheetName">Nama Sheet</label>
+            <input id="sheetName" class="input" readonly value="List">
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <h3>Data Akun</h3>
+            <p>Isi field utama dulu supaya struktur data tetap konsisten.</p>
           </div>
         </div>
 
-        <div class="preview-box">
-          <div class="preview-head">
-            <strong>Preview Gambar</strong>
-            <div class="preview-count" id="previewCount">0</div>
+        <div class="grid">
+          <div class="field">
+            <label class="label" for="nama">Nama</label>
+            <input id="nama" class="input" placeholder="Contoh: HSR Asia • Reroll SS">
           </div>
-          <div id="previewArea">
-            <div class="empty-state">
-              Belum ada gambar. Tempel URL gambar pada kolom Gambar untuk melihat preview.
+          <div class="field">
+            <label class="label" for="game">Game</label>
+            <input id="game" class="input" placeholder="Contoh: Honkai Star Rail">
+          </div>
+
+          <div class="field">
+            <label class="label" for="harga">Harga</label>
+            <input id="harga" class="input" inputmode="numeric" placeholder="Contoh: 150000">
+          </div>
+          <div class="field">
+            <label class="label" for="diskon">Diskon</label>
+            <input id="diskon" class="input" inputmode="numeric" placeholder="Contoh: 10 atau 10%">
+          </div>
+
+          <div class="field">
+            <label class="label" for="status">Status</label>
+            <select id="status" class="select">
+              <option value="ready">Ready</option>
+              <option value="proses">Proses</option>
+              <option value="sold">Sold</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label" for="label">Label</label>
+            <select id="label" class="select">
+              <option value="">Kosong</option>
+              <option value="new">New</option>
+              <option value="hot">Hot</option>
+              <option value="promo">Promo</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label class="label" for="ket">Keterangan</label>
+            <textarea id="ket" class="textarea" placeholder="Contoh: 5 limited, sudah email bind, server Asia, masih aman..."></textarea>
+          </div>
+        </div>
+
+        <div class="chips" style="margin-top:14px">
+          <button class="chip active" data-fill="ready">Ready</button>
+          <button class="chip" data-fill="proses">Proses</button>
+          <button class="chip" data-fill="sold">Sold</button>
+          <button class="chip" data-fill="new">New</button>
+          <button class="chip" data-fill="promo">Promo</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <h3>Gambar & Preview</h3>
+            <p>Isi dengan link gambar. Bisa lebih dari satu, pisahkan dengan koma, baris baru, atau titik koma.</p>
+          </div>
+        </div>
+
+        <div class="preview-wrap">
+          <div class="sidebar-box">
+            <div class="field">
+              <label class="label" for="gambar">Gambar</label>
+              <textarea id="gambar" class="textarea" placeholder="https://drive.google.com/uc?export=view&id=xxxx, https://..."></textarea>
+              <div class="hint">
+                Tips: kalau link Google Drive belum muncul, ubah jadi format <b>uc?export=view&id=</b>.
+                Form ini otomatis mencoba membaca file ID dari link Drive umum.
+              </div>
+            </div>
+
+            <div>
+              <div class="status-pill" id="imageState">0 gambar terdeteksi</div>
+              <div class="small-note" style="margin-top:10px">
+                Kolom spreadsheet yang akan diisi: <b>Nama, Harga, Diskon, Game, Gambar, Label, Status, Ket, Tanggal, DONE</b>.
+                Tanggal otomatis diisi saat submit.
+              </div>
+            </div>
+          </div>
+
+          <div class="preview-box">
+            <div class="preview-head">
+              <strong>Preview Gambar</strong>
+              <div class="preview-count" id="previewCount">0</div>
+            </div>
+            <div id="previewArea">
+              <div class="empty-state">
+                Belum ada gambar. Tempel URL gambar pada kolom Gambar untuk melihat preview.
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="section">
-      <div class="section-head">
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <h3>Siap Dikirim</h3>
+            <p>Periksa data sebelum submit. Form akan menyusun payload yang sesuai dengan spreadsheet kamu.</p>
+          </div>
+        </div>
+
+        <div class="footer-actions">
+          <button class="big-save" id="submitBtn">
+            <span class="loader" id="submitLoader" style="display:none"><span class="spinner"></span> Menyimpan...</span>
+            <span id="submitLabel">Simpan Akun Baru</span>
+          </button>
+          <button class="btn secondary" id="resetBtn">Reset Form</button>
+          <button class="btn secondary" id="copyJsonBtn">Salin JSON</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="modal" id="helpModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="modal-top">
         <div>
-          <h3>Siap Dikirim</h3>
-          <p>Periksa data sebelum submit. Form akan menyusun payload yang sesuai dengan spreadsheet kamu.</p>
+          <h3 id="helpTitle">Panduan Singkat</h3>
+          <p>
+            1) Isi endpoint Apps Script. 2) Lengkapi data akun. 3) Tempel link gambar. 4) Klik Simpan Akun Baru.
+            Kalau form ini dijalankan dari Apps Script, tombol simpan akan memakai <code>google.script.run</code>.
+          </p>
+        </div>
+        <button class="close-x" id="closeHelpBtn" aria-label="Tutup">✕</button>
+      </div>
+
+      <div class="section-head" style="margin-bottom:8px">
+        <div>
+          <h3 style="font-size:16px;margin:0">Struktur data</h3>
+          <p>Format payload mengikuti sheet kamu dan mudah dipakai untuk Apps Script.</p>
         </div>
       </div>
 
-      <div class="footer-actions">
-        <button class="big-save" id="submitBtn">
-          <span class="loader" id="submitLoader" style="display:none"><span class="spinner"></span> Menyimpan...</span>
-          <span id="submitLabel">Simpan Akun Baru</span>
-        </button>
-        <button class="btn secondary" id="resetBtn">Reset Form</button>
-        <button class="btn secondary" id="copyJsonBtn">Salin JSON</button>
+      <div class="sidebar-box" style="margin-bottom:16px">
+        <div class="small-note" id="helpTemplate"></div>
       </div>
-    </section>
-  </main>
-</div>
 
-<div class="toast" id="toast"></div>
-
-<div class="modal" id="helpModal" aria-hidden="true">
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
-    <div class="modal-top">
-      <div>
-        <h3 id="helpTitle">Panduan Singkat</h3>
-        <p>
-          1) Isi endpoint Apps Script. 2) Lengkapi data akun. 3) Tempel link gambar. 4) Klik Simpan Akun Baru.
-          Kalau endpoint belum dipasang, tombol salin JSON bisa dipakai sementara.
-        </p>
+      <div class="modal-actions">
+        <button class="btn primary" id="closeHelpBtn2">Mengerti</button>
+        <button class="btn secondary" id="copyTemplateBtn2">Salin Template JSON</button>
       </div>
-      <button class="close-x" id="closeHelpBtn" aria-label="Tutup">✕</button>
-    </div>
-
-    <div class="section-head" style="margin-bottom:8px">
-      <div>
-        <h3 style="font-size:16px;margin:0">Struktur data</h3>
-        <p>Format payload mengikuti sheet kamu dan mudah dipakai untuk Apps Script.</p>
-      </div>
-    </div>
-
-    <div class="sidebar-box" style="margin-bottom:16px">
-      <div class="small-note" id="helpTemplate"></div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn primary" id="closeHelpBtn2">Mengerti</button>
-      <button class="btn secondary" id="copyTemplateBtn2">Salin Template JSON</button>
     </div>
   </div>
-</div>
 
-<script>
-(() => {
-  const SHEET_ID = "1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw";
-  const SHEET_NAME = "List";
-  const STORAGE_KEY = "yuraaa_add_account_draft_v1";
-  const ENDPOINT_KEY = "yuraaa_add_account_endpoint_v1";
+  <script>
+  (() => {
+    const SHEET_ID = "1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw";
+    const SHEET_NAME = "List";
+    const STORAGE_KEY = "yuraaa_add_account_draft_v1";
+    const ENDPOINT_KEY = "yuraaa_add_account_endpoint_v1";
 
-  const el = {
-    backBtn: document.getElementById("backBtn"),
-    copyTemplateBtn: document.getElementById("copyTemplateBtn"),
-    openHelpBtn: document.getElementById("openHelpBtn"),
-    scrollToFormBtn: document.getElementById("scrollToFormBtn"),
-    saveDraftBtn: document.getElementById("saveDraftBtn"),
-    endpoint: document.getElementById("endpoint"),
-    connStatus: document.getElementById("connStatus"),
-    nama: document.getElementById("nama"),
-    game: document.getElementById("game"),
-    harga: document.getElementById("harga"),
-    diskon: document.getElementById("diskon"),
-    status: document.getElementById("status"),
-    label: document.getElementById("label"),
-    ket: document.getElementById("ket"),
-    gambar: document.getElementById("gambar"),
-    previewArea: document.getElementById("previewArea"),
-    previewCount: document.getElementById("previewCount"),
-    imageState: document.getElementById("imageState"),
-    submitBtn: document.getElementById("submitBtn"),
-    submitLoader: document.getElementById("submitLoader"),
-    submitLabel: document.getElementById("submitLabel"),
-    resetBtn: document.getElementById("resetBtn"),
-    copyJsonBtn: document.getElementById("copyJsonBtn"),
-    toast: document.getElementById("toast"),
-    helpModal: document.getElementById("helpModal"),
-    closeHelpBtn: document.getElementById("closeHelpBtn"),
-    closeHelpBtn2: document.getElementById("closeHelpBtn2"),
-    copyTemplateBtn2: document.getElementById("copyTemplateBtn2"),
-    helpTemplate: document.getElementById("helpTemplate"),
-    chips: [...document.querySelectorAll(".chip")],
-  };
+    const el = {
+      backBtn: document.getElementById("backBtn"),
+      copyTemplateBtn: document.getElementById("copyTemplateBtn"),
+      openHelpBtn: document.getElementById("openHelpBtn"),
+      scrollToFormBtn: document.getElementById("scrollToFormBtn"),
+      saveDraftBtn: document.getElementById("saveDraftBtn"),
+      endpoint: document.getElementById("endpoint"),
+      connStatus: document.getElementById("connStatus"),
+      nama: document.getElementById("nama"),
+      game: document.getElementById("game"),
+      harga: document.getElementById("harga"),
+      diskon: document.getElementById("diskon"),
+      status: document.getElementById("status"),
+      label: document.getElementById("label"),
+      ket: document.getElementById("ket"),
+      gambar: document.getElementById("gambar"),
+      previewArea: document.getElementById("previewArea"),
+      previewCount: document.getElementById("previewCount"),
+      imageState: document.getElementById("imageState"),
+      submitBtn: document.getElementById("submitBtn"),
+      submitLoader: document.getElementById("submitLoader"),
+      submitLabel: document.getElementById("submitLabel"),
+      resetBtn: document.getElementById("resetBtn"),
+      copyJsonBtn: document.getElementById("copyJsonBtn"),
+      toast: document.getElementById("toast"),
+      helpModal: document.getElementById("helpModal"),
+      closeHelpBtn: document.getElementById("closeHelpBtn"),
+      closeHelpBtn2: document.getElementById("closeHelpBtn2"),
+      copyTemplateBtn2: document.getElementById("copyTemplateBtn2"),
+      helpTemplate: document.getElementById("helpTemplate"),
+      chips: [...document.querySelectorAll(".chip")],
+    };
 
-  const TEMPLATE = {
-    Nama: "",
-    Harga: "",
-    Diskon: "",
-    Game: "",
-    Gambar: "",
-    Label: "",
-    Status: "ready",
-    Ket: "",
-    Tanggal: "",
-    DONE: ""
-  };
-
-  function toast(msg) {
-    el.toast.textContent = msg;
-    el.toast.classList.add("show");
-    clearTimeout(toast._t);
-    toast._t = setTimeout(() => el.toast.classList.remove("show"), 1800);
-  }
-
-  function rupiah(v) {
-    const n = Number(String(v ?? "").replace(/[^\d]/g, "")) || 0;
-    return "Rp " + new Intl.NumberFormat("id-ID").format(n);
-  }
-
-  function normalizeText(v) {
-    return (v ?? "").toString().trim();
-  }
-
-  function toDrivePreview(url) {
-    const u = normalizeText(url);
-    if (!u) return "";
-    if (/uc\?export=view&id=/i.test(u) || /drive\.google\.com\/uc\?id=/i.test(u)) return u;
-
-    const idMatch = u.match(/\/d\/([a-zA-Z0-9_-]+)/) || u.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    if (idMatch && idMatch[1]) {
-      return `https://drive.google.com/uc?export=view&id=${idMatch[1]}`;
-    }
-    return u;
-  }
-
-  function extractImages(raw) {
-    const text = normalizeText(raw);
-    if (!text) return [];
-    const pieces = text.split(/[\n,;|]+/).map(s => s.trim()).filter(Boolean);
-    const urls = [];
-
-    for (const piece of pieces) {
-      const matches = piece.match(/https?:\/\/[^\s"'<>]+/gi);
-      if (matches && matches.length) {
-        matches.forEach(m => urls.push(toDrivePreview(m)));
-      }
-    }
-    return [...new Set(urls)];
-  }
-
-  function buildPayload() {
-    const now = new Date();
-    const tanggal = now.toISOString();
-
-    return {
-      Nama: el.nama.value.trim(),
-      Harga: String(el.harga.value).replace(/[^\d]/g, ""),
-      Diskon: String(el.diskon.value).replace(/[^\d]/g, ""),
-      Game: el.game.value.trim(),
-      Gambar: el.gambar.value.trim(),
-      Label: el.label.value,
-      Status: el.status.value,
-      Ket: el.ket.value.trim(),
-      Tanggal: tanggal,
+    const TEMPLATE = {
+      Nama: "",
+      Harga: "",
+      Diskon: "",
+      Game: "",
+      Gambar: "",
+      Label: "",
+      Status: "ready",
+      Ket: "",
+      Tanggal: "",
       DONE: ""
     };
-  }
 
-  function updateConnectionState() {
-    const endpoint = el.endpoint.value.trim();
-    localStorage.setItem(ENDPOINT_KEY, endpoint);
-    if (endpoint) {
-      el.connStatus.className = "status-pill";
-      el.connStatus.textContent = "Siap tersambung";
-    } else {
-      el.connStatus.className = "status-pill warn";
-      el.connStatus.textContent = "Belum tersambung";
+    function toast(msg) {
+      el.toast.textContent = msg;
+      el.toast.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.toast.classList.remove("show"), 1800);
     }
-  }
 
-  function renderPreview() {
-    const urls = extractImages(el.gambar.value);
-    el.previewCount.textContent = String(urls.length);
-    el.imageState.textContent = `${urls.length} gambar terdeteksi`;
+    function normalizeText(v) {
+      return (v ?? "").toString().trim();
+    }
 
-    if (!urls.length) {
+    function toDrivePreview(url) {
+      const u = normalizeText(url);
+      if (!u) return "";
+      if (/uc\?export=view&id=/i.test(u) || /drive\.google\.com\/uc\?id=/i.test(u)) return u;
+
+      const idMatch = u.match(/\/d\/([a-zA-Z0-9_-]+)/) || u.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (idMatch && idMatch[1]) {
+        return `https://drive.google.com/uc?export=view&id=${idMatch[1]}`;
+      }
+      return u;
+    }
+
+    function extractImages(raw) {
+      const text = normalizeText(raw);
+      if (!text) return [];
+      const pieces = text.split(/[\n,;|]+/).map(s => s.trim()).filter(Boolean);
+      const urls = [];
+      for (const piece of pieces) {
+        const matches = piece.match(/https?:\/\/[^\s"'<>]+/gi);
+        if (matches && matches.length) {
+          matches.forEach(m => urls.push(toDrivePreview(m)));
+        }
+      }
+      return [...new Set(urls)];
+    }
+
+    function cleanNumber(v) {
+      return String(v ?? "").replace(/[^\d]/g, "");
+    }
+
+    function buildPayload() {
+      return {
+        Nama: el.nama.value.trim(),
+        Harga: cleanNumber(el.harga.value),
+        Diskon: cleanNumber(el.diskon.value),
+        Game: el.game.value.trim(),
+        Gambar: el.gambar.value.trim(),
+        Label: el.label.value,
+        Status: el.status.value,
+        Ket: el.ket.value.trim(),
+        Tanggal: new Date().toISOString(),
+        DONE: ""
+      };
+    }
+
+    function updateConnectionState() {
+      const endpoint = el.endpoint.value.trim();
+      localStorage.setItem(ENDPOINT_KEY, endpoint);
+      if (endpoint) {
+        el.connStatus.className = "status-pill";
+        el.connStatus.textContent = "Siap tersambung";
+      } else {
+        el.connStatus.className = "status-pill warn";
+        el.connStatus.textContent = "Belum tersambung";
+      }
+    }
+
+    function renderPreview() {
+      const urls = extractImages(el.gambar.value);
+      el.previewCount.textContent = String(urls.length);
+      el.imageState.textContent = `${urls.length} gambar terdeteksi`;
+
+      if (!urls.length) {
+        el.previewArea.innerHTML = `<div class="empty-state">Belum ada gambar. Tempel URL gambar pada kolom Gambar untuk melihat preview.</div>`;
+        return;
+      }
+
       el.previewArea.innerHTML = `
-        <div class="empty-state">
-          Belum ada gambar. Tempel URL gambar pada kolom Gambar untuk melihat preview.
-        </div>`;
-      return;
+        <div class="preview-grid">
+          ${urls.slice(0, 9).map((url, i) => `
+            <div class="preview-item">
+              <img src="${url}" alt="Preview ${i + 1}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa link gambar.</div>'">
+              <div class="badge">#${i + 1}</div>
+            </div>
+          `).join("")}
+        </div>
+      `;
     }
 
-    el.previewArea.innerHTML = `
-      <div class="preview-grid">
-        ${urls.slice(0, 9).map((url, i) => `
-          <div class="preview-item">
-            <img src="${url}" alt="Preview ${i + 1}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa link gambar.</div>'">
-            <div class="badge">#${i + 1}</div>
-          </div>
-        `).join("")}
-      </div>
-    `;
-  }
-
-  function saveDraft() {
-    const draft = buildPayload();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
-    toast("Draft disimpan di perangkat ini.");
-  }
-
-  function loadDraft() {
-    const endpoint = localStorage.getItem(ENDPOINT_KEY) || "";
-    const draft = localStorage.getItem(STORAGE_KEY);
-    if (endpoint) el.endpoint.value = endpoint;
-
-    if (draft) {
-      try {
-        const d = JSON.parse(draft);
-        el.nama.value = d.Nama ?? "";
-        el.harga.value = d.Harga ?? "";
-        el.diskon.value = d.Diskon ?? "";
-        el.game.value = d.Game ?? "";
-        el.gambar.value = d.Gambar ?? "";
-        el.label.value = d.Label ?? "";
-        el.status.value = d.Status ?? "ready";
-        el.ket.value = d.Ket ?? "";
-      } catch {}
-    }
-    updateConnectionState();
-    renderPreview();
-  }
-
-  function setQuickFill(value) {
-    const map = {
-      ready: { status: "ready", label: "" },
-      proses: { status: "proses", label: "" },
-      sold: { status: "sold", label: "" },
-      new: { label: "new" },
-      promo: { label: "promo" },
-    };
-    const item = map[value];
-    if (!item) return;
-    if (item.status) el.status.value = item.status;
-    if (item.label !== undefined) el.label.value = item.label;
-    el.chips.forEach(c => c.classList.toggle("active", c.dataset.fill === value));
-    toast(`Mode ${value.toUpperCase()} diterapkan.`);
-  }
-
-  function scrollToForm() {
-    document.getElementById("sheetBox").scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function openHelp() {
-    el.helpModal.classList.add("open");
-    el.helpModal.setAttribute("aria-hidden", "false");
-  }
-
-  function closeHelp() {
-    el.helpModal.classList.remove("open");
-    el.helpModal.setAttribute("aria-hidden", "true");
-  }
-
-  function showSubmitting(isSubmitting) {
-    el.submitBtn.disabled = isSubmitting;
-    el.resetBtn.disabled = isSubmitting;
-    el.copyJsonBtn.disabled = isSubmitting;
-    el.submitLoader.style.display = isSubmitting ? "inline-flex" : "none";
-    el.submitLabel.style.display = isSubmitting ? "none" : "inline";
-    el.submitBtn.style.opacity = isSubmitting ? ".92" : "1";
-  }
-
-  function validate() {
-    if (!el.nama.value.trim()) return "Nama akun belum diisi.";
-    if (!el.game.value.trim()) return "Game belum diisi.";
-    if (!el.harga.value.trim()) return "Harga belum diisi.";
-    return "";
-  }
-
-  async function submit() {
-    const err = validate();
-    if (err) {
-      toast(err);
-      return;
+    function saveDraft() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(buildPayload()));
     }
 
-    const payload = buildPayload();
-    const endpoint = el.endpoint.value.trim();
+    function loadDraft() {
+      const endpoint = localStorage.getItem(ENDPOINT_KEY) || "";
+      const draft = localStorage.getItem(STORAGE_KEY);
+      if (endpoint) el.endpoint.value = endpoint;
 
-    if (!endpoint) {
-      await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
-      toast("Endpoint belum diisi. JSON disalin ke clipboard.");
-      return;
+      if (draft) {
+        try {
+          const d = JSON.parse(draft);
+          el.nama.value = d.Nama ?? "";
+          el.harga.value = d.Harga ?? "";
+          el.diskon.value = d.Diskon ?? "";
+          el.game.value = d.Game ?? "";
+          el.gambar.value = d.Gambar ?? "";
+          el.label.value = d.Label ?? "";
+          el.status.value = d.Status ?? "ready";
+          el.ket.value = d.Ket ?? "";
+        } catch {}
+      }
+
+      updateConnectionState();
+      renderPreview();
     }
 
-    try {
-      showSubmitting(true);
+    function setQuickFill(value) {
+      const map = {
+        ready: { status: "ready", label: "" },
+        proses: { status: "proses", label: "" },
+        sold: { status: "sold", label: "" },
+        new: { label: "new" },
+        promo: { label: "promo" },
+      };
+      const item = map[value];
+      if (!item) return;
+      if (item.status) el.status.value = item.status;
+      if (item.label !== undefined) el.label.value = item.label;
+      el.chips.forEach(c => c.classList.toggle("active", c.dataset.fill === value));
+      toast(`Mode ${value.toUpperCase()} diterapkan.`);
+      saveDraft();
+    }
+
+    function scrollToForm() {
+      document.getElementById("sheetBox").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function openHelp() {
+      el.helpModal.classList.add("open");
+      el.helpModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeHelp() {
+      el.helpModal.classList.remove("open");
+      el.helpModal.setAttribute("aria-hidden", "true");
+    }
+
+    function showSubmitting(isSubmitting) {
+      el.submitBtn.disabled = isSubmitting;
+      el.resetBtn.disabled = isSubmitting;
+      el.copyJsonBtn.disabled = isSubmitting;
+      el.submitLoader.style.display = isSubmitting ? "inline-flex" : "none";
+      el.submitLabel.style.display = isSubmitting ? "none" : "inline";
+      el.submitBtn.style.opacity = isSubmitting ? ".92" : "1";
+    }
+
+    function validate() {
+      if (!el.nama.value.trim()) return "Nama akun belum diisi.";
+      if (!el.game.value.trim()) return "Game belum diisi.";
+      if (!el.harga.value.trim()) return "Harga belum diisi.";
+      return "";
+    }
+
+    function sendViaGoogleScript(payload) {
+      return new Promise((resolve, reject) => {
+        if (!window.google || !google.script || !google.script.run) {
+          reject(new Error("google.script.run tidak tersedia."));
+          return;
+        }
+        google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(err => reject(new Error(err && err.message ? err.message : String(err))))
+          .saveAccount(payload);
+      });
+    }
+
+    async function sendViaFetch(endpoint, payload) {
       const res = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        mode: "cors",
+        cache: "no-store",
+        redirect: "follow",
         body: JSON.stringify({
           spreadsheetId: SHEET_ID,
           sheetName: SHEET_NAME,
-          data: payload,
+          data: payload
         })
       });
 
+      const text = await res.text().catch(() => "");
       let result = null;
-      try { result = await res.json(); } catch {}
+      try { result = JSON.parse(text); } catch { result = { raw: text }; }
 
-      if (!res.ok || (result && result.ok === false)) {
-        throw new Error(result?.message || "Gagal menyimpan data.");
+      if (!res.ok) {
+        throw new Error(result?.message || `HTTP ${res.status}`);
       }
+      if (result && result.ok === false) {
+        throw new Error(result.message || "Gagal menyimpan data.");
+      }
+      return result;
+    }
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-      toast("Akun berhasil dikirim ke spreadsheet.");
+    async function submit() {
+      const err = validate();
+      if (err) return toast(err);
+
+      const payload = buildPayload();
+      const endpoint = el.endpoint.value.trim();
+
+      try {
+        showSubmitting(true);
+
+        if (window.google && google.script && google.script.run) {
+          await sendViaGoogleScript(payload);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+          toast("Akun berhasil disimpan.");
+          return;
+        }
+
+        if (!endpoint) {
+          await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+          toast("Endpoint belum diisi. JSON disalin ke clipboard.");
+          return;
+        }
+
+        try {
+          await sendViaFetch(endpoint, payload);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+          toast("Akun berhasil dikirim ke spreadsheet.");
+        } catch (fetchErr) {
+          // fallback no-cors agar tidak muncul "Failed to fetch"
+          await fetch(endpoint, {
+            method: "POST",
+            mode: "no-cors",
+            cache: "no-store",
+            body: JSON.stringify({
+              spreadsheetId: SHEET_ID,
+              sheetName: SHEET_NAME,
+              data: payload
+            })
+          });
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+          toast("Permintaan dikirim. Cek spreadsheet untuk memastikan data masuk.");
+        }
+      } catch (e) {
+        console.error(e);
+        toast(e.message || "Gagal menyimpan data.");
+      } finally {
+        showSubmitting(false);
+      }
+    }
+
+    function copyJson() {
+      const payload = buildPayload();
+      navigator.clipboard.writeText(JSON.stringify(payload, null, 2))
+        .then(() => toast("JSON disalin."))
+        .catch(() => toast("Gagal menyalin JSON."));
+    }
+
+    function copyTemplate() {
+      navigator.clipboard.writeText(JSON.stringify(TEMPLATE, null, 2))
+        .then(() => toast("Template JSON disalin."))
+        .catch(() => toast("Gagal menyalin template."));
+    }
+
+    function updateHelpTemplate() {
+      el.helpTemplate.innerHTML = `<div style="white-space:pre-wrap; line-height:1.8; color:#dbeafe; font-size:13px">${JSON.stringify(TEMPLATE, null, 2)}</div>`;
+    }
+
+    el.backBtn.addEventListener("click", () => window.location.href = "index.html");
+    el.copyTemplateBtn.addEventListener("click", copyTemplate);
+    el.copyTemplateBtn2.addEventListener("click", copyTemplate);
+    el.openHelpBtn.addEventListener("click", openHelp);
+    el.closeHelpBtn.addEventListener("click", closeHelp);
+    el.closeHelpBtn2.addEventListener("click", closeHelp);
+    el.scrollToFormBtn.addEventListener("click", scrollToForm);
+    el.saveDraftBtn.addEventListener("click", () => { saveDraft(); toast("Draft disimpan di perangkat ini."); });
+    el.submitBtn.addEventListener("click", submit);
+    el.resetBtn.addEventListener("click", () => {
+      ["nama","game","harga","diskon","ket","gambar"].forEach(id => el[id].value = "");
       el.status.value = "ready";
+      el.label.value = "";
       renderPreview();
-    } catch (e) {
-      console.error(e);
-      toast(e.message || "Gagal menyimpan data.");
-    } finally {
-      showSubmitting(false);
+      saveDraft();
+      toast("Form direset.");
+    });
+    el.copyJsonBtn.addEventListener("click", copyJson);
+    el.endpoint.addEventListener("input", updateConnectionState);
+    el.gambar.addEventListener("input", () => { renderPreview(); saveDraft(); });
+    ["nama","game","harga","diskon","status","label","ket"].forEach(k => {
+      el[k].addEventListener("input", saveDraft);
+      el[k].addEventListener("change", saveDraft);
+    });
+    el.chips.forEach(chip => chip.addEventListener("click", () => setQuickFill(chip.dataset.fill)));
+    window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeHelp(); });
+    el.helpModal.addEventListener("click", (e) => { if (e.target === el.helpModal) closeHelp(); });
+
+    function syncChipState() {
+      el.chips.forEach(c => c.classList.remove("active"));
+      const active = [...el.chips].find(c => c.dataset.fill === el.status.value || c.dataset.fill === el.label.value);
+      if (active) active.classList.add("active");
     }
-  }
+    el.status.addEventListener("change", syncChipState);
+    el.label.addEventListener("change", syncChipState);
 
-  function copyJson() {
-    const payload = buildPayload();
-    navigator.clipboard.writeText(JSON.stringify(payload, null, 2))
-      .then(() => toast("JSON disalin."))
-      .catch(() => toast("Gagal menyalin JSON."));
-  }
+    loadDraft();
+    updateHelpTemplate();
 
-  function updateHelpTemplate() {
-    el.helpTemplate.innerHTML = `
-      <div style="white-space:pre-wrap; line-height:1.8; color:#dbeafe; font-size:13px">
-${JSON.stringify(TEMPLATE, null, 2)}
-      </div>
-    `;
-  }
-
-  // Events
-  el.backBtn.addEventListener("click", () => window.location.href = "index.html");
-  el.copyTemplateBtn.addEventListener("click", copyJson);
-  el.copyTemplateBtn2.addEventListener("click", copyJson);
-  el.openHelpBtn.addEventListener("click", openHelp);
-  el.closeHelpBtn.addEventListener("click", closeHelp);
-  el.closeHelpBtn2.addEventListener("click", closeHelp);
-  el.scrollToFormBtn.addEventListener("click", scrollToForm);
-  el.saveDraftBtn.addEventListener("click", saveDraft);
-  el.submitBtn.addEventListener("click", submit);
-  el.resetBtn.addEventListener("click", () => {
-    ["nama","game","harga","diskon","ket","gambar"].forEach(id => el[id].value = "");
-    el.status.value = "ready";
-    el.label.value = "";
-    renderPreview();
-    toast("Form direset.");
-  });
-  el.copyJsonBtn.addEventListener("click", copyJson);
-
-  el.endpoint.addEventListener("input", updateConnectionState);
-  el.gambar.addEventListener("input", () => {
-    renderPreview();
-    saveDraft();
-  });
-
-  ["nama","game","harga","diskon","status","label","ket"].forEach(k => {
-    el[k].addEventListener("input", saveDraft);
-    el[k].addEventListener("change", saveDraft);
-  });
-
-  el.chips.forEach(chip => {
-    chip.addEventListener("click", () => setQuickFill(chip.dataset.fill));
-  });
-
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeHelp();
-  });
-
-  el.helpModal.addEventListener("click", (e) => {
-    if (e.target === el.helpModal) closeHelp();
-  });
-
-  // auto-detect label/status chips from current form
-  function syncChipState() {
-    el.chips.forEach(c => c.classList.remove("active"));
-    const active = [...el.chips].find(c => c.dataset.fill === el.status.value || c.dataset.fill === el.label.value);
-    if (active) active.classList.add("active");
-  }
-  el.status.addEventListener("change", syncChipState);
-  el.label.addEventListener("change", syncChipState);
-
-  // Initial state
-  loadDraft();
-  updateHelpTemplate();
-
-  // Ensure current month friendly default note
-  setTimeout(() => {
     if (!el.endpoint.value.trim()) {
-      toast("Tip: isi endpoint Apps Script supaya form bisa menyimpan langsung.");
+      el.endpoint.value = "https://script.google.com/macros/s/AKfycbw6NuypL2CdoTJxnC-c4ZrqEypZLEB8pqBbXXNppmW8fljXrQiCzC3DbXaoWCd4CA8swA/exec";
+      updateConnectionState();
     }
-  }, 900);
-})();
-</script>
+
+    setTimeout(() => {
+      if (!el.endpoint.value.trim()) {
+        toast("Tip: isi endpoint Apps Script supaya form bisa menyimpan langsung.");
+      }
+    }, 900);
+  })();
+  </script>
 </body>
 </html>
