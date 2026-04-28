@@ -1236,157 +1236,6 @@
       return [...new Set(urls)];
     };
 
-    // ================================
-    // SMART GAME FILTER + WHITELIST
-// Hanya tampilkan:
-// - Honkai Star Rail
-// - Solo Leveling
-// - Mobile Legends
-// - Arena Breakout
-// - Arknights: Endfield
-// - Genshin Impact
-// - Neverness to Everness
-
-// ================================
-const GAME_RULES = [
-  {
-    key: 'honkai star rail',
-    title: 'Honkai Star Rail',
-    aliases: [
-      'hsr',
-      'honkai star rail',
-      'honkai: star rail',
-      'honkai starrail',
-      'honkai star-rail'
-    ]
-  },
-  {
-    key: 'solo leveling',
-    title: 'Solo Leveling',
-    aliases: [
-      'solo leveling',
-      'solo leveling arise',
-      'solo leveling: arise',
-      'solo leveling arise!'
-    ]
-  },
-  {
-    key: 'mobile legends',
-    title: 'Mobile Legends',
-    aliases: [
-      'mobile legends',
-      'mobile legend',
-      'mobile legends bang bang',
-      'ml',
-      'mlbb'
-    ]
-  },
-  {
-    key: 'arena breakout',
-    title: 'Arena Breakout',
-    aliases: [
-      'arena breakout',
-      'arena breakout infinite',
-      'ab',
-      'arenabreakout'
-    ]
-  },
-  {
-    key: 'arknights endfield',
-    title: 'Arknights: Endfield',
-    aliases: [
-      'arknights endfield',
-      'arknights: endfield',
-      'endfield',
-      'ark endfield'
-    ]
-  },
-  {
-    key: 'genshin impact',
-    title: 'Genshin Impact',
-    aliases: [
-      'genshin',
-      'genshin impact',
-      'genshinimpact',
-      'gi'
-    ]
-  },
-  {
-    key: 'neverness to everness',
-    title: 'Neverness to Everness',
-    aliases: [
-      'neverness to everness',
-      'nte',
-      'neverness',
-      'neverness everness'
-    ]
-  }
-    ];
-
-    const GAME_ALIAS_MAP = new Map();
-    const GAME_TITLE_MAP = new Map();
-    GAME_RULES.forEach(rule => {
-      GAME_TITLE_MAP.set(rule.key, rule.title);
-      rule.aliases.forEach(alias => GAME_ALIAS_MAP.set(alias, rule.key));
-      GAME_ALIAS_MAP.set(rule.key, rule.key);
-      GAME_ALIAS_MAP.set(rule.title.toLowerCase(), rule.key);
-    });
-
-    const GAME_WHITELIST = new Set(GAME_RULES.map(rule => rule.key));
-
-    function normalizeGameKey(value){
-      return (value ?? '')
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replace(/[:_.\-]+/g, ' ')
-        .replace(/\s+/g, ' ')
-        .replace(/[^\p{L}\p{N}\s]/gu, '');
-    }
-
-    function canonicalGameKey(value){
-      const normalized = normalizeGameKey(value);
-      if (!normalized) return '';
-      if (GAME_ALIAS_MAP.has(normalized)) return GAME_ALIAS_MAP.get(normalized);
-
-      // fallback toleran typo ringan
-      if (normalized.includes('honkai') && normalized.includes('star')) return 'honkai star rail';
-      if (normalized.includes('solo') && normalized.includes('leveling')) return 'solo leveling';
-      if ((normalized.includes('mobile') || normalized === 'ml' || normalized === 'mlbb') && normalized.includes('legend')) return 'mobile legends';
-      return normalized;
-    }
-
-    function canonicalGameTitle(value){
-      const key = canonicalGameKey(value);
-      return GAME_TITLE_MAP.get(key) || value;
-    }
-
-    function isSameGame(a, b){
-      const A = canonicalGameKey(a);
-      const B = canonicalGameKey(b);
-      return !!A && !!B && A === B;
-    }
-
-    function isAllowedGame(value){
-      return GAME_WHITELIST.has(canonicalGameKey(value));
-    }
-
-    function normalizeStatus(val){
-      return (val ?? '')
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z]/g,'');
-    }
-
-    function canonicalStatus(val){
-  const s = normalizeStatus(val);
-
-  if (s.includes('sold')) return 'sold';
-  if (s.includes('proses')) return 'proses';
-  return 'ready';
-}
-
     function getUniqueGames(primaryRows = [], extraRows = []) {
       const map = new Map();
 
@@ -1395,44 +1244,38 @@ const GAME_RULES = [
           ? rowOrGame
           : (rowOrGame?.game ?? rowOrGame?.Game ?? rowOrGame?.nama ?? rowOrGame?.Nama ?? rowOrGame?.Title ?? rowOrGame?.title ?? '');
 
-        const gameKey = canonicalGameKey(rawGame);
-        if (!GAME_WHITELIST.has(gameKey)) return;
-
-        if (!map.has(gameKey)) {
-          map.set(gameKey, GAME_TITLE_MAP.get(gameKey) || canonicalGameTitle(rawGame));
-        }
+        const game = normalizeText(rawGame);
+        if (!game) return;
+        const key = game.toLowerCase();
+        if (!map.has(key)) map.set(key, game);
       };
 
       (Array.isArray(primaryRows) ? primaryRows : []).forEach(ingest);
       (Array.isArray(extraRows) ? extraRows : []).forEach(ingest);
 
-      return [...map.entries()]
-        .map(([value, title]) => ({ value, title }))
-        .sort((a, b) => a.title.localeCompare(b.title, 'id'));
+      return [...map.values()].sort((a, b) => a.localeCompare(b));
     }
 
 
     function buildIconMap(rows){
       const map = new Map();
       (Array.isArray(rows) ? rows : []).forEach(row => {
-        const game = normalizeText(row.Game ?? row.game ?? row.Nama ?? row.nama ?? row.Title ?? row.title ?? '');
+        const game = normalizeText(row.Game ?? row.game ?? row.Nama ?? row.nama ?? row.Title ?? row.title ?? '').toLowerCase();
         if (!game) return;
         const rawImages = row.Gambar ?? row.gambar ?? row.Image ?? row.image ?? row.Icon ?? row.icon ?? '';
         const images = parseImages(rawImages);
-        const key = canonicalGameKey(game);
-        if (images.length && GAME_WHITELIST.has(key)) map.set(key, images);
+        if (images.length) map.set(game, images);
       });
       return map;
     }
 
     function mergeIconImages(item, iconMap){
-      const key = item.gameKey || canonicalGameKey(item.game || '');
+      const key = (item.game || '').toLowerCase();
       const extra = iconMap.get(key) || [];
       return extra.length ? extra : item.images;
     }
 
     async function fetchSheetJson(sheetName){
-
       const url = `https://opensheet.elk.sh/${SPREADSHEET_ID}/${encodeURIComponent(sheetName)}`;
       const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) throw new Error(`Failed to load sheet: ${sheetName}`);
@@ -1453,7 +1296,7 @@ const GAME_RULES = [
       const game = raw.Game ?? raw.game ?? '-';
       const gambar = raw.Gambar ?? raw.gambar ?? raw.Image ?? raw.image ?? '';
       const label = normalizeText(raw.Label ?? raw.label ?? '');
-      const status = canonicalStatus(raw.Status ?? raw.status ?? 'ready');
+      const status = normalizeText(raw.Status ?? raw.status ?? 'ready').toLowerCase();
       const ket = normalizeText(raw.Ket ?? raw.ket ?? raw.Detail ?? raw.detail ?? '');
       const createdAt = parseDate(raw.Tanggal ?? raw.tanggal ?? raw.Date ?? raw.date ?? raw.CreatedAt ?? raw.createdAt ?? raw.Timestamp ?? raw.timestamp ?? raw.Waktu ?? raw.waktu);
 
@@ -1467,7 +1310,6 @@ const GAME_RULES = [
         harga,
         diskon,
         game,
-        gameKey: canonicalGameKey(game),
         gambar,
         images,
         label,
@@ -1478,7 +1320,6 @@ const GAME_RULES = [
       };
     }
     function getPromoMeta(item){
-
       const value = Number(item?.diskon) || 0;
       const hasPromo = value > 0;
       const isPercent = hasPromo && value <= 100;
@@ -1504,7 +1345,7 @@ const GAME_RULES = [
         const days = (Date.now() - item.createdAt.getTime()) / (1000 * 60 * 60 * 24);
         if (days >= 0 && days <= NEW_DAYS) return 'new';
       }
-      if (topGames.has(canonicalGameKey(item.game || ''))) return 'hot';
+      if (topGames.has((item.game || '').toLowerCase())) return 'hot';
       return '';
     }
 
@@ -1639,12 +1480,11 @@ const GAME_RULES = [
 
     function applyFilters(){
       let items = RAW_DATA.filter(item => {
-        const status = canonicalStatus(item.status);
-        if (!isAllowedGame(item.game) && currentTab !== 'riwayat') return false;
+        const status = (item.status || '').toLowerCase();
         if (currentTab === 'list' && status === 'sold') return false;
         if (currentTab === 'riwayat' && status !== 'sold') return false;
-        if (selectedGame && !isSameGame(item.game, selectedGame)) return false;
-        if (selectedStatus && status !== canonicalStatus(selectedStatus)) return false;
+        if (selectedGame && item.game !== selectedGame) return false;
+        if (selectedStatus && status !== selectedStatus) return false;
         return true;
       });
 
@@ -1654,7 +1494,6 @@ const GAME_RULES = [
     }
 
     function paginate(items){
-
       const total = items.length;
       const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
       currentPage = Math.min(currentPage, totalPages);
@@ -1790,7 +1629,7 @@ const GAME_RULES = [
     }
 
     function setModalContactState(item){
-      const ready = canonicalStatus(item.status) === 'ready';
+      const ready = (item.status || '').toLowerCase() === 'ready';
       if (!ready){
         els.detailActions.classList.add('hidden');
         els.modalSubtitle.textContent = item.status === 'sold'
@@ -1812,7 +1651,6 @@ const GAME_RULES = [
     }
 
     function openPurchaseSheet(item){
-
       if (!item) return;
       const summary = `Nama akun: ${item.nama}\nHarga: Rp ${rupiah(item.harga)}`;
       els.purchaseTitle.textContent = 'Konfirmasi Pembelian';
@@ -1910,8 +1748,17 @@ const GAME_RULES = [
       });
     }
 
-    window.__openCard = openModal;
+    function closeModal(){
+      closePurchaseSheet();
+      els.modal.classList.remove('open');
+      document.body.style.overflow = '';
+      if (modalSwiper){
+        modalSwiper.destroy(true, true);
+        modalSwiper = null;
+      }
+    }
 
+    window.__openCard = openModal;
 
     function loadGames(){
       const games = getUniqueGames(
@@ -1923,8 +1770,8 @@ const GAME_RULES = [
 
       const freq = new Map();
       RAW_DATA.forEach(item => {
-        const key = canonicalGameKey(item.game);
-        if (!key || !GAME_WHITELIST.has(key)) return;
+        const key = normalizeText(item.game).toLowerCase();
+        if (!key) return;
         freq.set(key, (freq.get(key) || 0) + 1);
       });
       const maxFreq = Math.max(0, ...freq.values());
@@ -1932,7 +1779,7 @@ const GAME_RULES = [
 
       buildDropdownMenu('game', [
         { value: '', title: 'Semua Game', sub: 'Tampilkan semua akun' },
-        ...games.map(g => ({ value: g.value, title: g.title, sub: 'Filter berdasarkan game' }))
+        ...games.map(g => ({ value: g, title: g, sub: 'Filter berdasarkan game' }))
       ], selectedGame);
       setDropdownButton('game', selectedGame || 'Semua Game');
       setDropdownActive('game', selectedGame);
@@ -1957,7 +1804,6 @@ const GAME_RULES = [
 
     function setContactLinks(){
 
-
       els.sidebarWa.href = `https://wa.me/${WA_NUMBER}`;
       els.sidebarFb.href = FB_LINK;
     }
@@ -1968,13 +1814,13 @@ const GAME_RULES = [
         .sort((a,b) => b.createdAt - a.createdAt)
         .slice(0, 6);
 
-      const soldAll = RAW_DATA.filter(item => canonicalStatus(item.status) === 'sold');
+      const soldAll = RAW_DATA.filter(item => (item.status || '').toLowerCase() === 'sold');
       const sold = soldAll
         .sort((a,b) => (b.createdAt?.getTime?.() || 0) - (a.createdAt?.getTime?.() || 0))
         .slice(0, 8);
 
-      const ready = RAW_DATA.filter(item => canonicalStatus(item.status) === 'ready').length;
-      const proses = RAW_DATA.filter(item => canonicalStatus(item.status) === 'proses').length;
+      const ready = RAW_DATA.filter(item => (item.status || '').toLowerCase() === 'ready').length;
+      const proses = RAW_DATA.filter(item => (item.status || '').toLowerCase() === 'proses').length;
       const soldCount = soldAll.length;
 
       els.notifStats.innerHTML = `
@@ -2008,7 +1854,6 @@ const GAME_RULES = [
     }
 
     function render(){
-
       const { totalPages, pageItems } = paginate(FILTERED_DATA);
 
       if (!FILTERED_DATA.length){
@@ -2043,13 +1888,10 @@ const GAME_RULES = [
         ICON_ROWS = Array.isArray(iconJson) ? iconJson : [];
         ICON_MAP = buildIconMap(ICON_ROWS);
         RAW_DATA = Array.isArray(listJson)
-          ? listJson
-              .map(mapItem)
-              .filter(item => isAllowedGame(item.game))
-              .map(item => ({
-                ...item,
-                previewImages: ICON_MAP.get(item.gameKey || canonicalGameKey(item.game)) || []
-              }))
+          ? listJson.map(mapItem).map(item => ({
+              ...item,
+              previewImages: ICON_MAP.get((item.game || '').toLowerCase()) || []
+            }))
           : [];
 
         loadGames();
@@ -2066,7 +1908,6 @@ const GAME_RULES = [
     }
 
     // events
-
     els.toggleSidebar.addEventListener('click', () => {
       window.location.href = 'admin.html';
     });
@@ -2102,7 +1943,7 @@ const GAME_RULES = [
 
     els.modalWa.addEventListener('click', (e) => {
       if (!activeModalItem) return;
-      if (canonicalStatus(activeModalItem.status) !== 'ready') return;
+      if ((activeModalItem.status || '').toLowerCase().trim() !== 'ready') return;
       e.preventDefault();
       openPurchaseSheet(activeModalItem);
     });
