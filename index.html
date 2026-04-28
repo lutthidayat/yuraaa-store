@@ -1368,7 +1368,7 @@ const GAME_RULES = [
     }
 
     function isAllowedGame(value){
-      return GAME_WHITELIST.set(canonicalGameKey(value));
+      return GAME_WHITELIST.has(canonicalGameKey(value));
     }
 
     function normalizeStatus(val){
