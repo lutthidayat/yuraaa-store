@@ -258,15 +258,15 @@
   <div class="main-app">
     <header class="topbar">
       <div class="brand">
-        <div class="brand-mark">🏦</div>
+        <div class="brand-mark">ðŸ¦</div>
         <div style="min-width:0">
           <h1><span>Yuraaa</span> Finance</h1>
           <p>Ringkasan keuangan & transaksi terverifikasi</p>
         </div>
       </div>
       <div class="top-actions">
-        <button class="icon-btn" id="openPinBtn" title="Buka PIN">🔐</button>
-        <button class="ghost-btn primary" id="refreshBtn" title="Muat ulang data">↻ Refresh</button>
+        <button class="icon-btn" id="exitBtn" title="Kembali ke Index">âœ•</button>
+        <button class="ghost-btn primary" id="refreshBtn" title="Muat ulang data">â†» Refresh</button>
       </div>
     </header>
 
@@ -279,9 +279,9 @@
               <div class="stat-value" id="totalMasuk">Rp 0</div>
               <p class="stat-sub">Pemasukan bulan ini</p>
             </div>
-            <div class="stat-icon purple">⬇</div>
+            <div class="stat-icon purple">â¬‡</div>
           </div>
-          <div class="stat-pill"><span class="up">●</span> <span id="monthLabelTop">Bulan aktif</span></div>
+          <div class="stat-pill"><span class="up">â—</span> <span id="monthLabelTop">Bulan aktif</span></div>
         </div>
         <div class="stat-card">
           <div class="stat-top">
@@ -290,7 +290,7 @@
               <div class="stat-value" id="soldCount">0</div>
               <p class="stat-sub">Jumlah akun sold</p>
             </div>
-            <div class="stat-icon green">✓</div>
+            <div class="stat-icon green">âœ“</div>
           </div>
           <div class="stat-pill">Terverifikasi otomatis</div>
         </div>
@@ -301,7 +301,7 @@
               <div class="stat-value" id="avgSold">Rp 0</div>
               <p class="stat-sub">Nilai per transaksi</p>
             </div>
-            <div class="stat-icon blue">▣</div>
+            <div class="stat-icon blue">â–£</div>
           </div>
           <div class="stat-pill">Update tiap refresh</div>
         </div>
@@ -349,7 +349,7 @@
     </div>
   </div>
 
-  <button class="unlock-fab" id="unlockFab">🔐 Masuk PIN</button>
+  <button class="unlock-fab" id="unlockFab">ðŸ” Masuk PIN</button>
 
   <div class="pin-overlay" id="pinOverlay">
     <div class="pin-card" id="pinCard" role="dialog" aria-modal="true" aria-labelledby="pinTitle">
@@ -358,12 +358,12 @@
           <h2 class="pin-title" id="pinTitle">Masukkan PIN</h2>
           <p class="pin-sub">Akses dashboard keuangan dengan kode 6 digit.</p>
         </div>
-        <button class="pin-close" id="pinClose" aria-label="Tutup">×</button>
+        <button class="pin-close" id="pinClose" aria-label="Tutup">Ã—</button>
       </div>
 
       <div class="pin-body">
         <div class="pin-label">PIN Akses</div>
-        <input id="pinInput" class="pin-input" type="password" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" />
+        <input id="pinInput" class="pin-input" type="password" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢" />
         <div class="pin-msg" id="pinMsg"></div>
         <div class="pin-actions">
           <button class="btn secondary" id="clearPinBtn">Hapus</button>
@@ -391,7 +391,7 @@ const els = {
   listInfo: document.getElementById('listInfo'),
   updatedAt: document.getElementById('updatedAt'),
   refreshBtn: document.getElementById('refreshBtn'),
-  openPinBtn: document.getElementById('openPinBtn'),
+  exitBtn: document.getElementById('exitBtn'),
   unlockFab: document.getElementById('unlockFab'),
   pinOverlay: document.getElementById('pinOverlay'),
   pinCard: document.getElementById('pinCard'),
@@ -474,7 +474,6 @@ function closePinModal(){
   els.unlockFab.classList.add('show');
 }
 function unlockApp(){
-  sessionStorage.setItem('yuraaa_finance_unlocked','1');
   document.body.classList.remove('locked');
   els.pinOverlay.classList.add('hidden');
   els.unlockFab.classList.remove('show');
@@ -566,11 +565,11 @@ function render(){
   els.historyList.innerHTML = data.map((x,i)=>`
     <div class="history-item" style="transition-delay:${i*0.045}s">
       <div class="history-left">
-        <div class="history-icon">🎮</div>
+        <div class="history-icon">ðŸŽ®</div>
         <div class="history-main">
           <h4 class="history-title">${escapeHtml(x.nama)}</h4>
-          <p class="history-sub">${escapeHtml(x.game)} • ${x.date ? formatDate(x.date) : '-'}</p>
-          <div class="status-pill">● sold</div>
+          <p class="history-sub">${escapeHtml(x.game)} â€¢ ${x.date ? formatDate(x.date) : '-'}</p>
+          <div class="status-pill">â— sold</div>
         </div>
       </div>
       <div class="history-right">
@@ -632,7 +631,9 @@ els.refreshBtn.addEventListener('click', ()=>{
   showToast('Memuat ulang data...');
   loadData();
 });
-els.openPinBtn.addEventListener('click', openPinModal);
+els.exitBtn.addEventListener('click', () => {
+  window.location.href = 'index.html';
+});
 els.unlockFab.addEventListener('click', openPinModal);
 els.pinClose.addEventListener('click', ()=>{
   closePinModal();
@@ -672,14 +673,8 @@ els.pinOverlay.addEventListener('click', (e)=>{
   }
 });
 
-if(sessionStorage.getItem('yuraaa_finance_unlocked') === '1'){
-  document.body.classList.remove('locked');
-  els.pinOverlay.classList.add('hidden');
-  loadData();
-} else {
-  document.body.classList.add('locked');
-  openPinModal();
-}
+document.body.classList.add('locked');
+openPinModal();
 
 refreshTimer = setInterval(()=>{
   if(!document.body.classList.contains('locked')) loadData();
