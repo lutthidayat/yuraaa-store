@@ -400,6 +400,217 @@
     .top-actions{width:100%}
     .top-actions .btn{flex:1 1 auto}
   }
+
+  /* ===== Responsive polish overrides ===== */
+  html{scroll-behavior:smooth}
+  body{min-height:100dvh}
+  .app{max-width:1440px;margin:0 auto}
+  .topbar{
+    flex-wrap:wrap;
+    gap:12px;
+    padding:clamp(12px,1.6vw,18px);
+  }
+  .brand{flex:1 1 420px}
+  .top-actions{
+    width:100%;
+    justify-content:flex-end;
+    display:flex;
+  }
+  .top-actions .btn{min-width:132px}
+  .container{
+    width:min(1320px,100%);
+    padding:clamp(12px,1.6vw,22px);
+  }
+  .hero{
+    grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);
+    gap:16px;
+    align-items:stretch;
+  }
+  .hero-card{
+    padding:clamp(18px,2.2vw,28px);
+    min-height:240px;
+  }
+  .hero h2{
+    font-size:clamp(28px,3.5vw,46px);
+    max-width:14ch;
+  }
+  .hero p{
+    font-size:14px;
+    max-width:68ch;
+  }
+  .hero-actions .btn{
+    min-width:180px;
+    height:48px;
+  }
+  .hero-metrics{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  .metric{
+    min-height:120px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  .section{
+    padding:clamp(14px,1.8vw,20px);
+    margin-bottom:16px;
+  }
+  .section-head{
+    gap:14px;
+    margin-bottom:16px;
+  }
+  .grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+  }
+  .input,.select{
+    height:52px;
+  }
+  .textarea{
+    min-height:140px;
+  }
+  .preview-wrap{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:14px;
+  }
+  .preview-box{
+    min-height:260px;
+  }
+  .preview-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:12px;
+  }
+  .chips{
+    gap:8px;
+    padding-bottom:2px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .chips::-webkit-scrollbar{display:none}
+  .chip{white-space:nowrap}
+  .footer-actions{
+    gap:12px;
+  }
+  .footer-actions .btn{
+    flex:1 1 210px;
+  }
+  .big-save{
+    max-width:100%;
+  }
+  .modal-card{
+    width:min(760px,100%);
+    padding:22px;
+  }
+
+  @media (max-width: 960px){
+    .hero{grid-template-columns:1fr}
+    .preview-wrap{grid-template-columns:1fr}
+    .grid{grid-template-columns:1fr}
+    .preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .hero-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .top-actions{justify-content:flex-end}
+  }
+
+  @media (max-width: 720px){
+    .topbar{
+      align-items:flex-start;
+    }
+    .brand{
+      flex:1 1 100%;
+    }
+    .brand h1{
+      font-size:18px;
+    }
+    .brand p{
+      white-space:normal;
+    }
+    .top-actions{
+      width:100%;
+      justify-content:stretch;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+    }
+    .top-actions .btn{
+      width:100%;
+      min-width:0;
+    }
+    .hero-card{
+      min-height:auto;
+    }
+    .hero h2{
+      font-size:24px;
+      max-width:none;
+    }
+    .hero-actions{
+      flex-direction:column;
+    }
+    .hero-actions .btn{
+      width:100%;
+      min-width:0;
+    }
+    .hero-metrics{
+      grid-template-columns:1fr;
+    }
+    .grid{
+      grid-template-columns:1fr;
+    }
+    .preview-grid{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    .section-head{
+      flex-direction:column;
+      align-items:flex-start;
+    }
+    .section-head p{
+      max-width:unset;
+    }
+    .footer-actions{
+      flex-direction:column;
+    }
+    .footer-actions .btn,
+    .big-save{
+      width:100%;
+      flex:1 1 auto;
+    }
+    .modal-actions{
+      flex-direction:column;
+    }
+    .modal-actions .btn{
+      width:100%;
+    }
+  }
+
+  @media (max-width: 480px){
+    .container{
+      padding:10px;
+    }
+    .hero-card,
+    .section,
+    .preview-box,
+    .sidebar-box,
+    .modal-card{
+      border-radius:22px;
+    }
+    .preview-grid{
+      grid-template-columns:1fr;
+    }
+    .preview-item{
+      aspect-ratio:16/10;
+    }
+    .hero-card::before{
+      width:180px;
+      height:180px;
+    }
+    .metric .value{
+      font-size:17px;
+    }
+    .metric .sub{
+      font-size:11px;
+    }
+  }
+
 </style>
 </head>
 <body>
