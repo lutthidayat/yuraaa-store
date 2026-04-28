@@ -242,9 +242,78 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+  .topbar{
+    flex-wrap:wrap;
+  }
+  .brand{
+    flex:1 1 320px;
+  }
+  .top-actions{
+    flex:1 1 320px;
+  }
+  .top-actions .ghost-btn,
+  .top-actions .icon-btn{
+    min-width:44px;
+  }
+  .add-btn{
+    background:linear-gradient(180deg, rgba(34,197,94,.95), rgba(22,163,74,.95));
+    border-color:rgba(74,222,128,.35) !important;
+    color:#fff;
+  }
+  .add-btn:hover{filter:brightness(1.03)}
+  .cta-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .cta-row .ghost-btn,
+  .cta-row .icon-btn{
+    flex:1 1 0;
+  }
+  .wide-panel{
+    grid-column:1 / -1;
+  }
+
   @media (max-width: 920px){
     .grid-stats,.filters{grid-template-columns:1fr}
   }
+
+  @media (min-width: 1280px){
+    .container{padding:20px}
+    .grid-stats{
+      grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+    .stat-value{font-size:34px}
+    .history-title{font-size:16px}
+  }
+  @media (max-width: 920px){
+    .topbar{
+      gap:10px;
+    }
+    .brand{
+      gap:10px;
+    }
+    .brand h1{
+      font-size:18px;
+    }
+    .top-actions{
+      width:100%;
+    }
+    .top-actions .ghost-btn,
+    .top-actions .icon-btn{
+      flex:1 1 0;
+    }
+    .grid-stats,.filters{
+      grid-template-columns:1fr;
+    }
+    .stat-card,.panel,.history-box{
+      border-radius:22px;
+    }
+    .history-item{
+      padding:12px;
+    }
+  }
+
   @media (max-width: 720px){
     .topbar{padding:12px}
     .container{padding:12px}
@@ -264,7 +333,8 @@
           <p>Ringkasan keuangan & transaksi terverifikasi</p>
         </div>
       </div>
-      <div class="top-actions">
+      <div class="top-actions cta-row">
+        <button class="ghost-btn add-btn" id="addBtn" title="Tambah data baru">＋ Add</button>
         <button class="icon-btn" id="exitBtn" title="Kembali ke Index">✕</button>
         <button class="ghost-btn primary" id="refreshBtn" title="Muat ulang data">↻ Refresh</button>
       </div>
@@ -454,6 +524,9 @@ function showToast(msg){
   clearTimeout(showToast._t);
   showToast._t = setTimeout(()=>els.toast.classList.remove('show'), 1800);
 }
+function goAdd(){
+  window.location.href = 'add.html';
+}
 function showPinMsg(msg){
   els.pinMsg.textContent = msg;
   els.pinMsg.classList.add('show');
@@ -634,6 +707,8 @@ els.refreshBtn.addEventListener('click', ()=>{
 els.exitBtn.addEventListener('click', () => {
   window.location.href = 'index.html';
 });
+els.addBtn = document.getElementById('addBtn');
+els.addBtn.addEventListener('click', goAdd);
 els.unlockFab.addEventListener('click', openPinModal);
 els.pinClose.addEventListener('click', ()=>{
   closePinModal();
