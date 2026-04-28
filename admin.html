@@ -1,241 +1,689 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yuraaa Finance Premium</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Yuraaa Finance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-body{
-  margin:0;
-  font-family:system-ui;
-  background:#020617;
-  color:#fff;
-}
+  :root{
+    --bg:#020617;
+    --bg2:#0b1020;
+    --panel:rgba(15,23,42,.72);
+    --panel2:rgba(17,24,39,.82);
+    --line:rgba(148,163,184,.16);
+    --text:#e5e7eb;
+    --muted:#94a3b8;
+    --muted2:#64748b;
+    --accent:#8b5cf6;
+    --accent2:#60a5fa;
+    --green:#22c55e;
+    --red:#ef4444;
+    --yellow:#fbbf24;
+    --shadow:0 20px 60px rgba(2,6,23,.5);
+    --radius:24px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:
+      radial-gradient(1200px 500px at 80% -10%, rgba(139,92,246,.18), transparent 45%),
+      radial-gradient(800px 420px at 10% 0%, rgba(96,165,250,.12), transparent 40%),
+      linear-gradient(180deg, #020617 0%, #050816 100%);
+    color:var(--text);
+    overflow-x:hidden;
+  }
+  body.locked .main-app{
+    filter: blur(8px) saturate(.9);
+    pointer-events:none;
+    user-select:none;
+    transform:scale(.995);
+  }
+  .main-app{min-height:100vh;transition:filter .25s ease, transform .25s ease}
 
-/* ===== CLOSE ===== */
-.close-btn{
-  position:fixed;
-  top:16px;right:16px;
-  background:#0f172a;
-  width:42px;height:42px;
-  border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;
-  z-index:10;
-}
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 16px;
+    background:rgba(2,6,23,.66);
+    backdrop-filter: blur(18px);
+    border-bottom:1px solid rgba(148,163,184,.12);
+  }
+  .brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .brand-mark{
+    width:46px;height:46px;border-radius:16px;display:grid;place-items:center;
+    background:linear-gradient(180deg, rgba(139,92,246,.28), rgba(59,130,246,.14));
+    border:1px solid rgba(167,139,250,.22);box-shadow:var(--shadow);flex:0 0 auto
+  }
+  .brand h1{margin:0;font-size:20px;line-height:1.1;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .brand h1 span{color:var(--accent)}
+  .brand p{margin:3px 0 0;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* ===== WRAP ===== */
-.wrap{padding:20px;display:none}
+  .top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+  .icon-btn,.ghost-btn{border:none;cursor:pointer;font:inherit}
+  .icon-btn{
+    width:44px;height:44px;border-radius:14px;display:grid;place-items:center;
+    background:rgba(15,23,42,.72);color:#fff;border:1px solid var(--line)
+  }
+  .ghost-btn{
+    min-height:44px;padding:0 14px;border-radius:14px;
+    background:rgba(15,23,42,.72);color:#fff;border:1px solid var(--line);font-weight:800
+  }
+  .ghost-btn.primary{background:linear-gradient(180deg, #8b5cf6, #6d28d9);border-color:rgba(167,139,250,.5)}
 
-/* ===== CARD ===== */
-.card{
-  background:rgba(15,23,42,.6);
-  padding:20px;
-  border-radius:24px;
-  margin-bottom:16px;
-  backdrop-filter:blur(20px);
-  transition:.3s;
-}
-.card:hover{transform:scale(1.02);}
+  .container{padding:16px;max-width:1280px;margin:0 auto}
+  .grid-stats{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:14px
+  }
+  .stat-card{
+    position:relative;overflow:hidden;
+    background:linear-gradient(180deg, rgba(15,23,42,.86), rgba(8,13,28,.94));
+    border:1px solid rgba(148,163,184,.14);
+    border-radius:24px;padding:18px;box-shadow:var(--shadow)
+  }
+  .stat-card::before{
+    content:"";position:absolute;inset:-40% -30% auto auto;width:220px;height:220px;border-radius:50%;
+    background:radial-gradient(circle, rgba(139,92,246,.16), transparent 65%);pointer-events:none
+  }
+  .stat-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+  .stat-title{color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:800}
+  .stat-icon{width:48px;height:48px;border-radius:16px;display:grid;place-items:center}
+  .stat-icon.purple{background:rgba(139,92,246,.18);color:#c4b5fd}
+  .stat-icon.green{background:rgba(34,197,94,.16);color:#86efac}
+  .stat-icon.blue{background:rgba(59,130,246,.14);color:#93c5fd}
+  .stat-value{font-size:30px;line-height:1.05;font-weight:900;letter-spacing:-.02em;margin:0 0 6px}
+  .stat-sub{color:var(--muted);font-size:13px;margin:0}
+  .stat-pill{
+    display:inline-flex;align-items:center;gap:8px;margin-top:12px;
+    border-radius:999px;padding:8px 12px;background:rgba(15,23,42,.8);border:1px solid rgba(148,163,184,.12);
+    font-size:12px;font-weight:800;color:#dbeafe
+  }
+  .up{color:#86efac}
 
-.value{font-size:32px;font-weight:900;}
-.green{color:#22c55e}
+  .filters{
+    display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-bottom:14px
+  }
+  .panel{
+    background:linear-gradient(180deg, rgba(15,23,42,.86), rgba(8,13,28,.94));
+    border:1px solid rgba(148,163,184,.14);border-radius:24px;padding:16px;box-shadow:var(--shadow)
+  }
+  .panel-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .panel-title{margin:0;font-size:16px;font-weight:900}
+  .panel-sub{margin:3px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
+  .select{
+    width:100%;height:52px;border-radius:16px;padding:0 14px;
+    background:rgba(2,6,23,.36);color:#fff;border:1px solid rgba(148,163,184,.16);
+    outline:none;font:inherit;font-weight:700
+  }
+  .select:focus{border-color:rgba(139,92,246,.5);box-shadow:0 0 0 4px rgba(139,92,246,.12)}
 
-/* ===== HISTORY ===== */
-.item{
-  display:flex;
-  justify-content:space-between;
-  padding:12px;
-  border-radius:12px;
-  opacity:0;
-  transform:translateY(10px);
-  transition:.3s;
-}
-.item.show{opacity:1;transform:none}
+  .search-row{display:flex;gap:10px;align-items:center}
+  .search{
+    width:100%;height:52px;border-radius:16px;padding:0 14px;
+    background:rgba(2,6,23,.36);color:#fff;border:1px solid rgba(148,163,184,.16);
+    outline:none;font:inherit;font-weight:700
+  }
+  .search::placeholder{color:#64748b}
 
-/* ===== PIN ===== */
-.pin-modal{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.6);
-  display:flex;align-items:center;justify-content:center;
-}
+  .history-box{
+    background:linear-gradient(180deg, rgba(15,23,42,.86), rgba(8,13,28,.94));
+    border:1px solid rgba(148,163,184,.14);border-radius:24px;padding:16px;box-shadow:var(--shadow)
+  }
+  .history-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .history-head h3{margin:0;font-size:18px;font-weight:900}
+  .history-head p{margin:3px 0 0;color:var(--muted);font-size:12px}
+  .hint{color:var(--muted);font-size:12px}
 
-.pin-box{
-  background:#020617;
-  padding:24px;
-  border-radius:20px;
-  text-align:center;
-  width:300px;
-}
+  .history-list{display:flex;flex-direction:column;gap:12px}
+  .history-item{
+    display:flex;justify-content:space-between;align-items:center;gap:14px;
+    padding:14px;border-radius:18px;background:rgba(2,6,23,.28);border:1px solid rgba(148,163,184,.1);
+    opacity:0;transform:translateY(10px);transition:opacity .35s ease, transform .35s ease, border-color .2s ease
+  }
+  .history-item.show{opacity:1;transform:translateY(0)}
+  .history-item:hover{border-color:rgba(139,92,246,.22)}
+  .history-left{display:flex;gap:12px;align-items:flex-start;min-width:0}
+  .history-icon{
+    width:48px;height:48px;border-radius:16px;display:grid;place-items:center;flex:0 0 auto;
+    background:linear-gradient(180deg, rgba(139,92,246,.2), rgba(59,130,246,.12));border:1px solid rgba(167,139,250,.18)
+  }
+  .history-main{min-width:0}
+  .history-title{margin:0;font-size:15px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .history-sub{margin:5px 0 0;font-size:12px;color:var(--muted);line-height:1.5}
+  .history-right{text-align:right;flex:0 0 auto}
+  .history-price{margin:0;font-size:18px;font-weight:900;color:#34d399}
+  .history-date{margin:4px 0 0;color:var(--muted);font-size:12px}
+  .status-pill{
+    display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;
+    font-size:12px;font-weight:800;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.12);color:#fca5a5;margin-top:8px
+  }
 
-.pin-inputs{
-  display:flex;
-  gap:8px;
-  justify-content:center;
-  margin-top:10px;
-}
+  .empty,.error,.loading{
+    padding:22px;border-radius:20px;background:rgba(2,6,23,.24);border:1px dashed rgba(148,163,184,.18);
+    color:var(--muted);text-align:center
+  }
+  .error{color:#fecaca;border-color:rgba(248,113,113,.24)}
 
-.pin-input{
-  width:40px;height:50px;
-  font-size:20px;
-  text-align:center;
-  border-radius:10px;
-  border:none;
-  background:#0f172a;
-  color:#fff;
-}
+  .skeleton{display:flex;flex-direction:column;gap:12px}
+  .sk-item{
+    height:104px;border-radius:18px;
+    background:linear-gradient(90deg, rgba(148,163,184,.08), rgba(255,255,255,.08), rgba(148,163,184,.08));
+    background-size:200% 100%;animation:shimmer 1.2s linear infinite;opacity:.8
+  }
+  .sk-item.sm{height:72px}
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-.pin-box.shake{
-  animation:shake .4s;
-}
+  .pin-overlay{
+    position:fixed;inset:0;z-index:60;background:rgba(2,6,23,.72);backdrop-filter:blur(18px);
+    display:flex;align-items:center;justify-content:center;padding:18px;opacity:1;transition:opacity .25s ease
+  }
+  .pin-overlay.hidden{display:none}
+  .pin-card{
+    width:min(420px,100%);border-radius:28px;padding:20px;
+    background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(8,13,28,.98));
+    border:1px solid rgba(148,163,184,.16);box-shadow:0 40px 120px rgba(0,0,0,.65);
+    position:relative;overflow:hidden;animation:cardIn .28s ease
+  }
+  @keyframes cardIn{from{transform:translateY(14px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+  .pin-card::before{
+    content:"";position:absolute;inset:-25% -20% auto auto;width:220px;height:220px;border-radius:50%;
+    background:radial-gradient(circle, rgba(139,92,246,.18), transparent 65%);pointer-events:none
+  }
+  .pin-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+  .pin-title{margin:0;font-size:22px;line-height:1.1;font-weight:900}
+  .pin-sub{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
+  .pin-close{
+    width:40px;height:40px;border-radius:14px;border:1px solid rgba(148,163,184,.16);background:rgba(15,23,42,.8);
+    color:#fff;cursor:pointer;font-size:20px;display:grid;place-items:center;flex:0 0 auto
+  }
+  .pin-body{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+  .pin-label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800}
+  .pin-input{
+    width:100%;height:58px;border-radius:18px;padding:0 16px;
+    background:rgba(2,6,23,.36);color:#fff;border:1px solid rgba(148,163,184,.16);
+    outline:none;font-size:22px;letter-spacing:.4em;font-weight:900;text-align:center
+  }
+  .pin-input:focus{border-color:rgba(139,92,246,.55);box-shadow:0 0 0 4px rgba(139,92,246,.12)}
+  .pin-actions{display:flex;gap:10px;margin-top:2px}
+  .btn{
+    border:none;cursor:pointer;font:inherit;font-weight:900;border-radius:16px;height:50px;padding:0 16px
+  }
+  .btn.secondary{background:rgba(15,23,42,.74);color:#fff;border:1px solid rgba(148,163,184,.16);flex:1}
+  .btn.primary{background:linear-gradient(180deg, #8b5cf6, #6d28d9);color:#fff;flex:1;box-shadow:0 10px 30px rgba(139,92,246,.18)}
+  .pin-msg{
+    min-height:22px;font-size:13px;color:#fca5a5;opacity:0;transform:translateY(-4px);transition:opacity .2s ease, transform .2s ease
+  }
+  .pin-msg.show{opacity:1;transform:none}
+  .shake{animation:shake .45s ease}
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    15%{transform:translateX(-8px)}
+    30%{transform:translateX(8px)}
+    45%{transform:translateX(-6px)}
+    60%{transform:translateX(6px)}
+    75%{transform:translateX(-3px)}
+  }
+  .unlock-fab{
+    position:fixed;right:16px;bottom:16px;z-index:40;
+    height:48px;padding:0 16px;border-radius:999px;border:1px solid rgba(167,139,250,.3);
+    background:linear-gradient(180deg, rgba(139,92,246,.95), rgba(109,40,217,.95));color:#fff;cursor:pointer;
+    box-shadow:0 16px 40px rgba(139,92,246,.22);font-weight:900;display:none
+  }
+  .unlock-fab.show{display:inline-flex;align-items:center;gap:8px}
 
-@keyframes shake{
-  0%{transform:translateX(0)}
-  25%{transform:translateX(-5px)}
-  50%{transform:translateX(5px)}
-  75%{transform:translateX(-5px)}
-  100%{transform:translateX(0)}
-}
+  .toast{
+    position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(20px);
+    z-index:80;background:rgba(15,23,42,.95);border:1px solid rgba(148,163,184,.16);color:#fff;
+    border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s ease
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media (max-width: 920px){
+    .grid-stats,.filters{grid-template-columns:1fr}
+  }
+  @media (max-width: 720px){
+    .topbar{padding:12px}
+    .container{padding:12px}
+    .stat-value{font-size:26px}
+    .history-item{flex-direction:column;align-items:flex-start}
+    .history-right{text-align:left;width:100%}
+  }
 </style>
 </head>
-
 <body>
+  <div class="main-app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">🏦</div>
+        <div style="min-width:0">
+          <h1><span>Yuraaa</span> Finance</h1>
+          <p>Ringkasan keuangan & transaksi terverifikasi</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="openPinBtn" title="Buka PIN">🔐</button>
+        <button class="ghost-btn primary" id="refreshBtn" title="Muat ulang data">↻ Refresh</button>
+      </div>
+    </header>
 
-<div class="close-btn" onclick="location.href='/'">✕</div>
+    <div class="container">
+      <section class="grid-stats">
+        <div class="stat-card">
+          <div class="stat-top">
+            <div>
+              <div class="stat-title">Total Masuk</div>
+              <div class="stat-value" id="totalMasuk">Rp 0</div>
+              <p class="stat-sub">Pemasukan bulan ini</p>
+            </div>
+            <div class="stat-icon purple">⬇</div>
+          </div>
+          <div class="stat-pill"><span class="up">●</span> <span id="monthLabelTop">Bulan aktif</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div>
+              <div class="stat-title">Transaksi</div>
+              <div class="stat-value" id="soldCount">0</div>
+              <p class="stat-sub">Jumlah akun sold</p>
+            </div>
+            <div class="stat-icon green">✓</div>
+          </div>
+          <div class="stat-pill">Terverifikasi otomatis</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div>
+              <div class="stat-title">Rata-rata</div>
+              <div class="stat-value" id="avgSold">Rp 0</div>
+              <p class="stat-sub">Nilai per transaksi</p>
+            </div>
+            <div class="stat-icon blue">▣</div>
+          </div>
+          <div class="stat-pill">Update tiap refresh</div>
+        </div>
+      </section>
 
-<!-- PIN -->
-<div class="pin-modal" id="pinModal">
-  <div class="pin-box" id="pinBox">
-    <h3>Masukkan PIN</h3>
-    <div class="pin-inputs">
-      <input maxlength="1" class="pin-input">
-      <input maxlength="1" class="pin-input">
-      <input maxlength="1" class="pin-input">
-      <input maxlength="1" class="pin-input">
-      <input maxlength="1" class="pin-input">
-      <input maxlength="1" class="pin-input">
+      <section class="filters">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Filter Bulan</div>
+              <div class="panel-sub">Pilih bulan untuk melihat transaksi pada periode tertentu</div>
+            </div>
+          </div>
+          <select id="monthFilter" class="select"></select>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Pencarian</div>
+              <div class="panel-sub">Cari nama akun atau game</div>
+            </div>
+          </div>
+          <div class="search-row">
+            <input id="searchInput" class="search" placeholder="Cari akun, game, atau harga..." />
+          </div>
+        </div>
+      </section>
+
+      <section class="history-box">
+        <div class="history-head">
+          <div>
+            <h3>Riwayat Transaksi</h3>
+            <p id="listInfo">Memuat data...</p>
+          </div>
+          <div class="hint" id="updatedAt">Terakhir diperbarui: -</div>
+        </div>
+        <div id="historyList" class="history-list">
+          <div class="skeleton">
+            <div class="sk-item"></div>
+            <div class="sk-item sm"></div>
+            <div class="sk-item"></div>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
-</div>
 
-<div class="wrap" id="main">
+  <button class="unlock-fab" id="unlockFab">🔐 Masuk PIN</button>
 
-  <div class="card">
-    <div>Total Masuk</div>
-    <div class="value green" id="total">Rp 0</div>
+  <div class="pin-overlay" id="pinOverlay">
+    <div class="pin-card" id="pinCard" role="dialog" aria-modal="true" aria-labelledby="pinTitle">
+      <div class="pin-top">
+        <div>
+          <h2 class="pin-title" id="pinTitle">Masukkan PIN</h2>
+          <p class="pin-sub">Akses dashboard keuangan dengan kode 6 digit.</p>
+        </div>
+        <button class="pin-close" id="pinClose" aria-label="Tutup">×</button>
+      </div>
+
+      <div class="pin-body">
+        <div class="pin-label">PIN Akses</div>
+        <input id="pinInput" class="pin-input" type="password" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" />
+        <div class="pin-msg" id="pinMsg"></div>
+        <div class="pin-actions">
+          <button class="btn secondary" id="clearPinBtn">Hapus</button>
+          <button class="btn primary" id="submitPinBtn">Buka</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card">
-    <canvas id="chart"></canvas>
-  </div>
-
-  <div class="card">
-    <h3>Riwayat</h3>
-    <div id="list"></div>
-  </div>
-
-</div>
+  <div class="toast" id="toast"></div>
 
 <script>
 const API = "https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List";
-const PIN = "211202";
+const PIN_CODE = "211202";
+const AUTO_REFRESH_MS = 5 * 60 * 1000;
 
-// PIN INPUT
-const inputs = document.querySelectorAll(".pin-input");
+const els = {
+  totalMasuk: document.getElementById('totalMasuk'),
+  soldCount: document.getElementById('soldCount'),
+  avgSold: document.getElementById('avgSold'),
+  monthLabelTop: document.getElementById('monthLabelTop'),
+  monthFilter: document.getElementById('monthFilter'),
+  searchInput: document.getElementById('searchInput'),
+  historyList: document.getElementById('historyList'),
+  listInfo: document.getElementById('listInfo'),
+  updatedAt: document.getElementById('updatedAt'),
+  refreshBtn: document.getElementById('refreshBtn'),
+  openPinBtn: document.getElementById('openPinBtn'),
+  unlockFab: document.getElementById('unlockFab'),
+  pinOverlay: document.getElementById('pinOverlay'),
+  pinCard: document.getElementById('pinCard'),
+  pinClose: document.getElementById('pinClose'),
+  pinInput: document.getElementById('pinInput'),
+  submitPinBtn: document.getElementById('submitPinBtn'),
+  clearPinBtn: document.getElementById('clearPinBtn'),
+  pinMsg: document.getElementById('pinMsg'),
+  toast: document.getElementById('toast'),
+};
 
-inputs.forEach((inp,i)=>{
-  inp.addEventListener("input",()=>{
-    if(inp.value && i < inputs.length-1){
-      inputs[i+1].focus();
-    }
-    checkPin();
+let RAW = [];
+let CURRENT = [];
+let selectedMonth = monthKey(new Date());
+let searchTerm = '';
+let refreshTimer = null;
+
+function rupiah(n){
+  return 'Rp ' + new Intl.NumberFormat('id-ID').format(Number(n)||0);
+}
+
+function normalizeStatus(v){
+  return (v ?? '').toString().toLowerCase().trim().replace(/[^a-z]/g,'');
+}
+function parseDate(raw){
+  if(!raw) return null;
+  const d = new Date(raw);
+  return isNaN(d.getTime()) ? null : d;
+}
+function monthKey(date){
+  const y = date.getFullYear();
+  const m = String(date.getMonth()+1).padStart(2,'0');
+  return `${y}-${m}`;
+}
+function monthLabel(key){
+  const [y,m] = key.split('-').map(Number);
+  const d = new Date(y, m-1, 1);
+  return new Intl.DateTimeFormat('id-ID', { month:'long', year:'numeric' }).format(d);
+}
+function formatDate(date){
+  if(!date) return '-';
+  return new Intl.DateTimeFormat('id-ID', { day:'2-digit', month:'short', year:'numeric' }).format(date);
+}
+function animateNumber(el, target){
+  const start = 0;
+  const duration = 800;
+  const t0 = performance.now();
+  function frame(t){
+    const p = Math.min((t - t0) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const val = Math.round(start + (target - start) * eased);
+    el.textContent = rupiah(val);
+    if(p < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+function showToast(msg){
+  els.toast.textContent = msg;
+  els.toast.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>els.toast.classList.remove('show'), 1800);
+}
+function showPinMsg(msg){
+  els.pinMsg.textContent = msg;
+  els.pinMsg.classList.add('show');
+}
+function hidePinMsg(){
+  els.pinMsg.textContent = '';
+  els.pinMsg.classList.remove('show');
+}
+function openPinModal(){
+  els.pinOverlay.classList.remove('hidden');
+  document.body.classList.add('locked');
+  els.unlockFab.classList.remove('show');
+  setTimeout(()=>els.pinInput.focus(), 50);
+}
+function closePinModal(){
+  els.pinOverlay.classList.add('hidden');
+  document.body.classList.add('locked');
+  els.unlockFab.classList.add('show');
+}
+function unlockApp(){
+  sessionStorage.setItem('yuraaa_finance_unlocked','1');
+  document.body.classList.remove('locked');
+  els.pinOverlay.classList.add('hidden');
+  els.unlockFab.classList.remove('show');
+  hidePinMsg();
+  clearPin();
+  loadData();
+}
+function clearPin(){
+  els.pinInput.value = '';
+}
+function shakeCard(){
+  els.pinCard.classList.remove('shake');
+  void els.pinCard.offsetWidth;
+  els.pinCard.classList.add('shake');
+}
+function validatePin(){
+  const pin = els.pinInput.value.trim();
+  if(pin.length < 6) return;
+  if(pin === PIN_CODE){
+    unlockApp();
+  } else {
+    showPinMsg('PIN salah. Coba lagi ya.');
+    shakeCard();
+    clearPin();
+    setTimeout(()=>{
+      hidePinMsg();
+      closePinModal();
+      showToast('PIN salah. Klik Masuk PIN untuk mencoba lagi.');
+    }, 900);
+  }
+}
+function mapRow(row){
+  const nama = row.Nama ?? row.nama ?? row.Name ?? row.name ?? '-';
+  const game = row.Game ?? row.game ?? '-';
+  const harga = Number(String(row.Harga ?? row.harga ?? 0).replace(/[^\d]/g,'')) || 0;
+  const status = normalizeStatus(row.Status ?? row.status ?? 'ready');
+  const date = parseDate(row.Tanggal ?? row.tanggal ?? row.Date ?? row.date ?? row.CreatedAt ?? row.createdAt ?? row.Timestamp ?? row.timestamp ?? row.Waktu ?? row.waktu);
+  return { nama, game, harga, status, date, raw: row };
+}
+function getCurrentMonthData(data){
+  const target = selectedMonth;
+  return data.filter(x => x.date && monthKey(x.date) === target);
+}
+function applyFilters(){
+  const monthData = getCurrentMonthData(RAW);
+  const q = searchTerm.trim().toLowerCase();
+  const filtered = monthData.filter(item => {
+    if(!q) return true;
+    return [item.nama, item.game, String(item.harga), item.status].join(' ').toLowerCase().includes(q);
   });
-});
+  CURRENT = filtered;
+  render();
+}
+function renderStats(){
+  const sold = CURRENT.filter(x => x.status === 'sold');
+  const total = sold.reduce((s,x)=>s + x.harga, 0);
+  const avg = sold.length ? Math.round(total / sold.length) : 0;
+  animateNumber(els.totalMasuk, total);
+  els.soldCount.textContent = sold.length.toLocaleString('id-ID');
+  animateNumber(els.avgSold, avg);
+  els.monthLabelTop.textContent = monthLabel(selectedMonth);
+}
+function renderMonthOptions(data){
+  const months = [...new Map(data.filter(x => x.date).map(x => [monthKey(x.date), monthLabel(monthKey(x.date))])).entries()]
+    .sort((a,b)=> b[0].localeCompare(a[0]));
+  const current = monthKey(new Date());
+  if(!months.some(([k]) => k === current)) months.unshift([current, monthLabel(current)]);
+  els.monthFilter.innerHTML = `
+    <option value="">Semua Bulan</option>
+    ${months.map(([k,l]) => `<option value="${k}">${l}</option>`).join('')}
+  `;
+  if(!selectedMonth) selectedMonth = current;
+  els.monthFilter.value = selectedMonth;
+}
+function render(){
+  renderStats();
+  const data = CURRENT.filter(x => x.status === 'sold').sort((a,b) => (b.date?.getTime?.() || 0) - (a.date?.getTime?.() || 0));
 
-function checkPin(){
-  const val = [...inputs].map(i=>i.value).join("");
+  if(!data.length){
+    els.historyList.innerHTML = `
+      <div class="empty">
+        Tidak ada transaksi pada ${selectedMonth ? monthLabel(selectedMonth) : 'semua bulan'}.
+      </div>`;
+    els.listInfo.textContent = 'Belum ada transaksi yang cocok dengan filter.';
+    return;
+  }
 
-  if(val.length === 6){
-    if(val === PIN){
-      document.getElementById("pinModal").style.display="none";
-      document.getElementById("main").style.display="block";
-      load();
-    }else{
-      const box = document.getElementById("pinBox");
-      box.classList.add("shake");
+  els.listInfo.textContent = `${data.length} transaksi ditemukan pada ${selectedMonth ? monthLabel(selectedMonth) : 'semua bulan'}.`;
+  els.historyList.innerHTML = data.map((x,i)=>`
+    <div class="history-item" style="transition-delay:${i*0.045}s">
+      <div class="history-left">
+        <div class="history-icon">🎮</div>
+        <div class="history-main">
+          <h4 class="history-title">${escapeHtml(x.nama)}</h4>
+          <p class="history-sub">${escapeHtml(x.game)} • ${x.date ? formatDate(x.date) : '-'}</p>
+          <div class="status-pill">● sold</div>
+        </div>
+      </div>
+      <div class="history-right">
+        <p class="history-price">${rupiah(x.harga)}</p>
+        <p class="history-date">Masuk bulan ${selectedMonth ? monthLabel(selectedMonth) : 'semua'}</p>
+      </div>
+    </div>
+  `).join('');
 
-      setTimeout(()=>{
-        box.classList.remove("shake");
-        inputs.forEach(i=>i.value="");
-        inputs[0].focus();
-      },400);
-
-      setTimeout(()=>{
-        alert("PIN salah!");
-        location.href="/";
-      },800);
-    }
+  setTimeout(()=>{
+    document.querySelectorAll('.history-item').forEach(el=>el.classList.add('show'));
+  }, 60);
+}
+function escapeHtml(str){
+  return String(str ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+function setLoading(){
+  els.historyList.innerHTML = `
+    <div class="skeleton">
+      <div class="sk-item"></div>
+      <div class="sk-item sm"></div>
+      <div class="sk-item"></div>
+    </div>`;
+  els.listInfo.textContent = 'Memuat data...';
+}
+async function loadData(){
+  try{
+    setLoading();
+    const res = await fetch(API, { cache: 'no-store' });
+    if(!res.ok) throw new Error('Gagal mengambil data spreadsheet');
+    const rows = await res.json();
+    RAW = Array.isArray(rows) ? rows.map(mapRow).filter(x => x.status === 'sold') : [];
+    renderMonthOptions(RAW);
+    applyFilters();
+    els.updatedAt.textContent = 'Terakhir diperbarui: ' + new Intl.DateTimeFormat('id-ID', {
+      dateStyle: 'medium', timeStyle: 'short'
+    }).format(new Date());
+  }catch(err){
+    console.error(err);
+    els.historyList.innerHTML = `<div class="error">Gagal memuat data. Cek akses spreadsheet, nama sheet, dan koneksi internet.</div>`;
+    els.listInfo.textContent = 'Data tidak bisa dimuat.';
   }
 }
 
-// LOAD DATA
-function load(){
-  fetch(API)
-    .then(res=>res.json())
-    .then(data=>render(data));
+els.monthFilter.addEventListener('change', (e)=>{
+  selectedMonth = e.target.value || monthKey(new Date());
+  applyFilters();
+});
+els.searchInput.addEventListener('input', (e)=>{
+  searchTerm = e.target.value || '';
+  applyFilters();
+});
+els.refreshBtn.addEventListener('click', ()=>{
+  showToast('Memuat ulang data...');
+  loadData();
+});
+els.openPinBtn.addEventListener('click', openPinModal);
+els.unlockFab.addEventListener('click', openPinModal);
+els.pinClose.addEventListener('click', ()=>{
+  closePinModal();
+  showToast('PIN ditutup. Klik Masuk PIN untuk membuka lagi.');
+});
+els.clearPinBtn.addEventListener('click', ()=>{
+  clearPin();
+  hidePinMsg();
+  els.pinInput.focus();
+});
+els.submitPinBtn.addEventListener('click', validatePin);
+els.pinInput.addEventListener('input', ()=>{
+  els.pinInput.value = els.pinInput.value.replace(/\D/g,'').slice(0,6);
+  hidePinMsg();
+  if(els.pinInput.value.length === 6) validatePin();
+});
+els.pinInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') validatePin();
+});
+els.pinInput.addEventListener('paste', (e)=>{
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+  els.pinInput.value = text;
+  if(text.length === 6) validatePin();
+});
+
+window.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape' && !els.pinOverlay.classList.contains('hidden')){
+    closePinModal();
+  }
+});
+
+// Close when clicking the backdrop
+els.pinOverlay.addEventListener('click', (e)=>{
+  if(e.target === els.pinOverlay){
+    closePinModal();
+  }
+});
+
+if(sessionStorage.getItem('yuraaa_finance_unlocked') === '1'){
+  document.body.classList.remove('locked');
+  els.pinOverlay.classList.add('hidden');
+  loadData();
+} else {
+  document.body.classList.add('locked');
+  openPinModal();
 }
 
-// RENDER
-function render(data){
-  const sold = data.filter(x => (x.Status||"").toLowerCase().includes("sold"));
-
-  const total = sold.reduce((s,x)=>
-    s + Number((x.Harga||"").replace(/[^\d]/g,'')),0
-  );
-
-  document.getElementById("total").textContent =
-    "Rp " + total.toLocaleString("id-ID");
-
-  // CHART
-  const labels = sold.slice(0,10).map(x=>x.Nama);
-  const values = sold.slice(0,10).map(x=>
-    Number((x.Harga||"").replace(/[^\d]/g,''))
-  );
-
-  new Chart(document.getElementById("chart"),{
-    type:'bar',
-    data:{
-      labels,
-      datasets:[{
-        data:values
-      }]
-    },
-    options:{
-      plugins:{legend:{display:false}},
-      scales:{x:{display:false},y:{display:false}}
-    }
-  });
-
-  // LIST
-  const list = document.getElementById("list");
-
-  list.innerHTML = sold.map((x,i)=>`
-    <div class="item" style="transition-delay:${i*0.05}s">
-      <div>${x.Nama}</div>
-      <div class="green">Rp ${Number((x.Harga||"").replace(/[^\d]/g,'')).toLocaleString("id-ID")}</div>
-    </div>
-  `).join("");
-
-  setTimeout(()=>{
-    document.querySelectorAll(".item").forEach(el=>{
-      el.classList.add("show");
-    });
-  },100);
-}
+refreshTimer = setInterval(()=>{
+  if(!document.body.classList.contains('locked')) loadData();
+}, AUTO_REFRESH_MS);
 </script>
-
 </body>
 </html>
