@@ -173,7 +173,13 @@
         </div>
       </section>
 
+      <!-- GitHub Pages = frontend, Apps Script = backend. Endpoint otomatis diisi dari penyimpanan lokal / default. -->
       <section class="section" id="sheetBox">
+        <!-- 
+        Keterangan:
+        - Dibuka dari Apps Script: submit memakai google.script.run.
+        - Dibuka dari GitHub Pages: submit memakai hidden iframe POST ke endpoint.
+      -->
         <div class="section-head"><div><h3>Koneksi Spreadsheet</h3><p>Kalau dibuka dari Apps Script, submit memakai <b>google.script.run</b>. Kalau dibuka dari GitHub, submit memakai hidden iframe POST ke endpoint.</p></div><div class="status-pill warn" id="connStatus">Belum tersambung</div></div>
         <div class="grid">
           <div class="field full"><label class="label" for="endpoint">URL Endpoint / Web App</label><input id="endpoint" class="input" placeholder="https://script.google.com/macros/s/....../exec"><div class="hint">Kalau kosong, form tetap akan mencoba memakai endpoint bawaan. Pastikan deployment Apps Script sudah publik.</div></div>
@@ -227,7 +233,7 @@
 
 <script>
 (() => {
-  const DEFAULT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxpfoeXW7t20T77M2Wz1r2bpQQWodIamJaqumsS-TezCXUAJoKvjT2jQ2nzt4To0ojU2g/exec';
+  const DEFAULT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw11ea5OunhNEtQFZwYQ5Y8elLiWLxFtLlAlAxOCNhNUePTptftGUS42sluyYj_6-L0xw/exec';
   const ALLOWED_ORIGINS = ['https://script.google.com', 'https://script.googleusercontent.com'];
   const STORAGE_KEY = 'yuraaa_add_account_draft_v1';
   const ENDPOINT_KEY = 'yuraaa_add_account_endpoint_v1';
@@ -283,7 +289,7 @@
   function getEndpointOrDefault(){ return el.endpoint.value.trim() || DEFAULT_ENDPOINT; }
   function sendViaGoogleScript(fnName, payload){ return new Promise((resolve,reject)=>{ if(!window.google || !google.script || !google.script.run){ reject(new Error('google.script.run tidak tersedia.')); return; } const runner = google.script.run.withSuccessHandler(resolve).withFailureHandler(err=>reject(new Error(err && err.message ? err.message : String(err)))); runner[fnName](JSON.parse(JSON.stringify(payload))); }); }
   function sendViaIframePost(endpoint, payload){ return new Promise((resolve,reject)=>{ const iframeName=`sink_${Date.now()}`; const iframe=document.createElement('iframe'); iframe.name=iframeName; iframe.style.display='none'; const form=document.createElement('form'); form.action=endpoint; form.method='POST'; form.target=iframeName; form.style.display='none'; const fields={ client:'github', iframe:'1', origin:location.origin, data:JSON.stringify(payload) }; Object.entries(fields).forEach(([name,value])=>{ const input=document.createElement('input'); input.type='hidden'; input.name=name; input.value=value; form.appendChild(input); }); let settled=false; let messageSeen=false; const finish=(ok,data)=>{ if(settled) return; settled=true; cleanup(); if(ok) resolve(data || {ok:true,message:'Data berhasil disimpan.'}); else reject(new Error((data && data.message) || 'Gagal menyimpan data.')); }; const cleanup=()=>{ window.removeEventListener('message', onMessage); iframe.removeEventListener('load', onLoad); clearTimeout(timer); setTimeout(()=>{ form.remove(); iframe.remove(); },120); }; const onMessage=(event)=>{ if(!ALLOWED_ORIGINS.includes(event.origin)) return; const data=event.data || {}; if(data.source !== 'yuraaa-apps-script') return; messageSeen = true; finish(!!data.ok, data); }; const onLoad=()=>{ if(settled) return; setTimeout(()=>{ if(settled) return; if(messageSeen) return; finish(true, {ok:true,message:'Data berhasil dikirim ke spreadsheet.'}); }, 350); }; const timer=setTimeout(()=>{ finish(false, {message:'Tidak ada respons dari server. Periksa deployment / access.'}); }, 20000); iframe.addEventListener('load', onLoad); window.addEventListener('message', onMessage); document.body.appendChild(iframe); document.body.appendChild(form); form.submit(); }); }
-  async function submitSave(){ const err=validate(); if(err) return toast(err); try { showSubmitting(true); const payload=buildPayload(); if(window.google && google.script && google.script.run){ await sendViaGoogleScript('saveAccount', payload); showNotify('success','Berhasil','Data berhasil disimpan ke spreadsheet.'); } else { await sendViaIframePost(getEndpointOrDefault(), payload); showNotify('success','Berhasil','Data berhasil disimpan ke spreadsheet.'); } clearFormKeepEndpoint(); } catch (e) { console.error(e); showNotify('fail','Gagal',e.message || 'Gagal menyimpan data.'); } finally { showSubmitting(false); } }
+  async function submitSave(){ const err=validate(); if(err){ showNotify('fail','Gagal',err); toast(err); return; } try { showSubmitting(true); const payload=buildPayload(); if(window.google && google.script && google.script.run){ await sendViaGoogleScript('saveAccount', payload); showNotify('success','Berhasil','Data berhasil disimpan ke spreadsheet.'); } else { await sendViaIframePost(getEndpointOrDefault(), payload); showNotify('success','Berhasil','Data berhasil disimpan ke spreadsheet.'); } clearFormKeepEndpoint(); } catch (e) { console.error(e); showNotify('fail','Gagal',e.message || 'Gagal menyimpan data.'); } finally { showSubmitting(false); } }
   el.backBtn.addEventListener('click',()=>history.length > 1 ? history.back() : (window.location.href='https://lutthidayat.github.io/yuraaa-store/admin.html'));
   el.copyTemplateBtn.addEventListener('click', copyTemplate); el.copyTemplateBtn2.addEventListener('click', copyTemplate); el.openHelpBtn.addEventListener('click', openHelp); el.closeHelpBtn.addEventListener('click', closeHelp); el.closeHelpBtn2.addEventListener('click', closeHelp);
   el.scrollToFormBtn.addEventListener('click',()=>document.getElementById('sheetBox').scrollIntoView({behavior:'smooth', block:'start'}));
@@ -302,7 +308,8 @@
   window.addEventListener('keydown',e=>{ if(e.key === 'Escape') closeHelp(); });
   el.helpModal.addEventListener('click',e=>{ if(e.target === el.helpModal) closeHelp(); });
   el.notifyClose.addEventListener('click', hideNotify); el.notifyOverlay.addEventListener('click',e=>{ if(e.target === el.notifyOverlay) hideNotify(); });
-
+  window.addEventListener('focus', updateConnectionState);
+  setInterval(() => { updateConnectionState(); }, 15000);
 
   function initialize(){
     el.endpoint.value = localStorage.getItem(ENDPOINT_KEY) || DEFAULT_ENDPOINT;
