@@ -382,6 +382,54 @@
   const toDrivePreview = (url) => { const u = normalizeText(url); if (!u) return ''; if (/uc\?export=view&id=/i.test(u) || /drive\.google\.com\/uc\?id=/i.test(u)) return u; const idMatch = u.match(/\/d\/([a-zA-Z0-9_-]+)/) || u.match(/[?&]id=([a-zA-Z0-9_-]+)/); return idMatch && idMatch[1] ? `https://drive.google.com/uc?export=view&id=${idMatch[1]}` : u; };
   const extractLinks = (raw) => { const text = normalizeText(raw); if (!text) return []; return text.split(/[\n,;|]+/).map(s => toDrivePreview(s.trim())).filter(Boolean); };
 
+  let connectionProbeTimer = null;
+  function setConnectionStatus(connected, text) {
+    el.connStatus.className = connected ? 'status-pill' : 'status-pill warn';
+    el.connStatus.textContent = text;
+  }
+
+  function jsonp(url, cbName) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = url;
+      s.async = true;
+      s.onerror = () => { cleanup(); reject(new Error('Gagal memuat data koneksi.')); };
+      window[cbName] = (data) => { cleanup(); resolve(data); };
+      const cleanup = () => {
+        try { delete window[cbName]; } catch (_) { window[cbName] = undefined; }
+        s.remove();
+      };
+      document.body.appendChild(s);
+    });
+  }
+
+  async function updateConnectionState() {
+    const endpoint = el.endpoint.value.trim();
+    localStorage.setItem(ENDPOINT_KEY, endpoint);
+    if (!endpoint) {
+      setConnectionStatus(false, 'Belum tersambung');
+      return;
+    }
+
+    setConnectionStatus(false, 'Mengecek...');
+    const cb = `__yuraaa_ping_${Date.now()}`;
+    const url = `${endpoint}?action=names&callback=${cb}&_=${Date.now()}`;
+
+    try {
+      const res = await jsonp(url, cb);
+      if (!res || !res.ok) throw new Error((res && res.message) || 'Gagal konek.');
+      setConnectionStatus(true, 'Siap tersambung');
+    } catch (err) {
+      console.warn(err);
+      setConnectionStatus(false, 'Belum tersambung');
+    }
+  }
+
+  function scheduleConnectionCheck() {
+    clearTimeout(connectionProbeTimer);
+    connectionProbeTimer = setTimeout(() => updateConnectionState(), 450);
+  }
+
   async function fileToBase64(file) {
     return await new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -687,7 +735,7 @@
   el.resetBtn.addEventListener('click', () => { clearFormKeepEndpoint(); toast('Form direset.'); });
   el.copyJsonBtn.addEventListener('click', copyJson);
 
-  el.endpoint.addEventListener('input', updateConnectionState);
+  el.endpoint.addEventListener('input', scheduleConnectionCheck);
   el.gambar.addEventListener('input', () => { renderPreview(); saveDraft(); });
   el.imageFiles.addEventListener('change', async () => {
     try {
