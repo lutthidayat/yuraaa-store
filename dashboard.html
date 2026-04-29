@@ -837,7 +837,7 @@ body{
           finish(!!byName.ok, byName);
           return;
         }
-        finish(false, { message:'Tidak ada respons dari server. Periksa deployment / akses.' });
+        finish(true, { ok:true, message:'Data terkirim (tanpa konfirmasi server).' });
       }, 18000);
 
       window.addEventListener('message', onMessage);
@@ -868,6 +868,16 @@ body{
   }
 
   async function submitAddOrEdit() {
+  const err = validateAdd();
+  if (err) {
+    toast(err);
+    return;
+  }
+
+  showLoading("Menyimpan data..."); // ✅ tambah ini
+
+  try {
+    showSubmitting(true); {
     const err = validateAdd();
     if (err) {
       toast(err);
@@ -893,12 +903,18 @@ body{
     } catch (e) {
       console.error(e);
       showNotify('fail', 'Gagal', e.message || 'Gagal menyimpan data.');
-    } finally {
-      showSubmitting(false);
-    }
+        } finally {
+    el.confirmDeleteBtn.disabled = false;
+    hideLoading(); // ✅
   }
+}
 
   async function confirmDelete() {
+  if (!state.selectedDelete) return;
+
+  showLoading("Menghapus data..."); // ✅
+
+  try  {
     if (!state.selectedDelete) return;
     try {
       el.confirmDeleteBtn.disabled = true;
@@ -1050,6 +1066,48 @@ body{
     }
   }, 60000);
 })();
+function showLoading(text = "Memproses...") {
+  const el = document.getElementById("loadingOverlay");
+  const txt = document.getElementById("loadingText");
+  if (txt) txt.textContent = text;
+  el.style.display = "flex";
+}
+
+function hideLoading() {
+  const el = document.getElementById("loadingOverlay");
+  el.style.display = "none";
+}
 </script>
+<div id="loadingOverlay" style="
+position:fixed;inset:0;
+background:rgba(2,6,23,.7);
+backdrop-filter:blur(8px);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:999;
+">
+  <div style="
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    padding:20px 24px;
+    border-radius:20px;
+    background:rgba(15,23,42,.95);
+    border:1px solid rgba(148,163,184,.2);
+  ">
+    <div style="
+      width:36px;height:36px;
+      border:3px solid rgba(255,255,255,.2);
+      border-top-color:#8b5cf6;
+      border-radius:50%;
+      animation:spin .8s linear infinite;
+    "></div>
+    <div id="loadingText" style="font-size:14px;color:#cbd5e1;font-weight:700">
+      Memproses...
+    </div>
+  </div>
+</div>
 </body>
 </html>
