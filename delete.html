@@ -48,15 +48,6 @@
   .field.full{grid-column:1/-1}
   .label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}
   .input,.select,.textarea{width:100%;border-radius:18px;border:1px solid rgba(148,163,184,.16);background:rgba(2,6,23,.38);color:#fff;outline:none;font:inherit}
-
-  .input:-webkit-autofill,.input:-webkit-autofill:hover,.input:-webkit-autofill:focus,.select:-webkit-autofill,.select:-webkit-autofill:hover,.select:-webkit-autofill:focus,.textarea:-webkit-autofill,.textarea:-webkit-autofill:hover,.textarea:-webkit-autofill:focus{
-    -webkit-text-fill-color:#fff !important;
-    -webkit-box-shadow:0 0 0 1000px rgba(2,6,23,.38) inset !important;
-    box-shadow:0 0 0 1000px rgba(2,6,23,.38) inset !important;
-    caret-color:#fff;
-    transition:background-color 9999s ease-in-out 0s;
-  }
-  .select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%, #cbd5e1 50%), linear-gradient(135deg,#cbd5e1 50%, transparent 50%);background-position:calc(100% - 20px) calc(1em + 4px), calc(100% - 15px) calc(1em + 4px);background-size:5px 5px, 5px 5px;background-repeat:no-repeat;padding-right:40px}
   .input:focus,.select:focus,.textarea:focus{border-color:rgba(139,92,246,.55);box-shadow:0 0 0 4px rgba(139,92,246,.12)}
   .input,.select{height:52px;padding:0 14px;font-weight:700}
   .textarea{min-height:140px;padding:14px;resize:vertical;line-height:1.6;font-weight:600}
@@ -170,14 +161,7 @@
         </div>
       </section>
 
-      <!-- GitHub Pages = frontend, Apps Script = backend. Halaman ini mengambil data lewat endpoint yang sama. -->
-      <!-- GitHub Pages = frontend, Apps Script = backend. Data list dan delete memakai endpoint yang sama. -->
       <section class="section">
-        <!-- 
-          Keterangan:
-          - GitHub Pages dipakai sebagai tampilan frontend.
-          - Apps Script dipakai sebagai backend untuk list dan delete.
-        -->
         <div class="section-head">
           <div>
             <h3>Koneksi Spreadsheet</h3>
@@ -280,14 +264,14 @@
 
 <script>
 (() => {
-  const DEFAULT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwdr34FMbamJcEQaCEuD5n5_85M1pwnR5pAbGqqWfJPzurN0X_g6rXBs3G6Vx1FStPWgA/exec';
+  const DEFAULT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw11ea5OunhNEtQFZwYQ5Y8elLiWLxFtLlAlAxOCNhNUePTptftGUS42sluyYj_6-L0xw/exec';
   const STORAGE_KEY = 'yuraaa_delete_page_state_v1';
   const ENDPOINT_KEY = 'yuraaa_add_account_endpoint_v1';
   const ALLOWED_ORIGINS = ['https://script.google.com', 'https://script.googleusercontent.com'];
 
   const el = {
     backBtn: document.getElementById('backBtn'),
-    goAddBtn: document.getElementById('goAddBtn'),
+    goAddBtn: document.getElementById('goAddBtn') || document.getElementById('openAddPageBtn'),
     refreshBtn: document.getElementById('refreshBtn'),
     loadBtn: document.getElementById('loadBtn'),
     clearSelectionBtn: document.getElementById('clearSelectionBtn'),
@@ -322,6 +306,7 @@
     selected: null,
     sortNewest: true,
   };
+  let connectionCheckTimer = null;
 
   const toast = (msg) => { el.toast.textContent = msg; el.toast.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => el.toast.classList.remove('show'), 1800); };
   const showNotify = (type, title, msg) => { const ok = type === 'success'; el.notifyIcon.textContent = ok ? '✓' : '!'; el.notifyIcon.classList.toggle('fail', !ok); el.notifyTitle.textContent = title; el.notifyMsg.textContent = msg; el.notifyOverlay.classList.add('open'); el.notifyOverlay.setAttribute('aria-hidden', 'false'); };
@@ -335,8 +320,6 @@
   const closeConfirm = () => { el.confirmOverlay.classList.remove('open'); el.confirmOverlay.setAttribute('aria-hidden', 'true'); };
 
   const normalizeText = (v) => (v ?? '').toString().trim();
-  function getPageUrl(page){ const u = new URL(window.location.href); const isAppsScript = /script\.google\.(com|usercontent\.com)/i.test(window.location.href); if (isAppsScript) { u.searchParams.set('page', page); return u.toString(); } return page === 'delete' ? 'delete.html' : 'add.html'; }
-  function openAddPage(){ window.location.href = getPageUrl('add'); }
   const formatNum = (v) => {
     const n = String(v ?? '').replace(/[^\d]/g, '');
     return n ? new Intl.NumberFormat('id-ID').format(Number(n)) : '0';
@@ -347,145 +330,25 @@
     localStorage.setItem(ENDPOINT_KEY, el.endpoint.value.trim());
   }
 
-  async function updateConn(){
-    const endpoint = el.endpoint.value.trim();
-    saveEndpoint();
-    if (!endpoint) {
-      el.connStatus.className = 'status-pill warn';
-      el.connStatus.textContent = 'Belum tersambung';
-      return;
-    }
 
-    el.connStatus.className = 'status-pill warn';
-    el.connStatus.textContent = 'Mengecek...';
+function setConnectionState(ok, label) {
+  el.connStatus.className = ok ? 'status-pill' : 'status-pill warn';
+  el.connStatus.textContent = label;
+}
 
-    try {
-      const cb = `__yuraaa_ping_${Date.now()}`;
-      const url = `${endpoint}?action=names&callback=${cb}&_=${Date.now()}`;
-      const res = await jsonp(url, cb);
-      if (!res || !res.ok) throw new Error((res && res.message) || 'Gagal konek.');
-      el.connStatus.className = 'status-pill';
-      el.connStatus.textContent = 'Siap tersambung';
-    } catch (err) {
-      console.warn(err);
-      el.connStatus.className = 'status-pill warn';
-      el.connStatus.textContent = 'Belum tersambung';
-    }
+function isAppsScriptHost() {
+  return /script\.googleusercontent\.com|script\.google\.com/i.test(location.href);
+}
+
+function getPageUrl(page) {
+  const target = String(page || 'add').toLowerCase();
+  if (isAppsScriptHost()) {
+    const current = new URL(window.location.href);
+    current.searchParams.set('page', target);
+    return current.toString();
   }
-
-  function applyFilter(){
-    const q = normalizeText(el.searchInput.value).toLowerCase();
-    let list = [...state.items];
-    if (q) {
-      list = list.filter(x =>
-        [x.Nama, x.Game, x.Harga, x.Label, x.Status, `row ${x.row}`].join(' ').toLowerCase().includes(q)
-      );
-    }
-    if (state.sortNewest) list.sort((a, b) => b.row - a.row);
-    else list.sort((a, b) => a.row - b.row);
-
-    state.filtered = list;
-    renderCards();
-    renderChips();
-  }
-
-  function renderChips(){
-    const arr = state.filtered.slice(0, 40);
-    if (!arr.length) {
-      el.chipsList.innerHTML = '<div class="small-note">Tidak ada data yang cocok.</div>';
-      return;
-    }
-    el.chipsList.innerHTML = arr.map(item => `
-      <button type="button" class="chip${state.selected && state.selected.row === item.row ? ' active' : ''}" data-row="${item.row}">
-        ${escapeHtml(item.Nama)} • Rp ${escapeHtml(formatNum(item.Harga))} • ${escapeHtml(item.Game)}
-      </button>
-    `).join('');
-    el.chipsList.querySelectorAll('.chip').forEach(btn => {
-      btn.addEventListener('click', () => selectItem(Number(btn.dataset.row)));
-    });
-  }
-
-  function renderCards(){
-    const arr = state.filtered;
-    el.countBox.textContent = `${arr.length} item`;
-    if (!arr.length) {
-      el.cards.innerHTML = '<div class="small-note">Tidak ada data yang cocok.</div>';
-      return;
-    }
-    el.cards.innerHTML = arr.map(item => `
-      <div class="account-card${state.selected && state.selected.row === item.row ? ' active' : ''}" data-row="${item.row}">
-        <div class="small-note">Row ${item.row}</div>
-        <div class="account-name">${escapeHtml(item.Nama)}</div>
-        <div class="small-note">Rp ${escapeHtml(formatNum(item.Harga))}</div>
-        <div class="small-note">${escapeHtml(item.Game)}</div>
-        <div class="meta">
-          <span>${escapeHtml(item.Status || 'ready')}</span>
-          <span>${escapeHtml(item.Label || '-')}</span>
-        </div>
-      </div>
-    `).join('');
-    el.cards.querySelectorAll('.account-card').forEach(card => {
-      card.addEventListener('click', () => selectItem(Number(card.dataset.row)));
-    });
-  }
-
-  function renderSelected(){
-    if (!state.selected) {
-      el.selectedBox.innerHTML = '<div class="small-note">Belum ada pilihan.</div>';
-      el.deleteBtn.disabled = true;
-      return;
-    }
-    const s = state.selected;
-    el.selectedBox.innerHTML = `
-      <div class="selected-title">${escapeHtml(s.Nama)}</div>
-      <div class="small-note">Row ${s.row}</div>
-      <div class="small-note">Harga: Rp ${escapeHtml(formatNum(s.Harga))}</div>
-      <div class="small-note">Game: ${escapeHtml(s.Game)}</div>
-      <div class="small-note">Label: ${escapeHtml(s.Label || '-')}, Status: ${escapeHtml(s.Status || '-')}</div>
-    `;
-    el.deleteBtn.disabled = false;
-  }
-
-  function selectItem(row){
-    const found = state.items.find(x => x.row === row);
-    if (!found) return;
-    state.selected = found;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ row }));
-    renderCards();
-    renderChips();
-    renderSelected();
-  }
-
-  function clearSelection(){
-    state.selected = null;
-    localStorage.removeItem(STORAGE_KEY);
-    renderCards();
-    renderChips();
-    renderSelected();
-  }
-
-  function escapeHtml(str){
-    return String(str ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  function jsonp(url, cbName){
-    return new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = url;
-      s.async = true;
-      s.onerror = () => { cleanup(); reject(new Error('Gagal memuat data.')); };
-      window[cbName] = (data) => { cleanup(); resolve(data); };
-      const cleanup = () => {
-        try { delete window[cbName]; } catch (_) { window[cbName] = undefined; }
-        s.remove();
-      };
-      document.body.appendChild(s);
-    });
-  }
+  return new URL(`${target}.html`, window.location.href).toString();
+}
 
   async function loadData(){
     try {
@@ -506,8 +369,6 @@
       renderCards();
       renderChips();
       renderSelected();
-      el.connStatus.className = 'status-pill';
-      el.connStatus.textContent = 'Siap tersambung';
       toast('Daftar data dimuat.');
     } catch (e) {
       console.error(e);
@@ -584,9 +445,9 @@
       };
 
       const onMessage = (event) => {
-        if (!ALLOWED_ORIGINS.includes(event.origin)) return;
         const data = event.data || {};
         if (data.source !== 'yuraaa-apps-script') return;
+        if (event.origin && !ALLOWED_ORIGINS.includes(event.origin)) return;
         messageSeen = true;
         finish(!!data.ok, data);
       };
@@ -613,7 +474,6 @@
 
   async function deleteSelected(){
     if (!state.selected) {
-      showNotify('fail', 'Gagal', 'Pilih data dulu.');
       toast('Pilih data dulu.');
       return;
     }
@@ -643,7 +503,7 @@
   }
 
   el.backBtn.addEventListener('click', () => history.length > 1 ? history.back() : (window.location.href = getPageUrl('add')));
-  el.goAddBtn.addEventListener('click', openAddPage);
+  if (el.goAddBtn) el.goAddBtn.addEventListener('click', () => { window.location.href = getPageUrl('add'); });
   el.refreshBtn.addEventListener('click', loadData);
   el.loadBtn.addEventListener('click', loadData);
   el.reloadBtn.addEventListener('click', loadData);
@@ -654,15 +514,13 @@
     el.sortBtn.textContent = state.sortNewest ? 'Terbaru' : 'Terlama';
     applyFilter();
   });
-  el.endpoint.addEventListener('input', () => { updateConn(); });
-  el.endpoint.addEventListener('change', loadData);
+  el.endpoint.addEventListener('input', () => { updateConn(); scheduleConnectionCheck(); });
+  el.endpoint.addEventListener('change', verifyConnection);
   el.deleteBtn.addEventListener('click', deleteSelected);
   el.notifyClose.addEventListener('click', hideNotify);
   el.notifyOverlay.addEventListener('click', (e) => { if (e.target === el.notifyOverlay) hideNotify(); });
   el.confirmCancelBtn.addEventListener('click', closeConfirm);
   el.confirmDeleteBtn.addEventListener('click', doDelete);
-  window.addEventListener('focus', loadData);
-  setInterval(() => { if (!document.hidden) loadData(); }, 30000);
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeConfirm(); hideNotify(); } });
 
   function init(){
