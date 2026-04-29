@@ -4,14 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Yuraaa | Tambah Akun</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#040816;--panel:rgba(15,23,42,.78);--line:rgba(148,163,184,.16);--text:#e5e7eb;--muted:#94a3b8;--accent:#8b5cf6;--shadow:0 24px 70px rgba(0,0,0,.45)}
-  *{box-sizing:border-box} html,body{height:100%}
-  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text);background:linear-gradient(180deg,#020617 0%,#050816 100%);overflow-x:hidden;min-height:100dvh}
-  .bg{position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(rgba(148,163,184,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.12) 1px, transparent 1px);background-size:48px 48px;mask-image:radial-gradient(circle at 30% 10%, black 0, black 35%, transparent 72%)}
+  :root{--bg:#040816;--panel:rgba(15,23,42,.82);--line:rgba(148,163,184,.16);--text:#e5e7eb;--muted:#94a3b8;--accent:#8b5cf6;--good:#86efac;--bad:#fca5a5;--shadow:0 24px 70px rgba(0,0,0,.45)}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  html{scroll-behavior:smooth}
+  body{margin:0;min-height:100dvh;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text);background:radial-gradient(1200px 700px at 90% -10%, rgba(139,92,246,.18), transparent 45%),radial-gradient(900px 500px at 5% 0%, rgba(96,165,250,.12), transparent 40%),linear-gradient(180deg, #020617 0%, #050816 100%);overflow-x:hidden}
+  .bg{position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(rgba(148,163,184,.12) 1px, transparent 1px),linear-gradient(90deg, rgba(148,163,184,.12) 1px, transparent 1px);background-size:48px 48px;mask-image:radial-gradient(circle at 30% 10%, black 0, black 35%, transparent 72%)}
   .app{max-width:1440px;margin:0 auto;min-height:100vh;position:relative;z-index:1;display:flex;flex-direction:column}
   .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;background:rgba(2,6,23,.66);backdrop-filter:blur(18px);border-bottom:1px solid rgba(148,163,184,.12)}
   .brand{display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 420px}
@@ -47,7 +46,7 @@
   .field{display:flex;flex-direction:column;gap:8px}
   .field.full{grid-column:1/-1}
   .label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}
-  .input,.select,.textarea{width:100%;border-radius:18px;border:1px solid rgba(148,163,184,.16);background:rgba(2,6,23,.38);color:#fff;outline:none;font:inherit;transition:.18s ease}
+  .input,.select,.textarea{width:100%;border-radius:18px;border:1px solid rgba(148,163,184,.16);background:rgba(2,6,23,.38);color:#fff;outline:none;font:inherit}
   .input:focus,.select:focus,.textarea:focus{border-color:rgba(139,92,246,.55);box-shadow:0 0 0 4px rgba(139,92,246,.12)}
   .input,.select{height:52px;padding:0 14px;font-weight:700}
   .textarea{min-height:140px;padding:14px;resize:vertical;line-height:1.6;font-weight:600}
@@ -65,7 +64,7 @@
   .preview-item img{width:100%;height:100%;object-fit:cover;display:block}
   .badge{position:absolute;left:10px;bottom:10px;padding:6px 8px;border-radius:999px;background:rgba(2,6,23,.66);border:1px solid rgba(255,255,255,.08);font-size:11px;font-weight:800;backdrop-filter:blur(8px)}
   .empty-state{display:flex;align-items:center;justify-content:center;min-height:180px;border-radius:18px;border:1px dashed rgba(148,163,184,.22);color:var(--muted);text-align:center;padding:16px;background:rgba(2,6,23,.16)}
-  .status-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid rgba(34,197,94,.18);background:rgba(34,197,94,.10);color:#86efac;font-size:12px;font-weight:800;width:max-content}
+  .status-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid rgba(34,197,94,.18);background:rgba(34,197,94,.10);color:var(--good);font-size:12px;font-weight:800;width:max-content}
   .status-pill.warn{border-color:rgba(245,158,11,.22);background:rgba(245,158,11,.12);color:#fcd34d}
   .footer-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
   .footer-actions .btn{flex:1 1 210px}
@@ -76,23 +75,20 @@
   .loader{display:inline-flex;align-items:center;gap:10px}
   .spinner{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.22);border-top-color:#fff;animation:spin .9s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
-  .overlay{position:fixed;inset:0;z-index:120;background:rgba(2,6,23,.72);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:18px}
-  .overlay.open{display:flex}
-  .card{width:min(420px,100%);border-radius:24px;border:1px solid rgba(148,163,184,.16);background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(8,13,28,.98));box-shadow:0 30px 90px rgba(0,0,0,.55);padding:18px;text-align:center}
-  .ico{width:58px;height:58px;border-radius:18px;margin:0 auto 12px;display:grid;place-items:center;font-size:28px;font-weight:900;background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.18)}
-  .ico.fail{background:rgba(239,68,68,.12);color:#fca5a5;border-color:rgba(239,68,68,.22)}
-  .title{font-size:20px;font-weight:900;margin:0 0 8px}
-  .msg{font-size:13px;line-height:1.6;color:var(--muted);margin:0 0 16px}
-  .close{width:100%;height:44px;border:none;border-radius:14px;cursor:pointer;font-weight:900;color:#fff;background:linear-gradient(180deg, #8b5cf6, #6d28d9)}
-  .modal{position:fixed;inset:0;z-index:100;background:rgba(2,6,23,.72);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:18px}
-  .modal.open{display:flex}
-  .modal-card{width:min(760px,100%);border-radius:28px;background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(8,13,28,.98));border:1px solid rgba(148,163,184,.16);box-shadow:0 40px 120px rgba(0,0,0,.65);padding:22px}
+  .modal,.overlay{position:fixed;inset:0;background:rgba(2,6,23,.72);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}
+  .modal.open,.overlay.open{display:flex}
+  .modal-card,.card{width:min(760px,100%);border-radius:28px;background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(8,13,28,.98));border:1px solid rgba(148,163,184,.16);box-shadow:0 40px 120px rgba(0,0,0,.65);padding:22px}
   .modal-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
   .modal-top h3{margin:0;font-size:22px;font-weight:900}
   .modal-top p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
   .close-x{width:40px;height:40px;border-radius:14px;border:1px solid rgba(148,163,184,.16);background:rgba(15,23,42,.8);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:18px}
   .modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
   .modal-actions .btn{flex:1 1 160px}
+  .notify-ico{width:58px;height:58px;border-radius:18px;margin:0 auto 12px;display:grid;place-items:center;font-size:28px;font-weight:900;background:rgba(34,197,94,.12);color:var(--good);border:1px solid rgba(34,197,94,.18)}
+  .notify-ico.fail{background:rgba(239,68,68,.12);color:var(--bad);border-color:rgba(239,68,68,.22)}
+  .notify-title{font-size:20px;font-weight:900;margin:0 0 8px;text-align:center}
+  .notify-msg{font-size:13px;line-height:1.6;color:var(--muted);margin:0 0 16px;text-align:center}
+  .notify-close{width:100%;height:44px;border:none;border-radius:14px;cursor:pointer;font-weight:900;color:#fff;background:linear-gradient(180deg, #8b5cf6, #6d28d9)}
   @media (max-width:960px){.hero,.preview-wrap{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media (max-width:720px){
     .topbar{align-items:flex-start;padding:12px}
@@ -130,7 +126,7 @@
         <div class="brand-mark">✦</div>
         <div style="min-width:0">
           <h1><span>Yuraaa</span> | Tambah Akun</h1>
-          <p>Mode GitHub</p>
+          <p>Upload foto langsung</p>
         </div>
       </div>
       <div class="top-actions">
@@ -142,9 +138,9 @@
     <main class="container">
       <section class="hero">
         <div>
-          <div class="eyebrow">GitHub UI • submit ke Apps Script</div>
+          <div class="eyebrow">Upload foto langsung • GitHub & Apps Script</div>
           <h2>Buat akun baru <span>lebih cepat</span> dan lebih rapi.</h2>
-          <p>Form ini bisa dipakai dari GitHub. Submit memakai request POST ke Apps Script.</p>
+          <p>Upload gambar bisa langsung dari perangkat. File akan dikirim ke Apps Script, disimpan ke Drive, lalu link otomatis masuk ke spreadsheet.</p>
           <div class="hero-actions">
             <button class="btn primary" id="scrollToFormBtn">Isi Form Sekarang</button>
             <button class="btn secondary" id="saveDraftBtn">Simpan Draft</button>
@@ -154,13 +150,13 @@
           <div class="metrics">
             <div class="metric">
               <div class="label">Mode</div>
-              <div class="value">Apps Script</div>
-              <div class="sub">Submit langsung ke server Google.</div>
+              <div class="value">Upload System</div>
+              <div class="sub">Satu file HTML bisa dipakai di GitHub maupun Apps Script.</div>
             </div>
             <div class="metric">
               <div class="label">Harga</div>
               <div class="value">Rp Format</div>
-              <div class="sub">Input otomatis diformat dan tersimpan numerik.</div>
+              <div class="sub">Input harga otomatis menjadi format Rupiah.</div>
             </div>
           </div>
         </div>
@@ -170,7 +166,7 @@
         <div class="section-head">
           <div>
             <h3>Koneksi Spreadsheet</h3>
-            <p>Kalau halaman ini dibuka dari Apps Script, submit memakai <b>google.script.run</b>. Endpoint dipakai sebagai cadangan bila dibuka dari luar.</p>
+            <p>Kalau dibuka dari Apps Script, submit memakai <b>google.script.run</b>. Kalau dibuka dari GitHub, submit memakai hidden iframe POST ke endpoint.</p>
           </div>
           <div class="status-pill warn" id="connStatus">Belum tersambung</div>
         </div>
@@ -178,7 +174,7 @@
           <div class="field full">
             <label class="label" for="endpoint">URL Endpoint / Web App</label>
             <input id="endpoint" class="input" placeholder="https://script.google.com/macros/s/....../exec">
-            <div class="hint">Opsional. Jika kosong, data tetap dikirim saat dijalankan dari project Apps Script yang sama.</div>
+            <div class="hint">Kalau kosong, form tetap akan mencoba memakai endpoint bawaan. Pastikan deployment Apps Script sudah publik.</div>
           </div>
           <div class="field">
             <label class="label" for="sheetId">Spreadsheet ID</label>
@@ -240,20 +236,25 @@
       <section class="section">
         <div class="section-head">
           <div>
-            <h3>Gambar & Preview</h3>
-            <p>Masukkan link gambar, pisahkan dengan koma atau baris baru bila lebih dari satu.</p>
+            <h3>Upload Gambar</h3>
+            <p>Pilih foto dari perangkat atau tempel link gambar. File akan diupload ke folder Drive otomatis.</p>
           </div>
         </div>
         <div class="preview-wrap">
           <div class="box">
             <div class="field">
-              <label class="label" for="gambar">Gambar</label>
+              <label class="label" for="imageFiles">Foto dari perangkat</label>
+              <input id="imageFiles" class="input" type="file" accept="image/*" multiple style="padding:12px;height:auto">
+              <div class="hint">Bisa pilih lebih dari satu foto. Foto yang dipilih akan langsung dipreview sebelum dikirim.</div>
+            </div>
+            <div class="field" style="margin-top:14px">
+              <label class="label" for="gambar">Link gambar cadangan</label>
               <textarea id="gambar" class="textarea" placeholder="https://drive.google.com/uc?export=view&id=xxxx, https://..."></textarea>
-              <div class="hint">Jika link Drive belum kompatibel, cukup tempel link Drive biasa. Sistem akan mencoba membacanya.</div>
+              <div class="hint">Kalau upload file dipakai, kolom ini boleh dikosongkan. Tetap bisa dipakai sebagai cadangan.</div>
             </div>
             <div style="margin-top:12px">
-              <div class="status-pill" id="imageState">0 gambar terdeteksi</div>
-              <div class="small-note" style="margin-top:10px">Tanggal otomatis diisi saat submit. Data disimpan ke kolom: Nama, Harga, Diskon, Game, Gambar, Label, Status, Ket, Tanggal, DONE.</div>
+              <div class="status-pill" id="imageState">0 foto dipilih</div>
+              <div class="small-note" style="margin-top:10px">Data yang dikirim: Nama, Harga, Diskon, Game, Gambar, Label, Status, Ket, Tanggal, DONE.</div>
             </div>
           </div>
           <div class="box">
@@ -261,7 +262,7 @@
               <strong>Preview Gambar</strong>
               <div class="preview-count" id="previewCount">0</div>
             </div>
-            <div id="previewArea"><div class="empty-state">Belum ada gambar. Tempel URL gambar pada kolom Gambar untuk melihat preview.</div></div>
+            <div id="previewArea"><div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div></div>
           </div>
         </div>
       </section>
@@ -292,14 +293,14 @@
       <div class="modal-top">
         <div>
           <h3 id="helpTitle">Panduan Singkat</h3>
-          <p>Isi endpoint kalau dibuka di luar Apps Script. Jika dijalankan dari Apps Script, tombol simpan memakai google.script.run.</p>
+          <p>Pilih foto dari perangkat, isi data akun, lalu klik simpan. Kalau dibuka dari GitHub, file akan dikirim ke Apps Script lewat iframe POST.</p>
         </div>
         <button class="close-x" id="closeHelpBtn" aria-label="Tutup">✕</button>
       </div>
       <div class="section-head" style="margin-bottom:8px">
         <div>
-          <h3 style="font-size:16px;margin:0">Struktur data</h3>
-          <p>Format payload sudah disesuaikan dengan spreadsheet kamu.</p>
+          <h3 style="font-size:16px;margin:0">Payload</h3>
+          <p>File foto dikirim sebagai base64 dan akan disimpan ke Drive.</p>
         </div>
       </div>
       <div class="box" style="margin-bottom:16px">
@@ -314,18 +315,20 @@
 
   <div class="overlay" id="notifyOverlay" aria-hidden="true">
     <div class="card" role="dialog" aria-modal="true" aria-labelledby="notifyTitle">
-      <div class="ico" id="notifyIcon">✓</div>
-      <h3 class="title" id="notifyTitle">Berhasil</h3>
-      <p class="msg" id="notifyMsg">Data berhasil disimpan.</p>
-      <button class="close" id="notifyClose">Tutup</button>
+      <div class="notify-ico" id="notifyIcon">✓</div>
+      <h3 class="notify-title" id="notifyTitle">Berhasil</h3>
+      <p class="notify-msg" id="notifyMsg">Data berhasil disimpan.</p>
+      <button class="notify-close" id="notifyClose">Tutup</button>
     </div>
   </div>
 
 <script>
 (() => {
-  const DEFAULT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxncG81fXasycdmx9xoa9TEN3T62JBB-qxJxrUzfcopOTducx_otf6E7UHJbGqXaE-MhA/exec';
-    const STORAGE_KEY = 'yuraaa_add_account_draft_v1';
-    const TEMPLATE = { Nama:'', Harga:'', Diskon:'', Game:'', Gambar:'', Label:'', Status:'ready', Ket:'', Tanggal:'', DONE:'' };
+  const DEFAULT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw11ea5OunhNEtQFZwYQ5Y8elLiWLxFtLlAlAxOCNhNUePTptftGUS42sluyYj_6-L0xw/exec';
+  const ALLOWED_ORIGINS = ['https://script.google.com', 'https://script.googleusercontent.com'];
+  const STORAGE_KEY = 'yuraaa_add_account_draft_v1';
+  const ENDPOINT_KEY = 'yuraaa_add_account_endpoint_v1';
+  const TEMPLATE = { Nama:'', Harga:'', Diskon:'', Game:'', Gambar:'', imageFiles:[], Label:'', Status:'ready', Ket:'', Tanggal:'', DONE:'' };
 
   const el = {
     backBtn: document.getElementById('backBtn'),
@@ -343,6 +346,7 @@
     label: document.getElementById('label'),
     ket: document.getElementById('ket'),
     gambar: document.getElementById('gambar'),
+    imageFiles: document.getElementById('imageFiles'),
     previewArea: document.getElementById('previewArea'),
     previewCount: document.getElementById('previewCount'),
     imageState: document.getElementById('imageState'),
@@ -365,6 +369,8 @@
     notifyClose: document.getElementById('notifyClose'),
   };
 
+  const state = { files: [], objectUrls: [] };
+
   function toast(msg) { el.toast.textContent = msg; el.toast.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => el.toast.classList.remove('show'), 1800); }
   function showNotify(type, title, msg) { const ok = type === 'success'; el.notifyIcon.textContent = ok ? '✓' : '!'; el.notifyIcon.classList.toggle('fail', !ok); el.notifyTitle.textContent = title; el.notifyMsg.textContent = msg; el.notifyOverlay.classList.add('open'); el.notifyOverlay.setAttribute('aria-hidden', 'false'); }
   function hideNotify() { el.notifyOverlay.classList.remove('open'); el.notifyOverlay.setAttribute('aria-hidden', 'true'); }
@@ -373,22 +379,51 @@
   function cleanNumber(v) { return String(v ?? '').replace(/[^\d]/g, ''); }
   function formatRupiah(v) { const d = cleanNumber(v); return d ? 'Rp ' + new Intl.NumberFormat('id-ID').format(Number(d)) : ''; }
   function toDrivePreview(url) { const u = normalizeText(url); if (!u) return ''; if (/uc\?export=view&id=/i.test(u) || /drive\.google\.com\/uc\?id=/i.test(u)) return u; const idMatch = u.match(/\/d\/([a-zA-Z0-9_-]+)/) || u.match(/[?&]id=([a-zA-Z0-9_-]+)/); return idMatch && idMatch[1] ? `https://drive.google.com/uc?export=view&id=${idMatch[1]}` : u; }
-  function extractImages(raw) { const text = normalizeText(raw); if (!text) return []; const pieces = text.split(/[\n,;|]+/).map(s => s.trim()).filter(Boolean); const urls = []; for (const piece of pieces) { const matches = piece.match(/https?:\/\/[^\s"'<>]+/gi); if (matches && matches.length) matches.forEach(m => urls.push(toDrivePreview(m))); } return [...new Set(urls)]; }
-  function setRupiahInput(input) { const digits = cleanNumber(input.value); input.value = digits ? formatRupiah(digits) : ''; }
-  function buildPayload() { return { Nama: el.nama.value.trim(), Harga: cleanNumber(el.harga.value), Diskon: cleanNumber(el.diskon.value), Game: el.game.value.trim(), Gambar: el.gambar.value.trim(), Label: el.label.value, Status: el.status.value, Ket: el.ket.value.trim(), Tanggal: new Date().toISOString(), DONE: '' }; }
+  function extractLinks(raw) { const text = normalizeText(raw); if (!text) return []; return text.split(/[\n,;|]+/).map(s => toDrivePreview(s.trim())).filter(Boolean); }
+
+  async function fileToBase64(file) { return await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => { const result = String(reader.result || ''); resolve(result.includes(',') ? result.split(',')[1] : result); }; reader.onerror = () => reject(new Error('Gagal baca file.')); reader.readAsDataURL(file); }); }
+  async function prepareFiles(files) { const list = Array.from(files || []); const out = []; for (const file of list) { const data = await fileToBase64(file); out.push({ name: file.name, mimeType: file.type || 'image/png', data }); } return out; }
+
+  function buildPayload() { return { Nama: el.nama.value.trim(), Harga: cleanNumber(el.harga.value), Diskon: cleanNumber(el.diskon.value), Game: el.game.value.trim(), Gambar: el.gambar.value.trim(), imageFiles: state.files, Label: el.label.value, Status: el.status.value, Ket: el.ket.value.trim(), Tanggal: new Date().toISOString(), DONE: '' }; }
 
   function renderPreview() {
-    const urls = extractImages(el.gambar.value);
+    const urls = [...state.objectUrls, ...extractLinks(el.gambar.value)];
     el.previewCount.textContent = String(urls.length);
-    el.imageState.textContent = `${urls.length} gambar terdeteksi`;
-    if (!urls.length) { el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Tempel URL gambar pada kolom Gambar untuk melihat preview.</div>'; return; }
-    el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,9).map((url, i) => `<div class="preview-item"><img src="${url}" alt="Preview ${i + 1}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa link gambar.</div>'"><div class="badge">#${i + 1}</div></div>`).join('')}</div>`;
+    el.imageState.textContent = `${state.files.length ? state.files.length + ' foto dipilih' : (urls.length ? urls.length + ' link terdeteksi' : '0 foto dipilih')}`;
+    if (!urls.length) { el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>'; return; }
+    el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0, 9).map((url, i) => `<div class="preview-item"><img src="${url}" alt="Preview ${i + 1}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="badge">#${i + 1}</div></div>`).join('')}</div>`;
   }
 
-  function updateConnectionState() { const endpoint = el.endpoint.value.trim(); if (endpoint) { el.connStatus.className = 'status-pill'; el.connStatus.textContent = 'Siap tersambung'; } else { el.connStatus.className = 'status-pill warn'; el.connStatus.textContent = 'Belum tersambung'; } }
+  function updateConnectionState() { const endpoint = el.endpoint.value.trim(); localStorage.setItem(ENDPOINT_KEY, endpoint); if (endpoint) { el.connStatus.className = 'status-pill'; el.connStatus.textContent = 'Siap tersambung'; } else { el.connStatus.className = 'status-pill warn'; el.connStatus.textContent = 'Belum tersambung'; } }
   function saveDraft() { localStorage.setItem(STORAGE_KEY, JSON.stringify(buildPayload())); }
-  function loadDraft() { el.endpoint.value = DEFAULT_ENDPOINT; updateConnectionState(); const draft = localStorage.getItem(STORAGE_KEY); if (draft) { try { const d = JSON.parse(draft); el.nama.value = d.Nama ?? ''; el.harga.value = d.Harga ?? ''; el.diskon.value = d.Diskon ?? ''; el.game.value = d.Game ?? ''; el.gambar.value = d.Gambar ?? ''; el.label.value = d.Label ?? ''; el.status.value = d.Status ?? 'ready'; el.ket.value = d.Ket ?? ''; } catch {} } setRupiahInput(el.harga); syncChipState(); renderPreview(); }
-  function clearFormKeepEndpoint() { ['nama','game','harga','diskon','ket','gambar'].forEach(id => el[id].value = ''); el.status.value = 'ready'; el.label.value = ''; setRupiahInput(el.harga); syncChipState(); renderPreview(); saveDraft(); }
+  function setRupiahInput(input) { const digits = cleanNumber(input.value); input.value = digits ? formatRupiah(digits) : ''; }
+
+  function loadDraft() {
+    el.endpoint.value = localStorage.getItem(ENDPOINT_KEY) || DEFAULT_ENDPOINT;
+    updateConnectionState();
+    const draft = localStorage.getItem(STORAGE_KEY);
+    if (draft) {
+      try { const d = JSON.parse(draft); el.nama.value = d.Nama ?? ''; el.harga.value = d.Harga ?? ''; el.diskon.value = d.Diskon ?? ''; el.game.value = d.Game ?? ''; el.gambar.value = d.Gambar ?? ''; el.label.value = d.Label ?? ''; el.status.value = d.Status ?? 'ready'; el.ket.value = d.Ket ?? ''; } catch {}
+    }
+    setRupiahInput(el.harga);
+    syncChipState();
+    renderPreview();
+  }
+
+  function clearFormKeepEndpoint() {
+    ['nama','game','harga','diskon','ket','gambar'].forEach(id => el[id].value = '');
+    el.status.value = 'ready';
+    el.label.value = '';
+    el.imageFiles.value = '';
+    state.files = [];
+    state.objectUrls.forEach(u => URL.revokeObjectURL(u));
+    state.objectUrls = [];
+    setRupiahInput(el.harga);
+    syncChipState();
+    renderPreview();
+    saveDraft();
+  }
+
   function syncChipState() { el.chips.forEach(c => c.classList.remove('active')); const active = [...el.chips].find(c => c.dataset.fill === el.status.value || c.dataset.fill === el.label.value); if (active) active.classList.add('active'); }
   function setQuickFill(value) { const map = { ready:{status:'ready',label:''}, proses:{status:'proses',label:''}, sold:{status:'sold',label:''}, new:{label:'new'}, promo:{label:'promo'} }; const item = map[value]; if (!item) return; if (item.status) el.status.value = item.status; if (item.label !== undefined) el.label.value = item.label; syncChipState(); saveDraft(); toast(`Mode ${value.toUpperCase()} diterapkan.`); }
   function showSubmitting(isSubmitting) { el.submitBtn.disabled = isSubmitting; el.resetBtn.disabled = isSubmitting; el.copyJsonBtn.disabled = isSubmitting; el.submitLoader.style.display = isSubmitting ? 'inline-flex' : 'none'; el.submitLabel.style.display = isSubmitting ? 'none' : 'inline'; el.submitBtn.style.opacity = isSubmitting ? '.92' : '1'; }
@@ -399,31 +434,53 @@
   function copyTemplate() { navigator.clipboard.writeText(JSON.stringify(TEMPLATE, null, 2)).then(() => toast('Template JSON disalin.')).catch(() => toast('Gagal menyalin template.')); }
   function updateHelpTemplate() { el.helpTemplate.innerHTML = `<div style="white-space:pre-wrap;line-height:1.8;color:#dbeafe;font-size:13px">${JSON.stringify(TEMPLATE, null, 2)}</div>`; }
 
-  function sendViaGoogleScript(payload) { return new Promise((resolve, reject) => { if (!window.google || !google.script || !google.script.run) { reject(new Error('google.script.run tidak tersedia.')); return; } google.script.run.withSuccessHandler(resolve).withFailureHandler(err => reject(new Error(err && err.message ? err.message : String(err)))).saveAccount(JSON.parse(JSON.stringify(payload))); }); }
-  function sendViaFetchNoCors(endpoint, payload) {
-    const body = new URLSearchParams({
-      client: 'github',
-      iframe: '1',
-      origin: location.origin,
-      data: JSON.stringify(payload),
+  function sendViaGoogleScript(payload) {
+    return new Promise((resolve, reject) => {
+      if (!window.google || !google.script || !google.script.run) { reject(new Error('google.script.run tidak tersedia.')); return; }
+      google.script.run.withSuccessHandler(resolve).withFailureHandler(err => reject(new Error(err && err.message ? err.message : String(err)))).saveAccount(JSON.parse(JSON.stringify(payload)));
     });
-    return fetch(endpoint, {
-      method: 'POST',
-      mode: 'no-cors',
-      body,
+  }
+
+  function sendViaIframePost(endpoint, payload) {
+    return new Promise((resolve, reject) => {
+      const iframeName = `sink_${Date.now()}`;
+      const iframe = document.createElement('iframe'); iframe.name = iframeName; iframe.style.display = 'none';
+      const form = document.createElement('form'); form.action = endpoint; form.method = 'POST'; form.target = iframeName; form.style.display = 'none';
+      const fields = { client: 'github', iframe: '1', origin: location.origin, data: JSON.stringify(payload) };
+      Object.entries(fields).forEach(([name, value]) => { const input = document.createElement('input'); input.type = 'hidden'; input.name = name; input.value = value; form.appendChild(input); });
+
+      const cleanup = () => { window.removeEventListener('message', onMessage); clearTimeout(timer); setTimeout(() => { form.remove(); iframe.remove(); }, 150); };
+      const onMessage = (event) => { if (!ALLOWED_ORIGINS.includes(event.origin)) return; const data = event.data || {}; if (data.source !== 'yuraaa-apps-script') return; cleanup(); if (data.ok) resolve(data); else reject(new Error(data.message || 'Gagal menyimpan data.')); };
+      const timer = setTimeout(() => { cleanup(); reject(new Error('Tidak ada respons dari server. Periksa deployment / access.')); }, 15000);
+
+      window.addEventListener('message', onMessage);
+      document.body.appendChild(iframe);
+      document.body.appendChild(form);
+      form.submit();
     });
   }
 
   async function submit() {
-    const err = validate(); if (err) return toast(err);
-    const payload = buildPayload(); const endpoint = el.endpoint.value.trim() || DEFAULT_ENDPOINT;
+    const err = validate();
+    if (err) return toast(err);
     try {
       showSubmitting(true);
-      if (window.google && google.script && google.script.run) { await sendViaGoogleScript(payload); showNotify('success', 'Berhasil', 'Data berhasil disimpan ke spreadsheet.'); clearFormKeepEndpoint(); return; }
-      await sendViaFetchNoCors(endpoint, payload); showNotify('success', 'Berhasil', 'Data dikirim ke spreadsheet.'); clearFormKeepEndpoint();
+      const payload = buildPayload();
+      if (window.google && google.script && google.script.run) {
+        await sendViaGoogleScript(payload);
+        showNotify('success', 'Berhasil', 'Data berhasil disimpan ke spreadsheet.');
+      } else {
+        const endpoint = el.endpoint.value.trim() || DEFAULT_ENDPOINT;
+        await sendViaIframePost(endpoint, payload);
+        showNotify('success', 'Berhasil', 'Data berhasil dikirim ke spreadsheet.');
+      }
+      clearFormKeepEndpoint();
     } catch (e) {
-      console.error(e); showNotify('fail', 'Gagal', e.message || 'Gagal menyimpan data.');
-    } finally { showSubmitting(false); }
+      console.error(e);
+      showNotify('fail', 'Gagal', e.message || 'Gagal menyimpan data.');
+    } finally {
+      showSubmitting(false);
+    }
   }
 
   el.backBtn.addEventListener('click', () => history.length > 1 ? history.back() : (window.location.href = 'https://lutthidayat.github.io/yuraaa-store/admin.html'));
@@ -432,13 +489,23 @@
   el.openHelpBtn.addEventListener('click', openHelp);
   el.closeHelpBtn.addEventListener('click', closeHelp);
   el.closeHelpBtn2.addEventListener('click', closeHelp);
-  el.scrollToFormBtn.addEventListener('click', () => document.getElementById('sheetBox').scrollIntoView({behavior:'smooth', block:'start'}));
+  el.scrollToFormBtn.addEventListener('click', () => document.getElementById('sheetBox').scrollIntoView({ behavior: 'smooth', block: 'start' }));
   el.saveDraftBtn.addEventListener('click', () => { saveDraft(); toast('Draft disimpan di perangkat ini.'); });
   el.submitBtn.addEventListener('click', submit);
   el.resetBtn.addEventListener('click', () => { clearFormKeepEndpoint(); toast('Form direset.'); });
   el.copyJsonBtn.addEventListener('click', copyJson);
   el.endpoint.addEventListener('input', updateConnectionState);
   el.gambar.addEventListener('input', () => { renderPreview(); saveDraft(); });
+  el.imageFiles.addEventListener('change', async () => {
+    try {
+      state.files = await prepareFiles(el.imageFiles.files);
+      state.objectUrls.forEach(u => URL.revokeObjectURL(u));
+      state.objectUrls = Array.from(el.imageFiles.files).map(f => URL.createObjectURL(f));
+      renderPreview();
+      saveDraft();
+    } catch (e) { toast(e.message || 'Gagal baca file.'); }
+  });
+
   ['nama','game','harga','diskon','status','label','ket'].forEach(k => { el[k].addEventListener('input', saveDraft); el[k].addEventListener('change', saveDraft); });
   el.harga.addEventListener('input', () => { const digits = cleanNumber(el.harga.value); el.harga.value = digits ? formatRupiah(digits) : ''; saveDraft(); });
   el.harga.addEventListener('blur', () => { const digits = cleanNumber(el.harga.value); el.harga.value = digits ? formatRupiah(digits) : ''; });
@@ -452,6 +519,14 @@
   el.helpModal.addEventListener('click', (e) => { if (e.target === el.helpModal) closeHelp(); });
   el.notifyClose.addEventListener('click', hideNotify);
   el.notifyOverlay.addEventListener('click', (e) => { if (e.target === el.notifyOverlay) hideNotify(); });
+
+  window.addEventListener('message', (event) => {
+    if (!ALLOWED_ORIGINS.includes(event.origin)) return;
+    const data = event.data || {};
+    if (data.source !== 'yuraaa-apps-script') return;
+    if (data.ok) { showNotify('success', 'Berhasil', data.message || 'Data berhasil disimpan.'); clearFormKeepEndpoint(); }
+    else { showNotify('fail', 'Gagal', data.message || 'Gagal menyimpan data.'); }
+  });
 
   loadDraft();
   updateHelpTemplate();
