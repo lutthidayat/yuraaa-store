@@ -130,7 +130,7 @@
         <div class="brand-mark">✦</div>
         <div style="min-width:0">
           <h1><span>Yuraaa</span> | Tambah Akun</h1>
-          <p>Mode GitHub → Apps Script</p>
+          <p>Mode GitHub</p>
         </div>
       </div>
       <div class="top-actions">
@@ -142,9 +142,9 @@
     <main class="container">
       <section class="hero">
         <div>
-          <div class="eyebrow">GitHub UI • submit aman ke Apps Script</div>
+          <div class="eyebrow">GitHub UI • submit ke Apps Script</div>
           <h2>Buat akun baru <span>lebih cepat</span> dan lebih rapi.</h2>
-          <p>Form ini bisa dipakai dari GitHub. Submit memakai hidden iframe POST ke Apps Script, lalu hasilnya dikirim balik ke halaman.</p>
+          <p>Form ini bisa dipakai dari GitHub. Submit memakai request POST ke Apps Script.</p>
           <div class="hero-actions">
             <button class="btn primary" id="scrollToFormBtn">Isi Form Sekarang</button>
             <button class="btn secondary" id="saveDraftBtn">Simpan Draft</button>
@@ -323,11 +323,9 @@
 
 <script>
 (() => {
-  const DEFAULT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw11ea5OunhNEtQFZwYQ5Y8elLiWLxFtLlAlAxOCNhNUePTptftGUS42sluyYj_6-L0xw/exec';
-  const ALLOWED_ORIGINS = ['https://script.google.com', 'https://script.googleusercontent.com'];
-  const STORAGE_KEY = 'yuraaa_add_account_draft_v1';
-  const ENDPOINT_KEY = 'yuraaa_add_account_endpoint_v1';
-  const TEMPLATE = { Nama:'', Harga:'', Diskon:'', Game:'', Gambar:'', Label:'', Status:'ready', Ket:'', Tanggal:'', DONE:'' };
+  const DEFAULT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxncG81fXasycdmx9xoa9TEN3T62JBB-qxJxrUzfcopOTducx_otf6E7UHJbGqXaE-MhA/exec';
+    const STORAGE_KEY = 'yuraaa_add_account_draft_v1';
+    const TEMPLATE = { Nama:'', Harga:'', Diskon:'', Game:'', Gambar:'', Label:'', Status:'ready', Ket:'', Tanggal:'', DONE:'' };
 
   const el = {
     backBtn: document.getElementById('backBtn'),
@@ -387,9 +385,9 @@
     el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,9).map((url, i) => `<div class="preview-item"><img src="${url}" alt="Preview ${i + 1}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa link gambar.</div>'"><div class="badge">#${i + 1}</div></div>`).join('')}</div>`;
   }
 
-  function updateConnectionState() { const endpoint = el.endpoint.value.trim(); localStorage.setItem(ENDPOINT_KEY, endpoint); if (endpoint) { el.connStatus.className = 'status-pill'; el.connStatus.textContent = 'Siap tersambung'; } else { el.connStatus.className = 'status-pill warn'; el.connStatus.textContent = 'Belum tersambung'; } }
+  function updateConnectionState() { const endpoint = el.endpoint.value.trim(); if (endpoint) { el.connStatus.className = 'status-pill'; el.connStatus.textContent = 'Siap tersambung'; } else { el.connStatus.className = 'status-pill warn'; el.connStatus.textContent = 'Belum tersambung'; } }
   function saveDraft() { localStorage.setItem(STORAGE_KEY, JSON.stringify(buildPayload())); }
-  function loadDraft() { const endpoint = localStorage.getItem(ENDPOINT_KEY) || ''; el.endpoint.value = endpoint || DEFAULT_ENDPOINT; updateConnectionState(); const draft = localStorage.getItem(STORAGE_KEY); if (draft) { try { const d = JSON.parse(draft); el.nama.value = d.Nama ?? ''; el.harga.value = d.Harga ?? ''; el.diskon.value = d.Diskon ?? ''; el.game.value = d.Game ?? ''; el.gambar.value = d.Gambar ?? ''; el.label.value = d.Label ?? ''; el.status.value = d.Status ?? 'ready'; el.ket.value = d.Ket ?? ''; } catch {} } setRupiahInput(el.harga); syncChipState(); renderPreview(); }
+  function loadDraft() { el.endpoint.value = DEFAULT_ENDPOINT; updateConnectionState(); const draft = localStorage.getItem(STORAGE_KEY); if (draft) { try { const d = JSON.parse(draft); el.nama.value = d.Nama ?? ''; el.harga.value = d.Harga ?? ''; el.diskon.value = d.Diskon ?? ''; el.game.value = d.Game ?? ''; el.gambar.value = d.Gambar ?? ''; el.label.value = d.Label ?? ''; el.status.value = d.Status ?? 'ready'; el.ket.value = d.Ket ?? ''; } catch {} } setRupiahInput(el.harga); syncChipState(); renderPreview(); }
   function clearFormKeepEndpoint() { ['nama','game','harga','diskon','ket','gambar'].forEach(id => el[id].value = ''); el.status.value = 'ready'; el.label.value = ''; setRupiahInput(el.harga); syncChipState(); renderPreview(); saveDraft(); }
   function syncChipState() { el.chips.forEach(c => c.classList.remove('active')); const active = [...el.chips].find(c => c.dataset.fill === el.status.value || c.dataset.fill === el.label.value); if (active) active.classList.add('active'); }
   function setQuickFill(value) { const map = { ready:{status:'ready',label:''}, proses:{status:'proses',label:''}, sold:{status:'sold',label:''}, new:{label:'new'}, promo:{label:'promo'} }; const item = map[value]; if (!item) return; if (item.status) el.status.value = item.status; if (item.label !== undefined) el.label.value = item.label; syncChipState(); saveDraft(); toast(`Mode ${value.toUpperCase()} diterapkan.`); }
@@ -402,7 +400,19 @@
   function updateHelpTemplate() { el.helpTemplate.innerHTML = `<div style="white-space:pre-wrap;line-height:1.8;color:#dbeafe;font-size:13px">${JSON.stringify(TEMPLATE, null, 2)}</div>`; }
 
   function sendViaGoogleScript(payload) { return new Promise((resolve, reject) => { if (!window.google || !google.script || !google.script.run) { reject(new Error('google.script.run tidak tersedia.')); return; } google.script.run.withSuccessHandler(resolve).withFailureHandler(err => reject(new Error(err && err.message ? err.message : String(err)))).saveAccount(JSON.parse(JSON.stringify(payload))); }); }
-  function sendViaIframePost(endpoint, payload) { return new Promise((resolve, reject) => { const iframeName = `sink_${Date.now()}`; const iframe = document.createElement('iframe'); iframe.name = iframeName; iframe.style.display = 'none'; const form = document.createElement('form'); form.action = endpoint; form.method = 'POST'; form.target = iframeName; form.style.display = 'none'; const fields = { client:'github', iframe:'1', origin: location.origin, data: JSON.stringify(payload) }; Object.entries(fields).forEach(([name, value]) => { const input = document.createElement('input'); input.type = 'hidden'; input.name = name; input.value = value; form.appendChild(input); }); const cleanup = () => { window.removeEventListener('message', onMessage); clearTimeout(timer); setTimeout(() => { form.remove(); iframe.remove(); }, 150); }; const onMessage = (event) => { if (!ALLOWED_ORIGINS.includes(event.origin)) return; const data = event.data || {}; if (data.source !== 'yuraaa-apps-script') return; cleanup(); if (data.ok) resolve(data); else reject(new Error(data.message || 'Gagal menyimpan data.')); }; const timer = setTimeout(() => { cleanup(); reject(new Error('Tidak ada respons dari server. Periksa deployment / access.')); }, 12000); window.addEventListener('message', onMessage); document.body.appendChild(iframe); document.body.appendChild(form); form.submit(); }); }
+  function sendViaFetchNoCors(endpoint, payload) {
+    const body = new URLSearchParams({
+      client: 'github',
+      iframe: '1',
+      origin: location.origin,
+      data: JSON.stringify(payload),
+    });
+    return fetch(endpoint, {
+      method: 'POST',
+      mode: 'no-cors',
+      body,
+    });
+  }
 
   async function submit() {
     const err = validate(); if (err) return toast(err);
@@ -410,7 +420,7 @@
     try {
       showSubmitting(true);
       if (window.google && google.script && google.script.run) { await sendViaGoogleScript(payload); showNotify('success', 'Berhasil', 'Data berhasil disimpan ke spreadsheet.'); clearFormKeepEndpoint(); return; }
-      await sendViaIframePost(endpoint, payload); showNotify('success', 'Berhasil', 'Data berhasil dikirim ke spreadsheet.'); clearFormKeepEndpoint();
+      await sendViaFetchNoCors(endpoint, payload); showNotify('success', 'Berhasil', 'Data dikirim ke spreadsheet.'); clearFormKeepEndpoint();
     } catch (e) {
       console.error(e); showNotify('fail', 'Gagal', e.message || 'Gagal menyimpan data.');
     } finally { showSubmitting(false); }
@@ -442,8 +452,6 @@
   el.helpModal.addEventListener('click', (e) => { if (e.target === el.helpModal) closeHelp(); });
   el.notifyClose.addEventListener('click', hideNotify);
   el.notifyOverlay.addEventListener('click', (e) => { if (e.target === el.notifyOverlay) hideNotify(); });
-
-  window.addEventListener('message', (event) => { if (!ALLOWED_ORIGINS.includes(event.origin)) return; const data = event.data || {}; if (data.source !== 'yuraaa-apps-script') return; if (data.ok) { showNotify('success', 'Berhasil', data.message || 'Data berhasil disimpan.'); clearFormKeepEndpoint(); } else { showNotify('fail', 'Gagal', data.message || 'Gagal menyimpan data.'); } });
 
   loadDraft();
   updateHelpTemplate();
