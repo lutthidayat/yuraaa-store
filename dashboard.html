@@ -455,12 +455,27 @@ body{
   function escapeHtml(str) { return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   function toDrivePreview(url) {
-    const u = normalizeText(url);
-    if (!u) return '';
-    if (/uc\?export=view&id=/i.test(u) || /drive\.google\.com\/uc\?id=/i.test(u)) return u;
-    const idMatch = u.match(/\/d\/([a-zA-Z0-9_-]+)/) || u.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    return idMatch && idMatch[1] ? `https://drive.google.com/uc?export=view&id=${idMatch[1]}` : u;
+  const u = (url || '').trim();
+  if (!u) return '';
+
+  // sudah format benar
+  if (u.includes('uc?export=view&id=')) return u;
+
+  // format /file/d/ID
+  const match1 = u.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (match1) {
+    return `https://drive.google.com/uc?export=view&id=${match1[1]}`;
   }
+
+  // format ?id=ID
+  const match2 = u.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (match2) {
+    return `https://drive.google.com/uc?export=view&id=${match2[1]}`;
+  }
+
+  // kalau bukan drive link, balikin apa adanya
+  return u;
+}
 
   function extractLinks(raw) {
     const text = normalizeText(raw);
