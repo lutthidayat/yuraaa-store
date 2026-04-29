@@ -478,10 +478,20 @@ body{
 }
 
   function extractLinks(raw) {
-    const text = normalizeText(raw);
-    if (!text) return [];
-    return text.split(/[\n,;|]+/).map(s => toDrivePreview(s.trim())).filter(Boolean);
-  }
+  if (!raw) return [];
+
+  // hapus enter + spasi berlebihan
+  let text = String(raw)
+    .replace(/\s+/g, '') // 🔥 penting: hapus semua spasi & newline
+    .trim();
+
+  if (!text) return [];
+
+  return text
+    .split(/[,;|]+/) // pisah pakai koma saja
+    .map(s => toDrivePreview(s))
+    .filter(Boolean);
+}
 
   function setConnectionState(ok, label) {
     el.connStatus.className = ok ? 'status-pill' : 'status-pill warn';
