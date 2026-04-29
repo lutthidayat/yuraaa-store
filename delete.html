@@ -319,6 +319,8 @@
   const closeConfirm = () => { el.confirmOverlay.classList.remove('open'); el.confirmOverlay.setAttribute('aria-hidden', 'true'); };
 
   const normalizeText = (v) => (v ?? '').toString().trim();
+  function getPageUrl(page){ const u = new URL(window.location.href); const isAppsScript = /script\.google\.(com|usercontent\.com)/i.test(window.location.href); if (isAppsScript) { u.searchParams.set('page', page); return u.toString(); } return page === 'delete' ? 'delete.html' : 'add.html'; }
+  function openAddPage(){ window.location.href = getPageUrl('add'); }
   const formatNum = (v) => {
     const n = String(v ?? '').replace(/[^\d]/g, '');
     return n ? new Intl.NumberFormat('id-ID').format(Number(n)) : '0';
@@ -623,8 +625,8 @@
     }
   }
 
-  el.backBtn.addEventListener('click', () => history.length > 1 ? history.back() : (window.location.href = 'add.html'));
-  el.goAddBtn.addEventListener('click', () => { window.location.href = 'add.html'; });
+  el.backBtn.addEventListener('click', () => history.length > 1 ? history.back() : (window.location.href = getPageUrl('add')));
+  el.goAddBtn.addEventListener('click', openAddPage);
   el.refreshBtn.addEventListener('click', loadData);
   el.loadBtn.addEventListener('click', loadData);
   el.reloadBtn.addEventListener('click', loadData);
