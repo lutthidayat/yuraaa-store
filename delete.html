@@ -329,16 +329,30 @@
     localStorage.setItem(ENDPOINT_KEY, el.endpoint.value.trim());
   }
 
-  function updateConn(){
+  async function updateConn(){
     const endpoint = el.endpoint.value.trim();
-    if (endpoint) {
+    saveEndpoint();
+    if (!endpoint) {
+      el.connStatus.className = 'status-pill warn';
+      el.connStatus.textContent = 'Belum tersambung';
+      return;
+    }
+
+    el.connStatus.className = 'status-pill warn';
+    el.connStatus.textContent = 'Mengecek...';
+
+    try {
+      const cb = `__yuraaa_ping_${Date.now()}`;
+      const url = `${endpoint}?action=names&callback=${cb}&_=${Date.now()}`;
+      const res = await jsonp(url, cb);
+      if (!res || !res.ok) throw new Error((res && res.message) || 'Gagal konek.');
       el.connStatus.className = 'status-pill';
       el.connStatus.textContent = 'Siap tersambung';
-    } else {
+    } catch (err) {
+      console.warn(err);
       el.connStatus.className = 'status-pill warn';
       el.connStatus.textContent = 'Belum tersambung';
     }
-    saveEndpoint();
   }
 
   function applyFilter(){
@@ -474,6 +488,8 @@
       renderCards();
       renderChips();
       renderSelected();
+      el.connStatus.className = 'status-pill';
+      el.connStatus.textContent = 'Siap tersambung';
       toast('Daftar data dimuat.');
     } catch (e) {
       console.error(e);
@@ -619,7 +635,7 @@
     el.sortBtn.textContent = state.sortNewest ? 'Terbaru' : 'Terlama';
     applyFilter();
   });
-  el.endpoint.addEventListener('input', updateConn);
+  el.endpoint.addEventListener('input', () => { updateConn(); });
   el.endpoint.addEventListener('change', loadData);
   el.deleteBtn.addEventListener('click', deleteSelected);
   el.notifyClose.addEventListener('click', hideNotify);
