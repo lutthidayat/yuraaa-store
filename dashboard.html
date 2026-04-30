@@ -107,14 +107,33 @@
   function setConnectionState(ok,label){el.connStatus.className=ok?'status-pill':'status-pill warn';el.connStatus.textContent=label}
   function setMode(mode){const isEdit=mode==='edit';el.formTitle.textContent=isEdit?'Edit Akun':'Tambah Akun';el.formModePill.textContent=isEdit?'Mode edit':'Mode tambah';el.submitLabel.textContent=isEdit?'Update Akun':'Simpan Akun Baru'}
   function setRupiahInput(input){const digits=cleanNumber(input.value);input.value=digits?formatRupiah(digits):''}
-  function toDrivePreview(url){const u=normalizeText(url);if(!u)return'';if(/uc\?export=view&id=/i.test(u)||/drive\.google\.com\/uc\?id=/i.test(u))return u;const match1=u.match(/\/d\/([a-zA-Z0-9_-]+)/);if(match1&&match1[1])return `https://drive.google.com/uc?export=view&id=${match1[1]}`;const match2=u.match(/[?&]id=([a-zA-Z0-9_-]+)/);if(match2&&match2[1])return `https://drive.google.com/uc?export=view&id=${match2[1]}`;return u}
-  function extractLinks(raw){
+  function buildDriveThumbUrl(id){
+  return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+}
+function driveFileIdFromText(text){
+  const compact = String(text || '').replace(/\s+/g, '');
+  const match = compact.match(/(?:drive\.google\.com\/(?:uc\?export=view&id=|thumbnail\?id=|file\/d\/)|[?&]id=)([a-zA-Z0-9_-]+)/i);
+  return match && match[1] ? match[1] : '';
+}
+function toDrivePreview(url){
+  const u = normalizeText(url);
+  if(!u) return '';
+  const id = driveFileIdFromText(u);
+  if (id) return buildDriveThumbUrl(id);
+  return u.replace(/\s+/g, '');
+}
+function extractLinks(raw){
   if(!raw) return [];
-  return String(raw)
+  const text = String(raw).replace(/\r/g, '\n');
+  const ids = [...text.replace(/\s+/g, '').matchAll(/(?:drive\.google\.com\/(?:uc\?export=view&id=|thumbnail\?id=|file\/d\/)|[?&]id=)([a-zA-Z0-9_-]+)/gi)]
+    .map(m => buildDriveThumbUrl(m[1]));
+  const uniqueIds = [...new Set(ids)].filter(Boolean);
+  if (uniqueIds.length) return uniqueIds;
+  return text
     .split(/[\n,;|]+/)
     .map(s => s.trim())
     .filter(Boolean)
-    .map(s => toDrivePreview(s.replace(/\s+/g,'')))
+    .map(s => toDrivePreview(s))
     .filter(Boolean);
 }
   function firstImage(value){const list=extractLinks(value || '');return list.length?list[0]:''}
