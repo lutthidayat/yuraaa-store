@@ -146,9 +146,9 @@
     }
 
     function loadFrames() {
-      if (!financeFrame.srcdoc) financeFrame.srcdoc = FINANCE_HTML;
-      if (!dashboardFrame.srcdoc) dashboardFrame.srcdoc = DASHBOARD_HTML;
-    }
+  financeFrame.src = "finance.html";
+  dashboardFrame.src = "dashboard.html";
+}
 
     btnFinance.addEventListener('click', () => setActive('finance'));
     btnDashboard.addEventListener('click', () => setActive('dashboard'));
