@@ -59,7 +59,7 @@
       <div class="status-pill warn" id="connStatus">Belum tersambung</div>
       <button class="btn secondary" id="refreshAllBtn">Refresh</button>
       <button class="btn primary" id="openDeleteBtn">Buka Hapus</button>
-      <button class="btn ghost" id="closeBtn">Atas</button>
+      <button class="btn ghost" id="closeBtn" style="font-size:18px">✕</button>
     </div>
   </header>
   <main class="container">
@@ -765,11 +765,8 @@
   el.scrollListBtn.addEventListener('click', () => setTabScrollTo(el.listSection));
   el.openDeleteBtn.addEventListener('click', () => setTabScrollTo(el.listSection));
   el.closeBtn.addEventListener('click', () => {
-    closeConfirm();
-    hideNotify();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    toast('Tetap di dashboard.');
-  });
+  window.location.href = 'index.html';
+});
   el.refreshAllBtn.addEventListener('click', async () => {
     await loadList(true);
     await verifyConnection();
