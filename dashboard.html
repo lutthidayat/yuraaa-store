@@ -563,6 +563,7 @@
       const runner = google.script.run.withSuccessHandler(resolve).withFailureHandler(err => reject(new Error(err && err.message ? err.message : String(err))));
       if(action === 'delete') runner.deleteAccount(JSON.parse(JSON.stringify(payload)));
       else if(action === 'update') runner.updateAccount(JSON.parse(JSON.stringify(payload)));
+      else if(action === 'uploadImage') runner.uploadSingleImage(JSON.parse(JSON.stringify(payload)));
       else runner.saveAccount(JSON.parse(JSON.stringify(payload)));
     });
   }
@@ -663,6 +664,36 @@
     });
   }
 
+  async function uploadSingleImage(endpoint, fileData, index, total){
+    const payload = {
+      action: 'upload-image',
+      imageFile: fileData
+    };
+
+    const result = window.google && google.script && google.script.run
+      ? await sendViaGoogleScript('uploadImage', payload)
+      : await sendViaIframePost(endpoint, payload);
+
+    if(!result || result.ok === false){
+      throw new Error((result && result.message) ? result.message : 'Gagal mengunggah gambar.');
+    }
+
+    const url = result.url || (Array.isArray(result.uploaded) ? result.uploaded[0] : '');
+    if(!url) throw new Error('URL gambar tidak diterima.');
+    return url;
+  }
+
+  async function uploadQueuedImages(endpoint, files){
+    const list = Array.isArray(files) ? files : [];
+    const uploadedUrls = [];
+    for(let i = 0; i < list.length; i++){
+      showLoading(`Mengunggah gambar ${i + 1}/${list.length}...`);
+      const url = await uploadSingleImage(endpoint, list[i], i, list.length);
+      uploadedUrls.push(url);
+    }
+    return uploadedUrls;
+  }
+
   function validateAdd(){
     if(!el.nama.value.trim()) return 'Nama akun belum diisi.';
     if(!el.game.value.trim()) return 'Game belum diisi.';
@@ -677,8 +708,11 @@
     showLoading(el.rowEdit.value ? 'Menyimpan perubahan...' : 'Menyimpan data...');
     setBusy(true);
     try{
-      const payload = buildPayload();
       const endpoint = endpointValue();
+      const uploadedUrls = state.files.length ? await uploadQueuedImages(endpoint, state.files) : [];
+      const payload = buildPayload();
+      payload.uploadedImages = uploadedUrls;
+      payload.imageFiles = [];
       let result;
 
       if(window.google && google.script && google.script.run){
