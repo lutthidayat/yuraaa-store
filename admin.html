@@ -1431,9 +1431,15 @@
         if(!res.ok) throw new Error('Gagal mengambil data spreadsheet.');
         const json = await res.json();
         const rows = Array.isArray(json) ? json : Array.isArray(json?.items) ? json.items : [];
+        const seen = new Set();
         state.api = rows
           .filter(x => isSold(pick(x, 'Status', 'status')))
-          .map(apiToItem);
+          .map(apiToItem)
+          .filter(item => {
+            if(seen.has(item.id)) return false;
+            seen.add(item.id);
+            return true;
+          });
         toast('Spreadsheet tersinkron.');
         render();
       }catch(err){
@@ -1583,20 +1589,32 @@
     function toDrivePreview(url){
       const u = normalizeText(url);
       if(!u) return '';
-      if(/uc\?export=view&id=/i.test(u) || /drive\.google\.com\/uc\?id=/i.test(u)) return u;
-      const match1 = u.match(/\/d\/([a-zA-Z0-9_-]+)/);
-      const match2 = u.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      const compact = u.replace(/\s+/g,'');
+      if(!compact) return '';
+
+      if(/drive\.google\.com\/(?:thumbnail|uc)\?/i.test(compact) || /googleusercontent\.com/i.test(compact)) {
+        return compact;
+      }
+
+      const match1 = compact.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      const match2 = compact.match(/(?:[?&]id=)([a-zA-Z0-9_-]+)/i);
       const id = (match1 && match1[1]) || (match2 && match2[1]) || '';
-      return id ? `https://drive.google.com/uc?export=view&id=${id}` : u;
+      return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000` : compact;
     }
     function extractLinks(raw){
       if(!raw) return [];
+      const seen = new Set();
       return String(raw)
         .split(/[\n,;|]+/)
         .map(s => s.trim())
         .filter(Boolean)
-        .map(s => toDrivePreview(s.replace(/\s+/g,'')))
-        .filter(Boolean);
+        .map(s => toDrivePreview(s))
+        .filter(Boolean)
+        .filter(link => {
+          if(seen.has(link)) return false;
+          seen.add(link);
+          return true;
+        });
     }
     function firstImage(value){
       const list = extractLinks(value || '');
@@ -1632,6 +1650,27 @@
       return out;
     }
 
+    async function uploadSelectedFiles(files){
+      const list = Array.from(files || []);
+      const urls = [];
+      for(const file of list){
+        const imageFile = {
+          name: file.name,
+          mimeType: file.type || 'image/png',
+          data: await fileToBase64(file)
+        };
+        const result = await sendViaGoogleScript('upload-image', { imageFile });
+        if(result && result.url){
+          urls.push(result.url);
+        }else if(result && Array.isArray(result.uploaded) && result.uploaded.length){
+          urls.push(...result.uploaded);
+        }else{
+          throw new Error('Upload gambar gagal.');
+        }
+      }
+      return urls;
+    }
+
     function saveDashboardEndpoint(){
       localStorage.setItem(DASHBOARD_ENDPOINT_KEY, el.endpoint.value.trim() || DEFAULT_DASHBOARD_ENDPOINT);
     }
@@ -1652,7 +1691,7 @@
         el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>';
         return;
       }
-      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,9).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="badge">#${i+1}</div></div>`).join('')}</div>`;
+      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,9).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="badge">#${i+1}</div></div>`).join('')}</div>`;
     }
 
     function clearFiles(){
@@ -1692,7 +1731,8 @@
         Game: el.game.value.trim(),
         Gambar: el.gambar.value.trim(),
         keepImages: el.existingImages.value.trim(),
-        imageFiles: state.files,
+        imageFiles: [],
+        uploadedImages: [],
         Label: el.label.value,
         Status: el.statusSel.value,
         Ket: el.ket.value.trim(),
@@ -1704,7 +1744,7 @@
     function renderCard(item){
       const img = firstImage(item.Gambar || item.gambar || item.images || '');
       const media = img
-        ? `<img src="${img}" alt="${esc(item.Nama)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-empty',textContent:'Gambar tidak tersedia'}))">`
+        ? `<img src="${img}" alt="${esc(item.Nama)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-empty',textContent:'Gambar tidak tersedia'}))">`
         : `<div class="thumb-empty">Gambar tidak tersedia</div>`;
       return `<div class="account-card" data-row="${item.row}">
         <button class="card-x" data-daction="delete" data-row="${item.row}" title="Hapus">✕</button>
@@ -1730,7 +1770,10 @@
           const f = (state.filter || 'all').toLowerCase();
           const label = normalizeText(x.Label).toLowerCase();
           if(f === 'all') return true;
-          if(f === 'sold') return normalizeText(x.Status).toLowerCase().includes('sold');
+          if(f === 'sold') {
+            const s = normalizeText(x.Status).toLowerCase();
+            return s.includes('sold') || s.includes('done') || s.includes('terjual');
+          }
           return label === f;
         })
         .filter(x => [x.Nama, x.Game, x.Harga, x.Label, x.Status, x.Ket, `row ${x.row}`].join(' ').toLowerCase().includes(q))
@@ -1941,7 +1984,7 @@
         el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>';
         return;
       }
-      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,9).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="badge">#${i+1}</div></div>`).join('')}</div>`;
+      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,9).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="badge">#${i+1}</div></div>`).join('')}</div>`;
     }
 
     function formatImageUrlField(){
@@ -1957,7 +2000,18 @@
 
       setLoadingDashboard(true, data.action === 'update' ? 'Menyimpan perubahan...' : 'Menyimpan akun...');
       try{
-        data.imageFiles = await fileToPayload();
+        const selectedFiles = Array.from(el.imageFiles.files || []);
+        const uploaded = selectedFiles.length ? await uploadSelectedFiles(selectedFiles) : [];
+        const mergedLinks = [
+          ...normalizeImages_(el.existingImages.value),
+          ...normalizeImages_(el.gambar.value),
+          ...uploaded
+        ].filter(Boolean);
+        data.uploadedImages = uploaded;
+        data.Gambar = mergedLinks.join(', ');
+        data.keepImages = el.existingImages.value.trim();
+        data.imageFiles = [];
+
         const result = await sendViaGoogleScript(data.action, data);
         if(!result || result.ok === false) throw new Error((result && result.message) || 'Gagal menyimpan akun.');
         toast(data.action === 'update' ? 'Akun diperbarui.' : 'Akun disimpan.');
@@ -2114,7 +2168,6 @@
       $('dashImageFiles').addEventListener('change', setFileStateFromInput);
       $('dashGambar').addEventListener('input', () => { formatImageUrlField(); renderPreview(); });
       $('dashClearSearchBtn').onclick = () => { $('dashSearch').value=''; renderCards(); };
-      $('dashDashboardBtn');
       ui.closeBtn.onclick = () => { window.location.href = 'index.html'; };
 
       document.addEventListener('click', (e) => {
