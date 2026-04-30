@@ -1,759 +1,169 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Yuraaa Finance</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#020617;
-    --bg2:#0b1020;
-    --panel:rgba(15,23,42,.72);
-    --panel2:rgba(17,24,39,.82);
-    --line:rgba(148,163,184,.16);
-    --text:#e5e7eb;
-    --muted:#94a3b8;
-    --muted2:#64748b;
-    --accent:#8b5cf6;
-    --accent2:#60a5fa;
-    --green:#22c55e;
-    --red:#ef4444;
-    --yellow:#fbbf24;
-    --shadow:0 20px 60px rgba(2,6,23,.5);
-    --radius:24px;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-    background:
-      radial-gradient(1200px 500px at 80% -10%, rgba(139,92,246,.18), transparent 45%),
-      radial-gradient(800px 420px at 10% 0%, rgba(96,165,250,.12), transparent 40%),
-      linear-gradient(180deg, #020617 0%, #050816 100%);
-    color:var(--text);
-    overflow-x:hidden;
-  }
-  body.locked .main-app{
-    filter: blur(8px) saturate(.9);
-    pointer-events:none;
-    user-select:none;
-    transform:scale(.995);
-  }
-  .main-app{min-height:100vh;transition:filter .25s ease, transform .25s ease}
-
-  .topbar{
-    position:sticky;top:0;z-index:20;
-    display:flex;align-items:center;justify-content:space-between;gap:12px;
-    padding:14px 16px;
-    background:rgba(2,6,23,.66);
-    backdrop-filter: blur(18px);
-    border-bottom:1px solid rgba(148,163,184,.12);
-  }
-  .brand{display:flex;align-items:center;gap:12px;min-width:0}
-  .brand-mark{
-    width:46px;height:46px;border-radius:16px;display:grid;place-items:center;
-    background:linear-gradient(180deg, rgba(139,92,246,.28), rgba(59,130,246,.14));
-    border:1px solid rgba(167,139,250,.22);box-shadow:var(--shadow);flex:0 0 auto
-  }
-  .brand h1{margin:0;font-size:20px;line-height:1.1;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .brand h1 span{color:var(--accent)}
-  .brand p{margin:3px 0 0;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-  .top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-  .icon-btn,.ghost-btn{border:none;cursor:pointer;font:inherit}
-  .icon-btn{
-    width:44px;height:44px;border-radius:14px;display:grid;place-items:center;
-    background:rgba(15,23,42,.72);color:#fff;border:1px solid var(--line)
-  }
-  .ghost-btn{
-    min-height:44px;padding:0 14px;border-radius:14px;
-    background:rgba(15,23,42,.72);color:#fff;border:1px solid var(--line);font-weight:800
-  }
-  .ghost-btn.primary{background:linear-gradient(180deg, #8b5cf6, #6d28d9);border-color:rgba(167,139,250,.5)}
-
-  .container{padding:16px;max-width:1280px;margin:0 auto}
-  .grid-stats{
-    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:14px
-  }
-  .stat-card{
-    position:relative;overflow:hidden;
-    background:linear-gradient(180deg, rgba(15,23,42,.86), rgba(8,13,28,.94));
-    border:1px solid rgba(148,163,184,.14);
-    border-radius:24px;padding:18px;box-shadow:var(--shadow)
-  }
-  .stat-card::before{
-    content:"";position:absolute;inset:-40% -30% auto auto;width:220px;height:220px;border-radius:50%;
-    background:radial-gradient(circle, rgba(139,92,246,.16), transparent 65%);pointer-events:none
-  }
-  .stat-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
-  .stat-title{color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:800}
-  .stat-icon{width:48px;height:48px;border-radius:16px;display:grid;place-items:center}
-  .stat-icon.purple{background:rgba(139,92,246,.18);color:#c4b5fd}
-  .stat-icon.green{background:rgba(34,197,94,.16);color:#86efac}
-  .stat-icon.blue{background:rgba(59,130,246,.14);color:#93c5fd}
-  .stat-value{font-size:30px;line-height:1.05;font-weight:900;letter-spacing:-.02em;margin:0 0 6px}
-  .stat-sub{color:var(--muted);font-size:13px;margin:0}
-  .stat-pill{
-    display:inline-flex;align-items:center;gap:8px;margin-top:12px;
-    border-radius:999px;padding:8px 12px;background:rgba(15,23,42,.8);border:1px solid rgba(148,163,184,.12);
-    font-size:12px;font-weight:800;color:#dbeafe
-  }
-  .up{color:#86efac}
-
-  .filters{
-    display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-bottom:14px
-  }
-  .panel{
-    background:linear-gradient(180deg, rgba(15,23,42,.86), rgba(8,13,28,.94));
-    border:1px solid rgba(148,163,184,.14);border-radius:24px;padding:16px;box-shadow:var(--shadow)
-  }
-  .panel-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px}
-  .panel-title{margin:0;font-size:16px;font-weight:900}
-  .panel-sub{margin:3px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
-  .select{
-    width:100%;height:52px;border-radius:16px;padding:0 14px;
-    background:rgba(2,6,23,.36);color:#fff;border:1px solid rgba(148,163,184,.16);
-    outline:none;font:inherit;font-weight:700
-  }
-  .select:focus{border-color:rgba(139,92,246,.5);box-shadow:0 0 0 4px rgba(139,92,246,.12)}
-
-  .search-row{display:flex;gap:10px;align-items:center}
-  .search{
-    width:100%;height:52px;border-radius:16px;padding:0 14px;
-    background:rgba(2,6,23,.36);color:#fff;border:1px solid rgba(148,163,184,.16);
-    outline:none;font:inherit;font-weight:700
-  }
-  .search::placeholder{color:#64748b}
-
-  .history-box{
-    background:linear-gradient(180deg, rgba(15,23,42,.86), rgba(8,13,28,.94));
-    border:1px solid rgba(148,163,184,.14);border-radius:24px;padding:16px;box-shadow:var(--shadow)
-  }
-  .history-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-  .history-head h3{margin:0;font-size:18px;font-weight:900}
-  .history-head p{margin:3px 0 0;color:var(--muted);font-size:12px}
-  .hint{color:var(--muted);font-size:12px}
-
-  .history-list{display:flex;flex-direction:column;gap:12px}
-  .history-item{
-    display:flex;justify-content:space-between;align-items:center;gap:14px;
-    padding:14px;border-radius:18px;background:rgba(2,6,23,.28);border:1px solid rgba(148,163,184,.1);
-    opacity:0;transform:translateY(10px);transition:opacity .35s ease, transform .35s ease, border-color .2s ease
-  }
-  .history-item.show{opacity:1;transform:translateY(0)}
-  .history-item:hover{border-color:rgba(139,92,246,.22)}
-  .history-left{display:flex;gap:12px;align-items:flex-start;min-width:0}
-  .history-icon{
-    width:48px;height:48px;border-radius:16px;display:grid;place-items:center;flex:0 0 auto;
-    background:linear-gradient(180deg, rgba(139,92,246,.2), rgba(59,130,246,.12));border:1px solid rgba(167,139,250,.18)
-  }
-  .history-main{min-width:0}
-  .history-title{margin:0;font-size:15px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-  .history-sub{margin:5px 0 0;font-size:12px;color:var(--muted);line-height:1.5}
-  .history-right{text-align:right;flex:0 0 auto}
-  .history-price{margin:0;font-size:18px;font-weight:900;color:#34d399}
-  .history-date{margin:4px 0 0;color:var(--muted);font-size:12px}
-  .status-pill{
-    display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;
-    font-size:12px;font-weight:800;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.12);color:#fca5a5;margin-top:8px
-  }
-
-  .empty,.error,.loading{
-    padding:22px;border-radius:20px;background:rgba(2,6,23,.24);border:1px dashed rgba(148,163,184,.18);
-    color:var(--muted);text-align:center
-  }
-  .error{color:#fecaca;border-color:rgba(248,113,113,.24)}
-
-  .skeleton{display:flex;flex-direction:column;gap:12px}
-  .sk-item{
-    height:104px;border-radius:18px;
-    background:linear-gradient(90deg, rgba(148,163,184,.08), rgba(255,255,255,.08), rgba(148,163,184,.08));
-    background-size:200% 100%;animation:shimmer 1.2s linear infinite;opacity:.8
-  }
-  .sk-item.sm{height:72px}
-  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-  .pin-overlay{
-    position:fixed;inset:0;z-index:60;background:rgba(2,6,23,.72);backdrop-filter:blur(18px);
-    display:flex;align-items:center;justify-content:center;padding:18px;opacity:1;transition:opacity .25s ease
-  }
-  .pin-overlay.hidden{display:none}
-  .pin-card{
-    width:min(420px,100%);border-radius:28px;padding:20px;
-    background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(8,13,28,.98));
-    border:1px solid rgba(148,163,184,.16);box-shadow:0 40px 120px rgba(0,0,0,.65);
-    position:relative;overflow:hidden;animation:cardIn .28s ease
-  }
-  @keyframes cardIn{from{transform:translateY(14px) scale(.98);opacity:0}to{transform:none;opacity:1}}
-  .pin-card::before{
-    content:"";position:absolute;inset:-25% -20% auto auto;width:220px;height:220px;border-radius:50%;
-    background:radial-gradient(circle, rgba(139,92,246,.18), transparent 65%);pointer-events:none
-  }
-  .pin-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
-  .pin-title{margin:0;font-size:22px;line-height:1.1;font-weight:900}
-  .pin-sub{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
-  .pin-close{
-    width:40px;height:40px;border-radius:14px;border:1px solid rgba(148,163,184,.16);background:rgba(15,23,42,.8);
-    color:#fff;cursor:pointer;font-size:20px;display:grid;place-items:center;flex:0 0 auto
-  }
-  .pin-body{display:flex;flex-direction:column;gap:12px;margin-top:12px}
-  .pin-label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800}
-  .pin-input{
-    width:100%;height:58px;border-radius:18px;padding:0 16px;
-    background:rgba(2,6,23,.36);color:#fff;border:1px solid rgba(148,163,184,.16);
-    outline:none;font-size:22px;letter-spacing:.4em;font-weight:900;text-align:center
-  }
-  .pin-input:focus{border-color:rgba(139,92,246,.55);box-shadow:0 0 0 4px rgba(139,92,246,.12)}
-  .pin-actions{display:flex;gap:10px;margin-top:2px}
-  .btn{
-    border:none;cursor:pointer;font:inherit;font-weight:900;border-radius:16px;height:50px;padding:0 16px
-  }
-  .btn.secondary{background:rgba(15,23,42,.74);color:#fff;border:1px solid rgba(148,163,184,.16);flex:1}
-  .btn.primary{background:linear-gradient(180deg, #8b5cf6, #6d28d9);color:#fff;flex:1;box-shadow:0 10px 30px rgba(139,92,246,.18)}
-  .pin-msg{
-    min-height:22px;font-size:13px;color:#fca5a5;opacity:0;transform:translateY(-4px);transition:opacity .2s ease, transform .2s ease
-  }
-  .pin-msg.show{opacity:1;transform:none}
-  .shake{animation:shake .45s ease}
-  @keyframes shake{
-    0%,100%{transform:translateX(0)}
-    15%{transform:translateX(-8px)}
-    30%{transform:translateX(8px)}
-    45%{transform:translateX(-6px)}
-    60%{transform:translateX(6px)}
-    75%{transform:translateX(-3px)}
-  }
-  .unlock-fab{
-    position:fixed;right:16px;bottom:16px;z-index:40;
-    height:48px;padding:0 16px;border-radius:999px;border:1px solid rgba(167,139,250,.3);
-    background:linear-gradient(180deg, rgba(139,92,246,.95), rgba(109,40,217,.95));color:#fff;cursor:pointer;
-    box-shadow:0 16px 40px rgba(139,92,246,.22);font-weight:900;display:none
-  }
-  .unlock-fab.show{display:inline-flex;align-items:center;gap:8px}
-
-  .toast{
-    position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(20px);
-    z-index:80;background:rgba(15,23,42,.95);border:1px solid rgba(148,163,184,.16);color:#fff;
-    border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s ease
-  }
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-  .topbar{
-    flex-wrap:wrap;
-  }
-  .brand{
-    flex:1 1 320px;
-  }
-  .top-actions{
-    flex:1 1 320px;
-  }
-  .top-actions .ghost-btn,
-  .top-actions .icon-btn{
-    min-width:44px;
-  }
-  .add-btn{
-    background:linear-gradient(180deg, rgba(34,197,94,.95), rgba(22,163,74,.95));
-    border-color:rgba(74,222,128,.35) !important;
-    color:#fff;
-  }
-  .add-btn:hover{filter:brightness(1.03)}
-  .cta-row{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-  .cta-row .ghost-btn,
-  .cta-row .icon-btn{
-    flex:1 1 0;
-  }
-  .wide-panel{
-    grid-column:1 / -1;
-  }
-
-  @media (max-width: 920px){
-    .grid-stats,.filters{grid-template-columns:1fr}
-  }
-
-  @media (min-width: 1280px){
-    .container{padding:20px}
-    .grid-stats{
-      grid-template-columns:repeat(3,minmax(0,1fr));
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yuraaa | Finance + Dashboard</title>
+  <style>
+    :root {
+      --bg:#050816;
+      --panel:rgba(15,23,42,.88);
+      --line:rgba(148,163,184,.16);
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --accent:#8b5cf6;
+      --good:#86efac;
+      --shadow:0 24px 70px rgba(0,0,0,.45);
     }
-    .stat-value{font-size:34px}
-    .history-title{font-size:16px}
-  }
-  @media (max-width: 920px){
-    .topbar{
-      gap:10px;
+    * { box-sizing:border-box; }
+    html,body { margin:0; height:100%; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+    body {
+      background: radial-gradient(1200px 700px at 90% -10%, rgba(139,92,246,.18), transparent 45%),
+                  radial-gradient(900px 500px at 5% 0%, rgba(96,165,250,.12), transparent 40%),
+                  linear-gradient(180deg,#020617 0%,#050816 100%);
+      overflow:hidden;
     }
-    .brand{
-      gap:10px;
+    .shell {
+      height:100vh;
+      display:flex;
+      flex-direction:column;
     }
-    .brand h1{
-      font-size:18px;
+    .topbar {
+      position:sticky; top:0; z-index:20;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:12px 14px;
+      background:rgba(2,6,23,.82);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid var(--line);
+      flex-wrap:wrap;
     }
-    .top-actions{
-      width:100%;
+    .brand {
+      display:flex; align-items:center; gap:10px; min-width:0;
     }
-    .top-actions .ghost-btn,
-    .top-actions .icon-btn{
-      flex:1 1 0;
+    .logo {
+      width:42px; height:42px; border-radius:14px;
+      display:grid; place-items:center;
+      background:linear-gradient(180deg, rgba(139,92,246,.28), rgba(59,130,246,.16));
+      border:1px solid rgba(167,139,250,.24);
+      box-shadow:var(--shadow);
+      font-weight:900;
     }
-    .grid-stats,.filters{
-      grid-template-columns:1fr;
+    .brand h1 {
+      margin:0; font-size:18px; line-height:1.1; font-weight:900;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
-    .stat-card,.panel,.history-box{
-      border-radius:22px;
+    .brand p { margin:4px 0 0; font-size:12px; color:var(--muted); }
+    .actions {
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; align-items:center;
     }
-    .history-item{
-      padding:12px;
+    .btn {
+      appearance:none; border:none; cursor:pointer;
+      height:42px; padding:0 14px; border-radius:14px;
+      font:inherit; font-weight:800; color:#fff;
+      background:rgba(15,23,42,.72); border:1px solid var(--line);
     }
-  }
-
-  @media (max-width: 720px){
-    .topbar{padding:12px}
-    .container{padding:12px}
-    .stat-value{font-size:26px}
-    .history-item{flex-direction:column;align-items:flex-start}
-    .history-right{text-align:left;width:100%}
-  }
-</style>
+    .btn.primary { background:linear-gradient(180deg,#8b5cf6,#6d28d9); border:none; }
+    .btn.ghost { background:transparent; }
+    .btn.active {
+      box-shadow:0 0 0 3px rgba(139,92,246,.18) inset;
+      border-color:rgba(167,139,250,.32);
+    }
+    .workspace {
+      flex:1;
+      position:relative;
+      overflow:hidden;
+    }
+    .view {
+      position:absolute; inset:0;
+      display:none;
+      background:#050816;
+    }
+    .view.active { display:block; }
+    iframe {
+      width:100%; height:100%;
+      border:0; background:#050816;
+    }
+    .notice {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px; border-radius:999px;
+      background:rgba(34,197,94,.10);
+      border:1px solid rgba(34,197,94,.18);
+      color:var(--good); font-size:12px; font-weight:800;
+    }
+    @media (max-width:720px) {
+      .topbar { align-items:flex-start; }
+      .actions { width:100%; justify-content:stretch; }
+      .actions .btn { flex:1 1 calc(50% - 5px); }
+    }
+  </style>
 </head>
 <body>
-  <div class="main-app">
-    <header class="topbar">
+  <div class="shell">
+    <div class="topbar">
       <div class="brand">
-        <div class="brand-mark">🏦</div>
+        <div class="logo">Рюд</div>
         <div style="min-width:0">
-          <h1><span>Yuraaa</span> Finance</h1>
-          <p>Ringkasan keuangan & transaksi terverifikasi</p>
+          <h1>Yuraaa | Finance & Dashboard</h1>
+          <p>Satu file untuk finance dan dashboard akun</p>
         </div>
       </div>
-      <div class="top-actions cta-row">
-        <button class="ghost-btn add-btn" id="addBtn" title="Tambah data baru">＋ Add</button>
-        <button class="icon-btn" id="exitBtn" title="Kembali ke Index">✕</button>
-        <button class="ghost-btn primary" id="refreshBtn" title="Muat ulang data">↻ Refresh</button>
+      <div class="actions">
+        <span class="notice">Satu file</span>
+        <button class="btn primary active" id="btnFinance">Keuangan</button>
+        <button class="btn" id="btnDashboard">Dashboard</button>
+        <button class="btn ghost" id="btnReload">Reload</button>
       </div>
-    </header>
-
-    <div class="container">
-      <section class="grid-stats">
-        <div class="stat-card">
-          <div class="stat-top">
-            <div>
-              <div class="stat-title">Total Masuk</div>
-              <div class="stat-value" id="totalMasuk">Rp 0</div>
-              <p class="stat-sub">Pemasukan bulan ini</p>
-            </div>
-            <div class="stat-icon purple">⬇</div>
-          </div>
-          <div class="stat-pill"><span class="up">●</span> <span id="monthLabelTop">Bulan aktif</span></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-top">
-            <div>
-              <div class="stat-title">Transaksi</div>
-              <div class="stat-value" id="soldCount">0</div>
-              <p class="stat-sub">Jumlah akun sold</p>
-            </div>
-            <div class="stat-icon green">✓</div>
-          </div>
-          <div class="stat-pill">Terverifikasi otomatis</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-top">
-            <div>
-              <div class="stat-title">Rata-rata</div>
-              <div class="stat-value" id="avgSold">Rp 0</div>
-              <p class="stat-sub">Nilai per transaksi</p>
-            </div>
-            <div class="stat-icon blue">▣</div>
-          </div>
-          <div class="stat-pill">Update tiap refresh</div>
-        </div>
+    </div>
+    <div class="workspace">
+      <section class="view active" id="viewFinance">
+        <iframe id="financeFrame" title="Finance Admin"></iframe>
       </section>
-
-      <section class="filters">
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <div class="panel-title">Filter Bulan</div>
-              <div class="panel-sub">Pilih bulan untuk melihat transaksi pada periode tertentu</div>
-            </div>
-          </div>
-          <select id="monthFilter" class="select"></select>
-        </div>
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <div class="panel-title">Pencarian</div>
-              <div class="panel-sub">Cari nama akun atau game</div>
-            </div>
-          </div>
-          <div class="search-row">
-            <input id="searchInput" class="search" placeholder="Cari akun, game, atau harga..." />
-          </div>
-        </div>
-      </section>
-
-      <section class="history-box">
-        <div class="history-head">
-          <div>
-            <h3>Riwayat Transaksi</h3>
-            <p id="listInfo">Memuat data...</p>
-          </div>
-          <div class="hint" id="updatedAt">Terakhir diperbarui: -</div>
-        </div>
-        <div id="historyList" class="history-list">
-          <div class="skeleton">
-            <div class="sk-item"></div>
-            <div class="sk-item sm"></div>
-            <div class="sk-item"></div>
-          </div>
-        </div>
+      <section class="view" id="viewDashboard">
+        <iframe id="dashboardFrame" title="Dashboard"></iframe>
       </section>
     </div>
   </div>
 
-  <button class="unlock-fab" id="unlockFab">🔐 Masuk PIN</button>
+  <script>
+    const FINANCE_HTML = "<!DOCTYPE html>\n<html lang=\"id\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Admin Finance</title>\n<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>\n\n<style>\nbody{margin:0;font-family:system-ui;background:#050816;color:#fff}\n.container{padding:14px}\n\n/* PIN */\n.pin{\n position:fixed;inset:0;display:flex;align-items:center;justify-content:center;\n background:#0009;z-index:99\n}\n.card{background:#0b1220;padding:20px;border-radius:16px;text-align:center}\n\n/* UI */\n.box{background:#0b1220;padding:14px;border-radius:14px;margin-bottom:12px}\ninput,select{width:100%;height:40px;margin-bottom:8px;border-radius:8px;border:none;padding:6px}\nbutton{height:40px;border:none;border-radius:10px;padding:0 12px;cursor:pointer}\n.primary{background:#8b5cf6;color:#fff}\n.danger{background:#ef4444;color:#fff}\n\n.tx{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #1e293b}\n.income{color:#22c55e}\n.expense{color:#ef4444}\n\n.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);\nbackground:#111;padding:10px;border-radius:10px;opacity:0;transition:.3s}\n.toast.show{opacity:1}\n</style>\n</head>\n\n<body>\n\n<div class=\"pin\" id=\"pinBox\">\n<div class=\"card\">\n<h3>PIN</h3>\n<input id=\"pinInput\"><br><br>\n<button onclick=\"checkPin()\">Masuk</button>\n<p id=\"pinMsg\" style=\"color:red\"></p>\n</div>\n</div>\n\n<div class=\"container\" id=\"app\" style=\"display:none\">\n\n<div class=\"box\">\nSaldo: <b id=\"balance\"></b><br>\nMasuk: <b id=\"income\"></b><br>\nKeluar: <b id=\"expense\"></b>\n</div>\n\n<div class=\"box\">\n<input id=\"desc\" placeholder=\"Keterangan\">\n<input id=\"amount\" placeholder=\"Jumlah\">\n<select id=\"type\">\n<option value=\"income\">Pemasukan</option>\n<option value=\"expense\">Pengeluaran</option>\n</select>\n<select id=\"category\">\n<option>Umum</option>\n<option>Jual Akun</option>\n</select>\n<button class=\"primary\" onclick=\"save()\">Simpan</button>\n</div>\n\n<div class=\"box\">\n<input id=\"search\" placeholder=\"Search...\">\n</div>\n\n<div class=\"box\">\n<canvas id=\"chart\"></canvas>\n</div>\n\n<div class=\"box\" id=\"list\"></div>\n\n</div>\n\n<div class=\"toast\" id=\"toast\"></div>\n\n<script>\nconst PIN=\"211202\";\nconst API=\"https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List\";\nconst KEY=\"finance_v4\";\n\nlet localData=[], apiData=[], merged=[], chart;\n\n/* PIN */\nfunction checkPin(){\n let v=pinInput.value;\n if(v===PIN){\n  pinBox.style.display=\"none\";\n  app.style.display=\"block\";\n  init();\n }else{\n  pinMsg.innerText=\"PIN salah!\";\n }\n}\n\n/* TOAST */\nfunction toast(msg){\n let t=toastEl;\n t.innerText=msg;\n t.classList.add(\"show\");\n setTimeout(()=>t.classList.remove(\"show\"),1500);\n}\n\n/* INIT */\nasync function init(){\n localData=JSON.parse(localStorage.getItem(KEY))||[];\n\n let res=await fetch(API);\n let data=await res.json();\n\n apiData=data\n  .filter(x=>String(x.Status).toLowerCase()==\"sold\")\n  .map(x=>({\n    id:\"api_\"+btoa(x.Nama+x.Harga),\n    desc:x.Nama,\n    amount:Number(x.Harga)||0,\n    type:\"income\",\n    category:\"Jual Akun\",\n    date:x.Tanggal||new Date().toISOString(),\n    source:\"api\"\n  }));\n\n merge();\n render();\n}\n\n/* MERGE */\nfunction merge(){\n merged=[...localData,...apiData];\n}\n\n/* SAVE */\nfunction save(){\n let d=desc.value;\n let a=amount.value.replace(/\\D/g,\"\");\n let t=type.value;\n let c=category.value;\n\n if(!d||!a)return toast(\"Isi dulu\");\n\n localData.push({\n  id:Date.now(),\n  desc:d,\n  amount:Number(a),\n  type:t,\n  category:c,\n  date:new Date().toISOString(),\n  source:\"local\"\n });\n\n localStorage.setItem(KEY,JSON.stringify(localData));\n merge(); render();\n toast(\"Tersimpan \u2714\ufe0f\");\n}\n\n/* DELETE */\nfunction del(id){\n if(!confirm(\"Hapus?\"))return;\n localData=localData.filter(x=>x.id!=id);\n localStorage.setItem(KEY,JSON.stringify(localData));\n merge(); render();\n toast(\"Dihapus \u274c\");\n}\n\n/* STATS */\nfunction stats(){\n let inc=0,exp=0;\n merged.forEach(x=>{\n  if(x.type==\"income\")inc+=x.amount;\n  else exp+=x.amount;\n });\n return {inc,exp,balance:inc-exp};\n}\n\n/* RENDER */\nfunction render(){\n let s=stats();\n\n income.innerText=\"Rp \"+s.inc;\n expense.innerText=\"Rp \"+s.exp;\n balance.innerText=\"Rp \"+s.balance;\n\n let q=search.value?.toLowerCase()||\"\";\n\n list.innerHTML=\"\";\n\n merged\n .filter(x=>x.desc.toLowerCase().includes(q))\n .sort((a,b)=>new Date(b.date)-new Date(a.date))\n .forEach(x=>{\n   list.innerHTML+=`\n   <div class=\"tx\">\n     <div>\n       ${x.desc}<br>\n       <small>${x.category} (${x.source})</small>\n     </div>\n     <div class=\"${x.type}\">\n       ${x.type==\"income\"?\"+\":\"-\"}Rp ${x.amount}\n     </div>\n     ${x.source==\"local\"?`<button onclick=\"del(${x.id})\">X</button>`:\"\"}\n   </div>`;\n });\n\n renderChart();\n}\n\n/* CHART FIX */\nfunction renderChart(){\n if(chart) chart.destroy();\n\n let data={};\n merged.forEach(x=>{\n  let m=x.date.slice(0,7);\n  if(!data[m]) data[m]=0;\n  if(x.type==\"income\") data[m]+=x.amount;\n });\n\n chart=new Chart(chartEl,{\n  type:\"line\",\n  data:{\n    labels:Object.keys(data),\n    datasets:[{data:Object.values(data)}]\n  }\n });\n}\n\n/* EVENTS */\nsearch.oninput=render;\n\nconst toastEl=document.getElementById(\"toast\");\nconst chartEl=document.getElementById(\"chart\");\n\n</script>\n</body>\n</html>";
+    const DASHBOARD_HTML = "<!DOCTYPE html>\n<html lang=\"id\">\n<head>\n<meta charset=\"UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<title>Yuraaa | Dashboard</title>\n<style>\n:root{--bg:#050816;--panel:rgba(15,23,42,.84);--line:rgba(148,163,184,.16);--text:#e5e7eb;--muted:#94a3b8;--accent:#8b5cf6;--good:#86efac;--warn:#fcd34d;--bad:#fca5a5;--shadow:0 24px 70px rgba(0,0,0,.45);}*{box-sizing:border-box}html,body{height:100%}html{scroll-behavior:smooth}body{margin:0;min-height:100dvh;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(1200px 700px at 90% -10%, rgba(139,92,246,.18), transparent 45%),radial-gradient(900px 500px at 5% 0%, rgba(96,165,250,.12), transparent 40%),linear-gradient(180deg,#020617 0%,#050816 100%);overflow-x:hidden}.bg{position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(rgba(148,163,184,.12) 1px, transparent 1px),linear-gradient(90deg, rgba(148,163,184,.12) 1px, transparent 1px);background-size:48px 48px;mask-image:radial-gradient(circle at 30% 10%, black 0, black 35%, transparent 72%)}.app{max-width:1440px;margin:0 auto;min-height:100vh;position:relative;z-index:1;display:flex;flex-direction:column}.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;background:rgba(2,6,23,.68);backdrop-filter:blur(18px);border-bottom:1px solid rgba(148,163,184,.12)}.brand{display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 420px}.brand-mark{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(180deg, rgba(139,92,246,.28), rgba(59,130,246,.16));border:1px solid rgba(167,139,250,.24);box-shadow:var(--shadow)}.brand h1{margin:0;font-size:20px;line-height:1.1;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand h1 span{color:var(--accent)}.brand p{margin:4px 0 0;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;width:100%}.btn{border:none;cursor:pointer;font:inherit;font-weight:800;border-radius:16px;height:44px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.18s ease;color:#fff}.btn:hover{transform:translateY(-1px)}.btn:disabled{opacity:.65;cursor:not-allowed;transform:none}.ghost{background:transparent;border:1px solid var(--line)}.secondary{background:rgba(15,23,42,.72);border:1px solid var(--line)}.primary{background:linear-gradient(180deg,#8b5cf6,#6d28d9);box-shadow:0 12px 34px rgba(139,92,246,.18)}.container{width:min(1320px,100%);margin:0 auto;padding:16px;flex:1;padding-bottom:28px}.hero,.section{background:linear-gradient(180deg,rgba(15,23,42,.90),rgba(8,13,28,.96));border:1px solid rgba(148,163,184,.14);border-radius:28px;box-shadow:var(--shadow)}.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);gap:16px;padding:clamp(18px,2.2vw,28px);margin-bottom:14px}.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(15,23,42,.78);border:1px solid rgba(148,163,184,.14);color:#dbeafe;font-size:12px;font-weight:800}.hero h2{margin:14px 0 8px;font-size:clamp(28px,3.5vw,46px);line-height:1.08;font-weight:900;letter-spacing:-.03em;max-width:14ch}.hero h2 span{color:var(--accent)}.hero p{margin:0;max-width:68ch;color:var(--muted);line-height:1.7;font-size:14px}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.hero-actions .btn{min-width:180px;height:48px}.metrics{display:grid;gap:12px}.metric{padding:16px;border-radius:22px;background:rgba(2,6,23,.30);border:1px solid rgba(148,163,184,.10);min-height:120px;display:flex;flex-direction:column;justify-content:space-between}.metric .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:800}.metric .value{margin-top:8px;font-size:18px;font-weight:900}.metric .sub{margin-top:6px;color:#cbd5e1;font-size:12px;line-height:1.5}.section{padding:clamp(14px,1.8vw,20px);margin-bottom:16px}.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:16px}.section-head h3{margin:0;font-size:18px;font-weight:900}.section-head p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.5}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:8px}.field.full{grid-column:1/-1}.label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}.input,.select,.textarea{width:100%;border-radius:18px;border:1px solid rgba(148,163,184,.16);background:rgba(2,6,23,.38);color:#fff;outline:none;font:inherit}.input:-webkit-autofill,.input:-webkit-autofill:hover,.input:-webkit-autofill:focus,.select:-webkit-autofill,.select:-webkit-autofill:hover,.select:-webkit-autofill:focus,.textarea:-webkit-autofill,.textarea:-webkit-autofill:hover,.textarea:-webkit-autofill:focus{-webkit-text-fill-color:#fff !important;-webkit-box-shadow:0 0 0 1000px rgba(2,6,23,.38) inset !important;box-shadow:0 0 0 1000px rgba(2,6,23,.38) inset !important;caret-color:#fff;transition:background-color 9999s ease-in-out 0s}.select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%, #cbd5e1 50%), linear-gradient(135deg,#cbd5e1 50%, transparent 50%);background-position:calc(100% - 20px) calc(1em + 4px), calc(100% - 15px) calc(1em + 4px);background-size:5px 5px, 5px 5px;background-repeat:no-repeat;padding-right:40px}.input:focus,.select:focus,.textarea:focus{border-color:rgba(139,92,246,.55);box-shadow:0 0 0 4px rgba(139,92,246,.12)}.input,.select{height:52px;padding:0 14px;font-weight:700}.textarea{min-height:140px;padding:14px;resize:vertical;line-height:1.6;font-weight:600}.hint{color:var(--muted);font-size:12px;line-height:1.5}.preview-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:14px}.box{padding:14px;border-radius:22px;background:rgba(2,6,23,.28);border:1px solid rgba(148,163,184,.10)}.preview-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.preview-count{padding:6px 10px;border-radius:999px;background:rgba(15,23,42,.7);border:1px solid rgba(148,163,184,.12);color:#dbeafe;font-size:12px;font-weight:800}.preview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.preview-item{position:relative;aspect-ratio:1/1;border-radius:18px;overflow:hidden;border:1px solid rgba(148,163,184,.10);background:linear-gradient(180deg, rgba(15,23,42,.95), rgba(2,6,23,.95))}.preview-item img{width:100%;height:100%;object-fit:cover;display:block}.badge{position:absolute;left:10px;bottom:10px;padding:6px 8px;border-radius:999px;background:rgba(2,6,23,.66);border:1px solid rgba(255,255,255,.08);font-size:11px;font-weight:800;backdrop-filter:blur(8px)}.empty-state{display:flex;align-items:center;justify-content:center;min-height:180px;border-radius:18px;border:1px dashed rgba(148,163,184,.22);color:var(--muted);text-align:center;padding:16px;background:rgba(2,6,23,.16)}.status-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid rgba(34,197,94,.18);background:rgba(34,197,94,.10);color:var(--good);font-size:12px;font-weight:800;width:max-content}.status-pill.warn{border-color:rgba(245,158,11,.22);background:rgba(245,158,11,.12);color:#fcd34d}.footer-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}.footer-actions .btn{flex:1 1 210px}.big-save{min-height:58px;width:100%;border:none;border-radius:20px;background:linear-gradient(180deg,#8b5cf6,#6d28d9);color:#fff;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 16px 40px rgba(139,92,246,.18)}.small-note{font-size:12px;color:var(--muted);line-height:1.6}.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(20px);padding:12px 14px;border-radius:16px;background:rgba(15,23,42,.96);border:1px solid rgba(148,163,184,.16);color:#fff;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s ease;z-index:80;max-width:min(92vw,520px);text-align:center}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.loader{display:inline-flex;align-items:center;gap:10px}.spinner{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.22);border-top-color:#fff;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.overlay{position:fixed;inset:0;background:rgba(2,6,23,.72);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}.overlay.open{display:flex}.card{width:min(760px,100%);border-radius:28px;background:linear-gradient(180deg,rgba(15,23,42,.98),rgba(8,13,28,.98));border:1px solid rgba(148,163,184,.16);box-shadow:0 40px 120px rgba(0,0,0,.65);padding:22px}.modal-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}.modal-top h3{margin:0;font-size:22px;font-weight:900}.modal-top p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.5}.close-x{width:40px;height:40px;border-radius:14px;border:1px solid rgba(148,163,184,.16);background:rgba(15,23,42,.8);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:18px}.modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.modal-actions .btn{flex:1 1 160px}.notify-ico{width:58px;height:58px;border-radius:18px;margin:0 auto 12px;display:grid;place-items:center;font-size:28px;font-weight:900;background:rgba(34,197,94,.12);color:var(--good);border:1px solid rgba(34,197,94,.18)}.notify-ico.fail{background:rgba(239,68,68,.12);color:var(--bad);border-color:rgba(239,68,68,.22)}.notify-title{font-size:20px;font-weight:900;margin:0 0 8px;text-align:center}.notify-msg{font-size:13px;line-height:1.6;color:var(--muted);margin:0 0 16px;text-align:center}.notify-close{width:100%;height:44px;border:none;border-radius:14px;cursor:pointer;font-weight:900;color:#fff;background:linear-gradient(180deg,#8b5cf6,#6d28d9)}.list-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}.search-row{display:grid;grid-template-columns:1fr auto;gap:10px;width:100%}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.account-card{position:relative;overflow:hidden;border-radius:24px;background:rgba(2,6,23,.30);border:1px solid rgba(148,163,184,.14);box-shadow:0 16px 40px rgba(0,0,0,.22);transition:.18s ease;display:flex;flex-direction:column;min-height:100%}.account-card:hover{transform:translateY(-1px);border-color:rgba(167,139,250,.28)}.card-media{aspect-ratio:16/10;background:#0b1220;overflow:hidden}.card-media img{width:100%;height:100%;object-fit:cover;display:block}.thumb-empty{width:100%;height:100%;display:grid;place-items:center;color:#94a3b8;font-size:13px;padding:16px;text-align:center;background:linear-gradient(180deg,rgba(15,23,42,.92),rgba(2,6,23,.98))}.card-body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}.card-title{font-size:16px;font-weight:900;line-height:1.3}.card-sub{color:#94a3b8;font-size:12px;line-height:1.5}.card-price{font-size:15px;font-weight:900}.card-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}.card-tags span{padding:6px 8px;border-radius:999px;background:rgba(15,23,42,.72);border:1px solid rgba(148,163,184,.12);font-size:11px;font-weight:800;color:#dbeafe}.card-x,.card-edit{position:absolute;top:10px;z-index:2;border:none;border-radius:12px;padding:8px 10px;font-weight:900;cursor:pointer}.card-x{right:10px;background:rgba(239,68,68,.92);color:#fff}.card-edit{right:52px;background:rgba(139,92,246,.92);color:#fff}.toolbar{display:flex;gap:10px;flex-wrap:wrap}.hide{display:none !important}.loading-wrap{width:min(420px,calc(100vw - 28px));padding:22px;border-radius:24px;background:rgba(15,23,42,.98);border:1px solid rgba(148,163,184,.18);box-shadow:0 40px 120px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}.loading-ring{width:40px;height:40px;border-radius:50%;border:3px solid rgba(255,255,255,.16);border-top-color:#8b5cf6;animation:spin .8s linear infinite}.loading-text{font-size:14px;color:#dbeafe;font-weight:800}@media (max-width:960px){.hero,.preview-wrap,.grid,.cards{grid-template-columns:1fr}.preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:720px){.topbar{align-items:flex-start;padding:12px}.brand{flex:1 1 100%}.brand h1{font-size:18px}.brand p{white-space:normal}.top-actions{width:100%;justify-content:stretch;display:grid;grid-template-columns:1fr 1fr}.top-actions .btn{width:100%;min-width:0}.hero{padding:16px}.hero h2{font-size:24px;max-width:none}.hero-actions{flex-direction:column}.hero-actions .btn{width:100%;min-width:0}.grid{grid-template-columns:1fr}.preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.section-head{flex-direction:column;align-items:flex-start}.footer-actions{flex-direction:column}.footer-actions .btn,.big-save{width:100%;flex:1 1 auto}.modal-actions{flex-direction:column}.modal-actions .btn{width:100%}.search-row{grid-template-columns:1fr}.cards{grid-template-columns:1fr}}@media (max-width:480px){.container{padding:10px;padding-bottom:28px}.hero,.section,.box,.card{border-radius:22px}.preview-grid{grid-template-columns:1fr}.preview-item{aspect-ratio:16/10}}\n</style>\n</head>\n<body>\n<div class=\"bg\"></div>\n<div class=\"app\">\n  <header class=\"topbar\">\n    <div class=\"brand\">\n      <div class=\"brand-mark\">\u2726</div>\n      <div style=\"min-width:0\">\n        <h1><span>Yuraaa</span> | Dashboard</h1>\n        <p>Tambah, edit, hapus, upload gambar, dan sync data</p>\n      </div>\n    </div>\n    <div class=\"top-actions\">\n      <div class=\"status-pill warn\" id=\"connStatus\">Belum tersambung</div>\n      <button class=\"btn secondary\" id=\"refreshAllBtn\">Refresh</button>\n      <button class=\"btn primary\" id=\"openDeleteBtn\">Buka Hapus</button>\n      <button class=\"btn ghost\" id=\"closeBtn\">Close</button>\n    </div>\n  </header>\n  <main class=\"container\">\n    <section class=\"hero\">\n      <div>\n        <div class=\"eyebrow\">Upload multi gambar \u2022 UI seperti aplikasi \u2022 Endpoint terbaru</div>\n        <h2>Bikin data akun <span>lebih cepat</span>, rapi, dan aman.</h2>\n        <p>Semua fitur inti dipertahankan: tambah akun, edit data, hapus lewat tombol X pada card, upload multi gambar langsung, preview, harga format Rupiah, popup/notifikasi, dan sinkronisasi otomatis.</p>\n        <div class=\"hero-actions\">\n          <button class=\"btn primary\" id=\"scrollAddBtn\">Tambah / Edit</button>\n          <button class=\"btn secondary\" id=\"scrollListBtn\">Lihat Data</button>\n        </div>\n      </div>\n      <div>\n        <div class=\"metrics\">\n          <div class=\"metric\"><div class=\"label\">Mode</div><div class=\"value\">App Dashboard</div><div class=\"sub\">Satu halaman, enak dipakai di HP maupun desktop.</div></div>\n          <div class=\"metric\"><div class=\"label\">Harga</div><div class=\"value\">Rp Otomatis</div><div class=\"sub\">Input harga tetap gelap, tidak jadi putih saat autofill.</div></div>\n        </div>\n      </div>\n    </section>\n    <section class=\"section\" id=\"formSection\">\n      <div class=\"section-head\"><div><h3 id=\"formTitle\">Tambah Akun</h3><p>Klik Edit pada kartu untuk memuat data ke form. Simpan akan otomatis berubah jadi Update.</p></div><div class=\"status-pill\" id=\"formModePill\">Mode tambah</div></div>\n      <input type=\"hidden\" id=\"rowEdit\" value=\"\">\n      <input type=\"hidden\" id=\"existingImages\" value=\"\">\n      <div class=\"grid\">\n        <div class=\"field\"><label class=\"label\" for=\"endpoint\">Endpoint</label><input id=\"endpoint\" class=\"input\" placeholder=\"https://script.google.com/macros/s/.../exec\"><div class=\"hint\">Gunakan endpoint terbaru. Jika kosong akan memakai default.</div></div>\n        <div class=\"field\"><label class=\"label\" for=\"status\">Status</label><select id=\"status\" class=\"select\"><option value=\"ready\">Ready</option><option value=\"proses\">Proses</option><option value=\"sold\">Sold</option></select></div>\n        <div class=\"field\"><label class=\"label\" for=\"nama\">Nama</label><input id=\"nama\" class=\"input\" placeholder=\"Contoh: HSR Asia \u2022 Reroll SS\"></div>\n        <div class=\"field\"><label class=\"label\" for=\"game\">Game</label><input id=\"game\" class=\"input\" placeholder=\"Contoh: Honkai Star Rail\"></div>\n        <div class=\"field\"><label class=\"label\" for=\"harga\">Harga</label><input id=\"harga\" class=\"input\" inputmode=\"numeric\" placeholder=\"Contoh: 150000\"></div>\n        <div class=\"field\"><label class=\"label\" for=\"diskon\">Diskon</label><input id=\"diskon\" class=\"input\" inputmode=\"numeric\" placeholder=\"Contoh: 10\"></div>\n        <div class=\"field\"><label class=\"label\" for=\"label\">Label</label><select id=\"label\" class=\"select\"><option value=\"\">Kosong</option><option value=\"new\">New</option><option value=\"hot\">Hot</option><option value=\"promo\">Promo</option></select></div>\n        <div class=\"field\"><label class=\"label\" for=\"sheetId\">Spreadsheet</label><input id=\"sheetId\" class=\"input\" readonly value=\"1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw\"></div>\n        <div class=\"field full\"><label class=\"label\" for=\"ket\">Keterangan</label><textarea id=\"ket\" class=\"textarea\" placeholder=\"Contoh: 5 limited, sudah email bind, server Asia, masih aman...\"></textarea></div>\n      </div>\n      <div class=\"preview-wrap\">\n        <div class=\"box\">\n          <div class=\"field\"><label class=\"label\" for=\"imageFiles\">Foto dari perangkat</label><input id=\"imageFiles\" class=\"input\" type=\"file\" accept=\"image/*\" multiple style=\"padding:12px;height:auto\"><div class=\"hint\">Bisa pilih lebih dari satu foto. Preview langsung muncul.</div></div>\n          <div class=\"field\" style=\"margin-top:14px\"><label class=\"label\" for=\"gambar\">Link gambar cadangan</label><textarea id=\"gambar\" class=\"textarea\" placeholder=\"https://drive.google.com/uc?export=view&id=xxxx, https://...\"></textarea><div class=\"hint\">Saat edit, link lama tetap dipertahankan dan bisa ditambah foto baru.</div></div>\n          <div style=\"margin-top:12px\"><div class=\"status-pill\" id=\"imageState\">0 foto dipilih</div></div>\n        </div>\n        <div class=\"box\"><div class=\"preview-head\"><strong>Preview Gambar</strong><div class=\"preview-count\" id=\"previewCount\">0</div></div><div id=\"previewArea\"><div class=\"empty-state\">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div></div></div>\n      </div>\n      <div class=\"footer-actions\"><button class=\"big-save\" id=\"submitBtn\"><span class=\"loader\" id=\"submitLoader\" style=\"display:none\"><span class=\"spinner\"></span> Menyimpan...</span><span id=\"submitLabel\">Simpan Akun Baru</span></button><button class=\"btn secondary\" id=\"resetBtn\">Reset Form</button><button class=\"btn secondary\" id=\"copyJsonBtn\">Salin JSON</button></div>\n    </section>\n    <section class=\"section\" id=\"listSection\">\n      <div class=\"list-head\"><div><h3 style=\"margin:0;font-size:18px;font-weight:900\">Daftar Akun</h3><p style=\"margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.5\">Klik X untuk hapus cepat, klik Edit untuk ubah data dan tambah foto.</p></div><div class=\"toolbar\"><button class=\"btn secondary\" id=\"sortBtn\">Terbaru</button><button class=\"btn secondary\" id=\"reloadBtn\">Reload</button></div></div>\n      <div class=\"search-row\"><input id=\"searchInput\" class=\"input\" placeholder=\"Cari nama / game / harga / label\"><button class=\"btn secondary\" id=\"clearSearchBtn\">Clear</button></div>\n      <div style=\"margin-top:14px\" id=\"cards\" class=\"cards\"><div class=\"small-note\">Belum ada data dimuat.</div></div>\n    </section>\n  </main>\n</div>\n<div class=\"toast\" id=\"toast\"></div>\n<div class=\"overlay\" id=\"confirmOverlay\" aria-hidden=\"true\"><div class=\"card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"confirmTitle\"><div class=\"notify-ico fail\">!</div><h3 class=\"notify-title\" id=\"confirmTitle\">Konfirmasi hapus</h3><p class=\"notify-msg\" id=\"confirmMsg\">Data ini akan dihapus permanen dari spreadsheet.</p><div class=\"modal-actions\"><button class=\"notify-close\" id=\"confirmDeleteBtn\">Ya, hapus</button><button class=\"btn secondary\" id=\"confirmCancelBtn\" style=\"height:44px\">Batal</button></div></div></div>\n<div class=\"overlay\" id=\"notifyOverlay\" aria-hidden=\"true\"><div class=\"card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"notifyTitle\"><div class=\"notify-ico\" id=\"notifyIcon\">\u2713</div><h3 class=\"notify-title\" id=\"notifyTitle\">Berhasil</h3><p class=\"notify-msg\" id=\"notifyMsg\">Data berhasil disimpan.</p><button class=\"notify-close\" id=\"notifyClose\">Tutup</button></div></div>\n<div class=\"overlay\" id=\"loadingOverlay\" aria-hidden=\"true\"><div class=\"loading-wrap\"><div class=\"loading-ring\"></div><div class=\"loading-text\" id=\"loadingText\">Memproses...</div></div></div>\n<script>\n(() => {\n  const DEFAULT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwdr34FMbamJcEQaCEuD5n5_85M1pwnR5pAbGqqWfJPzurN0X_g6rXBs3G6Vx1FStPWgA/exec';\n  const ADMIN_URL = 'https://lutthidayat.github.io/yuraaa-store/admin.html';\n  const ENDPOINT_KEY = 'yuraaa_add_account_endpoint_v1';\n  const STORAGE_KEY = 'yuraaa_dashboard_draft_v5';\n  const SELECT_KEY = 'yuraaa_dashboard_selected_v5';\n  const SOURCE_KEY = 'yuraaa-apps-script';\n  const $ = (id) => document.getElementById(id);\n  const endpointValue = () => (localStorage.getItem(ENDPOINT_KEY) || DEFAULT_ENDPOINT).trim();\n  const el = {connStatus:$('connStatus'),refreshAllBtn:$('refreshAllBtn'),openDeleteBtn:$('openDeleteBtn'),closeBtn:$('closeBtn'),scrollAddBtn:$('scrollAddBtn'),scrollListBtn:$('scrollListBtn'),formSection:$('formSection'),listSection:$('listSection'),endpoint:$('endpoint'),nama:$('nama'),game:$('game'),harga:$('harga'),diskon:$('diskon'),status:$('status'),label:$('label'),ket:$('ket'),gambar:$('gambar'),imageFiles:$('imageFiles'),previewArea:$('previewArea'),previewCount:$('previewCount'),imageState:$('imageState'),submitBtn:$('submitBtn'),submitLoader:$('submitLoader'),submitLabel:$('submitLabel'),resetBtn:$('resetBtn'),copyJsonBtn:$('copyJsonBtn'),clearSearchBtn:$('clearSearchBtn'),searchInput:$('searchInput'),sortBtn:$('sortBtn'),reloadBtn:$('reloadBtn'),cards:$('cards'),rowEdit:$('rowEdit'),existingImages:$('existingImages'),formTitle:$('formTitle'),formModePill:$('formModePill'),toast:$('toast'),notifyOverlay:$('notifyOverlay'),notifyIcon:$('notifyIcon'),notifyTitle:$('notifyTitle'),notifyMsg:$('notifyMsg'),notifyClose:$('notifyClose'),confirmOverlay:$('confirmOverlay'),confirmTitle:$('confirmTitle'),confirmMsg:$('confirmMsg'),confirmDeleteBtn:$('confirmDeleteBtn'),confirmCancelBtn:$('confirmCancelBtn'),loadingOverlay:$('loadingOverlay'),loadingText:$('loadingText')};\n  const state = {files:[],objectUrls:[],items:[],sortNewest:true,connectionTimer:null,loadTimer:null,selectedDelete:null,editingRow:null};\n  function toast(msg){el.toast.textContent=msg;el.toast.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.toast.classList.remove('show'),1800)}\n  function showNotify(type,title,msg){const ok=type==='success';el.notifyIcon.textContent=ok?'\u2713':'!';el.notifyIcon.classList.toggle('fail',!ok);el.notifyTitle.textContent=title;el.notifyMsg.textContent=msg;el.notifyOverlay.classList.add('open');el.notifyOverlay.setAttribute('aria-hidden','false')}\n  function hideNotify(){el.notifyOverlay.classList.remove('open');el.notifyOverlay.setAttribute('aria-hidden','true')}\n  function showLoading(text='Memproses...'){el.loadingText.textContent=text;el.loadingOverlay.classList.add('open');el.loadingOverlay.setAttribute('aria-hidden','false')}\n  function hideLoading(){el.loadingOverlay.classList.remove('open');el.loadingOverlay.setAttribute('aria-hidden','true')}\n  function normalizeText(v){return (v ?? '').toString().trim()}\n  function cleanNumber(v){return String(v ?? '').replace(/\\D/g,'')}\n  function formatRupiah(v){const d=cleanNumber(v);return d?'Rp '+new Intl.NumberFormat('id-ID').format(Number(d)):''}\n  function formatNum(v){const n=String(v ?? '').replace(/\\D/g,'');return n?new Intl.NumberFormat('id-ID').format(Number(n)):'0'}\n  function escapeHtml(str){return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;')}\n  function setBusy(isBusy){el.submitBtn.disabled=isBusy;el.resetBtn.disabled=isBusy;el.copyJsonBtn.disabled=isBusy;el.refreshAllBtn.disabled=isBusy;el.openDeleteBtn.disabled=isBusy;el.confirmDeleteBtn.disabled=isBusy;el.confirmCancelBtn.disabled=isBusy;el.submitLoader.style.display=isBusy?'inline-flex':'none';el.submitLabel.style.display=isBusy?'none':'inline';el.submitBtn.style.opacity=isBusy?'.92':'1'}\n  function setDeletingBusy(isBusy){el.confirmDeleteBtn.disabled=isBusy;el.confirmCancelBtn.disabled=isBusy;el.refreshAllBtn.disabled=isBusy;el.openDeleteBtn.disabled=isBusy}\n  function setConnectionState(ok,label){el.connStatus.className=ok?'status-pill':'status-pill warn';el.connStatus.textContent=label}\n  function setMode(mode){const isEdit=mode==='edit';el.formTitle.textContent=isEdit?'Edit Akun':'Tambah Akun';el.formModePill.textContent=isEdit?'Mode edit':'Mode tambah';el.submitLabel.textContent=isEdit?'Update Akun':'Simpan Akun Baru'}\n  function setRupiahInput(input){const digits=cleanNumber(input.value);input.value=digits?formatRupiah(digits):''}\n  function toDrivePreview(url){const u=normalizeText(url);if(!u)return'';if(/uc\\?export=view&id=/i.test(u)||/drive\\.google\\.com\\/uc\\?id=/i.test(u))return u;const match1=u.match(/\\/d\\/([a-zA-Z0-9_-]+)/);if(match1&&match1[1])return `https://drive.google.com/uc?export=view&id=${match1[1]}`;const match2=u.match(/[?&]id=([a-zA-Z0-9_-]+)/);if(match2&&match2[1])return `https://drive.google.com/uc?export=view&id=${match2[1]}`;return u}\n  function extractLinks(raw){\n  if(!raw) return [];\n  return String(raw)\n    .split(/[\\n,;|]+/)\n    .map(s => s.trim())\n    .filter(Boolean)\n    .map(s => toDrivePreview(s.replace(/\\s+/g,'')))\n    .filter(Boolean);\n}\n  function firstImage(value){const list=extractLinks(value || '');return list.length?list[0]:''}\n  function saveDraft(){const draft={Nama:el.nama.value,Harga:cleanNumber(el.harga.value),Diskon:cleanNumber(el.diskon.value),Game:el.game.value,Gambar:el.gambar.value,Label:el.label.value,Status:el.status.value,Ket:el.ket.value};localStorage.setItem(STORAGE_KEY,JSON.stringify(draft))}\n  function loadDraft(){el.endpoint.value=localStorage.getItem(ENDPOINT_KEY)||DEFAULT_ENDPOINT;const raw=localStorage.getItem(STORAGE_KEY);if(raw){try{const d=JSON.parse(raw);el.nama.value=d.Nama||'';el.harga.value=d.Harga?formatRupiah(d.Harga):'';el.diskon.value=d.Diskon||'';el.game.value=d.Game||'';el.gambar.value=d.Gambar||'';el.label.value=d.Label||'';el.status.value=d.Status||'ready';el.ket.value=d.Ket||''}catch(_) {}}setRupiahInput(el.harga);renderPreview()}\n  function clearForm(keepEndpoint=true){const endpoint=keepEndpoint?el.endpoint.value:DEFAULT_ENDPOINT;el.nama.value='';el.game.value='';el.harga.value='';el.diskon.value='';el.ket.value='';el.gambar.value='';el.label.value='';el.status.value='ready';el.rowEdit.value='';el.existingImages.value='';el.imageFiles.value='';state.files=[];state.objectUrls.forEach(u=>URL.revokeObjectURL(u));state.objectUrls=[];localStorage.setItem(ENDPOINT_KEY,endpoint.trim()||DEFAULT_ENDPOINT);setRupiahInput(el.harga);setMode('add');saveDraft();renderPreview()}\n  function buildPayload(){return{action:el.rowEdit.value?'update':'save',row:el.rowEdit.value?Number(el.rowEdit.value):'',Nama:el.nama.value.trim(),Harga:cleanNumber(el.harga.value),Diskon:cleanNumber(el.diskon.value),Game:el.game.value.trim(),Gambar:el.gambar.value.trim(),keepImages:el.existingImages.value.trim(),imageFiles:state.files,Label:el.label.value,Status:el.status.value,Ket:el.ket.value.trim(),Tanggal:new Date().toISOString(),DONE:''}}\n  function renderPreview(){const urls=[...state.objectUrls,...extractLinks(el.gambar.value),...extractLinks(el.existingImages.value)];el.previewCount.textContent=String(urls.length);el.imageState.textContent=`${state.files.length?state.files.length+' foto dipilih':(urls.length?urls.length+' link terdeteksi':'0 foto dipilih')}`;if(!urls.length){el.previewArea.innerHTML='<div class=\"empty-state\">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>';return}el.previewArea.innerHTML=`<div class=\"preview-grid\">${urls.slice(0,9).map((url,i)=>`<div class=\"preview-item\"><img src=\"${url}\" alt=\"Preview ${i+1}\" loading=\"lazy\" onerror=\"this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'\"><div class=\"badge\">#${i+1}</div></div>`).join('')}</div>`}\n  function renderCard(item){\n    const img = firstImage(item.Gambar || item.gambar || item.images || '');\n    const media = img\n      ? `<img src=\"${img}\" alt=\"${escapeHtml(item.Nama)}\" loading=\"lazy\" onerror=\"this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-empty',textContent:'Gambar tidak tersedia'}))\">`\n      : `<div class=\"thumb-empty\">Gambar tidak tersedia</div>`;\n\n    return `<div class=\"account-card\" data-row=\"${item.row}\">\n      <button class=\"card-x\" data-action=\"delete\" data-row=\"${item.row}\" title=\"Hapus\">\u2715</button>\n      <button class=\"card-edit\" data-action=\"edit\" data-row=\"${item.row}\" title=\"Edit\">Edit</button>\n      <div class=\"card-media\">${media}</div>\n      <div class=\"card-body\">\n        <div class=\"card-title\">${escapeHtml(item.Nama)}</div>\n        <div class=\"card-sub\">${escapeHtml(item.Game || '-')}</div>\n        <div class=\"card-price\">Rp ${escapeHtml(formatNum(item.Harga))}</div>\n        <div class=\"card-tags\">\n          <span>${escapeHtml(item.Status || 'ready')}</span>\n          <span>${escapeHtml(item.Label || '-')}</span>\n          <span>${escapeHtml(item.Diskon || '-')}</span>\n        </div>\n      </div>\n    </div>`;\n  }\n  function renderCards(){const q=normalizeText(el.searchInput.value).toLowerCase();const arr=state.items.filter(x=>[x.Nama,x.Game,x.Harga,x.Label,x.Status,x.Ket,`row ${x.row}`].join(' ').toLowerCase().includes(q)).sort((a,b)=>state.sortNewest?b.row-a.row:a.row-b.row);if(!arr.length){el.cards.innerHTML='<div class=\"small-note\">Belum ada data dimuat.</div>';return}el.cards.innerHTML=arr.map(renderCard).join('')}\n  function openConfirm(item){state.selectedDelete=item;el.confirmTitle.textContent=`Hapus: ${item.Nama}`;el.confirmMsg.textContent=`${item.Nama} \u2022 Rp ${formatNum(item.Harga)} \u2022 ${item.Game} \u2022 Row ${item.row}`;el.confirmOverlay.classList.add('open');el.confirmOverlay.setAttribute('aria-hidden','false')}\n  function closeConfirm(){el.confirmOverlay.classList.remove('open');el.confirmOverlay.setAttribute('aria-hidden','true');state.selectedDelete=null}\n  function startEdit(item){state.editingRow=item.row;el.rowEdit.value=item.row;el.existingImages.value=item.Gambar || '';el.nama.value=item.Nama || '';el.game.value=item.Game || '';el.harga.value=item.Harga || '';el.diskon.value=item.Diskon || '';el.label.value=item.Label || '';el.status.value=item.Status || 'ready';el.ket.value=item.Ket || '';el.gambar.value=item.Gambar || '';state.files=[];state.objectUrls.forEach(u=>URL.revokeObjectURL(u));state.objectUrls=[];setRupiahInput(el.harga);setMode('edit');saveDraft();renderPreview();window.scrollTo({top:0,behavior:'smooth'})}\n  function fileToBase64(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>{const result=String(reader.result || '');resolve(result.includes(',')?result.split(',')[1]:result)};reader.onerror=()=>reject(new Error('Gagal baca file.'));reader.readAsDataURL(file)})}\n  async function prepareFiles(files){const list=Array.from(files || []);const out=[];for(const file of list){const data=await fileToBase64(file);out.push({name:file.name,mimeType:file.type || 'image/png',data})}return out}\n  function jsonp(url,cbName){return new Promise((resolve,reject)=>{const script=document.createElement('script');script.async=true;const cleanup=()=>{try{delete window[cbName]}catch(_){window[cbName]=undefined}script.remove()};window[cbName]=(data)=>{cleanup();resolve(data)};script.onerror=()=>{cleanup();reject(new Error('Gagal memuat respons.'))};script.src=url;document.body.appendChild(script)})}\n  async function verifyConnection(){const endpoint=endpointValue();const cb=`__yuraaa_ping_${Date.now()}`;setConnectionState(false,'Memeriksa koneksi...');try{const res=await jsonp(`${endpoint}?action=ping&callback=${cb}&_=${Date.now()}`,cb);setConnectionState(!!(res && res.ok),res && res.ok ? 'Tersambung' : 'Gagal tersambung')}catch(e){setConnectionState(false,'Gagal tersambung')}}\n  function scheduleVerify(){clearTimeout(state.connectionTimer);state.connectionTimer=setTimeout(verifyConnection,350)}\n  function updateConnectionBadge(){localStorage.setItem(ENDPOINT_KEY,el.endpoint.value.trim() || DEFAULT_ENDPOINT);setConnectionState(false,'Siap diverifikasi');scheduleVerify()}\n  function sendViaGoogleScript(action,payload){return new Promise((resolve,reject)=>{if(!window.google || !google.script || !google.script.run){reject(new Error('google.script.run tidak tersedia.'));return}const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(err=>reject(new Error(err && err.message ? err.message : String(err))));if(action==='delete')runner.deleteAccount(JSON.parse(JSON.stringify(payload)));else if(action==='update')runner.updateAccount(JSON.parse(JSON.stringify(payload)));else runner.saveAccount(JSON.parse(JSON.stringify(payload)))});}\n  function sendViaIframePost(endpoint,payload){return new Promise((resolve,reject)=>{const token=`${Date.now()}_${Math.random().toString(36).slice(2,10)}`;const iframeName=`sink_${token}`;const iframe=document.createElement('iframe');iframe.name=iframeName;iframe.style.display='none';const form=document.createElement('form');form.action=endpoint;form.method='POST';form.target=iframeName;form.style.display='none';const fields={client:'github',iframe:'1',origin:location.origin,token,data:JSON.stringify(payload)};Object.entries(fields).forEach(([name,value])=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=value;form.appendChild(input)});let settled=false;let submitted=false;const cleanup=()=>{window.removeEventListener('message',onMessage);iframe.removeEventListener('load',onLoad);clearTimeout(timer);setTimeout(()=>{form.remove();iframe.remove()},150)};const finish=(ok,data)=>{if(settled)return;settled=true;cleanup();if(ok)resolve(data || {ok:true});else reject(new Error((data && data.message) || 'Gagal menyimpan data.'))};const parseWindowName=()=>{try{const raw=iframe.contentWindow && iframe.contentWindow.name;if(!raw)return null;const parsed=JSON.parse(raw);if(parsed && parsed.source===SOURCE_KEY && parsed.token===token)return parsed}catch(_){ }return null};const onMessage=(event)=>{const data=event.data || {};if(!data || data.source!==SOURCE_KEY || data.token!==token)return;finish(!!data.ok,data)};const onLoad=()=>{if(!submitted)return;setTimeout(()=>{if(settled)return;const byName=parseWindowName();if(byName){finish(!!byName.ok,byName);return}finish(true,{ok:true,message:'Data terkirim.'})},800)};const timer=setTimeout(()=>{if(settled)return;const byName=parseWindowName();if(byName){finish(!!byName.ok,byName);return}finish(true,{ok:true,message:'Data terkirim (auto-accepted).'})},15000);window.addEventListener('message',onMessage);iframe.addEventListener('load',onLoad);document.body.appendChild(iframe);document.body.appendChild(form);submitted=true;form.submit()})}\n  function validateAdd(){if(!el.nama.value.trim())return 'Nama akun belum diisi.';if(!el.game.value.trim())return 'Game belum diisi.';if(!cleanNumber(el.harga.value))return 'Harga belum diisi.';return ''}\n  async function submitAddOrEdit(){const err=validateAdd();if(err){toast(err);return}showLoading(el.rowEdit.value ? 'Menyimpan perubahan...' : 'Menyimpan data...');setBusy(true);try{const payload=buildPayload();const endpoint=endpointValue();let result;if(window.google && google.script && google.script.run){result=await sendViaGoogleScript(payload.action,payload)}else{result=await sendViaIframePost(endpoint,payload)}if(!result || result.ok===false){throw new Error((result && result.message) ? result.message : 'Gagal menyimpan data.')}showNotify('success','Berhasil',payload.action==='update' ? 'Data berhasil diperbarui.' : 'Data berhasil disimpan.');clearForm();await loadList(true);toast(payload.action==='update' ? 'Data diperbarui.' : 'Data tersimpan.')}catch(e){console.error(e);showNotify('fail','Gagal',e.message || 'Gagal menyimpan data.')}finally{setBusy(false);hideLoading()}}\n  async function confirmDelete(){if(!state.selectedDelete)return;showLoading('Menghapus data...');setDeletingBusy(true);try{const payload={action:'delete',mode:'row',value:String(state.selectedDelete.row),row:state.selectedDelete.row};const endpoint=endpointValue();let result;if(window.google && google.script && google.script.run){result=await sendViaGoogleScript('delete',payload)}else{result=await sendViaIframePost(endpoint,payload)}if(!result || result.ok===false)throw new Error((result && result.message) ? result.message : 'Gagal menghapus data.');showNotify('success','Berhasil',result.message || 'Data berhasil dihapus.');toast('Data dihapus.');closeConfirm();await loadList(true)}catch(e){console.error(e);showNotify('fail','Gagal',e.message || 'Gagal menghapus data.')}finally{setDeletingBusy(false);hideLoading()}}\n  async function loadList(silent=false){try{const endpoint=endpointValue();localStorage.setItem(ENDPOINT_KEY,endpoint || DEFAULT_ENDPOINT);const cb=`__yuraaa_list_${Date.now()}`;const res=await jsonp(`${endpoint}?action=list&callback=${cb}&_=${Date.now()}`,cb);if(!res || !res.ok)throw new Error((res && res.message) || 'Gagal memuat data.');state.items=Array.isArray(res.items) ? res.items : [];renderCards();if(!silent)toast('Data dimuat.');setConnectionState(true,'Tersambung')}catch(e){console.error(e);if(!silent)showNotify('fail','Gagal',e.message || 'Gagal memuat data.');setConnectionState(false,'Gagal tersambung')}}\n  function copyJson(){navigator.clipboard.writeText(JSON.stringify(buildPayload(), null, 2)).then(()=>toast('JSON disalin.')).catch(()=>toast('Gagal menyalin JSON.'))}\n  function setTabScrollTo(section){section.scrollIntoView({behavior:'smooth',block:'start'})}\n  el.scrollAddBtn.addEventListener('click',()=>setTabScrollTo(el.formSection));el.scrollListBtn.addEventListener('click',()=>setTabScrollTo(el.listSection));el.openDeleteBtn.addEventListener('click',()=>setTabScrollTo(el.listSection));el.closeBtn.addEventListener('click',()=>window.location.href='index.html');el.refreshAllBtn.addEventListener('click',async()=>{await loadList(true);await verifyConnection();toast('Disegarkan.');});el.submitBtn.addEventListener('click',submitAddOrEdit);el.resetBtn.addEventListener('click',()=>{clearForm();toast('Form direset.');});el.copyJsonBtn.addEventListener('click',copyJson);el.imageFiles.addEventListener('change',async()=>{try{state.files=await prepareFiles(el.imageFiles.files);state.objectUrls.forEach(u=>URL.revokeObjectURL(u));state.objectUrls=Array.from(el.imageFiles.files).map(f=>URL.createObjectURL(f));renderPreview();saveDraft()}catch(e){toast(e.message || 'Gagal membaca file')}});el.gambar.addEventListener('input',()=>{renderPreview();saveDraft()});el.searchInput.addEventListener('input',renderCards);el.clearSearchBtn.addEventListener('click',()=>{el.searchInput.value='';renderCards()});el.sortBtn.addEventListener('click',()=>{state.sortNewest=!state.sortNewest;el.sortBtn.textContent=state.sortNewest ? 'Terbaru' : 'Terlama';renderCards()});el.reloadBtn.addEventListener('click',()=>loadList());el.confirmDeleteBtn.addEventListener('click',confirmDelete);el.confirmCancelBtn.addEventListener('click',closeConfirm);el.notifyClose.addEventListener('click',()=>window.location.href='index.html');el.notifyOverlay.addEventListener('click',(e)=>{if(e.target===el.notifyOverlay)hideNotify()});el.confirmOverlay.addEventListener('click',(e)=>{if(e.target===el.confirmOverlay)closeConfirm()});el.loadingOverlay.addEventListener('click',(e)=>{if(e.target===el.loadingOverlay)return});['nama','game','harga','diskon','status','label','ket'].forEach(id=>{const node=$(id);if(!node)return;node.addEventListener('input',saveDraft);node.addEventListener('change',saveDraft)});el.endpoint.addEventListener('input',()=>{localStorage.setItem(ENDPOINT_KEY,el.endpoint.value.trim() || DEFAULT_ENDPOINT);updateConnectionBadge()});el.endpoint.addEventListener('change',()=>{localStorage.setItem(ENDPOINT_KEY,el.endpoint.value.trim() || DEFAULT_ENDPOINT);updateConnectionBadge()});el.harga.addEventListener('focus',()=>{el.harga.value=cleanNumber(el.harga.value)});el.harga.addEventListener('input',()=>{el.harga.value=formatRupiah(el.harga.value);saveDraft()});el.harga.addEventListener('blur',()=>{el.harga.value=formatRupiah(el.harga.value)});el.diskon.addEventListener('input',saveDraft);document.addEventListener('click',(e)=>{const deleteBtn=e.target.closest('[data-action=\"delete\"]');const editBtn=e.target.closest('[data-action=\"edit\"]');if(deleteBtn){const row=Number(deleteBtn.dataset.row);const found=state.items.find(x=>x.row===row);if(found)openConfirm(found);return}if(editBtn){const row=Number(editBtn.dataset.row);const found=state.items.find(x=>x.row===row);if(found)startEdit(found);return}});window.addEventListener('keydown',(e)=>{if(e.key==='Escape'){closeConfirm();hideNotify();hideLoading()}});function buildPayload(){return{action:el.rowEdit.value ? 'update' : 'save',row:el.rowEdit.value ? Number(el.rowEdit.value) : '',Nama:el.nama.value.trim(),Harga:cleanNumber(el.harga.value),Diskon:cleanNumber(el.diskon.value),Game:el.game.value.trim(),Gambar:el.gambar.value.trim(),keepImages:el.existingImages.value.trim(),imageFiles:state.files,Label:el.label.value,Status:el.status.value,Ket:el.ket.value.trim(),Tanggal:new Date().toISOString(),DONE:''}}\n  loadDraft();setMode('add');loadList(true);verifyConnection();setInterval(()=>{if(!document.hidden){loadList(true).catch(()=>{});verifyConnection().catch(()=>{})}},60000)\n})();\n</script>\n</body>\n</html>\n";
 
-  <div class="pin-overlay" id="pinOverlay">
-    <div class="pin-card" id="pinCard" role="dialog" aria-modal="true" aria-labelledby="pinTitle">
-      <div class="pin-top">
-        <div>
-          <h2 class="pin-title" id="pinTitle">Masukkan PIN</h2>
-          <p class="pin-sub">Akses dashboard keuangan dengan kode 6 digit.</p>
-        </div>
-        <button class="pin-close" id="pinClose" aria-label="Tutup">×</button>
-      </div>
+    const financeFrame = document.getElementById('financeFrame');
+    const dashboardFrame = document.getElementById('dashboardFrame');
+    const viewFinance = document.getElementById('viewFinance');
+    const viewDashboard = document.getElementById('viewDashboard');
+    const btnFinance = document.getElementById('btnFinance');
+    const btnDashboard = document.getElementById('btnDashboard');
+    const btnReload = document.getElementById('btnReload');
 
-      <div class="pin-body">
-        <div class="pin-label">PIN Akses</div>
-        <input id="pinInput" class="pin-input" type="password" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" />
-        <div class="pin-msg" id="pinMsg"></div>
-        <div class="pin-actions">
-          <button class="btn secondary" id="clearPinBtn">Hapus</button>
-          <button class="btn primary" id="submitPinBtn">Buka</button>
-        </div>
-      </div>
-    </div>
-  </div>
+    function setActive(which) {
+      const finance = which === 'finance';
+      viewFinance.classList.toggle('active', finance);
+      viewDashboard.classList.toggle('active', !finance);
+      btnFinance.classList.toggle('active', finance);
+      btnDashboard.classList.toggle('active', !finance);
+      localStorage.setItem('yuraaa_active_view', finance ? 'finance' : 'dashboard');
+    }
 
-  <div class="toast" id="toast"></div>
+    function loadFrames() {
+      if (!financeFrame.srcdoc) financeFrame.srcdoc = FINANCE_HTML;
+      if (!dashboardFrame.srcdoc) dashboardFrame.srcdoc = DASHBOARD_HTML;
+    }
 
-<script>
-const API = "https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List";
-const PIN_CODE = "211202";
-const AUTO_REFRESH_MS = 5 * 60 * 1000;
+    btnFinance.addEventListener('click', () => setActive('finance'));
+    btnDashboard.addEventListener('click', () => setActive('dashboard'));
+    btnReload.addEventListener('click', () => {
+      // reload current active view
+      const active = localStorage.getItem('yuraaa_active_view') || 'finance';
+      if (active === 'dashboard') {
+        dashboardFrame.srcdoc = DASHBOARD_HTML;
+      } else {
+        financeFrame.srcdoc = FINANCE_HTML;
+      }
+    });
 
-const els = {
-  totalMasuk: document.getElementById('totalMasuk'),
-  soldCount: document.getElementById('soldCount'),
-  avgSold: document.getElementById('avgSold'),
-  monthLabelTop: document.getElementById('monthLabelTop'),
-  monthFilter: document.getElementById('monthFilter'),
-  searchInput: document.getElementById('searchInput'),
-  historyList: document.getElementById('historyList'),
-  listInfo: document.getElementById('listInfo'),
-  updatedAt: document.getElementById('updatedAt'),
-  refreshBtn: document.getElementById('refreshBtn'),
-  exitBtn: document.getElementById('exitBtn'),
-  unlockFab: document.getElementById('unlockFab'),
-  pinOverlay: document.getElementById('pinOverlay'),
-  pinCard: document.getElementById('pinCard'),
-  pinClose: document.getElementById('pinClose'),
-  pinInput: document.getElementById('pinInput'),
-  submitPinBtn: document.getElementById('submitPinBtn'),
-  clearPinBtn: document.getElementById('clearPinBtn'),
-  pinMsg: document.getElementById('pinMsg'),
-  toast: document.getElementById('toast'),
-};
-
-let RAW = [];
-let CURRENT = [];
-let selectedMonth = monthKey(new Date());
-let searchTerm = '';
-let refreshTimer = null;
-
-function rupiah(n){
-  return 'Rp ' + new Intl.NumberFormat('id-ID').format(Number(n)||0);
-}
-
-function normalizeStatus(v){
-  return (v ?? '').toString().toLowerCase().trim().replace(/[^a-z]/g,'');
-}
-function parseDate(raw){
-  if(!raw) return null;
-  const d = new Date(raw);
-  return isNaN(d.getTime()) ? null : d;
-}
-function monthKey(date){
-  const y = date.getFullYear();
-  const m = String(date.getMonth()+1).padStart(2,'0');
-  return `${y}-${m}`;
-}
-function monthLabel(key){
-  const [y,m] = key.split('-').map(Number);
-  const d = new Date(y, m-1, 1);
-  return new Intl.DateTimeFormat('id-ID', { month:'long', year:'numeric' }).format(d);
-}
-function formatDate(date){
-  if(!date) return '-';
-  return new Intl.DateTimeFormat('id-ID', { day:'2-digit', month:'short', year:'numeric' }).format(date);
-}
-function animateNumber(el, target){
-  const start = 0;
-  const duration = 800;
-  const t0 = performance.now();
-  function frame(t){
-    const p = Math.min((t - t0) / duration, 1);
-    const eased = 1 - Math.pow(1 - p, 3);
-    const val = Math.round(start + (target - start) * eased);
-    el.textContent = rupiah(val);
-    if(p < 1) requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-}
-function showToast(msg){
-  els.toast.textContent = msg;
-  els.toast.classList.add('show');
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(()=>els.toast.classList.remove('show'), 1800);
-}
-function goAdd() {
-  window.location.href = 'https://lutthidayat.github.io/yuraaa-store/dashboard.html';
-}
-function showPinMsg(msg){
-  els.pinMsg.textContent = msg;
-  els.pinMsg.classList.add('show');
-}
-function hidePinMsg(){
-  els.pinMsg.textContent = '';
-  els.pinMsg.classList.remove('show');
-}
-function openPinModal(){
-  els.pinOverlay.classList.remove('hidden');
-  document.body.classList.add('locked');
-  els.unlockFab.classList.remove('show');
-  setTimeout(()=>els.pinInput.focus(), 50);
-}
-function closePinModal(){
-  els.pinOverlay.classList.add('hidden');
-  document.body.classList.add('locked');
-  els.unlockFab.classList.add('show');
-}
-function unlockApp(){
-  document.body.classList.remove('locked');
-  els.pinOverlay.classList.add('hidden');
-  els.unlockFab.classList.remove('show');
-  hidePinMsg();
-  clearPin();
-  loadData();
-}
-function clearPin(){
-  els.pinInput.value = '';
-}
-function shakeCard(){
-  els.pinCard.classList.remove('shake');
-  void els.pinCard.offsetWidth;
-  els.pinCard.classList.add('shake');
-}
-function validatePin(){
-  const pin = els.pinInput.value.trim();
-  if(pin.length < 6) return;
-  if(pin === PIN_CODE){
-    unlockApp();
-  } else {
-    showPinMsg('PIN salah. Coba lagi ya.');
-    shakeCard();
-    clearPin();
-    setTimeout(()=>{
-      hidePinMsg();
-      closePinModal();
-      showToast('PIN salah. Klik Masuk PIN untuk mencoba lagi.');
-    }, 900);
-  }
-}
-function mapRow(row){
-  const nama = row.Nama ?? row.nama ?? row.Name ?? row.name ?? '-';
-  const game = row.Game ?? row.game ?? '-';
-  const harga = Number(String(row.Harga ?? row.harga ?? 0).replace(/[^\d]/g,'')) || 0;
-  const status = normalizeStatus(row.Status ?? row.status ?? 'ready');
-  const date = parseDate(row.Tanggal ?? row.tanggal ?? row.Date ?? row.date ?? row.CreatedAt ?? row.createdAt ?? row.Timestamp ?? row.timestamp ?? row.Waktu ?? row.waktu);
-  return { nama, game, harga, status, date, raw: row };
-}
-function getCurrentMonthData(data){
-  const target = selectedMonth;
-  return data.filter(x => x.date && monthKey(x.date) === target);
-}
-function applyFilters(){
-  const monthData = getCurrentMonthData(RAW);
-  const q = searchTerm.trim().toLowerCase();
-  const filtered = monthData.filter(item => {
-    if(!q) return true;
-    return [item.nama, item.game, String(item.harga), item.status].join(' ').toLowerCase().includes(q);
-  });
-  CURRENT = filtered;
-  render();
-}
-function renderStats(){
-  const sold = CURRENT.filter(x => x.status === 'sold');
-  const total = sold.reduce((s,x)=>s + x.harga, 0);
-  const avg = sold.length ? Math.round(total / sold.length) : 0;
-  animateNumber(els.totalMasuk, total);
-  els.soldCount.textContent = sold.length.toLocaleString('id-ID');
-  animateNumber(els.avgSold, avg);
-  els.monthLabelTop.textContent = monthLabel(selectedMonth);
-}
-function renderMonthOptions(data){
-  const months = [...new Map(data.filter(x => x.date).map(x => [monthKey(x.date), monthLabel(monthKey(x.date))])).entries()]
-    .sort((a,b)=> b[0].localeCompare(a[0]));
-  const current = monthKey(new Date());
-  if(!months.some(([k]) => k === current)) months.unshift([current, monthLabel(current)]);
-  els.monthFilter.innerHTML = `
-    <option value="">Semua Bulan</option>
-    ${months.map(([k,l]) => `<option value="${k}">${l}</option>`).join('')}
-  `;
-  if(!selectedMonth) selectedMonth = current;
-  els.monthFilter.value = selectedMonth;
-}
-function render(){
-  renderStats();
-  const data = CURRENT.filter(x => x.status === 'sold').sort((a,b) => (b.date?.getTime?.() || 0) - (a.date?.getTime?.() || 0));
-
-  if(!data.length){
-    els.historyList.innerHTML = `
-      <div class="empty">
-        Tidak ada transaksi pada ${selectedMonth ? monthLabel(selectedMonth) : 'semua bulan'}.
-      </div>`;
-    els.listInfo.textContent = 'Belum ada transaksi yang cocok dengan filter.';
-    return;
-  }
-
-  els.listInfo.textContent = `${data.length} transaksi ditemukan pada ${selectedMonth ? monthLabel(selectedMonth) : 'semua bulan'}.`;
-  els.historyList.innerHTML = data.map((x,i)=>`
-    <div class="history-item" style="transition-delay:${i*0.045}s">
-      <div class="history-left">
-        <div class="history-icon">🎮</div>
-        <div class="history-main">
-          <h4 class="history-title">${escapeHtml(x.nama)}</h4>
-          <p class="history-sub">${escapeHtml(x.game)} • ${x.date ? formatDate(x.date) : '-'}</p>
-          <div class="status-pill">● sold</div>
-        </div>
-      </div>
-      <div class="history-right">
-        <p class="history-price">${rupiah(x.harga)}</p>
-        <p class="history-date">Masuk bulan ${selectedMonth ? monthLabel(selectedMonth) : 'semua'}</p>
-      </div>
-    </div>
-  `).join('');
-
-  setTimeout(()=>{
-    document.querySelectorAll('.history-item').forEach(el=>el.classList.add('show'));
-  }, 60);
-}
-function escapeHtml(str){
-  return String(str ?? '')
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#39;');
-}
-function setLoading(){
-  els.historyList.innerHTML = `
-    <div class="skeleton">
-      <div class="sk-item"></div>
-      <div class="sk-item sm"></div>
-      <div class="sk-item"></div>
-    </div>`;
-  els.listInfo.textContent = 'Memuat data...';
-}
-async function loadData(){
-  try{
-    setLoading();
-    const res = await fetch(API, { cache: 'no-store' });
-    if(!res.ok) throw new Error('Gagal mengambil data spreadsheet');
-    const rows = await res.json();
-    RAW = Array.isArray(rows) ? rows.map(mapRow).filter(x => x.status === 'sold') : [];
-    renderMonthOptions(RAW);
-    applyFilters();
-    els.updatedAt.textContent = 'Terakhir diperbarui: ' + new Intl.DateTimeFormat('id-ID', {
-      dateStyle: 'medium', timeStyle: 'short'
-    }).format(new Date());
-  }catch(err){
-    console.error(err);
-    els.historyList.innerHTML = `<div class="error">Gagal memuat data. Cek akses spreadsheet, nama sheet, dan koneksi internet.</div>`;
-    els.listInfo.textContent = 'Data tidak bisa dimuat.';
-  }
-}
-
-els.monthFilter.addEventListener('change', (e)=>{
-  selectedMonth = e.target.value || monthKey(new Date());
-  applyFilters();
-});
-els.searchInput.addEventListener('input', (e)=>{
-  searchTerm = e.target.value || '';
-  applyFilters();
-});
-els.refreshBtn.addEventListener('click', ()=>{
-  showToast('Memuat ulang data...');
-  loadData();
-});
-els.exitBtn.addEventListener('click', () => {
-  window.location.href = 'index.html';
-});
-els.addBtn = document.getElementById('addBtn');
-els.addBtn.addEventListener('click', goAdd);
-els.unlockFab.addEventListener('click', openPinModal);
-els.pinClose.addEventListener('click', ()=>{
-  closePinModal();
-  showToast('PIN ditutup. Klik Masuk PIN untuk membuka lagi.');
-});
-els.clearPinBtn.addEventListener('click', ()=>{
-  clearPin();
-  hidePinMsg();
-  els.pinInput.focus();
-});
-els.submitPinBtn.addEventListener('click', validatePin);
-els.pinInput.addEventListener('input', ()=>{
-  els.pinInput.value = els.pinInput.value.replace(/\D/g,'').slice(0,6);
-  hidePinMsg();
-  if(els.pinInput.value.length === 6) validatePin();
-});
-els.pinInput.addEventListener('keydown', (e)=>{
-  if(e.key === 'Enter') validatePin();
-});
-els.pinInput.addEventListener('paste', (e)=>{
-  e.preventDefault();
-  const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
-  els.pinInput.value = text;
-  if(text.length === 6) validatePin();
-});
-
-window.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape' && !els.pinOverlay.classList.contains('hidden')){
-    closePinModal();
-  }
-});
-
-// Close when clicking the backdrop
-els.pinOverlay.addEventListener('click', (e)=>{
-  if(e.target === els.pinOverlay){
-    closePinModal();
-  }
-});
-
-document.body.classList.add('locked');
-openPinModal();
-
-refreshTimer = setInterval(()=>{
-  if(!document.body.classList.contains('locked')) loadData();
-}, AUTO_REFRESH_MS);
-</script>
+    loadFrames();
+    setActive(localStorage.getItem('yuraaa_active_view') || 'finance');
+  </script>
 </body>
 </html>
