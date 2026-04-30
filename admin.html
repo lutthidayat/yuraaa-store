@@ -189,6 +189,22 @@
   .textarea{min-height:112px;padding:14px;resize:vertical;line-height:1.6;font-weight:600}
   .input::placeholder, .textarea::placeholder{color:#64748b}
   input, select, textarea{color:#fff !important;}
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus{
+    -webkit-text-fill-color:#fff !important;
+    -webkit-box-shadow:0 0 0 1000px #020617 inset !important;
+    box-shadow:0 0 0 1000px #020617 inset !important;
+    caret-color:#fff !important;
+    transition:background-color 9999s ease-in-out 0s;
+    background-clip:content-box !important;
+  }
   select option{background:#020617;color:#fff}
   .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
   .controls .btn{flex:1 1 180px}
@@ -1119,7 +1135,8 @@
       merged: [],
       filter: localStorage.getItem(ACTIVE_FILTER_KEY) || 'all',
       deleteTarget: null,
-      editingId: null
+      editingId: null,
+      initialized: false
     };
 
     function loadLocal(){
@@ -1421,38 +1438,54 @@
     function openModal(node){ node.classList.add('open'); node.setAttribute('aria-hidden','false'); }
     function closeModal(node){ node.classList.remove('open'); node.setAttribute('aria-hidden','true'); }
 
-    async function loadApi(){
-      setLoading(true, 'Sinkron spreadsheet...');
-      try{
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 12000);
-        const res = await fetch(`${API}?_=${Date.now()}`, { cache:'no-store', signal: controller.signal });
-        clearTimeout(timer);
-        if(!res.ok) throw new Error('Gagal mengambil data spreadsheet.');
-        const json = await res.json();
-        const rows = Array.isArray(json) ? json : Array.isArray(json?.items) ? json.items : [];
-        const seen = new Set();
-        state.api = rows
-          .filter(x => isSold(pick(x, 'Status', 'status')))
-          .map(apiToItem)
-          .filter(item => {
-            if(seen.has(item.id)) return false;
-            seen.add(item.id);
-            return true;
-          });
-        toast('Spreadsheet tersinkron.');
-        render();
-      }catch(err){
-        console.error(err);
-        state.api = [];
-        render();
-        toast('Spreadsheet tidak bisa diambil, data manual tetap tampil.');
-      }finally{
-        setLoading(false);
-      }
-    }
 
-    function bindAmountInput(node){
+async function loadApi(){
+  setLoading(true, 'Sinkron spreadsheet...');
+  try{
+    const endpoint = (localStorage.getItem(DASHBOARD_ENDPOINT_KEY) || DEFAULT_DASHBOARD_ENDPOINT || '').trim();
+    if(!endpoint) throw new Error('Endpoint dashboard belum diatur.');
+    const cb = `__yuraaa_finance_${Date.now()}`;
+    const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
+    const res = await jsonpFinance(url, cb);
+    const rows = Array.isArray(res && res.items) ? res.items : Array.isArray(res) ? res : [];
+    const seen = new Set();
+    state.api = rows
+      .filter(x => isSold(pick(x, 'Status', 'status')))
+      .map(apiToItem)
+      .filter(item => {
+        if(seen.has(item.id)) return false;
+        seen.add(item.id);
+        return true;
+      });
+    toast('Spreadsheet tersinkron.');
+    render();
+  }catch(err){
+    console.error(err);
+    state.api = [];
+    render();
+    toast('Spreadsheet tidak bisa diambil, data manual tetap tampil.');
+  }finally{
+    setLoading(false);
+  }
+}
+
+function jsonpFinance(url, cbName){
+  return new Promise((resolve,reject)=>{
+    const script = document.createElement('script');
+    script.async = true;
+    const cleanup = () => {
+      try{ delete window[cbName]; }catch(_){ window[cbName] = undefined; }
+      script.remove();
+    };
+    window[cbName] = (data) => { cleanup(); resolve(data); };
+    script.onerror = () => { cleanup(); reject(new Error('Gagal memuat respons.')); };
+    script.src = url;
+    document.body.appendChild(script);
+  });
+}
+
+function bindAmountInput(node){
+
       node.addEventListener('focus', () => { node.value = cleanAmount(node.value); });
       node.addEventListener('input', () => {
         const digits = cleanAmount(node.value);
@@ -1512,6 +1545,8 @@
     });
 
     async function init(){
+      if(state.initialized) return;
+      state.initialized = true;
       resetForm();
       render();
       await loadApi();
@@ -1566,7 +1601,8 @@
       files: [],
       objectUrls: [],
       sortNewest: true,
-      filter: 'all'
+      filter: 'all',
+      initialized: false
     };
 
     function normalizeText(v){ return (v ?? '').toString().trim(); }
@@ -1771,7 +1807,7 @@
           const label = normalizeText(x.Label).toLowerCase();
           if(f === 'all') return true;
           if(f === 'sold') {
-            const s = normalizeText(x.Status).toLowerCase();
+            const s = normalizeText(pick(x, 'Status', 'status')).toLowerCase();
             return s.includes('sold') || s.includes('done') || s.includes('terjual');
           }
           return label === f;
@@ -1942,7 +1978,7 @@
     async function loadList(silent=false){
       setLoadingDashboard(true, 'Memuat akun...');
       try{
-        const endpoint = endpointValue();
+        const endpoint = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
         localStorage.setItem(DASHBOARD_ENDPOINT_KEY, endpoint || DEFAULT_DASHBOARD_ENDPOINT);
         el.endpoint.value = endpoint || DEFAULT_DASHBOARD_ENDPOINT;
         const cb = `__yuraaa_list_${Date.now()}`;
@@ -2132,6 +2168,8 @@
     }
 
     async function init(){
+      if(state.initialized) return;
+      state.initialized = true;
       el.endpoint.value = endpointValue();
       if(!el.endpoint.value) el.endpoint.value = DEFAULT_DASHBOARD_ENDPOINT;
       document.querySelectorAll('[data-dash-filter]').forEach(ch => ch.addEventListener('click', () => applyFilter(ch.dataset.dashFilter)));
@@ -2195,7 +2233,7 @@
     async function loadList(silent=false){
       setLoadingDashboard(true, 'Memuat akun...');
       try{
-        const endpoint = endpointValue();
+        const endpoint = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
         localStorage.setItem(DASHBOARD_ENDPOINT_KEY, endpoint || DEFAULT_DASHBOARD_ENDPOINT);
         el.endpoint.value = endpoint || DEFAULT_DASHBOARD_ENDPOINT;
         const cb = `__yuraaa_list_${Date.now()}`;
@@ -2276,28 +2314,13 @@
     }
   });
 
-  // Init
-  openView(localStorage.getItem('yuraaa_active_view_v1') || 'finance');
-  setTimeout(() => {
-    ensureUnlocked();
-    if(sessionStorage.getItem(UNLOCK_KEY) === '1'){
-      finance.init();
-      dashboard.init();
-    }
-  }, 0);
+  // Init (bind events once, even while locked)
+  finance.init();
+  dashboard.init();
 
-  // Auto load when unlocked
-  if(sessionStorage.getItem(UNLOCK_KEY) === '1'){
-    finance.init();
-    dashboard.init();
-  }
-
-  // Hide dashboard details by default in one-file but keep active view
-  if((localStorage.getItem('yuraaa_active_view_v1') || 'finance') === 'dashboard'){
-    openView('dashboard');
-  } else {
-    openView('finance');
-  }
+  const activeView = localStorage.getItem('yuraaa_active_view_v1') || 'finance';
+  openView(activeView);
+  ensureUnlocked();
 
   // If unlocked, ensure lists load
   if(sessionStorage.getItem(UNLOCK_KEY) === '1'){
