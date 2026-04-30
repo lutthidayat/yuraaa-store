@@ -1062,6 +1062,7 @@
   ui.clearPinBtn.onclick = () => { ui.pinInput.value = ''; setPinMsg(''); ui.pinInput.focus(); };
   ui.submitPinBtn.onclick = () => pinCheck(ui.pinInput.value.trim());
   ui.pinInput.addEventListener('input', () => {
+    ui.pinInput.value = ui.pinInput.value.replace(/\D/g, '').slice(0, 6);
     const val = ui.pinInput.value.trim();
     if(val.length === 6) pinCheck(val);
   });
@@ -2094,15 +2095,6 @@
         openModal(ui.formOverlay);
       };
       el.scrollListBtn.onclick = () => document.getElementById('dashListSection').scrollIntoView({ behavior:'smooth', block:'start' });
-      el.resetBtn = el.resetBtn;
-      el.dashFormSection.querySelector('#dashEndpointBtn')?.addEventListener('click', setEndpointFromPrompt);
-      el.endpointBtn = el.endpointBtn;
-
-      el.saveBtn = null;
-      el.addBtn = null;
-
-      el.saveBtn = null;
-
       $('dashSaveBtn').onclick = saveAccount;
       $('dashResetBtn').onclick = () => { resetForm(true); toast('Form akun direset.'); };
       $('dashReloadBtn').onclick = () => loadList();
