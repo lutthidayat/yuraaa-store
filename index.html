@@ -286,7 +286,7 @@
       background:linear-gradient(180deg, rgba(11,17,34,.96), rgba(8,13,28,.96));
       border:1px solid rgba(148,163,184,.12);
       border-radius:24px;
-      padding:16px;
+      padding:20px 16px 16px;
       display:grid;
       grid-template-columns: 210px 1fr 230px;
       gap:16px;
@@ -308,9 +308,11 @@
       pointer-events:none
     }
     .card-badge{
-      position:absolute;top:14px;right:14px;z-index:2;
+      position:absolute;top:16px;right:16px;z-index:5;
       font-size:12px;line-height:1;padding:8px 12px;border-radius:12px;
-      font-weight:800;text-transform:capitalize;letter-spacing:.2px
+      font-weight:800;text-transform:capitalize;letter-spacing:.2px;
+      max-width:calc(100% - 248px);
+      white-space:nowrap;
     }
     .b-hot{background:#ef4444;color:white}
     .b-new{background:#2563eb;color:white}
@@ -321,11 +323,12 @@
       width:100%;height:182px;border-radius:20px;overflow:hidden;
       background:linear-gradient(180deg, rgba(148,163,184,.08), rgba(15,23,42,.1));
       border:1px solid rgba(148,163,184,.1);
-      position:relative;flex:0 0 auto
+      position:relative;flex:0 0 auto;
+      padding:10px;
     }
     .thumb img{
       width:100%;height:100%;
-      object-fit:cover;
+      object-fit:contain;
       object-position:center center;
       background:
         radial-gradient(circle at 50% 30%, rgba(139,92,246,.15), transparent 42%),
@@ -333,6 +336,7 @@
       display:block;
       box-sizing:border-box;
       filter:saturate(1.02) contrast(1.02);
+      border-radius:14px;
     }
     .thumb-count{
       position:absolute;left:12px;bottom:12px;z-index:2;
@@ -377,7 +381,8 @@
     }
     .status-pill{
       display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 12px;
-      font-size:12px;font-weight:800;text-transform:capitalize;color:#fff;letter-spacing:.2px
+      font-size:12px;font-weight:800;text-transform:capitalize;color:#fff;letter-spacing:.2px;
+      white-space:nowrap;
     }
     .status-ready{background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.25);color:#86efac}
     .status-proses{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.22);color:#fcd34d}
@@ -389,7 +394,7 @@
     .contact-chip{
       display:inline-flex;align-items:center;border-radius:999px;padding:8px 12px;
       font-size:12px;font-weight:800;border:1px solid rgba(148,163,184,.16);background:rgba(15,23,42,.5);
-      color:#dbeafe
+      color:#dbeafe;white-space:nowrap;
     }
     .contact-chip.locked{color:#fda4af;border-color:rgba(248,113,113,.2);background:rgba(239,68,68,.1)}
 
@@ -655,6 +660,8 @@
       place-items:center;
       background:linear-gradient(180deg, rgba(2,6,23,.92), rgba(8,13,28,.96));
       overflow:hidden;
+      padding:12px;
+      box-sizing:border-box;
     }
     .modal-frame img{
       width:100%;
@@ -663,6 +670,7 @@
       object-position:center center;
       display:block;
       background:linear-gradient(180deg, rgba(2,6,23,.35), rgba(2,6,23,.35));
+      border-radius:16px;
     }
     .modal-empty{display:grid;place-items:center}
     .empty-media{color:var(--muted);font-size:13px;letter-spacing:.02em}
@@ -828,8 +836,8 @@
       .page-title p{font-size:12px}
       .main{padding:16px 14px 18px}
       .toolbar{grid-template-columns:1fr}
-      .card,.skeleton-card{grid-template-columns:1fr;padding:14px}
-      .thumb,.sk-thumb{width:100%;height:190px}
+      .card,.skeleton-card{grid-template-columns:1fr;padding:18px 14px 14px}
+      .thumb,.sk-thumb{width:100%;height:200px}
       .title{font-size:18px;white-space:normal;overflow:visible;text-overflow:clip}
       .price{font-size:20px}
       .mini-actions,.detail-actions,.banner-actions{width:100%}
@@ -917,7 +925,7 @@
 
       <div class="profile-card">
         <div class="avatar-wrap">
-          <img class="avatar" src="https://i.imgur.com/JXO9OKs.png" alt="Profile">
+          <img class="avatar" src="https://i.imgur.com/1X6VQvR.png" alt="Profile">
           <div class="verified">✓</div>
         </div>
         <div class="profile-name">Yuraaa Store</div>
@@ -1510,13 +1518,15 @@
       const statusClass = getStatusClass(item.status);
       const promo = getPromoMeta(item);
       const blocked = isContactBlocked(item);
+      const topBadgeText = blocked ? item.status : label;
+      const topBadgeClass = blocked ? statusClass : tagClass;
       const contactHint = blocked
         ? (item.status === 'sold' ? 'Akun sudah terjual.' : 'Sedang proses, kontak dinonaktifkan.')
         : 'Klik card untuk detail premium dan slide foto.';
 
       return `
         <article class="card" data-id="${item.id}" role="button" tabindex="0" onclick="window.__openCard && window.__openCard('${item.id}')">
-          ${label ? `<div class="card-badge ${tagClass}">${label}</div>` : ''}
+          ${topBadgeText ? `<div class="card-badge ${topBadgeClass}">${topBadgeText}</div>` : ''}
           ${previewImg ? `
           <div class="thumb">
             <img src="${previewImg}" alt="${item.nama}" loading="lazy" decoding="async">
@@ -1540,6 +1550,7 @@
             <div class="meta-row">
               <span class="pill">Klik card untuk detail & slide foto</span>
               <span class="pill">${imgCount} gambar</span>
+              ${blocked && label ? `<span class="pill">label: ${label}</span>` : ''}
             </div>
 
             <div class="desc">${item.ket || 'Tidak ada detail tambahan.'}</div>
