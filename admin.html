@@ -1044,6 +1044,65 @@
     dashCards: $('dashCards')
   };
 
+
+  async function fetchTextWithTimeout(url, options = {}, timeoutMs = 18000){
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try{
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      return response;
+    }catch(err){
+      clearTimeout(timer);
+      throw err;
+    }
+  }
+
+  async function apiGetJson(url, timeoutMs = 18000){
+    const response = await fetchTextWithTimeout(url, {
+      method: 'GET',
+      cache: 'no-store',
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+      },
+    }, timeoutMs);
+
+    const text = await response.text();
+    try{
+      return JSON.parse(text);
+    }catch(err){
+      throw new Error('Response bukan JSON');
+    }
+  }
+
+  async function apiPostJson(url, payload, timeoutMs = 30000){
+    const response = await fetchTextWithTimeout(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
+      },
+      body: JSON.stringify(payload || {}),
+    }, timeoutMs);
+
+    const text = await response.text();
+    let json;
+    try{
+      json = JSON.parse(text);
+    }catch(err){
+      throw new Error('Response bukan JSON');
+    }
+
+    if(json && (json.ok === false || json.success === false)){
+      throw new Error(json.message || json.error || 'Server error');
+    }
+
+    return json;
+  }
+
   function toast(msg){
     ui.toast.textContent = msg;
     ui.toast.classList.add('show');
@@ -1478,21 +1537,26 @@ async function loadApi(){
 
     if(endpoint){
       try{
-        const cb = `__yuraaa_finance_${Date.now()}`;
-        const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
-        const res = await jsonpFinance(url, cb);
-        rows = Array.isArray(res && res.items) ? res.items : Array.isArray(res) ? res : [];
+        const data = await apiGetJson(`${endpoint}?action=list&_=${Date.now()}`);
+        rows = Array.isArray(data && data.items) ? data.items : Array.isArray(data) ? data : [];
       }catch(err){
-        console.warn('Finance primary endpoint failed, falling back to opensheet.', err);
+        console.warn('Finance primary endpoint failed, falling back to JSONP.', err);
+        try{
+          const cb = `__yuraaa_finance_${Date.now()}`;
+          const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
+          const res = await jsonpFinance(url, cb);
+          rows = Array.isArray(res && res.items) ? res.items : Array.isArray(res) ? res : [];
+        }catch(err2){
+          console.warn('Finance JSONP fallback failed.', err2);
+        }
       }
     }
 
     if(!rows.length){
       try{
         const fallback = `${API}?_=${Date.now()}`;
-        const res = await fetch(fallback, { cache:'no-store' });
-        const json = await res.json();
-        rows = Array.isArray(json) ? json : [];
+        const res = await apiGetJson(fallback);
+        rows = Array.isArray(res) ? res : [];
       }catch(err){
         console.warn('Finance fallback opensheet failed.', err);
       }
@@ -1920,22 +1984,28 @@ function bindAmountInput(node){
     }
 
     async function sendViaGoogleScript(action, payload){
+      const endpoint = endpointValue();
+      const data = JSON.parse(JSON.stringify({ ...(payload || {}), action }));
+
       if(window.google && google.script && google.script.run){
         return new Promise((resolve,reject)=>{
           const runner = google.script.run
             .withSuccessHandler(resolve)
             .withFailureHandler(err => reject(new Error(err && err.message ? err.message : String(err))));
-          const data = JSON.parse(JSON.stringify(payload));
           if(action === 'delete') runner.deleteAccount(data);
           else if(action === 'update') runner.updateAccount(data);
           else if(action === 'upload-image' && runner.uploadImage) runner.uploadImage(data);
           else runner.saveAccount(data);
         });
       }
-      return sendViaIframePost(endpointValue(), payload);
+
+      return apiPostJson(endpoint, data).catch(err => {
+        console.warn('fetch/json gagal, fallback iframe dipakai.', err);
+        return sendViaIframePost(endpoint, data);
+      });
     }
 
-    function sendViaIframePost(endpoint, payload){
+function sendViaIframePost(endpoint, payload){
       return new Promise((resolve,reject)=>{
         const token = `${Date.now()}_${Math.random().toString(36).slice(2,10)}`;
         const iframeName = `sink_${token}`;
@@ -2031,10 +2101,18 @@ function bindAmountInput(node){
         const endpoint = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
         localStorage.setItem(DASHBOARD_ENDPOINT_KEY, endpoint || DEFAULT_DASHBOARD_ENDPOINT);
         el.endpoint.value = endpoint || DEFAULT_DASHBOARD_ENDPOINT;
-        const cb = `__yuraaa_list_${Date.now()}`;
-        const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
-        const res = await jsonp(url, cb);
-        state.items = Array.isArray(res && res.items) ? res.items : [];
+
+        let res = null;
+        try{
+          res = await apiGetJson(`${endpoint}?action=list&_=${Date.now()}`);
+        }catch(err){
+          console.warn('Dashboard list fetch failed, falling back to JSONP.', err);
+          const cb = `__yuraaa_list_${Date.now()}`;
+          const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
+          res = await jsonp(url, cb);
+        }
+
+        state.items = Array.isArray(res && res.items) ? res.items : Array.isArray(res) ? res : [];
         setConnectionState(true, 'Tersambung');
         if(!silent) toast('Data akun dimuat.');
         renderCards();
@@ -2047,7 +2125,7 @@ function bindAmountInput(node){
       }
     }
 
-    function jsonp(url, cbName){
+function jsonp(url, cbName){
       return new Promise((resolve,reject)=>{
         const script = document.createElement('script');
         script.async = true;
