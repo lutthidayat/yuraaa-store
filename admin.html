@@ -602,6 +602,64 @@
     animation:spin .8s linear infinite;
   }
   .hidden{display:none !important}
+
+  /* Compact delete-confirm modal (finance) */
+  #confirmOverlay .modal{
+    width:min(460px, calc(100vw - 24px));
+    padding:16px;
+    border-radius:22px;
+  }
+  #confirmOverlay .modal-top{
+    margin-bottom:10px;
+  }
+  #confirmOverlay .modal-top h4{
+    font-size:18px;
+  }
+  #confirmOverlay .modal-top p{
+    font-size:12px;
+  }
+  #confirmOverlay .delete-summary{
+    padding:12px;
+    border-radius:16px;
+  }
+  #confirmOverlay .delete-badge{
+    width:40px;height:40px;
+  }
+  #confirmOverlay .confirm-actions .btn{
+    min-height:46px;
+  }
+  #confirmOverlay .btn-danger{
+    background:linear-gradient(180deg,#ff5a5f,#d11d1d);
+  }
+
+  /* Smaller delete modal khusus akun dashboard */
+  #dashboardConfirmOverlay .modal{
+    width:min(420px, calc(100vw - 24px));
+    padding:16px;
+    border-radius:20px;
+  }
+  #dashboardConfirmOverlay .modal-top{
+    margin-bottom:10px;
+  }
+  #dashboardConfirmOverlay .modal-top h4{
+    font-size:17px;
+  }
+  #dashboardConfirmOverlay .modal-top p{
+    font-size:12px;
+  }
+  #dashboardConfirmOverlay .delete-summary{
+    padding:12px;
+    border-radius:16px;
+  }
+  #dashboardConfirmOverlay .delete-badge{
+    width:40px;height:40px;
+  }
+  #dashboardConfirmOverlay .confirm-actions .btn{
+    min-height:46px;
+  }
+  #dashboardConfirmOverlay .btn-danger{
+    background:linear-gradient(180deg,#ef4444,#b91c1c);
+  }
 </style>
 </head>
 <body class="locked">
@@ -938,6 +996,29 @@
     </div>
   </div>
 
+  <div class="overlay" id="dashboardConfirmOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="dashboardConfirmTitle">
+      <div class="modal-top">
+        <div>
+          <h4 id="dashboardConfirmTitle">Hapus akun?</h4>
+          <p id="dashboardConfirmMsg">Akun ini akan dihapus dari dashboard.</p>
+        </div>
+        <button type="button" class="close-x" id="dashboardCloseDeleteBtn" aria-label="Tutup">×</button>
+      </div>
+      <div class="delete-summary">
+        <div class="delete-badge">!</div>
+        <div>
+          <strong id="dashboardConfirmItemTitle">Periksa kembali sebelum menghapus akun.</strong>
+          <span id="dashboardConfirmItemMeta">Tindakan ini tidak bisa dibatalkan setelah data dihapus.</span>
+        </div>
+      </div>
+      <div class="modal-actions confirm-actions">
+        <button type="button" class="btn btn-danger" id="dashboardYesDeleteBtn">Ya, hapus akun</button>
+        <button type="button" class="btn btn-secondary" id="dashboardCancelDeleteBtn">Batal</button>
+      </div>
+    </div>
+  </div>
+
   <div class="overlay" id="formOverlay" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="formModalTitle">
       <div class="modal-top">
@@ -1089,6 +1170,13 @@
     yesDeleteBtn: $('yesDeleteBtn'),
     cancelDeleteBtn: $('cancelDeleteBtn'),
     closeConfirmBtn: $('closeConfirmBtn'),
+    dashboardConfirmOverlay: $('dashboardConfirmOverlay'),
+    dashboardConfirmMsg: $('dashboardConfirmMsg'),
+    dashboardConfirmItemTitle: $('dashboardConfirmItemTitle'),
+    dashboardConfirmItemMeta: $('dashboardConfirmItemMeta'),
+    dashboardYesDeleteBtn: $('dashboardYesDeleteBtn'),
+    dashboardCancelDeleteBtn: $('dashboardCancelDeleteBtn'),
+    dashboardCloseDeleteBtn: $('dashboardCloseDeleteBtn'),
     formOverlay: $('formOverlay'),
     closeFormModalBtn: $('closeFormModalBtn'),
     saveModalBtn: $('saveModalBtn'),
@@ -1588,52 +1676,33 @@
       const item = state.manual.find(x => x.id === id);
       if(!item) return;
       state.deleteTarget = id;
-      window.__yuraaaDeleteContext = 'finance';
-      window.__yuraaaDeletePayload = { id: String(id || ''), row: String(item.row || '') };
-      ui.confirmMsg.textContent = `${item.desc} • ${rupiah(item.amount)} • ${formatDate(item.date)}`;
+      ui.confirmTitle.textContent = 'Hapus transaksi?';
+      ui.confirmMsg.textContent = 'Data finance akan dihapus permanen.';
+      ui.confirmItemTitle.textContent = item.desc || 'Transaksi';
+      ui.confirmItemMeta.textContent = `${rupiah(item.amount)} • ${formatDate(item.date)}`;
       openModal(ui.confirmOverlay);
     }
-    async function confirmDeleteFinance(){
-      const context = window.__yuraaaDeleteContext || 'finance';
-      const payload = window.__yuraaaDeletePayload || {};
-      if(context === 'dashboard'){
-        const id = String(payload.id || '').trim();
-        if(!id) return;
-        setButtonBusy(ui.yesDeleteBtn, true, 'Menghapus...');
-        setButtonBusy(ui.cancelDeleteBtn, true, 'Batal');
-        setLoadingDashboard(true, 'Menghapus akun...');
-        try{
-          const res = await sendViaGoogleScript('delete', {
-            action: 'delete',
-            id,
-            row: String(payload.row || '')
-          });
-          if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
-          toast('Akun dihapus.');
-          closeModal(ui.confirmOverlay);
-          window.__yuraaaDeleteContext = '';
-          window.__yuraaaDeletePayload = null;
-          state.selectedDelete = null;
-          await dashboard.loadList(true);
-        }catch(e){
-          console.error(e);
-          toast(e.message || 'Gagal menghapus akun.');
-        }finally{
-          setButtonBusy(ui.yesDeleteBtn, false);
-          setButtonBusy(ui.cancelDeleteBtn, false);
-          setLoadingDashboard(false);
-        }
-        return;
-      }
 
+    async function confirmDeleteFinance(){
       if(!state.deleteTarget) return;
-      state.manual = state.manual.filter(x => x.id !== state.deleteTarget);
-      saveLocal();
-      render();
-      closeModal(ui.confirmOverlay);
-      window.__yuraaaDeleteContext = '';
-      window.__yuraaaDeletePayload = null;
-      toast('Transaksi dihapus.');
+      setButtonBusy(ui.yesDeleteBtn, true, 'Menghapus...');
+      setButtonBusy(ui.cancelDeleteBtn, true, 'Batal');
+      setLoading(true, 'Menghapus transaksi...');
+      try{
+        state.manual = state.manual.filter(x => x.id !== state.deleteTarget);
+        saveLocal();
+        render();
+        closeModal(ui.confirmOverlay);
+        toast('Transaksi dihapus.');
+      }catch(e){
+        console.error(e);
+        toast('Gagal menghapus transaksi.');
+      }finally{
+        state.deleteTarget = null;
+        setButtonBusy(ui.yesDeleteBtn, false);
+        setButtonBusy(ui.cancelDeleteBtn, false);
+        setLoading(false);
+      }
     }
 
     function openModal(node){ node.classList.add('open'); node.setAttribute('aria-hidden','false'); }
@@ -1756,14 +1825,14 @@ function bindAmountInput(node){
     };
     ui.closeFormModalBtn.onclick = () => closeModal(ui.formOverlay);
     ui.formOverlay.onclick = (e) => { if(e.target === ui.formOverlay) closeModal(ui.formOverlay); };
-    function handleConfirmDelete(){
-      const context = window.__yuraaaDeleteContext || 'finance';
-      return context === 'dashboard' ? confirmDeleteDashboard() : confirmDeleteFinance();
-    }
-    ui.yesDeleteBtn.onclick = handleConfirmDelete;
+    ui.yesDeleteBtn.onclick = confirmDeleteFinance;
     ui.cancelDeleteBtn.onclick = () => closeModal(ui.confirmOverlay);
     ui.closeConfirmBtn.onclick = () => closeModal(ui.confirmOverlay);
     ui.confirmOverlay.onclick = (e) => { if(e.target === ui.confirmOverlay) closeModal(ui.confirmOverlay); };
+    ui.dashboardYesDeleteBtn.onclick = confirmDeleteDashboard;
+    ui.dashboardCancelDeleteBtn.onclick = () => closeModal(ui.dashboardConfirmOverlay);
+    ui.dashboardCloseDeleteBtn.onclick = () => closeModal(ui.dashboardConfirmOverlay);
+    ui.dashboardConfirmOverlay.onclick = (e) => { if(e.target === ui.dashboardConfirmOverlay) closeModal(ui.dashboardConfirmOverlay); };
     document.addEventListener('click', (e) => {
       const editBtn = e.target.closest('[data-faction="edit"]');
       const delBtn = e.target.closest('[data-faction="delete"]');
@@ -2119,11 +2188,12 @@ function bindAmountInput(node){
     }
 
     function askDeleteDashboard(item){
-      ui.confirmMsg.textContent = `${item.Nama} • Rp ${formatNum(item.Harga)} • ${item.Game || '-'}`;
-      ui.confirmItemTitle.textContent = item.Nama || 'Data ini akan dihapus.';
-      ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`;
+      closeDashboardActionMenus();
+      ui.dashboardConfirmMsg.textContent = `${item.Nama} • Rp ${formatNum(item.Harga)} • ${item.Game || '-'}`;
+      ui.dashboardConfirmItemTitle.textContent = item.Nama || 'Data ini akan dihapus.';
+      ui.dashboardConfirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`;
       state.selectedDelete = item;
-      openModal(ui.confirmOverlay);
+      openModal(ui.dashboardConfirmOverlay);
     }
 
     function openModal(node){
@@ -2459,47 +2529,37 @@ function sendViaIframePost(endpoint, payload){
       }
 
       const name = String(el.nama.value || '').trim() || 'akun ini';
-      if(!confirm(`Yakin hapus ${name}?`)){
-        return;
-      }
+      const harga = String(el.harga.value || '').replace(/\D/g, '');
+      const game = String(el.game.value || '').trim();
 
-      setButtonBusy(el.deleteBtn, true, 'Menghapus...');
-      setLoadingDashboard(true, 'Menghapus akun...');
-      try{
-        const res = await sendViaGoogleScript('delete', {
-          action: 'delete',
-          id
-        });
-        if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
-        toast('Akun dihapus.');
-        resetForm(true);
-        await loadList(true);
-      }catch(e){
-        console.error(e);
-        toast(e.message || 'Gagal menghapus akun.');
-      }finally{
-        setButtonBusy(el.deleteBtn, false);
-        setLoadingDashboard(false);
-      }
+      state.selectedDelete = {
+        id,
+        Nama: name,
+        Harga: harga,
+        Game: game
+      };
+
+      ui.dashboardConfirmMsg.textContent = `${name} • Rp ${formatNum(harga || 0)} • ${game || '-'}`;
+      ui.dashboardConfirmItemTitle.textContent = name || 'Data ini akan dihapus.';
+      ui.dashboardConfirmItemMeta.textContent = `Harga: Rp ${formatNum(harga || 0)} • Game: ${game || '-'} • ID: ${String(id).slice(0, 8) || '-'}`;
+
+      openModal(ui.dashboardConfirmOverlay);
     }
 
     function askDeleteDashboard(item){
       closeDashboardActionMenus();
-      ui.confirmMsg.textContent = `${item.Nama} • Rp ${formatNum(item.Harga)} • ${item.Game || '-'}`;
-      ui.confirmItemTitle.textContent = item.Nama || 'Data ini akan dihapus.';
-      ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`;
+      ui.dashboardConfirmMsg.textContent = `${item.Nama} • Rp ${formatNum(item.Harga)} • ${item.Game || '-'}`;
+      ui.dashboardConfirmItemTitle.textContent = item.Nama || 'Data ini akan dihapus.';
+      ui.dashboardConfirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`;
       state.selectedDelete = item;
-      window.__yuraaaDeleteContext = 'dashboard';
-      window.__yuraaaDeletePayload = { id: String(item.id || '') };
-      openModal(ui.confirmOverlay);
+      openModal(ui.dashboardConfirmOverlay);
     }
 
-
-        async function confirmDeleteDashboard(){
-      const item = state.selectedDelete || window.__yuraaaDeletePayload || {};
+    async function confirmDeleteDashboard(){
+      const item = state.selectedDelete || {};
       if(!item) return;
-      setButtonBusy(ui.yesDeleteBtn, true, 'Menghapus...');
-      setButtonBusy(ui.cancelDeleteBtn, true, 'Batal');
+      setButtonBusy(ui.dashboardYesDeleteBtn, true, 'Menghapus...');
+      setButtonBusy(ui.dashboardCancelDeleteBtn, true, 'Batal');
       setLoadingDashboard(true, 'Menghapus akun...');
       try{
         const payload = {
@@ -2509,20 +2569,19 @@ function sendViaIframePost(endpoint, payload){
         const res = await sendViaGoogleScript('delete', payload);
         if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
         toast('Akun dihapus.');
-        closeModal(ui.confirmOverlay);
+        closeModal(ui.dashboardConfirmOverlay);
         state.selectedDelete = null;
-        window.__yuraaaDeleteContext = '';
-        window.__yuraaaDeletePayload = null;
         await loadList(true);
       }catch(e){
         console.error(e);
         toast(e.message || 'Gagal menghapus akun.');
       }finally{
-        setButtonBusy(ui.yesDeleteBtn, false);
-        setButtonBusy(ui.cancelDeleteBtn, false);
+        setButtonBusy(ui.dashboardYesDeleteBtn, false);
+        setButtonBusy(ui.dashboardCancelDeleteBtn, false);
         setLoadingDashboard(false);
       }
     }
+
     function applyFilter(filter){
       state.filter = filter;
       document.querySelectorAll('[data-dash-filter]').forEach(ch => ch.classList.toggle('active', ch.dataset.dashFilter === filter));
