@@ -511,6 +511,25 @@
     font-size:12px;font-weight:800;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.12);color:#fca5a5;margin-top:8px
   }
 
+
+  .delete-summary{
+    margin-top:10px;
+    padding:14px;
+    border-radius:18px;
+    background:linear-gradient(180deg, rgba(239,68,68,.10), rgba(15,23,42,.78));
+    border:1px solid rgba(239,68,68,.16);
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .delete-badge{
+    width:42px;height:42px;border-radius:14px;display:grid;place-items:center;flex:0 0 auto;
+    background:rgba(239,68,68,.16);border:1px solid rgba(239,68,68,.18);color:#fecaca;font-size:20px;font-weight:900;
+  }
+  .delete-summary strong{display:block;font-size:14px;line-height:1.4;color:#fff}
+  .delete-summary span{display:block;margin-top:4px;color:#cbd5e1;font-size:12px;line-height:1.5}
+  .modal-actions.confirm-actions .btn{min-height:52px;}
+
   @media (max-width: 1100px){
     .hero{grid-template-columns:1fr}
     .dash-grid{grid-template-columns:1fr 1fr}
@@ -852,12 +871,19 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
       <div class="modal-top">
         <div>
-          <h4 id="confirmTitle">Hapus transaksi?</h4>
-          <p id="confirmMsg">Data akan dihapus dari riwayat keuangan.</p>
+          <h4 id="confirmTitle">Hapus data?</h4>
+          <p id="confirmMsg">Data akan dihapus secara permanen dari daftar akun.</p>
         </div>
         <button class="close-x" id="closeConfirmBtn" aria-label="Tutup">×</button>
       </div>
-      <div class="modal-actions">
+      <div class="delete-summary">
+        <div class="delete-badge">!</div>
+        <div>
+          <strong id="confirmItemTitle">Periksa kembali sebelum menghapus.</strong>
+          <span id="confirmItemMeta">Tindakan ini tidak bisa dibatalkan setelah data dihapus.</span>
+        </div>
+      </div>
+      <div class="modal-actions confirm-actions">
         <button class="btn btn-danger" id="yesDeleteBtn">Ya, hapus</button>
         <button class="btn btn-secondary" id="cancelDeleteBtn">Batal</button>
       </div>
@@ -987,6 +1013,8 @@
     dashboardView: $('dashboardView'),
     confirmOverlay: $('confirmOverlay'),
     confirmMsg: $('confirmMsg'),
+    confirmItemTitle: $('confirmItemTitle'),
+    confirmItemMeta: $('confirmItemMeta'),
     yesDeleteBtn: $('yesDeleteBtn'),
     cancelDeleteBtn: $('cancelDeleteBtn'),
     closeConfirmBtn: $('closeConfirmBtn'),
@@ -1705,28 +1733,22 @@ function bindAmountInput(node){
       }
       return out;
     }
-
     async function uploadSelectedFiles(files){
       const list = Array.from(files || []);
-      const urls = [];
+      if(!list.length) return [];
+      const imageFiles = [];
       for(const file of list){
-        const imageFile = {
+        imageFiles.push({
           name: file.name,
           mimeType: file.type || 'image/png',
           data: await fileToBase64(file)
-        };
-        const result = await sendViaGoogleScript('upload-image', { imageFile });
-        if(result && result.url){
-          urls.push(result.url);
-        }else if(result && Array.isArray(result.uploaded) && result.uploaded.length){
-          urls.push(...result.uploaded);
-        }else{
-          throw new Error('Upload gambar gagal.');
-        }
+        });
       }
-      return urls;
+      const result = await sendViaGoogleScript('upload-image', { imageFiles });
+      const uploaded = normalizeImages_(result && result.uploaded ? result.uploaded : result && result.url ? [result.url] : []);
+      if(!uploaded.length) throw new Error('Upload gambar gagal.');
+      return uploaded;
     }
-
     function saveDashboardEndpoint(){
       localStorage.setItem(DASHBOARD_ENDPOINT_KEY, el.endpoint.value.trim() || DEFAULT_DASHBOARD_ENDPOINT);
     }
@@ -1867,6 +1889,8 @@ function bindAmountInput(node){
 
     function askDelete(item){
       ui.confirmMsg.textContent = `${item.Nama} • Rp ${formatNum(item.Harga)} • ${item.Game || '-'} • Row ${item.row}`;
+      ui.confirmItemTitle.textContent = item.Nama || 'Data ini akan dihapus.';
+      ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Game: ${item.Game || '-'} • Baris: ${item.row}`;
       state.selectedDelete = item;
       openModal(ui.confirmOverlay);
     }
@@ -2051,8 +2075,7 @@ function bindAmountInput(node){
       const links = normalizeImages_(el.gambar.value);
       el.gambar.value = links.join(', ');
     }
-
-        async function saveAccount(){
+    async function saveAccount(){
       const data = buildPayload();
       if(!data.Nama){ toast('Nama akun belum diisi.'); return; }
       if(!data.Game){ toast('Game belum diisi.'); return; }
@@ -2164,6 +2187,7 @@ function bindAmountInput(node){
         async function confirmDelete(){
       if(!state.selectedDelete) return;
       ui.yesDeleteBtn.disabled = true;
+      ui.cancelDeleteBtn.disabled = true;
       setLoadingDashboard(true, 'Menghapus akun...');
       try{
         const payload = { action:'delete', mode:'row', value:String(state.selectedDelete.row), row:state.selectedDelete.row };
@@ -2177,6 +2201,7 @@ function bindAmountInput(node){
         toast(e.message || 'Gagal menghapus akun.');
       }finally{
         ui.yesDeleteBtn.disabled = false;
+        ui.cancelDeleteBtn.disabled = false;
         setLoadingDashboard(false);
       }
     }
@@ -2197,6 +2222,22 @@ function bindAmountInput(node){
       el.clearSearchBtn.addEventListener('click', () => { el.search.value=''; renderCards(); });
       el.searchResetBtn.addEventListener('click', () => { el.search.value=''; applyFilter('all'); toast('Filter dibersihkan.'); });
       el.reloadBtn.onclick = () => loadList();
+      el.cards.addEventListener('click', (e) => {
+        const editBtn = e.target.closest('[data-daction="edit"]');
+        const delBtn = e.target.closest('[data-daction="delete"]');
+        if(editBtn){
+          const row = Number(editBtn.dataset.row);
+          const found = state.items.find(x => Number(x.row) === row);
+          if(found) startEditing(found);
+          return;
+        }
+        if(delBtn){
+          const row = Number(delBtn.dataset.row);
+          const found = state.items.find(x => Number(x.row) === row);
+          if(found) askDelete(found);
+          return;
+        }
+      }, { passive:true });
       el.addBtn.onclick = () => {
         ui.modalDesc.value = '';
         ui.modalAmount.value = '';
