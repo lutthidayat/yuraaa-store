@@ -1727,174 +1727,6 @@ function bindAmountInput(node){
       return urls;
     }
 
-    function saveDashboardEndpoint(){
-      localStorage.setItem(DASHBOARD_ENDPOINT_KEY, el.endpoint.value.trim() || DEFAULT_DASHBOARD_ENDPOINT);
-    }
-    function endpointValue(){
-      return (localStorage.getItem(DASHBOARD_ENDPOINT_KEY) || defaultEndpoint || DEFAULT_DASHBOARD_ENDPOINT).trim();
-    }
-
-    function setRupiahInput(input){
-      const digits = cleanNumber(input.value);
-      input.value = digits ? formatRupiah(digits) : '';
-    }
-
-    function renderPreview(){
-      const urls = [...state.objectUrls, ...extractLinks(el.gambar.value), ...extractLinks(el.existingImages.value)];
-      el.previewCount.textContent = String(urls.length);
-      el.imageState.textContent = `${state.files.length ? state.files.length + ' foto dipilih' : (urls.length ? urls.length + ' link terdeteksi' : '0 foto dipilih')}`;
-      if(!urls.length){
-        el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>';
-        return;
-      }
-      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,12).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="badge">#${i+1}</div></div>`).join('')}</div>`;
-    }
-
-        function resetPreviewFiles(){
-      state.objectUrls.forEach(u => URL.revokeObjectURL(u));
-      state.objectUrls = [];
-      state.files = [];
-    }
-
-    function clearFiles(){
-      resetPreviewFiles();
-      el.imageFiles.value = '';
-    }
-
-    function resetForm(keepEndpoint=true){
-      if(!keepEndpoint) localStorage.setItem(DASHBOARD_ENDPOINT_KEY, DEFAULT_DASHBOARD_ENDPOINT);
-      el.rowEdit.value = '';
-      el.existingImages.value = '';
-      el.nama.value = '';
-      el.game.value = '';
-      el.harga.value = '';
-      el.diskon.value = '';
-      el.label.value = '';
-      el.statusSel.value = 'ready';
-      el.ket.value = '';
-      el.gambar.value = '';
-      clearFiles();
-      el.formTitle.textContent = 'Tambah Akun';
-      el.saveBtn.textContent = 'Simpan Akun Baru';
-      el.endpoint.value = endpointValue();
-      setRupiahInput(el.harga);
-      renderPreview();
-    }
-
-    function buildPayload(){
-      return {
-        action: el.rowEdit.value ? 'update' : 'save',
-        row: el.rowEdit.value ? Number(el.rowEdit.value) : '',
-        Nama: el.nama.value.trim(),
-        Harga: cleanNumber(el.harga.value),
-        Diskon: cleanNumber(el.diskon.value),
-        Game: el.game.value.trim(),
-        Gambar: el.gambar.value.trim(),
-        keepImages: el.existingImages.value.trim(),
-        imageFiles: [],
-        uploadedImages: [],
-        Label: el.label.value,
-        Status: el.statusSel.value,
-        Ket: el.ket.value.trim(),
-        Tanggal: new Date().toISOString(),
-        DONE: ''
-      };
-    }
-
-    function renderCard(item){
-      const img = firstImage(item.Gambar || item.gambar || item.images || '');
-      const media = img
-        ? `<img src="${img}" alt="${esc(item.Nama)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-empty',textContent:'Gambar tidak tersedia'}))">`
-        : `<div class="thumb-empty">Gambar tidak tersedia</div>`;
-      return `<div class="account-card" data-row="${item.row}">
-        <button type="button" class="card-x" data-daction="delete" data-row="${item.row}" title="Hapus" onclick="window.__yuraaaDashboardAction && window.__yuraaaDashboardAction(\'delete\', ${item.row}); event.stopPropagation();">✕</button>
-        <button type="button" class="card-edit" data-daction="edit" data-row="${item.row}" title="Edit" onclick="window.__yuraaaDashboardAction && window.__yuraaaDashboardAction(\'edit\', ${item.row}); event.stopPropagation();">Edit</button>
-        <div class="card-media">${media}</div>
-        <div class="card-body">
-          <div class="card-title">${esc(item.Nama)}</div>
-          <div class="card-sub">${esc(item.Game || '-')}</div>
-          <div class="card-price">Rp ${esc(formatNum(item.Harga))}</div>
-          <div class="card-tags">
-            <span>${esc(item.Status || 'ready')}</span>
-            <span>${esc(item.Label || '-')}</span>
-            <span>${esc(item.Diskon || '-')}</span>
-          </div>
-        </div>
-      </div>`;
-    }
-
-    function renderCards(){
-      const q = normalizeText(el.search.value).toLowerCase();
-      const items = state.items
-        .filter(x => {
-          const f = (state.filter || 'all').toLowerCase();
-          const label = normalizeText(x.Label).toLowerCase();
-          if(f === 'all') return true;
-          if(f === 'sold') {
-            const s = normalizeText(pick(x, 'Status', 'status')).toLowerCase();
-            return s.includes('sold') || s.includes('done') || s.includes('terjual');
-          }
-          return label === f;
-        })
-        .filter(x => [x.Nama, x.Game, x.Harga, x.Label, x.Status, x.Ket, `row ${x.row}`].join(' ').toLowerCase().includes(q))
-        .sort((a,b)=> state.sortNewest ? b.row - a.row : a.row - b.row);
-
-      if(!items.length){
-        el.cards.innerHTML = '<div class="empty">Belum ada data dimuat.</div>';
-        return;
-      }
-      el.cards.innerHTML = items.map(renderCard).join('');
-    }
-
-    function startEdit(item){
-      el.rowEdit.value = item.row;
-      el.existingImages.value = item.Gambar || '';
-      el.nama.value = item.Nama || '';
-      el.game.value = item.Game || '';
-      el.harga.value = item.Harga || '';
-      el.diskon.value = item.Diskon || '';
-      el.label.value = item.Label || '';
-      el.statusSel.value = item.Status || 'ready';
-      el.ket.value = item.Ket || '';
-      el.gambar.value = item.Gambar || '';
-      clearFiles();
-      el.formTitle.textContent = 'Edit Akun';
-      el.saveBtn.textContent = 'Update Akun';
-      setRupiahInput(el.harga);
-      renderPreview();
-      document.getElementById('dashFormSection').scrollIntoView({ behavior:'smooth', block:'start' });
-    }
-
-    function askDelete(item){
-      ui.confirmMsg.textContent = `${item.Nama} • Rp ${formatNum(item.Harga)} • ${item.Game || '-'} • Row ${item.row}`;
-      state.selectedDelete = item;
-      openModal(ui.confirmOverlay);
-    }
-
-    function openModal(node){
-      node.classList.add('open');
-      node.setAttribute('aria-hidden','false');
-    }
-    function closeModal(node){
-      node.classList.remove('open');
-      node.setAttribute('aria-hidden','true');
-    }
-
-    function isValidImageUrl(url){
-      return /drive\.google\.com|googleusercontent|lh3\.googleusercontent/i.test(url);
-    }
-    function normalizeImages_(value){
-      if(!value) return [];
-      if(Array.isArray(value)) return value.map(v => toDrivePreview(String(v))).filter(Boolean);
-      const txt = String(value).trim();
-      if(!txt) return [];
-      return txt.split(/[\n,;|]+/g).map(v => toDrivePreview(v.trim().replace(/\s+/g,''))).filter(Boolean);
-    }
-
-    function fileToPayload(){
-      return prepareFiles(el.imageFiles.files);
-    }
-
     async function sendViaGoogleScript(action, payload){
       if(window.google && google.script && google.script.run){
         return new Promise((resolve,reject)=>{
@@ -1906,10 +1738,10 @@ function bindAmountInput(node){
           else runner.saveAccount(JSON.parse(JSON.stringify(payload)));
         });
       }
-      return sendViaIframePost(endpointValue(), payload);
+      return sendViaIframePost(endpointValue(), action, payload);
     }
 
-    function sendViaIframePost(endpoint, payload){
+    function sendViaIframePost(endpoint, action, payload){
       return new Promise((resolve,reject)=>{
         const token = `${Date.now()}_${Math.random().toString(36).slice(2,10)}`;
         const iframeName = `sink_${token}`;
@@ -1923,12 +1755,17 @@ function bindAmountInput(node){
         form.target = iframeName;
         form.style.display = 'none';
 
+        const request = {
+          action: action || (payload && payload.action) || 'save',
+          ...(payload || {})
+        };
+
         const fields = {
           client:'github',
           iframe:'1',
           origin:location.origin,
           token,
-          data:JSON.stringify(payload)
+          data:JSON.stringify(request)
         };
         Object.entries(fields).forEach(([name,value])=>{
           const input = document.createElement('input');
@@ -1999,47 +1836,30 @@ function bindAmountInput(node){
       });
     }
 
-    async function loadList(silent=false){
-      setLoadingDashboard(true, 'Memuat akun...');
-      try{
-        const endpoint = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
-        localStorage.setItem(DASHBOARD_ENDPOINT_KEY, endpoint || DEFAULT_DASHBOARD_ENDPOINT);
-        el.endpoint.value = endpoint || DEFAULT_DASHBOARD_ENDPOINT;
-        const cb = `__yuraaa_list_${Date.now()}`;
-        const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
-        const res = await jsonp(url, cb);
-        state.items = Array.isArray(res && res.items) ? res.items : [];
-        setConnectionState(true, 'Tersambung');
-        if(!silent) toast('Data akun dimuat.');
-        renderCards();
-      }catch(e){
-        console.error(e);
-        setConnectionState(false, 'Gagal tersambung');
-        if(!silent) toast('Gagal memuat data akun.');
-      }finally{
-        setLoadingDashboard(false);
+    function saveDashboardEndpoint(){
+      localStorage.setItem(DASHBOARD_ENDPOINT_KEY, el.endpoint.value.trim() || DEFAULT_DASHBOARD_ENDPOINT);
+    }
+    function endpointValue(){
+      return (localStorage.getItem(DASHBOARD_ENDPOINT_KEY) || defaultEndpoint || DEFAULT_DASHBOARD_ENDPOINT).trim();
+    }
+
+    function setRupiahInput(input){
+      const digits = cleanNumber(input.value);
+      input.value = digits ? formatRupiah(digits) : '';
+    }
+
+    function renderPreview(){
+      const liveFiles = Array.from(el.imageFiles.files || []);
+      if (liveFiles.length && (!state.files.length || !state.objectUrls.length)) {
+        resetPreviewFiles();
+        state.files = liveFiles;
+        state.objectUrls = liveFiles.map(f => URL.createObjectURL(f));
       }
-    }
 
-    function jsonp(url, cbName){
-      return new Promise((resolve,reject)=>{
-        const script = document.createElement('script');
-        script.async = true;
-        const cleanup = () => {
-          try{ delete window[cbName]; }catch(_){ window[cbName] = undefined; }
-          script.remove();
-        };
-        window[cbName] = (data) => { cleanup(); resolve(data); };
-        script.onerror = () => { cleanup(); reject(new Error('Gagal memuat respons.')); };
-        script.src = url;
-        document.body.appendChild(script);
-      });
-    }
-
-    function formatPreview(){
-      const urls = [...state.objectUrls, ...normalizeImages_(el.gambar.value), ...normalizeImages_(el.existingImages.value)];
+      const count = state.files.length || liveFiles.length;
+      const urls = [...state.objectUrls, ...extractLinks(el.gambar.value), ...extractLinks(el.existingImages.value)];
       el.previewCount.textContent = String(urls.length);
-      el.imageState.textContent = `${state.files.length ? state.files.length + ' foto dipilih' : (urls.length ? urls.length + ' link terdeteksi' : '0 foto dipilih')}`;
+      el.imageState.textContent = `${count ? count + ' foto dipilih' : (urls.length ? urls.length + ' link terdeteksi' : '0 foto dipilih')}`;
       if(!urls.length){
         el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>';
         return;
@@ -2062,16 +1882,16 @@ function bindAmountInput(node){
       ui.saveBtn.disabled = true;
       try{
         const selectedFiles = Array.from(el.imageFiles.files || []);
-        const uploaded = selectedFiles.length ? await uploadSelectedFiles(selectedFiles) : [];
+        const preparedFiles = selectedFiles.length ? await prepareFiles(selectedFiles) : [];
         const mergedLinks = [
           ...normalizeImages_(el.existingImages.value),
-          ...normalizeImages_(el.gambar.value),
-          ...uploaded
+          ...normalizeImages_(el.gambar.value)
         ].filter(Boolean);
-        data.uploadedImages = uploaded;
+
+        data.imageFiles = preparedFiles;
+        data.uploadedImages = [];
         data.Gambar = mergedLinks.join(', ');
         data.keepImages = el.existingImages.value.trim();
-        data.imageFiles = [];
 
         const result = await sendViaGoogleScript(data.action, data);
         if(!result || result.ok === false) throw new Error((result && result.message) || 'Gagal menyimpan akun.');
@@ -2161,6 +1981,13 @@ function bindAmountInput(node){
       openModal(ui.confirmOverlay);
     }
 
+    window.__yuraaaDashboardAction = (action, row) => {
+      const item = state.items.find(x => Number(x.row) === Number(row));
+      if(!item) return;
+      if(action === 'edit') startEditing(item);
+      if(action === 'delete') askDelete(item);
+    };
+
         async function confirmDelete(){
       if(!state.selectedDelete) return;
       ui.yesDeleteBtn.disabled = true;
@@ -2224,6 +2051,8 @@ function bindAmountInput(node){
       $('dashHarga').addEventListener('input', () => { $('dashHarga').value = formatRupiah($('dashHarga').value); });
       $('dashHarga').addEventListener('blur', () => { $('dashHarga').value = formatRupiah($('dashHarga').value); });
       $('dashImageFiles').addEventListener('change', setFileStateFromInput);
+      $('dashImageFiles').addEventListener('input', setFileStateFromInput);
+      $('dashImageFiles').onchange = setFileStateFromInput;
       $('dashGambar').addEventListener('input', () => { formatImageUrlField(); renderPreview(); });
       $('dashClearSearchBtn').onclick = () => { $('dashSearch').value=''; renderCards(); };
       ui.closeBtn.onclick = () => { window.location.href = 'index.html'; };
