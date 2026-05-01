@@ -1925,9 +1925,11 @@ function bindAmountInput(node){
           const runner = google.script.run
             .withSuccessHandler(resolve)
             .withFailureHandler(err => reject(new Error(err && err.message ? err.message : String(err))));
-          if(action === 'delete') runner.deleteAccount(JSON.parse(JSON.stringify(payload)));
-          else if(action === 'update') runner.updateAccount(JSON.parse(JSON.stringify(payload)));
-          else runner.saveAccount(JSON.parse(JSON.stringify(payload)));
+          const data = JSON.parse(JSON.stringify(payload));
+          if(action === 'delete') runner.deleteAccount(data);
+          else if(action === 'update') runner.updateAccount(data);
+          else if(action === 'upload-image' && runner.uploadImage) runner.uploadImage(data);
+          else runner.saveAccount(data);
         });
       }
       return sendViaIframePost(endpointValue(), payload);
