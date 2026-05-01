@@ -30,6 +30,7 @@
   body{
     margin:0;
     font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    color-scheme: dark;
     background:
       radial-gradient(1200px 500px at 80% -10%, rgba(139,92,246,.18), transparent 45%),
       radial-gradient(800px 420px at 10% 0%, rgba(96,165,250,.12), transparent 40%),
@@ -1042,8 +1043,10 @@
     localStorage.setItem('yuraaa_active_view_v1', finance ? 'finance' : 'dashboard');
     if(!finance){
       dashboard.render();
+      if(sessionStorage.getItem(UNLOCK_KEY) === '1') dashboard.loadList(true).catch(()=>{});
     } else {
       finance.render();
+      if(sessionStorage.getItem(UNLOCK_KEY) === '1') finance.loadApi().catch(()=>{});
     }
   }
   function lockApp(){
@@ -1440,14 +1443,33 @@
 
 
 async function loadApi(){
-  setLoading(true, 'Sinkron spreadsheet...');
+  setLoading(true, 'Memuat data akun sold...');
   try{
     const endpoint = (localStorage.getItem(DASHBOARD_ENDPOINT_KEY) || DEFAULT_DASHBOARD_ENDPOINT || '').trim();
-    if(!endpoint) throw new Error('Endpoint dashboard belum diatur.');
-    const cb = `__yuraaa_finance_${Date.now()}`;
-    const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
-    const res = await jsonpFinance(url, cb);
-    const rows = Array.isArray(res && res.items) ? res.items : Array.isArray(res) ? res : [];
+    let rows = [];
+
+    if(endpoint){
+      try{
+        const cb = `__yuraaa_finance_${Date.now()}`;
+        const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
+        const res = await jsonpFinance(url, cb);
+        rows = Array.isArray(res && res.items) ? res.items : Array.isArray(res) ? res : [];
+      }catch(err){
+        console.warn('Finance primary endpoint failed, falling back to opensheet.', err);
+      }
+    }
+
+    if(!rows.length){
+      try{
+        const fallback = `${API}?_=${Date.now()}`;
+        const res = await fetch(fallback, { cache:'no-store' });
+        const json = await res.json();
+        rows = Array.isArray(json) ? json : [];
+      }catch(err){
+        console.warn('Finance fallback opensheet failed.', err);
+      }
+    }
+
     const seen = new Set();
     state.api = rows
       .filter(x => isSold(pick(x, 'Status', 'status')))
@@ -1457,13 +1479,11 @@ async function loadApi(){
         seen.add(item.id);
         return true;
       });
-    toast('Spreadsheet tersinkron.');
     render();
   }catch(err){
     console.error(err);
     state.api = [];
     render();
-    toast('Spreadsheet tidak bisa diambil, data manual tetap tampil.');
   }finally{
     setLoading(false);
   }
@@ -1727,13 +1747,17 @@ function bindAmountInput(node){
         el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>';
         return;
       }
-      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,9).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="badge">#${i+1}</div></div>`).join('')}</div>`;
+      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,12).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="badge">#${i+1}</div></div>`).join('')}</div>`;
+    }
+
+        function resetPreviewFiles(){
+      state.objectUrls.forEach(u => URL.revokeObjectURL(u));
+      state.objectUrls = [];
+      state.files = [];
     }
 
     function clearFiles(){
-      state.objectUrls.forEach(u=>URL.revokeObjectURL(u));
-      state.objectUrls = [];
-      state.files = [];
+      resetPreviewFiles();
       el.imageFiles.value = '';
     }
 
@@ -1783,8 +1807,8 @@ function bindAmountInput(node){
         ? `<img src="${img}" alt="${esc(item.Nama)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-empty',textContent:'Gambar tidak tersedia'}))">`
         : `<div class="thumb-empty">Gambar tidak tersedia</div>`;
       return `<div class="account-card" data-row="${item.row}">
-        <button class="card-x" data-daction="delete" data-row="${item.row}" title="Hapus">✕</button>
-        <button class="card-edit" data-daction="edit" data-row="${item.row}" title="Edit">Edit</button>
+        <button type="button" class="card-x" data-daction="delete" data-row="${item.row}" title="Hapus" onclick="window.__yuraaaDashboardAction && window.__yuraaaDashboardAction(\'delete\', ${item.row}); event.stopPropagation();">✕</button>
+        <button type="button" class="card-edit" data-daction="edit" data-row="${item.row}" title="Edit" onclick="window.__yuraaaDashboardAction && window.__yuraaaDashboardAction(\'edit\', ${item.row}); event.stopPropagation();">Edit</button>
         <div class="card-media">${media}</div>
         <div class="card-body">
           <div class="card-title">${esc(item.Nama)}</div>
@@ -2020,7 +2044,7 @@ function bindAmountInput(node){
         el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>';
         return;
       }
-      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,9).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="badge">#${i+1}</div></div>`).join('')}</div>`;
+      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,12).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="badge">#${i+1}</div></div>`).join('')}</div>`;
     }
 
     function formatImageUrlField(){
@@ -2028,13 +2052,14 @@ function bindAmountInput(node){
       el.gambar.value = links.join(', ');
     }
 
-    async function saveAccount(){
+        async function saveAccount(){
       const data = buildPayload();
       if(!data.Nama){ toast('Nama akun belum diisi.'); return; }
       if(!data.Game){ toast('Game belum diisi.'); return; }
       if(!data.Harga){ toast('Harga belum diisi.'); return; }
 
       setLoadingDashboard(true, data.action === 'update' ? 'Menyimpan perubahan...' : 'Menyimpan akun...');
+      ui.saveBtn.disabled = true;
       try{
         const selectedFiles = Array.from(el.imageFiles.files || []);
         const uploaded = selectedFiles.length ? await uploadSelectedFiles(selectedFiles) : [];
@@ -2057,6 +2082,7 @@ function bindAmountInput(node){
         console.error(e);
         toast(e.message || 'Gagal menyimpan akun.');
       }finally{
+        ui.saveBtn.disabled = false;
         setLoadingDashboard(false);
       }
     }
@@ -2080,24 +2106,16 @@ function bindAmountInput(node){
       };
     }
 
-    function setFileStateFromInput(){
-      clearFiles();
-      state.files = [];
+        function setFileStateFromInput(){
       const files = Array.from(el.imageFiles.files || []);
+      resetPreviewFiles();
       if(!files.length){
         renderPreview();
         return;
       }
-      Promise.all(files.map(file => fileToBase64(file).then(data => ({ name:file.name, mimeType:file.type || 'image/png', data }))))
-        .then(list => {
-          state.files = list;
-          state.objectUrls = files.map(f => URL.createObjectURL(f));
-          renderPreview();
-        })
-        .catch(err => {
-          console.error(err);
-          toast('Gagal membaca file gambar.');
-        });
+      state.files = files;
+      state.objectUrls = files.map(f => URL.createObjectURL(f));
+      renderPreview();
     }
 
     function clearFiles(){
@@ -2143,8 +2161,9 @@ function bindAmountInput(node){
       openModal(ui.confirmOverlay);
     }
 
-    async function confirmDelete(){
+        async function confirmDelete(){
       if(!state.selectedDelete) return;
+      ui.yesDeleteBtn.disabled = true;
       setLoadingDashboard(true, 'Menghapus akun...');
       try{
         const payload = { action:'delete', mode:'row', value:String(state.selectedDelete.row), row:state.selectedDelete.row };
@@ -2157,6 +2176,7 @@ function bindAmountInput(node){
         console.error(e);
         toast(e.message || 'Gagal menghapus akun.');
       }finally{
+        ui.yesDeleteBtn.disabled = false;
         setLoadingDashboard(false);
       }
     }
@@ -2322,7 +2342,6 @@ function bindAmountInput(node){
   openView(activeView);
   ensureUnlocked();
 
-  // If unlocked, ensure lists load
   if(sessionStorage.getItem(UNLOCK_KEY) === '1'){
     finance.loadApi().catch(()=>{});
     dashboard.loadList(true).catch(()=>{});
