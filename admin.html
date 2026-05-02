@@ -98,7 +98,7 @@
     white-space:nowrap;
   }
   .btn:hover{transform:translateY(-1px)}
-  .btn:active{transform:translateY(0)}
+  .btn:active{transform:translateY(0) scale(.98)}
   .btn:disabled{opacity:.65;cursor:not-allowed;transform:none}
   .btn-primary{background:linear-gradient(180deg,var(--accent),var(--accent2));box-shadow:0 14px 34px rgba(139,92,246,.18)}
   .btn-secondary{background:rgba(15,23,42,.72);border:1px solid var(--line)}
@@ -185,7 +185,11 @@
     font:inherit;
     transition:.18s ease;
   }
-  .input:focus, .select:focus, .textarea:focus{border-color:rgba(139,92,246,.56);box-shadow:0 0 0 4px rgba(139,92,246,.12)}
+  .input:focus, .select:focus, .textarea:focus{
+    border-color:rgba(139,92,246,.56);
+    box-shadow:0 0 0 4px rgba(139,92,246,.12);
+    transform:translateY(-1px);
+  }
   .input, .select{height:52px;padding:0 14px;font-weight:700}
   .textarea{min-height:112px;padding:14px;resize:vertical;line-height:1.6;font-weight:600}
   .input::placeholder, .textarea::placeholder{color:#64748b}
@@ -240,7 +244,15 @@
     border:1px solid rgba(148,163,184,.12);
     box-shadow:0 16px 40px rgba(0,0,0,.18);
     padding:14px;
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    will-change:transform;
   }
+  .tx:hover{
+    transform:translateY(-1px);
+    box-shadow:0 18px 44px rgba(0,0,0,.22);
+    border-color:rgba(148,163,184,.18);
+  }
+  .tx:active{transform:translateY(0) scale(.985)}
   .tx-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
   .tx-left{display:flex;gap:12px;min-width:0;align-items:flex-start}
   .icon{
@@ -251,7 +263,11 @@
   }
   .icon.income{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.18)}
   .icon.expense{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.18)}
-  .tx-title{font-size:15px;font-weight:950;line-height:1.3;margin:0}
+  .tx-title{
+    font-size:15px;font-weight:950;line-height:1.3;margin:0;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+    overflow:hidden;
+  }
   .tx-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
   .meta-pill{
     padding:6px 8px;border-radius:999px;
@@ -269,16 +285,21 @@
     padding:24px;text-align:center;color:var(--muted);
     border-radius:22px;border:1px dashed rgba(148,163,184,.22);
     background:rgba(2,6,23,.18);
+    animation:fadeInUp .3s ease;
+  }
+  @keyframes fadeInUp{
+    from{opacity:0;transform:translateY(8px)}
+    to{opacity:1;transform:none}
   }
   .toast{
-    position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(18px);
+    position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(18px) scale(.95);
     background:rgba(15,23,42,.96);
     color:#fff;border:1px solid rgba(148,163,184,.16);
     border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);
-    opacity:0;pointer-events:none;transition:.22s ease;z-index:99;
+    opacity:0;pointer-events:none;transition:.22s ease, transform .22s ease;z-index:99;
     max-width:min(92vw,560px);text-align:center;font-size:13px;
   }
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
   .overlay{
     position:fixed;inset:0;background:rgba(2,6,23,.72);backdrop-filter:blur(14px);
     display:none;align-items:center;justify-content:center;padding:18px;z-index:100;
@@ -290,7 +311,7 @@
     background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(8,13,28,.98));
     border:1px solid rgba(148,163,184,.16);
     box-shadow:0 40px 120px rgba(0,0,0,.65);
-    padding:20px;
+    padding:18px;
   }
   .modal-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:14px}
   .modal-top h4{margin:0;font-size:20px;font-weight:950}
@@ -328,7 +349,7 @@
   .pin-card{
     width:min(620px,100%);
     border-radius:30px;
-    padding:22px;
+    padding:18px;
     position:relative;
     overflow:hidden;
     background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(8,13,28,.98));
@@ -463,7 +484,7 @@
 
   .loading-layer{
     position:fixed;inset:0;z-index:110;display:none;align-items:center;justify-content:center;padding:18px;
-    background:rgba(2,6,23,.58);backdrop-filter:blur(10px);
+    background:rgba(2,6,23,.42);backdrop-filter:blur(12px);
   }
   .loading-layer.show{display:flex}
   .loading-box{
@@ -474,6 +495,12 @@
     box-shadow:0 40px 120px rgba(0,0,0,.55);
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
     text-align:center;
+    animation:popIn .24s ease;
+    transform-origin:center;
+  }
+  @keyframes popIn{
+    from{opacity:0;transform:translateY(10px) scale(.98)}
+    to{opacity:1;transform:translateY(0) scale(1)}
   }
   .ring{
     width:40px;height:40px;border-radius:50%;
@@ -494,14 +521,33 @@
     background:rgba(2,6,23,.30);
     border:1px solid rgba(148,163,184,.14);
     box-shadow:0 16px 40px rgba(0,0,0,.22);
-    transition:.18s ease;display:flex;flex-direction:column;min-height:100%;
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    will-change:transform;
+    display:flex;flex-direction:column;min-height:100%;
   }
-  .account-card:hover{transform:translateY(-1px);border-color:rgba(167,139,250,.28)}
+  .account-card:hover{
+    transform:translateY(-1px);
+    border-color:rgba(167,139,250,.28);
+    box-shadow:0 20px 50px rgba(0,0,0,.28);
+  }
+  .account-card:active{transform:translateY(0) scale(.975)}
   .card-media{position:relative;aspect-ratio:16/10;background:#0b1220;overflow:hidden}
   .card-media img{width:100%;height:100%;object-fit:cover;display:block}
   .thumb-empty{width:100%;height:100%;display:grid;place-items:center;color:#94a3b8;font-size:13px;padding:16px;text-align:center;background:linear-gradient(180deg,rgba(15,23,42,.92),rgba(2,6,23,.98))}
   .card-body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}
-  .card-title{font-size:16px;font-weight:900;line-height:1.3}
+  .card-title{
+    font-size:16px;font-weight:900;line-height:1.35;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+    overflow:hidden;min-height:2.7em;
+  }
+  .card-id{
+    color:#c4b5fd;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    line-height:1.2;
+  }
   .card-sub{color:#94a3b8;font-size:12px;line-height:1.5}
   .card-price{font-size:15px;font-weight:900}
   .card-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
@@ -536,7 +582,7 @@
     user-select:none;
     -webkit-user-drag:none;
   }
-  .badge{position:absolute;left:10px;bottom:10px;padding:6px 8px;border-radius:999px;background:rgba(2,6,23,.66);border:1px solid rgba(255,255,255,.08);font-size:11px;font-weight:800;backdrop-filter:blur(8px)}
+  .badge{display:none !important}
   .empty-state{display:flex;align-items:center;justify-content:center;min-height:180px;border-radius:18px;border:1px dashed rgba(148,163,184,.22);color:var(--muted);text-align:center;padding:16px;background:rgba(2,6,23,.16)}
   .status-pill{
     display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;
@@ -576,12 +622,13 @@
     .dash-grid{grid-template-columns:1fr}
   }
   @media (max-width: 560px){
-    .app{padding:10px 10px 24px}
-    .hero-main,.hero-side,.section{padding:16px}
+    .app{padding:12px 12px 24px}
+    .hero-main,.hero-side,.section{padding:14px}
     .hero h2{font-size:30px;max-width:none}
     .topbar{padding:10px}
     .brand h1{font-size:18px}
-    .modal{padding:16px;border-radius:22px}
+    .modal{padding:14px;border-radius:22px}
+    .pin-card{padding:16px}
     .modal-actions{flex-direction:column}
     .modal-actions .btn{width:100%}
     .history-item{padding:12px}
@@ -895,16 +942,10 @@
             <h3>Daftar Akun</h3>
             <p>Klik X untuk hapus cepat, klik Edit untuk ubah data dan tambah foto.</p>
           </div>
-          <div class="filter-row">
-            <button class="chip active" data-dash-filter="new">New</button>
-            <button class="chip" data-dash-filter="hot">Hot</button>
-            <button class="chip" data-dash-filter="sold">Sold</button>
-            <button class="chip" data-dash-filter="all">Semua</button>
-          </div>
         </div>
 
         <div class="search-row">
-          <input id="dashSearch" class="input" placeholder="Cari nama / game / harga / label">
+          <input id="dashSearch" class="input" placeholder="Cari nama / ID / kategori">
           <button class="btn btn-secondary" id="dashClearSearchBtn">Clear</button>
         </div>
 
@@ -1991,7 +2032,7 @@ function bindAmountInput(node){
         el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>';
         return;
       }
-      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,12).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="watermark-overlay"><img src="${WATERMARK_IMAGE}" alt="yuraaa.store watermark" loading="lazy" decoding="async" draggable="false"></div><div class="badge">#${i+1}</div></div>`).join('')}</div>`;
+      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,12).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="watermark-overlay"><img src="${WATERMARK_IMAGE}" alt="yuraaa.store watermark" loading="lazy" decoding="async" draggable="false"></div></div>`).join('')}</div>`;
     }
 
         function resetPreviewFiles(){
@@ -2047,19 +2088,26 @@ function bindAmountInput(node){
       };
     }
 
+    function formatShortId(value){
+      const clean = String(value ?? '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      return clean ? `YR-${clean.slice(0, 6)}` : '';
+    }
+
     function renderCard(item){
       const img = firstImage(item.Gambar || item.gambar || item.images || '');
       const media = img
         ? `<img src="${img}" alt="${esc(item.Nama)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-empty',textContent:'Gambar tidak tersedia'}))">`
         : `<div class="thumb-empty">Gambar tidak tersedia</div>`;
       const key = esc(item.id || item.row || '');
+      const shortId = formatShortId(item.id || item.row || '');
       return `<div class="account-card" data-id="${key}" data-row="${item.row}">
         <div class="card-actions" data-action-wrap>
           <button type="button" class="card-edit" data-daction="edit" data-id="${key}" data-row="${item.row}" title="Edit akun">Edit</button>
         </div>
         <div class="card-media">${media}<div class="watermark-overlay"><img src="${WATERMARK_IMAGE}" alt="yuraaa.store watermark" loading="lazy" decoding="async" draggable="false"></div></div>
         <div class="card-body">
-          <div class="card-title">${esc(item.Nama)}</div>
+          <div class="card-title" title="${esc(item.Nama)}">${esc(item.Nama)}</div>
+          ${shortId ? `<div class="card-id">ID ${esc(shortId)}</div>` : ''}
           <div class="card-sub">${esc(item.Game || '-')}</div>
           <div class="card-price">Rp ${esc(formatNum(item.Harga))}</div>
           <div class="card-tags">
@@ -2074,17 +2122,7 @@ function bindAmountInput(node){
     function renderCards(){
       const q = normalizeText(el.search.value).toLowerCase();
       const items = state.items
-        .filter(x => {
-          const f = (state.filter || 'all').toLowerCase();
-          const label = normalizeText(x.Label).toLowerCase();
-          if(f === 'all') return true;
-          if(f === 'sold') {
-            const s = normalizeText(pick(x, 'Status', 'status')).toLowerCase();
-            return s.includes('sold') || s.includes('done') || s.includes('terjual');
-          }
-          return label === f;
-        })
-        .filter(x => [x.Nama, x.Game, x.Harga, x.Label, x.Status, x.Ket, `row ${x.row}`].join(' ').toLowerCase().includes(q))
+        .filter(x => [x.Nama, x.id, x.Game, x.Harga, x.Label, x.Status, x.Ket, `row ${x.row}`].join(' ').toLowerCase().includes(q))
         .sort((a,b)=> state.sortNewest ? b.row - a.row : a.row - b.row);
 
       if(!items.length){
@@ -2524,8 +2562,7 @@ function sendViaIframePost(endpoint, payload){
       }
     }
     function applyFilter(filter){
-      state.filter = filter;
-      document.querySelectorAll('[data-dash-filter]').forEach(ch => ch.classList.toggle('active', ch.dataset.dashFilter === filter));
+      state.filter = 'all';
       renderCards();
     }
 
@@ -2534,10 +2571,9 @@ function sendViaIframePost(endpoint, payload){
       state.initialized = true;
       el.endpoint.value = endpointValue();
       if(!el.endpoint.value) el.endpoint.value = DEFAULT_DASHBOARD_ENDPOINT;
-      document.querySelectorAll('[data-dash-filter]').forEach(ch => ch.addEventListener('click', () => applyFilter(ch.dataset.dashFilter)));
       el.search.addEventListener('input', renderCards);
       el.clearSearchBtn.addEventListener('click', () => { el.search.value=''; renderCards(); });
-      el.searchResetBtn.addEventListener('click', () => { el.search.value=''; applyFilter('all'); toast('Filter dibersihkan.'); });
+      el.searchResetBtn.addEventListener('click', () => { el.search.value=''; renderCards(); toast('Pencarian dibersihkan.'); });
       el.reloadBtn.onclick = () => loadList();
       el.cards.addEventListener('click', (e) => {
         const editBtn = e.target.closest('[data-daction="edit"]');
