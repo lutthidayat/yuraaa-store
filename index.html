@@ -1764,6 +1764,17 @@ Harga: Rp ${rupiah(item.harga)}`;
       document.body.style.overflow = '';
     }
 
+    function closeModal(){
+      els.modal.classList.remove('open');
+      els.modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (modalSwiper) {
+        modalSwiper.destroy(true, true);
+        modalSwiper = null;
+      }
+      activeModalItem = null;
+    }
+
     function openModal(id){
       const item = RAW_DATA.find(x => String(x.id) === String(id));
       if (!item) return;
@@ -2031,7 +2042,7 @@ Harga: Rp ${rupiah(item.harga)}`;
       document.querySelector('.main').scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    els.closeModal.addEventListener('click', closeModal);
+    els.closeModal.addEventListener('click', () => closeModal());
     els.modal.addEventListener('click', (e) => {
       if (e.target === els.modal) closeModal();
     });
