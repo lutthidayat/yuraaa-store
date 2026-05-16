@@ -1363,7 +1363,27 @@
       return null;
     }
 
-    function mapItem(raw, idx){
+    
+    function parseDiscountValue(raw){
+      const value = String(raw ?? '').trim();
+      if (!value) return 0;
+
+      if (value.includes('%')){
+        const parsed = parseFloat(value.replace(',', '.').replace(/[^\d.]/g, ''));
+        return isNaN(parsed) ? 0 : Math.max(0, Math.min(100, parsed));
+      }
+
+      const normalized = parseFloat(value.replace(',', '.'));
+      if (isNaN(normalized)) return 0;
+
+      if (normalized > 0 && normalized <= 1){
+        return Math.max(0, Math.min(100, normalized * 100));
+      }
+
+      return Math.max(0, Math.min(100, normalized));
+    }
+
+function mapItem(raw, idx){
       const nama = raw.Nama ?? raw.nama ?? raw.Name ?? raw.name ?? raw.Judul ?? raw.judul ?? '-';
       const hargaRaw = raw.Harga ?? raw.harga ?? raw.Price ?? raw.price ?? 0;
       const diskonRaw = raw.Diskon ?? raw.diskon ?? 0;
@@ -1375,7 +1395,7 @@
       const createdAt = parseDate(raw.Tanggal ?? raw.tanggal ?? raw.Date ?? raw.date ?? raw.CreatedAt ?? raw.createdAt ?? raw.Timestamp ?? raw.timestamp ?? raw.Waktu ?? raw.waktu);
 
       const harga = Number(String(hargaRaw).replace(/[^\d]/g, '')) || 0;
-      const diskon = Number(String(diskonRaw).replace(/[^\d]/g, '')) || 0;
+      const diskon = parseDiscountValue(diskonRaw);
       const images = parseImages(gambar);
 
       return {
@@ -1395,12 +1415,14 @@
       };
     }
     function getPromoMeta(item){
-      const value = Number(item?.diskon) || 0;
-      const hasPromo = value > 0;
-      const isPercent = hasPromo && value <= 100;
-      const oldPrice = isPercent ? Math.round(Number(item?.harga || 0) / (1 - value / 100)) : 0;
-      const badge = isPercent ? `-${value}%` : (hasPromo ? 'Promo' : '');
-      return { value, hasPromo, isPercent, oldPrice, badge };
+      const discount = Math.max(0, Math.min(100, Number(item?.diskon) || 0));
+      const originalPrice = Math.max(0, Number(item?.harga || 0));
+      const hasPromo = discount > 0;
+      const isPercent = hasPromo;
+      const discountedPrice = hasPromo ? Math.max(0, Math.round(originalPrice * (1 - discount / 100))) : originalPrice;
+      const savings = hasPromo ? Math.max(0, originalPrice - discountedPrice) : 0;
+      const badge = hasPromo ? `-${discount}%` : '';
+      return { discount, hasPromo, isPercent, originalPrice, discountedPrice, savings, badge };
     }
 
 
@@ -1449,14 +1471,15 @@
 ` +
         `ID: #${itemId}
 ` +
-        `Harga: Rp ${rupiah(item.harga)}`
+        `Harga: Rp ${rupiah(getPromoMeta(item).discountedPrice)}`
       );
       return `https://wa.me/${WA_NUMBER}?text=${text}`;
     }
 
     function buildFbLink(item){
       if (isContactBlocked(item)) return '#';
-      const text = encodeURIComponent(`Akun: ${item.nama} | ${item.game} | Rp ${rupiah(item.harga)}`);
+      const promo = getPromoMeta(item);
+      const text = encodeURIComponent(`Akun: ${item.nama} | ${item.game} | Rp ${rupiah(promo.discountedPrice)}`);
       return FB_LINK.includes('?') ? `${FB_LINK}&ref=${text}` : `${FB_LINK}?ref=${text}`;
     }
 
@@ -1619,10 +1642,9 @@
             </div>
 
             <div class="price-row">
-              <div class="price">Rp ${rupiah(item.harga)}</div>
-              ${promo.hasPromo ? (promo.isPercent
-                ? `<div class="old-price">Rp ${rupiah(promo.oldPrice)}</div><div class="disc-pill">-${promo.value}%</div>`
-                : `<div class="disc-pill">Promo</div>`) : ''}
+              ${promo.hasPromo ? `<div class="old-price">Rp ${rupiah(promo.originalPrice)}</div>` : ''}
+              <div class="price">Rp ${rupiah(promo.discountedPrice)}</div>
+              ${promo.hasPromo ? `<div class="disc-pill">-${promo.discount}%</div>` : ''}
             </div>
 
             <div class="meta-row">
@@ -1742,14 +1764,16 @@
     function openPurchaseSheet(item){
       if (!item) return;
       const itemId = item.displayId || formatDisplayId(item.id);
+      const promo = getPromoMeta(item);
       const summary = `Nama akun: ${item.nama}
 ID: #${itemId}
-Harga: Rp ${rupiah(item.harga)}`;
+Harga asli: Rp ${rupiah(promo.originalPrice)}
+Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
       els.purchaseTitle.textContent = 'Konfirmasi Pembelian';
       els.purchaseMeta.textContent = summary;
       els.purchaseName.textContent = item.nama;
       els.purchaseId.textContent = `#${itemId}`;
-      els.purchasePrice.textContent = `Rp ${rupiah(item.harga)}`;
+      els.purchasePrice.textContent = `Rp ${rupiah(promo.discountedPrice)}`;
       els.purchaseConfirm.href = buildWhatsappLink(item);
       els.purchaseModal.classList.remove('hidden');
       els.purchaseModal.classList.add('open');
@@ -1792,13 +1816,13 @@ Harga: Rp ${rupiah(item.harga)}`;
       els.modalLabel.style.display = label ? 'inline-flex' : 'none';
       els.modalStatusPill.className = `pill ${getStatusClass(item.status)}`;
       els.modalStatusPill.innerHTML = `<span class="status-dot"></span>${item.status}`;
-      els.modalPricePill.textContent = `Rp ${rupiah(item.harga)}`;
+      els.modalPricePill.textContent = promo.hasPromo
+        ? `Diskon ${promo.discount}%`
+        : `Rp ${rupiah(promo.discountedPrice)}`;
       els.modalIdPill.textContent = `ID #${itemId}`;
-      els.modalHarga.textContent = `Rp ${rupiah(item.harga)}`;
+      els.modalHarga.textContent = `Rp ${rupiah(promo.discountedPrice)}`;
       els.modalSubprice.innerHTML = promo.hasPromo
-        ? (promo.isPercent
-          ? `<span class="detail-old">Rp ${rupiah(promo.oldPrice)}</span><span class="detail-disc">-${promo.value}%</span>`
-          : `<span class="detail-disc">Promo</span>`)
+        ? `<span class="detail-old">Rp ${rupiah(promo.originalPrice)}</span><span class="detail-disc">-${promo.discount}%</span>`
         : `<span>Harga sesuai data spreadsheet.</span>`;
       els.modalKet.textContent = item.ket || 'Tidak ada detail tambahan.';
 
