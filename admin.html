@@ -556,4 +556,2217 @@
     font-size:11px;
     font-weight:900;
     letter-spacing:.06em;
-    text-tra
+    text-transform:uppercase;
+    line-height:1.2;
+  }
+  .card-sub{color:#94a3b8;font-size:12px;line-height:1.5}
+  .card-price{font-size:15px;font-weight:900}
+  .card-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+  .card-tags span{padding:6px 8px;border-radius:999px;background:rgba(15,23,42,.72);border:1px solid rgba(148,163,184,.12);font-size:11px;font-weight:800;color:#dbeafe}
+  .card-actions{position:absolute;top:10px;right:10px;z-index:3;display:flex;gap:8px;align-items:flex-start}
+  .card-edit,.card-menu{border:none;border-radius:12px;padding:8px 10px;font-weight:900;cursor:pointer;color:#fff}
+  .card-edit{background:rgba(139,92,246,.92)}
+  .card-menu{width:40px;height:40px;display:grid;place-items:center;background:rgba(15,23,42,.92);border:1px solid rgba(148,163,184,.18);font-size:18px;line-height:1}
+  .card-action-menu{position:absolute;top:46px;right:0;min-width:180px;padding:8px;border-radius:18px;background:rgba(15,23,42,.98);border:1px solid rgba(148,163,184,.16);box-shadow:0 20px 50px rgba(0,0,0,.35);display:none;backdrop-filter:blur(12px)}
+  .account-card.menu-open .card-action-menu{display:block}
+  .card-action-item{width:100%;display:flex;align-items:center;justify-content:flex-start;gap:8px;border:none;border-radius:12px;padding:10px 12px;font:inherit;font-weight:900;background:transparent;color:#fff;cursor:pointer;text-align:left}
+  .card-action-item:hover{background:rgba(148,163,184,.12)}
+  .card-action-item.danger{color:#fecaca}
+  .card-action-item.danger:hover{background:rgba(239,68,68,.16)}
+  .preview-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:14px}
+  .box{padding:14px;border-radius:22px;background:rgba(2,6,23,.28);border:1px solid rgba(148,163,184,.10)}
+  .preview-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+  .preview-count{padding:6px 10px;border-radius:999px;background:rgba(15,23,42,.7);border:1px solid rgba(148,163,184,.12);color:#dbeafe;font-size:12px;font-weight:800}
+  .preview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .preview-item{position:relative;aspect-ratio:1/1;border-radius:18px;overflow:hidden;border:1px solid rgba(148,163,184,.10);background:linear-gradient(180deg, rgba(15,23,42,.95), rgba(2,6,23,.95))}
+  .preview-item img{width:100%;height:100%;object-fit:cover;display:block}
+  .badge{display:none !important}
+  .empty-state{display:flex;align-items:center;justify-content:center;min-height:180px;border-radius:18px;border:1px dashed rgba(148,163,184,.22);color:var(--muted);text-align:center;padding:16px;background:rgba(2,6,23,.16)}
+  .status-pill{
+    display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;
+    font-size:12px;font-weight:800;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.12);color:#fca5a5;margin-top:8px
+  }
+
+
+  .delete-summary{
+    margin-top:12px;
+    padding:16px;
+    border-radius:22px;
+    background:linear-gradient(180deg, rgba(239,68,68,.12), rgba(15,23,42,.86));
+    border:1px solid rgba(239,68,68,.18);
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    box-shadow:0 18px 40px rgba(0,0,0,.18) inset;
+  }
+  .delete-badge{
+    width:44px;height:44px;border-radius:16px;display:grid;place-items:center;flex:0 0 auto;
+    background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.22);color:#fecaca;font-size:20px;font-weight:900;
+  }
+  .delete-summary strong{display:block;font-size:14px;line-height:1.4;color:#fff}
+  .delete-summary span{display:block;margin-top:4px;color:#cbd5e1;font-size:12px;line-height:1.5}
+  .modal-actions.confirm-actions .btn{min-height:52px;}
+
+  @media (max-width: 1100px){
+    .hero{grid-template-columns:1fr}
+    .dash-grid{grid-template-columns:1fr 1fr}
+    .preview-wrap,.split{grid-template-columns:1fr}
+  }
+  @media (max-width: 920px){
+    .form-grid{grid-template-columns:1fr}
+    .search-row{grid-template-columns:1fr}
+    .topbar{gap:10px}
+    .top-actions{width:100%}
+    .top-actions .btn{flex:1 1 0}
+    .dash-grid{grid-template-columns:1fr}
+  }
+  @media (max-width: 560px){
+    .app{padding:12px 12px 24px}
+    .hero-main,.hero-side,.section{padding:14px}
+    .hero h2{font-size:30px;max-width:none}
+    .topbar{padding:10px}
+    .brand h1{font-size:18px}
+    .modal{padding:14px;border-radius:22px;width:min(100%,calc(100vw - 16px));max-height:calc(100vh - 16px)}
+    .pin-card{padding:16px}
+    .modal-actions{flex-direction:column}
+    .modal-actions .btn{width:100%}
+    .history-item{padding:12px}
+  }
+
+  .btn.is-busy{
+    opacity:.88;
+    cursor:wait;
+    position:relative;
+  }
+  .btn.is-busy::after{
+    content:"";
+    width:14px;height:14px;
+    margin-left:8px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,.34);
+    border-top-color:#fff;
+    animation:spin .8s linear infinite;
+  }
+  .hidden{display:none !important}
+</style>
+</head>
+<body class="locked">
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">🏦</div>
+        <div>
+          <h1><span>Yuraaa</span> Finance & Dashboard</h1>
+          <p>Saldo otomatis, manual income/expense, dan manajemen akun</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="pill" id="statusPill">● Tersimpan otomatis</div>
+        <button class="btn btn-secondary" id="goFinanceBtn">💰 Finance</button>
+        <button class="btn btn-secondary" id="goDashboardBtn">📊 Dashboard</button>
+        <button class="btn btn-secondary" id="refreshAllBtn">↻ Refresh</button>
+        <button class="btn btn-danger" id="closeBtn">✕ Close</button>
+      </div>
+    </header>
+
+    <!-- FINANCE -->
+    <section id="financeView">
+      <section class="hero">
+        <div class="panel hero-main">
+          <div class="eyebrow">Bank-style UI • dark smooth dashboard • one-file</div>
+          <h2>Kelola <span>keuangan</span> lebih rapi.</h2>
+          <p>
+            Pemasukan otomatis diambil dari akun yang sudah sold di spreadsheet, lalu digabung dengan pemasukan/pengeluaran manual.
+            Semua transaksi tampil dalam satu riwayat dengan tanggal, kategori, dan catatan.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" id="scrollFormBtn">＋ Add</button>
+            <button class="btn btn-secondary" id="scrollListBtn">Lihat Riwayat</button>
+            <button class="btn btn-blue" id="reloadApiBtn">Sync Spreadsheet</button>
+          </div>
+        </div>
+        <div class="panel hero-side">
+          <div class="stats">
+            <div class="stat">
+              <div class="label">Saldo</div>
+              <div class="value balance" id="balance">Rp 0</div>
+              <div class="sub">Sisa saldo setelah semua pemasukan dan pengeluaran dihitung.</div>
+            </div>
+            <div class="stat">
+              <div class="label">Pemasukan</div>
+              <div class="value income" id="income">Rp 0</div>
+              <div class="sub">Gabungan akun sold + pemasukan manual.</div>
+            </div>
+            <div class="stat">
+              <div class="label">Pengeluaran</div>
+              <div class="value expense" id="expense">Rp 0</div>
+              <div class="sub">Semua pengeluaran manual yang tersimpan.</div>
+            </div>
+            <div class="stat">
+              <div class="label">Akun Sold</div>
+              <div class="value" id="soldCount">0</div>
+              <div class="sub">Data dari spreadsheet yang statusnya sold.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="layout">
+        <section class="panel section" id="formSection">
+          <div class="section-head">
+            <div>
+              <h3 id="formTitle">Tambah Transaksi</h3>
+              <p>Input manual untuk pemasukan atau pengeluaran. Data bisa diedit dan dihapus setelah disimpan.</p>
+            </div>
+            <div class="toolbar">
+              <button class="btn btn-ghost" id="resetBtn">Reset</button>
+            </div>
+          </div>
+
+          <input type="hidden" id="editId" value="">
+          <div class="form-grid">
+            <div class="field full">
+              <label class="label" for="desc">Keterangan</label>
+              <input id="desc" class="input" placeholder="Contoh: Jual akun, bayar makan, ongkir, top up, gaji">
+            </div>
+            <div class="field">
+              <label class="label" for="amount">Jumlah</label>
+              <input id="amount" class="input" inputmode="numeric" placeholder="Contoh: 150000">
+            </div>
+            <div class="field">
+              <label class="label" for="type">Jenis</label>
+              <select id="type" class="select">
+                <option value="income">Pemasukan</option>
+                <option value="expense">Pengeluaran</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="label" for="category">Kategori</label>
+              <select id="category" class="select">
+                <option value="Umum">Umum</option>
+                <option value="Jual Akun">Jual Akun</option>
+                <option value="Gaji">Gaji</option>
+                <option value="Makanan">Makanan</option>
+                <option value="Transport">Transport</option>
+                <option value="Tagihan">Tagihan</option>
+                <option value="Belanja">Belanja</option>
+                <option value="Hiburan">Hiburan</option>
+                <option value="Bisnis">Bisnis</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="label" for="date">Tanggal</label>
+              <input id="date" type="date" class="input">
+            </div>
+            <div class="field full">
+              <label class="label" for="note">Catatan</label>
+              <textarea id="note" class="textarea" placeholder="Catatan tambahan, misalnya metode pembayaran, detail transaksi, atau tujuan"></textarea>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="btn btn-primary" id="saveBtn">Simpan Transaksi</button>
+            <button class="btn btn-secondary" id="clearFiltersBtn">Tampilkan Semua</button>
+          </div>
+          <div class="helper">Angka otomatis diformat jadi Rupiah. Input tetap dark, tidak berubah putih saat autofill.</div>
+
+          <div class="split">
+            <div class="mini-card">
+              <h4>Riwayat Transaksi</h4>
+              <p>Daftar terbaru tampil di bawah, lengkap dengan tanggal, kategori, dan sumber data.</p>
+            </div>
+            <div class="mini-card">
+              <h4>Saldo Otomatis</h4>
+              <p>Saldo dihitung dari pemasukan dikurangi pengeluaran. Data sold dari spreadsheet masuk sebagai pemasukan otomatis.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel section" id="listSection">
+          <div class="history-head">
+            <div>
+              <h3>Riwayat</h3>
+              <p>Semua transaksi tampil di satu tempat. Data manual bisa diedit atau dihapus.</p>
+            </div>
+            <div class="filter-row">
+              <button class="chip active" data-filter="all">Semua</button>
+              <button class="chip" data-filter="income">Masuk</button>
+              <button class="chip" data-filter="expense">Keluar</button>
+              <button class="chip" data-filter="api">Sold</button>
+              <button class="chip" data-filter="manual">Manual</button>
+            </div>
+          </div>
+
+          <div class="search-row">
+            <input id="search" class="input" placeholder="Cari keterangan, kategori, catatan, atau tanggal">
+            <button class="btn btn-secondary" id="clearSearchBtn">Clear</button>
+          </div>
+
+          <div style="margin-top:14px" class="history-list" id="list"></div>
+        </section>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboardView" class="hidden">
+      <section class="hero">
+        <div class="panel hero-main">
+          <div class="eyebrow">Upload multi gambar • UI seperti aplikasi • endpoint terbaru</div>
+          <h2>Bikin data akun <span>lebih cepat</span>, rapi, dan aman.</h2>
+          <p>
+            Tambah akun, edit data, hapus lewat tombol X pada card, upload multi gambar langsung, preview, harga format Rupiah, popup/notifikasi, dan sinkronisasi otomatis.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" id="dashAddBtn">＋ Add Account</button>
+            <button class="btn btn-secondary" id="dashScrollListBtn">Lihat Data</button>
+            <button class="btn btn-blue" id="dashReloadBtn">Sync Spreadsheet</button>
+          </div>
+        </div>
+        <div class="panel hero-side">
+          <div class="stats">
+            <div class="stat">
+              <div class="label">Mode</div>
+              <div class="value">App Dashboard</div>
+              <div class="sub">Satu halaman, enak dipakai di HP maupun desktop.</div>
+            </div>
+            <div class="stat">
+              <div class="label">Harga</div>
+              <div class="value balance">Rp Otomatis</div>
+              <div class="sub">Input harga tetap gelap, tidak jadi putih saat autofill.</div>
+            </div>
+            <div class="stat">
+              <div class="label">Koneksi</div>
+              <div class="value" id="dashConnText">Belum tersambung</div>
+              <div class="sub">Sync data spreadsheet via Apps Script.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel section" id="dashFormSection">
+        <div class="section-head">
+          <div>
+            <h3 id="dashFormTitle">Tambah Akun</h3>
+            <p>Klik Edit pada kartu untuk memuat data ke form. Simpan akan otomatis berubah jadi Update.</p>
+          </div>
+          <div class="toolbar">
+            <button class="btn btn-ghost" id="dashResetBtn">Reset</button>
+            <button class="btn btn-secondary" id="dashEndpointBtn">Set Endpoint</button>
+          </div>
+        </div>
+
+        <input type="hidden" id="dashRowEdit" value="">
+        <input type="hidden" id="dashExistingImages" value="">
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="dashEndpoint">Endpoint</label>
+            <input id="dashEndpoint" class="input" placeholder="https://script.google.com/macros/s/.../exec">
+            <div class="helper">Gunakan endpoint terbaru. Jika kosong akan memakai default.</div>
+          </div>
+          <div class="field">
+            <label class="label" for="dashStatus">Status</label>
+            <select id="dashStatus" class="select">
+              <option value="ready">Ready</option>
+              <option value="proses">Proses</option>
+              <option value="sold">Sold</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label" for="dashNama">Nama</label>
+            <input id="dashNama" class="input" placeholder="Contoh: HSR Asia • Reroll SS">
+          </div>
+          <div class="field">
+            <label class="label" for="dashGame">Game</label>
+            <input id="dashGame" class="input" placeholder="Contoh: Honkai Star Rail">
+          </div>
+          <div class="field">
+            <label class="label" for="dashHarga">Harga</label>
+            <input id="dashHarga" class="input" inputmode="numeric" placeholder="Contoh: 150000">
+          </div>
+          <div class="field">
+            <label class="label" for="dashDiskon">Diskon</label>
+            <div class="input-suffix-wrap">
+              <input id="dashDiskon" class="input input-with-suffix" inputmode="numeric" placeholder="Contoh: 10">
+              <span class="input-suffix">%</span>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label" for="dashSheetId">Spreadsheet</label>
+            <input id="dashSheetId" class="input" readonly value="1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw">
+          </div>
+          <div class="field full">
+            <label class="label" for="dashKet">Keterangan</label>
+            <textarea id="dashKet" class="textarea" placeholder="Contoh: 5 limited, sudah email bind, server Asia, masih aman..."></textarea>
+          </div>
+        </div>
+
+        <div class="preview-wrap">
+          <div class="box">
+            <div class="field">
+              <label class="label" for="dashImageFiles">Foto dari perangkat</label>
+              <input id="dashImageFiles" class="input" type="file" accept="image/*" multiple style="padding:12px;height:auto">
+              <div class="helper">Bisa pilih lebih dari satu foto. Preview langsung muncul.</div>
+            </div>
+            <div class="field" style="margin-top:14px">
+              <label class="label" for="dashGambar">Link gambar cadangan</label>
+              <textarea id="dashGambar" class="textarea" placeholder="https://drive.google.com/uc?export=view&id=xxxx, https://..."></textarea>
+              <div class="helper">Saat edit, link lama tetap dipertahankan dan bisa ditambah foto baru.</div>
+            </div>
+            <div style="margin-top:12px"><div class="status-pill" id="dashImageState">0 foto dipilih</div></div>
+          </div>
+          <div class="box">
+            <div class="preview-head"><strong>Preview Gambar</strong><div class="preview-count" id="dashPreviewCount">0</div></div>
+            <div id="dashPreviewArea"><div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div></div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-primary" id="dashSaveBtn">Simpan Akun Baru</button>
+          <button type="button" class="btn btn-danger hidden" id="dashDeleteBtn">Hapus Akun</button>
+          <button class="btn btn-secondary" id="dashSearchResetBtn">Tampilkan Semua</button>
+        </div>
+        <div class="helper">Data tersimpan ke spreadsheet via Apps Script. Gambar akan diupload ke Cloudinary lalu link-nya disimpan agar bisa tampil di card.</div>
+      </section>
+
+      <section class="panel section" id="dashListSection">
+        <div class="history-head">
+          <div>
+            <h3>Daftar Akun</h3>
+            <p>Klik Edit untuk ubah data, dan hapus lewat tombol delete yang sudah dibuat lebih modern.</p>
+          </div>
+        </div>
+
+        <div class="filter-row status-filters">
+          <button class="chip status-chip active" data-dfilter="all">Semua</button>
+          <button class="chip status-chip" data-dfilter="ready">Ready</button>
+          <button class="chip status-chip" data-dfilter="proses">Proses</button>
+          <button class="chip status-chip" data-dfilter="sold">Sold</button>
+        </div>
+
+        <div class="search-row">
+          <input id="dashSearch" class="input" placeholder="Cari nama / ID / kategori">
+          <button class="btn btn-secondary" id="dashClearSearchBtn">Clear</button>
+        </div>
+
+        <div style="margin-top:14px" id="dashCards" class="dash-grid"></div>
+      </section>
+    </section>
+  </div>
+
+  <button class="floating-add" id="floatingAddBtn">＋ Add</button>
+
+  <div class="overlay" id="confirmOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <div class="modal-top">
+        <div>
+          <div class="endpoint-badge" id="confirmBadge">⚠️ Konfirmasi hapus</div>
+          <h4 id="confirmTitle">Hapus data?</h4>
+          <p id="confirmMsg">Data akan dihapus secara permanen.</p>
+        </div>
+        <button type="button" class="close-x" id="closeConfirmBtn" aria-label="Tutup">×</button>
+      </div>
+      <div class="delete-summary">
+        <div class="delete-badge">!</div>
+        <div>
+          <strong id="confirmItemTitle">Periksa kembali sebelum menghapus.</strong>
+          <span id="confirmItemMeta">Tindakan ini tidak bisa dibatalkan setelah data dihapus.</span>
+        </div>
+      </div>
+      <div class="modal-actions confirm-actions">
+        <button type="button" class="btn btn-danger" id="yesDeleteBtn">Ya, hapus</button>
+        <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="formOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="formModalTitle">
+      <div class="modal-top">
+        <div>
+          <h4 id="formModalTitle">Tambah Transaksi</h4>
+          <p>Modal tambahan untuk input cepat, tetap sinkron dengan form utama.</p>
+        </div>
+        <button class="close-x" id="closeFormModalBtn" aria-label="Tutup">× Kembali</button>
+      </div>
+      <div class="form-grid">
+        <div class="field full">
+          <label class="label" for="modalDesc">Keterangan</label>
+          <input id="modalDesc" class="input" placeholder="Contoh: Jual akun, makan siang">
+        </div>
+        <div class="field">
+          <label class="label" for="modalAmount">Jumlah</label>
+          <input id="modalAmount" class="input" inputmode="numeric" placeholder="Contoh: 100000">
+        </div>
+        <div class="field">
+          <label class="label" for="modalType">Jenis</label>
+          <select id="modalType" class="select">
+            <option value="income">Pemasukan</option>
+            <option value="expense">Pengeluaran</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label" for="modalCategory">Kategori</label>
+          <select id="modalCategory" class="select">
+            <option value="Umum">Umum</option>
+            <option value="Jual Akun">Jual Akun</option>
+            <option value="Gaji">Gaji</option>
+            <option value="Makanan">Makanan</option>
+            <option value="Transport">Transport</option>
+            <option value="Tagihan">Tagihan</option>
+            <option value="Belanja">Belanja</option>
+            <option value="Hiburan">Hiburan</option>
+            <option value="Bisnis">Bisnis</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label" for="modalDate">Tanggal</label>
+          <input id="modalDate" type="date" class="input">
+        </div>
+        <div class="field full">
+          <label class="label" for="modalNote">Catatan</label>
+          <textarea id="modalNote" class="textarea" placeholder="Catatan tambahan"></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" id="saveModalBtn">Simpan</button>
+        <button type="button" class="btn btn-secondary" id="syncModalBtn">Sync Spreadsheet</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="overlay" id="endpointOverlay" aria-hidden="true">
+    <div class="modal endpoint-modal" role="dialog" aria-modal="true" aria-labelledby="endpointTitle">
+      <div class="modal-top">
+        <div>
+          <h4 id="endpointTitle">Set Endpoint</h4>
+          <p>Masukkan URL Apps Script terbaru untuk menyimpan, update, hapus, dan upload gambar.</p>
+        </div>
+        <button type="button" class="close-x" id="closeEndpointBtn" aria-label="Tutup">×</button>
+      </div>
+
+      <div class="endpoint-badge">⚙️ Endpoint Dashboard</div>
+      <input id="endpointInput" class="input" placeholder="https://script.google.com/macros/s/.../exec">
+      <div class="helper">Kalau kosong, aplikasi akan memakai default endpoint yang tersimpan.</div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" id="saveEndpointBtn">Simpan Endpoint</button>
+        <button type="button" class="btn btn-secondary" id="cancelEndpointBtn">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="pin-overlay" id="pinOverlay">
+    <div class="pin-card" id="pinCard" role="dialog" aria-modal="true" aria-labelledby="pinTitle">
+      <div class="pin-top">
+        <div>
+          <h2 class="pin-title" id="pinTitle">Masukkan PIN</h2>
+          <p class="pin-sub">Akses dashboard keuangan dengan kode 6 digit.</p>
+        </div>
+        <button class="pin-close" id="pinClose" aria-label="Tutup">×</button>
+      </div>
+
+      <div class="pin-body">
+        <div class="pin-label">PIN Akses</div>
+        <input id="pinInput" class="pin-input" type="password" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" />
+        <div class="pin-msg" id="pinMsg"></div>
+        <div class="pin-actions">
+          <button class="btn btn-primary small" id="submitPinBtn">Buka</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-layer" id="loadingLayer" aria-hidden="true">
+    <div class="loading-box">
+      <div class="ring"></div>
+      <div id="loadingText" style="font-weight:900;color:#dbeafe">Memproses...</div>
+      <div style="color:#94a3b8;font-size:13px">Mohon tunggu sebentar.</div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  /* =========================
+     GLOBAL / NAV / PIN
+  ========================== */
+  const API = 'https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List';
+  const LOCAL_KEY = 'finance_manual_v4';
+  const PIN_CODE = '211202';
+  const UNLOCK_KEY = 'finance_unlocked_v2';
+  const ACTIVE_FILTER_KEY = 'finance_active_filter_v2';
+  const DASHBOARD_ENDPOINT_KEY = 'dash_endpoint_v1';
+  const DEFAULT_DASHBOARD_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwdr34FMbamJcEQaCEuD5n5_85M1pwnR5pAbGqqWfJPzurN0X_g6rXBs3G6Vx1FStPWgA/exec';
+  const CLOUDINARY_CLOUD_NAME = 'df3oxlqpx';
+  const CLOUDINARY_UPLOAD_PRESET = 'yuraaa_upload';
+
+  const $ = (id) => document.getElementById(id);
+  const ui = {
+    app: $('app'),
+    statusPill: $('statusPill'),
+    goFinanceBtn: $('goFinanceBtn'),
+    goDashboardBtn: $('goDashboardBtn'),
+    refreshAllBtn: $('refreshAllBtn'),
+    closeBtn: $('closeBtn'),
+    pinOverlay: $('pinOverlay'),
+    pinCard: $('pinCard'),
+    pinClose: $('pinClose'),
+    pinInput: $('pinInput'),
+    submitPinBtn: $('submitPinBtn'),
+    pinMsg: $('pinMsg'),
+    toast: $('toast'),
+    loadingLayer: $('loadingLayer'),
+    loadingText: $('loadingText'),
+    financeView: $('financeView'),
+    dashboardView: $('dashboardView'),
+    confirmOverlay: $('confirmOverlay'),
+    confirmBadge: $('confirmBadge'),
+    confirmTitle: $('confirmTitle'),
+    confirmMsg: $('confirmMsg'),
+    confirmItemTitle: $('confirmItemTitle'),
+    confirmItemMeta: $('confirmItemMeta'),
+    yesDeleteBtn: $('yesDeleteBtn'),
+    cancelDeleteBtn: $('cancelDeleteBtn'),
+    closeConfirmBtn: $('closeConfirmBtn'),
+    formOverlay: $('formOverlay'),
+    closeFormModalBtn: $('closeFormModalBtn'),
+    saveModalBtn: $('saveModalBtn'),
+    syncModalBtn: $('syncModalBtn'),
+    modalDesc: $('modalDesc'),
+    modalAmount: $('modalAmount'),
+    modalType: $('modalType'),
+    modalCategory: $('modalCategory'),
+    modalDate: $('modalDate'),
+    modalNote: $('modalNote'),
+    scrollFormBtn: $('scrollFormBtn'),
+    scrollListBtn: $('scrollListBtn'),
+    floatingAddBtn: $('floatingAddBtn'),
+    addBtn: $('dashAddBtn'),
+    dashScrollListBtn: $('dashScrollListBtn'),
+    dashReloadBtn: $('dashReloadBtn'),
+    dashConnText: $('dashConnText'),
+    dashFormSection: $('dashFormSection'),
+    dashListSection: $('dashListSection'),
+    dashEndpointBtn: $('dashEndpointBtn'),
+    dashResetBtn: $('dashResetBtn'),
+    dashSearchResetBtn: $('dashSearchResetBtn'),
+    dashClearSearchBtn: $('dashClearSearchBtn'),
+    dashCards: $('dashCards'),
+    endpointOverlay: $('endpointOverlay'),
+    endpointInput: $('endpointInput'),
+    saveEndpointBtn: $('saveEndpointBtn'),
+    cancelEndpointBtn: $('cancelEndpointBtn'),
+    closeEndpointBtn: $('closeEndpointBtn')
+  };
+
+
+  async function fetchTextWithTimeout(url, options = {}, timeoutMs = 18000){
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try{
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      return response;
+    }catch(err){
+      clearTimeout(timer);
+      throw err;
+    }
+  }
+
+  async function apiGetJson(url, timeoutMs = 18000){
+    const response = await fetchTextWithTimeout(url, {
+      method: 'GET',
+      cache: 'no-store',
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+      },
+    }, timeoutMs);
+
+    const text = await response.text();
+    try{
+      return JSON.parse(text);
+    }catch(err){
+      throw new Error('Response bukan JSON');
+    }
+  }
+
+  async function apiPostJson(url, payload, timeoutMs = 60000){
+    const response = await fetchTextWithTimeout(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
+      },
+      body: JSON.stringify(payload || {}),
+    }, timeoutMs);
+
+    const text = await response.text();
+    let json;
+    try{
+      json = JSON.parse(text);
+    }catch(err){
+      throw new Error('Response bukan JSON');
+    }
+
+    if(json && (json.ok === false || json.success === false)){
+      throw new Error(json.message || json.error || 'Server error');
+    }
+
+    return json;
+  }
+
+  function toast(msg){
+    ui.toast.textContent = msg;
+    ui.toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => ui.toast.classList.remove('show'), 1800);
+  }
+  function setLoading(show, text='Memproses...'){
+    ui.loadingText.textContent = text;
+    ui.loadingLayer.classList.toggle('show', !!show);
+    ui.loadingLayer.setAttribute('aria-hidden', String(!show));
+  }
+  function setPinMsg(msg=''){
+    ui.pinMsg.textContent = msg;
+    ui.pinMsg.classList.toggle('show', !!msg);
+    if(msg){
+      ui.pinCard.classList.remove('shake');
+      void ui.pinCard.offsetWidth;
+      ui.pinCard.classList.add('shake');
+    }
+  }
+  function openView(which){
+    const finance = which === 'finance';
+    ui.financeView.classList.toggle('hidden', !finance);
+    ui.dashboardView.classList.toggle('hidden', finance);
+    localStorage.setItem('yuraaa_active_view_v1', finance ? 'finance' : 'dashboard');
+    if(!finance){
+      dashboard.render();
+      if(sessionStorage.getItem(UNLOCK_KEY) === '1') dashboard.loadList(true).catch(()=>{});
+    } else {
+      finance.render();
+      if(sessionStorage.getItem(UNLOCK_KEY) === '1') finance.loadApi().catch(()=>{});
+    }
+  }
+  function lockApp(){
+    sessionStorage.removeItem(UNLOCK_KEY);
+    document.body.classList.add('locked');
+    ui.pinOverlay.classList.remove('hidden');
+    ui.pinInput.value = '';
+    setPinMsg('');
+    setTimeout(() => ui.pinInput.focus(), 60);
+  }
+  function unlockApp(){
+    sessionStorage.setItem(UNLOCK_KEY, '1');
+    document.body.classList.remove('locked');
+    ui.pinOverlay.classList.add('hidden');
+    setPinMsg('');
+  }
+  function ensureUnlocked(){
+    if(sessionStorage.getItem(UNLOCK_KEY) === '1') unlockApp();
+    else lockApp();
+  }
+
+  ui.goFinanceBtn.onclick = () => openView('finance');
+  ui.goDashboardBtn.onclick = () => openView('dashboard');
+  ui.refreshAllBtn.onclick = async () => {
+    await finance.loadApi();
+    await dashboard.loadList(true);
+    toast('Disegarkan.');
+  };
+  ui.closeBtn.onclick = () => { window.location.href = 'index.html'; };
+
+  ui.pinClose.onclick = () => { window.location.href = 'index.html'; };
+  ui.submitPinBtn.onclick = () => pinCheck(ui.pinInput.value.trim());
+  ui.pinInput.addEventListener('input', () => {
+    ui.pinInput.value = ui.pinInput.value.replace(/\D/g, '').slice(0, 6);
+    const val = ui.pinInput.value.trim();
+    if(val.length === 6) pinCheck(val);
+  });
+  ui.pinInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') pinCheck(ui.pinInput.value.trim());
+  });
+
+  function pinCheck(val){
+    if(val === PIN_CODE){
+      unlockApp();
+      toast('PIN benar.');
+      const active = localStorage.getItem('yuraaa_active_view_v1') || 'finance';
+      openView(active);
+      finance.loadApi().catch(()=>{});
+      dashboard.loadList(true).catch(()=>{});
+    } else {
+      setPinMsg('❌ PIN salah');
+      ui.pinInput.value = '';
+      setTimeout(() => setPinMsg(''), 1500);
+    }
+  }
+
+  /* =========================
+     FINANCE MODULE
+  ========================== */
+  const finance = (() => {
+    const el = {
+      balance: $('balance'),
+      income: $('income'),
+      expense: $('expense'),
+      soldCount: $('soldCount'),
+      desc: $('desc'),
+      amount: $('amount'),
+      type: $('type'),
+      category: $('category'),
+      date: $('date'),
+      note: $('note'),
+      saveBtn: $('saveBtn'),
+      resetBtn: $('resetBtn'),
+      clearFiltersBtn: $('clearFiltersBtn'),
+      list: $('list'),
+      search: $('search'),
+      clearSearchBtn: $('clearSearchBtn'),
+      formTitle: $('formTitle'),
+      editId: $('editId'),
+      refreshBtn: $('reloadApiBtn'),
+      scrollFormBtn: $('scrollFormBtn'),
+      scrollListBtn: $('scrollListBtn'),
+      floatingAddBtn: $('floatingAddBtn')
+    };
+    const state = {
+      manual: loadLocal(),
+      api: [],
+      merged: [],
+      filter: localStorage.getItem(ACTIVE_FILTER_KEY) || 'all',
+      deleteTarget: null,
+      editingId: null,
+      initialized: false
+    };
+
+    function loadLocal(){
+      try{
+        return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]');
+      }catch(_){
+        return [];
+      }
+    }
+    function saveLocal(){
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(state.manual));
+    }
+    function uid(prefix='tx'){
+      return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+    }
+    function hashStr(str){
+      let h = 0;
+      const s = String(str || '');
+      for(let i=0;i<s.length;i++){
+        h = ((h << 5) - h) + s.charCodeAt(i);
+        h |= 0;
+      }
+      return Math.abs(h).toString(36);
+    }
+    function rupiah(n){
+      return 'Rp ' + new Intl.NumberFormat('id-ID').format(Number(n) || 0);
+    }
+    function parseDate(raw){
+      if(!raw) return null;
+      const d = new Date(raw);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+    function formatDate(iso){
+      const d = parseDate(iso);
+      if(!d) return '-';
+      return new Intl.DateTimeFormat('id-ID', { day:'2-digit', month:'short', year:'numeric' }).format(d);
+    }
+    function formatDateTime(iso){
+      const d = parseDate(iso);
+      if(!d) return '-';
+      return new Intl.DateTimeFormat('id-ID', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }).format(d);
+    }
+    function todayISO(){
+      return new Date().toISOString().slice(0,10);
+    }
+    function cleanAmount(v){
+      return String(v || '').replace(/\D/g, '');
+    }
+    function formatDiskon(v){
+      const d = cleanAmount(v);
+      return d ? `${d}%` : '-';
+    }
+    function normalizeStatusBucket(v){
+      const s = normalizeStatus(v);
+      if(s.includes('sold') || s.includes('terjual') || s.includes('done')) return 'sold';
+      if(s.includes('proses') || s.includes('process') || s.includes('progress')) return 'proses';
+      if(s.includes('ready') || !s) return 'ready';
+      return s;
+    }
+    function statusLabel(v){
+      const b = normalizeStatusBucket(v);
+      return b ? b.charAt(0).toUpperCase() + b.slice(1) : 'Ready';
+    }
+    function esc(str){
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+    function normalizeStatus(v){
+      return String(v ?? '').toLowerCase().trim().replace(/[^a-z]/g, '');
+    }
+    function pick(obj, ...keys){
+      for (const key of keys) {
+        if (obj && obj[key] !== undefined && obj[key] !== null && String(obj[key]).trim() !== '') return obj[key];
+      }
+      return '';
+    }
+    function parseMoney(v){
+      if (v === null || v === undefined) return 0;
+      const n = String(v).replace(/[^\d-]/g, '');
+      return Number(n || 0) || 0;
+    }
+    function isSold(status){
+      const s = normalizeStatus(status);
+      return s.includes('sold') || s.includes('done') || s.includes('terjual');
+    }
+    function saveDraft(){
+      localStorage.setItem(ACTIVE_FILTER_KEY, state.filter);
+    }
+    function resetForm(){
+      state.editingId = null;
+      el.editId.value = '';
+      el.desc.value = '';
+      el.amount.value = '';
+      el.type.value = 'income';
+      el.category.value = 'Umum';
+      el.date.value = todayISO();
+      el.note.value = '';
+      el.formTitle.textContent = 'Tambah Transaksi';
+      el.saveBtn.textContent = 'Simpan Transaksi';
+      syncModal();
+    }
+    function syncModal(){
+      ui.modalDesc.value = el.desc.value;
+      ui.modalAmount.value = el.amount.value;
+      ui.modalType.value = el.type.value;
+      ui.modalCategory.value = el.category.value;
+      ui.modalDate.value = el.date.value || todayISO();
+      ui.modalNote.value = el.note.value;
+    }
+
+    function manualToItem(x){
+      return {
+        id: x.id || uid('local'),
+        desc: x.desc || x.Nama || '-',
+        amount: Number(x.amount || x.Harga || 0),
+        type: x.type || 'income',
+        category: x.category || x.Kategori || 'Umum',
+        date: x.date || x.Tanggal || new Date().toISOString(),
+        note: x.note || x.Ket || '',
+        source: 'manual',
+        createdAt: x.createdAt || x.Tanggal || new Date().toISOString(),
+        updatedAt: x.updatedAt || ''
+      };
+    }
+    function apiToItem(x){
+      const nama = pick(x, 'Nama', 'nama', 'Title', 'title') || '-';
+      const hargaRaw = pick(x, 'Harga', 'harga', 'Amount', 'amount', 'Price', 'price');
+      const game = pick(x, 'Game', 'game', 'KategoriGame', 'kategoriGame');
+      const dateRaw = pick(x, 'Tanggal', 'tanggal', 'Date', 'date') || new Date().toISOString();
+      const amount = parseMoney(hargaRaw);
+      return {
+        id: 'api_' + hashStr(`${nama}|${amount}|${dateRaw}|${game}`),
+        desc: String(nama),
+        amount,
+        type: 'income',
+        category: 'Jual Akun',
+        date: dateRaw,
+        note: game ? `Game: ${game}` : '',
+        source: 'api',
+        createdAt: dateRaw,
+        updatedAt: ''
+      };
+    }
+    function filterItem(item){
+      if(state.filter === 'all') return true;
+      if(state.filter === 'income') return item.type === 'income';
+      if(state.filter === 'expense') return item.type === 'expense';
+      if(state.filter === 'api') return item.source === 'api';
+      if(state.filter === 'manual') return item.source === 'manual';
+      return true;
+    }
+    function searchMatch(item){
+      const q = el.search.value.trim().toLowerCase();
+      if(!q) return true;
+      const hay = [item.desc, item.category, item.note, item.type, item.source, formatDate(item.date), String(item.amount)].join(' ').toLowerCase();
+      return hay.includes(q);
+    }
+    function computeMerged(){
+      state.merged = [
+        ...state.api,
+        ...state.manual.map(manualToItem)
+      ].filter(Boolean).sort((a,b) => (parseDate(b.date || b.createdAt)?.getTime() || 0) - (parseDate(a.date || a.createdAt)?.getTime() || 0));
+    }
+    function stats(){
+      let income = 0, expense = 0, soldCount = 0;
+      state.merged.forEach(item => {
+        if(item.source === 'api') soldCount++;
+        if(item.type === 'income') income += Number(item.amount || 0);
+        else expense += Number(item.amount || 0);
+      });
+      return { income, expense, balance: income - expense, soldCount };
+    }
+    function render(){
+      computeMerged();
+      const s = stats();
+
+      el.income.textContent = rupiah(s.income);
+      el.expense.textContent = rupiah(s.expense);
+      el.balance.textContent = rupiah(s.balance);
+      el.soldCount.textContent = String(s.soldCount);
+
+      const items = state.merged.filter(filterItem).filter(searchMatch);
+
+      if(!items.length){
+        el.list.innerHTML = '<div class="empty">Belum ada transaksi yang cocok dengan filter atau pencarian.</div>';
+        return;
+      }
+
+      el.list.innerHTML = items.map(item => {
+        const badge = item.source === 'api'
+          ? '<span class="meta-pill">Sold</span>'
+          : '<span class="meta-pill">Manual</span>';
+        const actions = item.source === 'manual'
+          ? `
+            <div class="tx-actions">
+              <button class="btn btn-secondary" data-faction="edit" data-id="${item.id}">Edit</button>
+              <button class="btn btn-danger" data-faction="delete" data-id="${item.id}">Hapus</button>
+            </div>
+          `
+          : '';
+        return `
+          <article class="tx">
+            <div class="tx-top">
+              <div class="tx-left">
+                <div class="icon ${item.type === 'income' ? 'income' : 'expense'}">${item.type === 'income' ? '↑' : '↓'}</div>
+                <div style="min-width:0">
+                  <h4 class="tx-title">${esc(item.desc || '-')}</h4>
+                  <div class="tx-meta">
+                    ${badge}
+                    <span class="meta-pill">${esc(item.category || 'Umum')}</span>
+                    <span class="meta-pill">${item.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}</span>
+                    <span class="meta-pill">${formatDate(item.date)}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="amount ${item.type === 'income' ? 'income' : 'expense'}">${item.type === 'income' ? '+' : '-'}${rupiah(item.amount)}</div>
+            </div>
+            ${item.note ? `<div class="tx-note">${esc(item.note)}</div>` : ''}
+            <div class="tx-meta" style="margin-top:12px">
+              <span class="meta-pill">Sumber: ${item.source === 'api' ? 'Spreadsheet' : 'Manual'}</span>
+              <span class="meta-pill">Dibuat: ${formatDateTime(item.createdAt || item.date)}</span>
+              ${item.updatedAt ? `<span class="meta-pill">Update: ${formatDateTime(item.updatedAt)}</span>` : ''}
+            </div>
+            ${actions}
+          </article>
+        `;
+      }).join('');
+    }
+
+    function saveTransaction(){
+      const desc = el.desc.value.trim();
+      const amount = Number(cleanAmount(el.amount.value));
+      const type = el.type.value;
+      const category = el.category.value || 'Umum';
+      const date = el.date.value || todayISO();
+      const note = el.note.value.trim();
+
+      if(!desc){ toast('Keterangan belum diisi.'); return; }
+      if(!amount){ toast('Jumlah belum diisi.'); return; }
+      if(!date){ toast('Tanggal belum diisi.'); return; }
+
+      if(el.editId.value){
+        const idx = state.manual.findIndex(x => x.id === el.editId.value);
+        if(idx >= 0){
+          state.manual[idx] = {
+            ...state.manual[idx],
+            desc,
+            amount,
+            type,
+            category,
+            date,
+            note,
+            updatedAt: new Date().toISOString()
+          };
+          toast('Transaksi diperbarui.');
+        }
+      } else {
+        state.manual.unshift({
+          id: uid('local'),
+          desc,
+          amount,
+          type,
+          category,
+          date,
+          note,
+          source: 'manual',
+          createdAt: new Date().toISOString(),
+          updatedAt: ''
+        });
+        toast('Transaksi disimpan.');
+      }
+
+      saveLocal();
+      resetForm();
+      render();
+      closeModal(ui.formOverlay);
+    }
+
+    function startEdit(id){
+      const item = state.manual.find(x => x.id === id);
+      if(!item) return;
+      el.editId.value = item.id;
+      el.desc.value = item.desc || '';
+      el.amount.value = item.amount || '';
+      el.type.value = item.type || 'income';
+      el.category.value = item.category || 'Umum';
+      el.date.value = item.date || todayISO();
+      el.note.value = item.note || '';
+      el.formTitle.textContent = 'Edit Transaksi';
+      el.saveBtn.textContent = 'Update Transaksi';
+      syncModal();
+      openModal(ui.formOverlay);
+    }
+
+    function askDeleteFinance(id){
+      const item = state.manual.find(x => x.id === id);
+      if(!item) return;
+      state.deleteTarget = id;
+      window.__yuraaaDeleteContext = 'finance';
+      window.__yuraaaDeletePayload = { id: String(id || ''), row: String(item.row || '') };
+      setDeleteModal('finance', {
+        title: item.desc || 'Transaksi ini akan dihapus.',
+        meta: `${rupiah(item.amount)} • ${item.category || '-'} • ${formatDate(item.date)}`
+      });
+      openModal(ui.confirmOverlay);
+    }
+    async function confirmDeleteFinance(){
+      const payload = window.__yuraaaDeletePayload || {};
+      if(!state.deleteTarget) return;
+      setButtonBusy(ui.yesDeleteBtn, true, 'Menghapus...');
+      setButtonBusy(ui.cancelDeleteBtn, true, 'Batal');
+      setLoadingDashboard(true, 'Menghapus transaksi...');
+      try{
+        state.manual = state.manual.filter(x => x.id !== state.deleteTarget);
+        saveLocal();
+        render();
+        closeModal(ui.confirmOverlay);
+        window.__yuraaaDeleteContext = '';
+        window.__yuraaaDeletePayload = null;
+        state.deleteTarget = null;
+        toast('Transaksi dihapus.');
+      }catch(e){
+        console.error(e);
+        toast(e.message || 'Gagal menghapus transaksi.');
+      }finally{
+        setButtonBusy(ui.yesDeleteBtn, false);
+        setButtonBusy(ui.cancelDeleteBtn, false);
+        setLoadingDashboard(false);
+      }
+    }
+
+    function openModal(node){ node.classList.add('open'); node.setAttribute('aria-hidden','false'); }
+    function closeModal(node){ node.classList.remove('open'); node.setAttribute('aria-hidden','true'); }
+
+
+async function loadApi(){
+  setLoading(true, 'Memuat data akun sold...');
+  try{
+    const endpoint = (localStorage.getItem(DASHBOARD_ENDPOINT_KEY) || DEFAULT_DASHBOARD_ENDPOINT || '').trim();
+    let rows = [];
+
+    if(endpoint){
+      try{
+        const data = await apiGetJson(`${endpoint}?action=list&_=${Date.now()}`);
+        rows = Array.isArray(data && data.items) ? data.items : Array.isArray(data) ? data : [];
+      }catch(err){
+        console.warn('Finance primary endpoint failed, falling back to JSONP.', err);
+        try{
+          const cb = `__yuraaa_finance_${Date.now()}`;
+          const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
+          const res = await jsonpFinance(url, cb);
+          rows = Array.isArray(res && res.items) ? res.items : Array.isArray(res) ? res : [];
+        }catch(err2){
+          console.warn('Finance JSONP fallback failed.', err2);
+        }
+      }
+    }
+
+    if(!rows.length){
+      try{
+        const fallback = `${API}?_=${Date.now()}`;
+        const res = await apiGetJson(fallback);
+        rows = Array.isArray(res) ? res : [];
+      }catch(err){
+        console.warn('Finance fallback opensheet failed.', err);
+      }
+    }
+
+    const seen = new Set();
+    state.api = rows
+      .filter(x => isSold(pick(x, 'Status', 'status')))
+      .map(apiToItem)
+      .filter(item => {
+        if(seen.has(item.id)) return false;
+        seen.add(item.id);
+        return true;
+      });
+    render();
+  }catch(err){
+    console.error(err);
+    state.api = [];
+    render();
+  }finally{
+    setLoading(false);
+  }
+}
+
+function jsonpFinance(url, cbName){
+  return new Promise((resolve,reject)=>{
+    const script = document.createElement('script');
+    script.async = true;
+    const cleanup = () => {
+      try{ delete window[cbName]; }catch(_){ window[cbName] = undefined; }
+      script.remove();
+    };
+    window[cbName] = (data) => { cleanup(); resolve(data); };
+    script.onerror = () => { cleanup(); reject(new Error('Gagal memuat respons.')); };
+    script.src = url;
+    document.body.appendChild(script);
+  });
+}
+
+function bindAmountInput(node){
+
+      node.addEventListener('focus', () => { node.value = cleanAmount(node.value); });
+      node.addEventListener('input', () => {
+        const digits = cleanAmount(node.value);
+        node.value = digits ? rupiah(digits) : '';
+      });
+      node.addEventListener('blur', () => {
+        const digits = cleanAmount(node.value);
+        node.value = digits ? rupiah(digits) : '';
+      });
+    }
+    bindAmountInput(el.amount);
+    bindAmountInput(ui.modalAmount);
+
+    /* finance events */
+    el.saveBtn.onclick = saveTransaction;
+    el.resetBtn.onclick = () => { resetForm(); toast('Form direset.'); };
+    el.clearFiltersBtn.onclick = () => {
+      state.filter = 'all';
+      localStorage.setItem(ACTIVE_FILTER_KEY, 'all');
+      document.querySelectorAll('[data-filter]').forEach(ch => ch.classList.remove('active'));
+      document.querySelector('[data-filter="all"]').classList.add('active');
+      render();
+      toast('Filter dibersihkan.');
+    };
+    el.search.addEventListener('input', render);
+    document.querySelectorAll('[data-filter]').forEach(ch => ch.addEventListener('click', () => {
+      state.filter = ch.dataset.filter;
+      localStorage.setItem(ACTIVE_FILTER_KEY, state.filter);
+      document.querySelectorAll('[data-filter]').forEach(x => x.classList.remove('active'));
+      ch.classList.add('active');
+      render();
+    }));
+    el.scrollFormBtn.onclick = () => document.getElementById('formSection').scrollIntoView({ behavior:'smooth', block:'start' });
+    el.scrollListBtn.onclick = () => document.getElementById('listSection').scrollIntoView({ behavior:'smooth', block:'start' });
+    el.floatingAddBtn.onclick = () => { ui.modalDesc.value = ''; ui.modalAmount.value = ''; ui.modalType.value = 'income'; ui.modalCategory.value = 'Umum'; ui.modalDate.value = todayISO(); ui.modalNote.value = ''; openModal(ui.formOverlay); };
+    ui.syncModalBtn.onclick = loadApi;
+    ui.saveModalBtn.onclick = () => {
+      el.desc.value = ui.modalDesc.value;
+      el.amount.value = ui.modalAmount.value;
+      el.type.value = ui.modalType.value;
+      el.category.value = ui.modalCategory.value;
+      el.date.value = ui.modalDate.value || todayISO();
+      el.note.value = ui.modalNote.value;
+      saveTransaction();
+    };
+    ui.closeFormModalBtn.onclick = () => closeModal(ui.formOverlay);
+    ui.formOverlay.onclick = (e) => { if(e.target === ui.formOverlay) closeModal(ui.formOverlay); };
+    function handleConfirmDelete(){
+      const context = window.__yuraaaDeleteContext || 'finance';
+      return context === 'dashboard' ? confirmDeleteDashboard() : confirmDeleteFinance();
+    }
+    ui.yesDeleteBtn.onclick = handleConfirmDelete;
+    ui.cancelDeleteBtn.onclick = () => closeModal(ui.confirmOverlay);
+    ui.closeConfirmBtn.onclick = () => closeModal(ui.confirmOverlay);
+    ui.confirmOverlay.onclick = (e) => { if(e.target === ui.confirmOverlay) closeModal(ui.confirmOverlay); };
+    document.addEventListener('click', (e) => {
+      const editBtn = e.target.closest('[data-faction="edit"]');
+      const delBtn = e.target.closest('[data-faction="delete"]');
+      if(editBtn){ startEdit(editBtn.dataset.id); return; }
+      if(delBtn){ askDeleteFinance(delBtn.dataset.id); return; }
+    });
+
+    async function init(){
+      if(state.initialized) return;
+      state.initialized = true;
+      resetForm();
+      render();
+      await loadApi();
+    }
+
+    return { loadApi, render, init };
+  })();
+
+  /* =========================
+     DASHBOARD MODULE
+  ========================== */
+  const dashboard = (() => {
+    const defaultEndpoint = localStorage.getItem(DASHBOARD_ENDPOINT_KEY) || DEFAULT_DASHBOARD_ENDPOINT;
+
+    const el = {
+      endpoint: $('dashEndpoint'),
+      status: $('dashConnText'),
+      rowEdit: $('dashRowEdit'),
+      existingImages: $('dashExistingImages'),
+      formTitle: $('dashFormTitle'),
+      nama: $('dashNama'),
+      game: $('dashGame'),
+      harga: $('dashHarga'),
+      diskon: $('dashDiskon'),
+      statusSel: $('dashStatus'),
+      ket: $('dashKet'),
+      gambar: $('dashGambar'),
+      imageFiles: $('dashImageFiles'),
+      previewArea: $('dashPreviewArea'),
+      previewCount: $('dashPreviewCount'),
+      imageState: $('dashImageState'),
+      saveBtn: $('dashSaveBtn'),
+      deleteBtn: $('dashDeleteBtn'),
+      resetBtn: $('dashResetBtn'),
+      cards: $('dashCards'),
+      search: $('dashSearch'),
+      clearSearchBtn: $('dashClearSearchBtn'),
+      searchResetBtn: $('dashSearchResetBtn'),
+      endpointBtn: $('dashEndpointBtn'),
+      reloadBtn: $('dashReloadBtn'),
+      addBtn: $('dashAddBtn'),
+      scrollListBtn: $('dashScrollListBtn'),
+      dashListSection: $('dashListSection'),
+      dashFormSection: $('dashFormSection'),
+      dashConnText: $('dashConnText')
+    };
+
+    const state = {
+      items: [],
+      selectedDelete: null,
+      editingRow: null,
+      files: [],
+      objectUrls: [],
+      sortNewest: true,
+      filter: 'all',
+      initialized: false
+    };
+
+    function normalizeText(v){ return (v ?? '').toString().trim(); }
+    function cleanNumber(v){ return String(v ?? '').replace(/\D/g,''); }
+    function formatRupiah(v){
+      const d = cleanNumber(v);
+      return d ? 'Rp ' + new Intl.NumberFormat('id-ID').format(Number(d)) : '';
+    }
+    function formatNum(v){
+      const n = String(v ?? '').replace(/\D/g,'');
+      return n ? new Intl.NumberFormat('id-ID').format(Number(n)) : '0';
+    }
+    function esc(str){
+      return String(str ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+    function toDrivePreview(url){
+      const u = normalizeText(url);
+      if(!u) return '';
+      const compact = u.replace(/\s+/g,'');
+      if(!compact) return '';
+
+      if(/cloudinary\.com|res\.cloudinary\.com/i.test(compact)) {
+        return compact;
+      }
+
+      if(/drive\.google\.com\/(?:thumbnail|uc)\?/i.test(compact) || /googleusercontent\.com/i.test(compact)) {
+        return compact;
+      }
+
+      const match1 = compact.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      const match2 = compact.match(/(?:[?&]id=)([a-zA-Z0-9_-]+)/i);
+      const id = (match1 && match1[1]) || (match2 && match2[1]) || '';
+      return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000` : compact;
+    }
+    function extractLinks(raw){
+      if(!raw) return [];
+      const seen = new Set();
+      return String(raw)
+        .split(/[\n,;|]+/)
+        .map(s => s.trim())
+        .filter(Boolean)
+        .map(s => toDrivePreview(s))
+        .filter(Boolean)
+        .filter(link => {
+          if(seen.has(link)) return false;
+          seen.add(link);
+          return true;
+        });
+    }
+    function firstImage(value){
+      const list = extractLinks(value || '');
+      return list.length ? list[0] : '';
+    }
+
+    function setConnectionState(ok, label){
+      ui.dashConnText.textContent = label;
+      ui.dashConnText.className = ok ? 'pill' : 'pill warn';
+      el.status.textContent = label;
+    }
+    function setLoadingDashboard(show, text='Memproses...'){
+      setLoading(show, text);
+    }
+    function setButtonBusy(button, busy, busyText){
+      if(!button) return;
+      if(busy){
+        if(!button.dataset.originalText) button.dataset.originalText = button.textContent;
+        button.disabled = true;
+        if(busyText) button.textContent = busyText;
+        button.classList.add('is-busy');
+      }else{
+        button.disabled = false;
+        if(button.dataset.originalText) button.textContent = button.dataset.originalText;
+        button.classList.remove('is-busy');
+      }
+    }
+    function fileToBase64(file){
+      return new Promise((resolve,reject)=>{
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = String(reader.result || '');
+          resolve(result.includes(',') ? result.split(',')[1] : result);
+        };
+        reader.onerror = () => reject(new Error('Gagal baca file.'));
+        reader.readAsDataURL(file);
+      });
+    }
+    async function prepareFiles(files){
+      const list = Array.from(files || []);
+      const out = [];
+      for(const file of list){
+        const data = await fileToBase64(file);
+        out.push({ name:file.name, mimeType:file.type || 'image/png', data });
+      }
+      return out;
+    }
+    async function uploadToCloudinary(file){
+      const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      formData.append('folder', 'yuraaa.store');
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 90000);
+
+      try{
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          body: formData,
+          signal: controller.signal,
+        });
+
+        const json = await res.json().catch(() => null);
+        if(!res.ok || !json || !json.secure_url){
+          throw new Error((json && json.error && json.error.message) ? json.error.message : 'Upload gambar ke Cloudinary gagal.');
+        }
+
+        return String(json.secure_url);
+      }finally{
+        clearTimeout(timeout);
+      }
+    }
+
+    async function uploadSelectedFiles(files){
+      const list = Array.from(files || []);
+      if(!list.length) return [];
+
+      const uploaded = [];
+      for(let i = 0; i < list.length; i++){
+        const file = list[i];
+        setLoadingDashboard(true, `Mengupload ${i + 1}/${list.length} gambar ke Cloudinary...`);
+        const url = await uploadToCloudinary(file);
+        uploaded.push(url);
+      }
+      return uploaded;
+    }
+    function saveDashboardEndpoint(){
+      localStorage.setItem(DASHBOARD_ENDPOINT_KEY, el.endpoint.value.trim() || DEFAULT_DASHBOARD_ENDPOINT);
+    }
+    function endpointValue(){
+      return (localStorage.getItem(DASHBOARD_ENDPOINT_KEY) || DEFAULT_DASHBOARD_ENDPOINT).trim();
+    }
+
+    function setRupiahInput(input){
+      const digits = cleanNumber(input.value);
+      input.value = digits ? formatRupiah(digits) : '';
+    }
+
+    function renderPreview(){
+      const urls = [...state.objectUrls, ...extractLinks(el.gambar.value), ...extractLinks(el.existingImages.value)];
+      el.previewCount.textContent = String(urls.length);
+      el.imageState.textContent = `${state.files.length ? state.files.length + ' foto dipilih' : (urls.length ? urls.length + ' link terdeteksi' : '0 foto dipilih')}`;
+      if(!urls.length){
+        el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>';
+        return;
+      }
+      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,12).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"></div>`).join('')}</div>`;
+    }
+
+        function resetPreviewFiles(){
+      state.objectUrls.forEach(u => URL.revokeObjectURL(u));
+      state.objectUrls = [];
+      state.files = [];
+    }
+
+    function clearFiles(){
+      resetPreviewFiles();
+      el.imageFiles.value = '';
+    }
+
+    function resetForm(keepEndpoint=true){
+      if(!keepEndpoint) localStorage.setItem(DASHBOARD_ENDPOINT_KEY, DEFAULT_DASHBOARD_ENDPOINT);
+      el.rowEdit.value = '';
+      state.editingRow = null;
+      el.existingImages.value = '';
+      el.nama.value = '';
+      el.game.value = '';
+      el.harga.value = '';
+      el.diskon.value = '';
+      el.statusSel.value = 'ready';
+      el.ket.value = '';
+      el.gambar.value = '';
+      clearFiles();
+      el.formTitle.textContent = 'Tambah Akun';
+      el.saveBtn.textContent = 'Simpan Akun Baru';
+      if (el.deleteBtn) el.deleteBtn.classList.add('hidden');
+      el.endpoint.value = endpointValue();
+      setRupiahInput(el.harga);
+      renderPreview();
+    }
+
+    function buildPayload(){
+      return {
+        action: el.rowEdit.value ? 'update' : 'save',
+        row: el.rowEdit.value ? Number(el.rowEdit.value) : '',
+        Nama: el.nama.value.trim(),
+        Harga: cleanNumber(el.harga.value),
+        Diskon: cleanNumber(el.diskon.value),
+        Game: el.game.value.trim(),
+        Gambar: el.gambar.value.trim(),
+        keepImages: el.existingImages.value.trim(),
+        imageFiles: [],
+        uploadedImages: [],
+        Label: '',
+        Status: el.statusSel.value,
+        Ket: el.ket.value.trim(),
+        Tanggal: new Date().toISOString(),
+        DONE: ''
+      };
+    }
+
+    function formatShortId(value){
+      const clean = String(value ?? '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      return clean ? `YR-${clean.slice(0, 6)}` : '';
+    }
+
+    function renderCard(item){
+      const img = firstImage(item.Gambar || item.gambar || item.images || '');
+      const media = img
+        ? `<img src="${img}" alt="${esc(item.Nama)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-empty',textContent:'Gambar tidak tersedia'}))">`
+        : `<div class="thumb-empty">Gambar tidak tersedia</div>`;
+      const key = esc(item.id || item.row || '');
+      const shortId = formatShortId(item.id || item.row || '');
+      return `<div class="account-card" data-id="${key}" data-row="${item.row}">
+        <div class="card-actions" data-action-wrap>
+          <button type="button" class="card-edit" data-daction="edit" data-id="${key}" data-row="${item.row}" title="Edit akun">Edit</button>
+          <button type="button" class="card-menu" data-daction="delete" data-id="${key}" data-row="${item.row}" title="Hapus akun">×</button>
+        </div>
+        <div class="card-media">${media}</div>
+        <div class="card-body">
+          <div class="card-title" title="${esc(item.Nama)}">${esc(item.Nama)}</div>
+          ${shortId ? `<div class="card-id">ID ${esc(shortId)}</div>` : ''}
+          <div class="card-sub">${esc(item.Game || '-')}</div>
+          <div class="card-price">Rp ${esc(formatNum(item.Harga))}</div>
+          <div class="card-tags">
+            <span>${esc(statusLabel(item.Status))}</span>
+            <span>${esc(item.Label || '-')}</span>
+            <span>${esc(formatDiskon(item.Diskon))}</span>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function renderCards(){
+      const q = normalizeText(el.search.value).toLowerCase();
+      const items = state.items
+        .filter(x => {
+          const statusBucket = normalizeStatusBucket(x.Status);
+          if(state.filter !== 'all' && statusBucket !== state.filter) return false;
+          return [x.Nama, x.id, x.Game, x.Harga, x.Label, x.Status, x.Ket, `row ${x.row}`].join(' ').toLowerCase().includes(q);
+        })
+        .sort((a,b)=> state.sortNewest ? b.row - a.row : a.row - b.row);
+
+      if(!items.length){
+        el.cards.innerHTML = '<div class="empty">Belum ada data dimuat.</div>';
+        return;
+      }
+      el.cards.innerHTML = items.map(renderCard).join('');
+    }
+
+    function startEdit(item){
+      el.rowEdit.value = item.row;
+      el.existingImages.value = item.Gambar || '';
+      el.nama.value = item.Nama || '';
+      el.game.value = item.Game || '';
+      el.harga.value = item.Harga || '';
+      el.diskon.value = item.Diskon || '';
+      el.statusSel.value = item.Status || 'ready';
+      el.ket.value = item.Ket || '';
+      el.gambar.value = item.Gambar || '';
+      clearFiles();
+      el.formTitle.textContent = 'Edit Akun';
+      el.saveBtn.textContent = 'Update Akun';
+      if (el.deleteBtn) el.deleteBtn.classList.remove('hidden');
+      setRupiahInput(el.harga);
+      renderPreview();
+      document.getElementById('dashFormSection').scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+
+    function closeDashboardActionMenus(){
+      document.querySelectorAll('.account-card.menu-open').forEach(card => card.classList.remove('menu-open'));
+    }
+
+    function setDeleteModal(kind, item){
+      const isDashboard = kind === 'dashboard';
+      ui.confirmBadge.textContent = isDashboard ? '⚠️ Hapus akun' : '⚠️ Hapus transaksi';
+      ui.confirmTitle.textContent = isDashboard ? 'Hapus akun?' : 'Hapus transaksi?';
+      ui.confirmMsg.textContent = isDashboard
+        ? 'Akun akan dihapus permanen dari spreadsheet.'
+        : 'Transaksi akan dihapus permanen dari riwayat keuangan.';
+      ui.confirmItemTitle.textContent = item.title || (isDashboard ? 'Akun ini akan dihapus.' : 'Transaksi ini akan dihapus.');
+      ui.confirmItemMeta.textContent = item.meta || 'Tindakan ini tidak bisa dibatalkan setelah data dihapus.';
+      ui.yesDeleteBtn.textContent = isDashboard ? 'Ya, hapus akun' : 'Ya, hapus transaksi';
+    }
+
+    function askDeleteDashboard(item){
+      closeDashboardActionMenus();
+      setDeleteModal('dashboard', {
+        title: item.Nama || 'Akun ini akan dihapus.',
+        meta: `Harga: Rp ${formatNum(item.Harga)} • Status: ${statusLabel(item.Status)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`
+      });
+      state.selectedDelete = item;
+      window.__yuraaaDeleteContext = 'dashboard';
+      window.__yuraaaDeletePayload = { id: String(item.id || ''), row: String(item.row || '') };
+      openModal(ui.confirmOverlay);
+    }
+
+    function openModal(node){
+      node.classList.add('open');
+      node.setAttribute('aria-hidden','false');
+    }
+    function closeModal(node){
+      node.classList.remove('open');
+      node.setAttribute('aria-hidden','true');
+    }
+
+    function isValidImageUrl(url){
+      return /drive\.google\.com|googleusercontent|lh3\.googleusercontent|cloudinary\.com|res\.cloudinary\.com/i.test(url);
+    }
+    function normalizeImages_(value){
+      if(!value) return [];
+      if(Array.isArray(value)) return value.map(v => toDrivePreview(String(v))).filter(Boolean);
+      const txt = String(value).trim();
+      if(!txt) return [];
+      return txt.split(/[\n,;|]+/g).map(v => toDrivePreview(v.trim().replace(/\s+/g,''))).filter(Boolean);
+    }
+
+    function fileToPayload(){
+      return prepareFiles(el.imageFiles.files);
+    }
+
+    async function sendViaGoogleScript(action, payload){
+      const endpoint = endpointValue();
+      const data = JSON.parse(JSON.stringify({ ...(payload || {}), action }));
+
+      if(window.google && google.script && google.script.run){
+        return new Promise((resolve,reject)=>{
+          const timeout = setTimeout(() => reject(new Error('Permintaan melebihi waktu tunggu.')), 25000);
+          const doneResolve = (value) => { clearTimeout(timeout); resolve(value); };
+          const doneReject = (err) => {
+            clearTimeout(timeout);
+            reject(new Error(err && err.message ? err.message : String(err)));
+          };
+          const runner = google.script.run
+            .withSuccessHandler(doneResolve)
+            .withFailureHandler(doneReject);
+          if(action === 'delete') runner.deleteAccount(data);
+          else if(action === 'update') runner.updateAccount(data);
+          else if(action === 'upload-image' && runner.uploadImage) runner.uploadImage(data);
+          else runner.saveAccount(data);
+        });
+      }
+
+      return apiPostJson(endpoint, data).catch(err => {
+        console.warn('fetch/json gagal, fallback iframe dipakai.', err);
+        return sendViaIframePost(endpoint, data);
+      });
+    }
+
+function sendViaIframePost(endpoint, payload){
+      return new Promise((resolve,reject)=>{
+        const token = `${Date.now()}_${Math.random().toString(36).slice(2,10)}`;
+        const iframeName = `sink_${token}`;
+        const iframe = document.createElement('iframe');
+        iframe.name = iframeName;
+        iframe.style.display = 'none';
+
+        const form = document.createElement('form');
+        form.action = endpoint;
+        form.method = 'POST';
+        form.target = iframeName;
+        form.style.display = 'none';
+
+        const fields = {
+          client:'github',
+          iframe:'1',
+          origin:location.origin,
+          token,
+          data:JSON.stringify(payload)
+        };
+        Object.entries(fields).forEach(([name,value])=>{
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
+        });
+
+        let settled = false;
+        let submitted = false;
+
+        const cleanup = () => {
+          window.removeEventListener('message', onMessage);
+          iframe.removeEventListener('load', onLoad);
+          clearTimeout(timer);
+          setTimeout(()=>{ form.remove(); iframe.remove(); },150);
+        };
+        const finish = (ok, data) => {
+          if(settled) return;
+          settled = true;
+          cleanup();
+          if(ok) resolve(data || { ok:true });
+          else reject(new Error((data && data.message) || 'Gagal menyimpan data.'));
+        };
+        const parseWindowName = () => {
+          try{
+            const raw = iframe.contentWindow && iframe.contentWindow.name;
+            if(!raw) return null;
+            const parsed = JSON.parse(raw);
+            if(parsed && parsed.source === 'yuraaa-apps-script' && parsed.token === token) return parsed;
+          }catch(_){}
+          return null;
+        };
+        const onMessage = (event) => {
+          const data = event.data || {};
+          if(!data || data.source !== 'yuraaa-apps-script' || data.token !== token) return;
+          finish(!!data.ok, data);
+        };
+        const onLoad = () => {
+          if(!submitted) return;
+          setTimeout(()=>{
+            if(settled) return;
+            const byName = parseWindowName();
+            if(byName){
+              finish(!!byName.ok, byName);
+              return;
+            }
+            finish(true, { ok:true, message:'Data terkirim.' });
+          }, 800);
+        };
+        const timer = setTimeout(()=>{
+          if(settled) return;
+          const byName = parseWindowName();
+          if(byName){
+            finish(!!byName.ok, byName);
+            return;
+          }
+          finish(true, { ok:true, message:'Data terkirim (auto-accepted).' });
+        }, 15000);
+
+        window.addEventListener('message', onMessage);
+        iframe.addEventListener('load', onLoad);
+        document.body.appendChild(iframe);
+        document.body.appendChild(form);
+        submitted = true;
+        form.submit();
+      });
+    }
+
+    async function loadList(silent=false){
+      setLoadingDashboard(true, 'Memuat akun...');
+      try{
+        const endpoint = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
+        localStorage.setItem(DASHBOARD_ENDPOINT_KEY, endpoint || DEFAULT_DASHBOARD_ENDPOINT);
+        el.endpoint.value = endpoint || DEFAULT_DASHBOARD_ENDPOINT;
+
+        let rows = [];
+        let lastError = null;
+
+        try{
+          const data = await apiGetJson(`${endpoint}?action=list&_=${Date.now()}`);
+          rows = Array.isArray(data && data.items) ? data.items : Array.isArray(data) ? data : [];
+        }catch(err){
+          lastError = err;
+          console.warn('Dashboard fetch gagal, mencoba JSONP.', err);
+        }
+
+        if(!rows.length){
+          try{
+            const cb = `__yuraaa_list_${Date.now()}`;
+            const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
+            const res = await jsonp(url, cb);
+            rows = Array.isArray(res && res.items) ? res.items : Array.isArray(res) ? res : [];
+          }catch(err){
+            lastError = err;
+          }
+        }
+
+        if(!rows.length){
+          const msg = lastError && lastError.message ? lastError.message : 'Data kosong atau endpoint belum mengembalikan daftar.';
+          throw new Error(msg);
+        }
+
+        state.items = rows;
+        if(!silent) toast('Data akun dimuat.');
+        renderCards();
+        setConnectionState(true, 'Tersambung');
+      }catch(e){
+        console.error(e);
+        setConnectionState(false, 'Gagal tersambung');
+        if(!silent) toast('Gagal memuat data akun.');
+      }finally{
+        setLoadingDashboard(false);
+      }
+    }
+
+    function jsonp(url, cbName){
+      return new Promise((resolve,reject)=>{
+        const script = document.createElement('script');
+        script.async = true;
+        const cleanup = () => {
+          try{ delete window[cbName]; }catch(_){ window[cbName] = undefined; }
+          script.remove();
+        };
+        window[cbName] = (data) => { cleanup(); resolve(data); };
+        script.onerror = () => { cleanup(); reject(new Error('Gagal memuat respons.')); };
+        script.src = url;
+        document.body.appendChild(script);
+      });
+    }
+
+    function formatPreview(){
+      const urls = [...state.objectUrls, ...normalizeImages_(el.gambar.value), ...normalizeImages_(el.existingImages.value)];
+      el.previewCount.textContent = String(urls.length);
+      el.imageState.textContent = `${state.files.length ? state.files.length + ' foto dipilih' : (urls.length ? urls.length + ' link terdeteksi' : '0 foto dipilih')}`;
+      if(!urls.length){
+        el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>';
+        return;
+      }
+      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,12).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="badge">#${i+1}</div></div>`).join('')}</div>`;
+    }
+
+    function formatImageUrlField(){
+      const links = normalizeImages_(el.gambar.value);
+      el.gambar.value = links.join(', ');
+    }
+
+    async function saveAccount(){
+      const data = buildPayload();
+      if(!data.Nama){ toast('Nama akun belum diisi.'); return; }
+      if(!data.Game){ toast('Game belum diisi.'); return; }
+      if(!data.Harga){ toast('Harga belum diisi.'); return; }
+
+      setLoadingDashboard(true, 'Menyiapkan data...');
+      setButtonBusy(ui.saveBtn, true, data.action === 'update' ? 'Menyimpan...' : 'Menyimpan...');
+      try{
+        const selectedFiles = Array.from(el.imageFiles.files || []);
+        let uploaded = [];
+
+        if(selectedFiles.length){
+          setLoadingDashboard(true, `Mengupload ${selectedFiles.length} gambar ke Cloudinary...`);
+          uploaded = await uploadSelectedFiles(selectedFiles);
+          if(!uploaded.length || uploaded.length !== selectedFiles.length){
+            throw new Error('Upload gambar gagal. Data belum disimpan.');
+          }
+        }
+
+        setLoadingDashboard(true, data.action === 'update' ? 'Menyimpan perubahan...' : 'Menyimpan akun...');
+        const mergedLinks = [
+          ...normalizeImages_(el.existingImages.value),
+          ...normalizeImages_(el.gambar.value),
+          ...uploaded
+        ].filter(Boolean);
+        data.uploadedImages = uploaded;
+        data.Gambar = mergedLinks.join(', ');
+        data.keepImages = el.existingImages.value.trim();
+        data.imageFiles = [];
+
+        const result = await sendViaGoogleScript(data.action, data);
+        if(!result || result.ok === false) throw new Error((result && result.message) || 'Gagal menyimpan akun.');
+        toast(data.action === 'update' ? 'Akun diperbarui.' : 'Akun disimpan.');
+        resetForm(true);
+        await loadList(true);
+      }catch(e){
+        console.error(e);
+        toast(e.message || 'Gagal menyimpan akun.');
+      }finally{
+        setButtonBusy(ui.saveBtn, false);
+        setLoadingDashboard(false);
+      }
+    }
+
+    function buildPayload(){
+      const currentId = String(el.rowEdit.value || '').trim();
+      return {
+        action: currentId ? 'update' : 'save',
+        id: currentId,
+        row: currentId && /^\d+$/.test(currentId) ? Number(currentId) : '',
+        Nama: el.nama.value.trim(),
+        Harga: cleanNumber(el.harga.value),
+        Diskon: cleanNumber(el.diskon.value),
+        Game: el.game.value.trim(),
+        Gambar: normalizeImages_(el.gambar.value).join(', '),
+        keepImages: el.existingImages.value.trim(),
+        imageFiles: state.files,
+        Label: '',
+        Status: el.statusSel.value,
+        Ket: el.ket.value.trim(),
+        Tanggal: new Date().toISOString(),
+        DONE: ''
+      };
+    }
+
+        function setFileStateFromInput(){
+      const files = Array.from(el.imageFiles.files || []);
+      resetPreviewFiles();
+      if(!files.length){
+        renderPreview();
+        return;
+      }
+      state.files = files;
+      state.objectUrls = files.map(f => URL.createObjectURL(f));
+      renderPreview();
+    }
+
+    function clearFiles(){
+      state.objectUrls.forEach(u => URL.revokeObjectURL(u));
+      state.objectUrls = [];
+      state.files = [];
+      el.imageFiles.value = '';
+    }
+
+    function openEndpointModal(){
+      ui.endpointInput.value = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
+      openModal(ui.endpointOverlay);
+      setTimeout(() => ui.endpointInput.focus(), 50);
+      ui.endpointInput.select();
+    }
+    function saveEndpointFromModal(){
+      const next = (ui.endpointInput.value || '').trim();
+      const value = next || DEFAULT_DASHBOARD_ENDPOINT;
+      localStorage.setItem(DASHBOARD_ENDPOINT_KEY, value);
+      el.endpoint.value = value;
+      closeModal(ui.endpointOverlay);
+      toast('Endpoint disimpan.');
+    }
+
+    function startEditing(item){
+      const editKey = item.id || item.row || '';
+      state.editingRow = editKey;
+      el.rowEdit.value = editKey;
+      el.existingImages.value = item.Gambar || '';
+      el.nama.value = item.Nama || '';
+      el.game.value = item.Game || '';
+      el.harga.value = item.Harga || '';
+      el.diskon.value = item.Diskon || '';
+      el.statusSel.value = item.Status || 'ready';
+      el.ket.value = item.Ket || '';
+      el.gambar.value = item.Gambar || '';
+      clearFiles();
+      el.formTitle.textContent = 'Edit Akun';
+      el.saveBtn.textContent = 'Update Akun';
+      if (el.deleteBtn) el.deleteBtn.classList.remove('hidden');
+      setRupiahInput(el.harga);
+      renderPreview();
+      document.getElementById('dashFormSection').scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+
+    async function deleteCurrentDashboardAccount(){
+      const id = String(el.rowEdit.value || '').trim();
+      if(!id){
+        toast('Pilih akun lewat Edit dulu.');
+        return;
+      }
+      askDeleteDashboard({
+        id,
+        row: id,
+        Nama: String(el.nama.value || '').trim(),
+        Harga: cleanNumber(el.harga.value),
+        Status: el.statusSel.value || 'ready',
+        Game: String(el.game.value || '').trim()
+      });
+    }
+
+    function askDeleteDashboard(item){
+      closeDashboardActionMenus();
+      ui.confirmMsg.textContent = `${item.Nama} • Rp ${formatNum(item.Harga)} • ${item.Game || '-'}`;
+      ui.confirmItemTitle.textContent = item.Nama || 'Data ini akan dihapus.';
+      ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`;
+      state.selectedDelete = item;
+      window.__yuraaaDeleteContext = 'dashboard';
+      window.__yuraaaDeletePayload = { id: String(item.id || '') };
+      openModal(ui.confirmOverlay);
+    }
+
+
+        async function confirmDeleteDashboard(){
+      const item = state.selectedDelete || window.__yuraaaDeletePayload || {};
+      if(!item) return;
+      setButtonBusy(ui.yesDeleteBtn, true, 'Menghapus...');
+      setButtonBusy(ui.cancelDeleteBtn, true, 'Batal');
+      setLoadingDashboard(true, 'Menghapus akun...');
+      try{
+        const payload = {
+          action: 'delete',
+          id: String(item.id || ''),
+          row: String(item.row || '')
+        };
+        const res = await sendViaGoogleScript('delete', payload);
+        if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
+        toast('Akun dihapus.');
+        closeModal(ui.confirmOverlay);
+        state.selectedDelete = null;
+        window.__yuraaaDeleteContext = '';
+        window.__yuraaaDeletePayload = null;
+        await loadList(true);
+      }catch(e){
+        console.error(e);
+        toast(e.message || 'Gagal menghapus akun.');
+      }finally{
+        setButtonBusy(ui.yesDeleteBtn, false);
+        setButtonBusy(ui.cancelDeleteBtn, false);
+        setLoadingDashboard(false);
+      }
+    }
+    function applyFilter(filter){
+      state.filter = filter || 'all';
+      document.querySelectorAll('[data-dfilter]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.dfilter === state.filter);
+      });
+      renderCards();
+    }
+
+    async function init(){
+      if(state.initialized) return;
+      state.initialized = true;
+      el.endpoint.value = endpointValue();
+      if(!el.endpoint.value) el.endpoint.value = DEFAULT_DASHBOARD_ENDPOINT;
+      el.search.addEventListener('input', renderCards);
+      el.clearSearchBtn.addEventListener('click', () => { el.search.value=''; renderCards(); });
+      el.searchResetBtn.addEventListener('click', () => { el.search.value=''; renderCards(); toast('Pencarian dibersihkan.'); });
+      document.querySelectorAll('[data-dfilter]').forEach(btn => {
+        btn.addEventListener('click', () => applyFilter(btn.dataset.dfilter));
+      });
+      applyFilter(state.filter);
+      el.reloadBtn.onclick = () => loadList();
+      el.cards.addEventListener('click', (e) => {
+        const editBtn = e.target.closest('[data-daction="edit"]');
+        const deleteBtn = e.target.closest('[data-daction="delete"]');
+        if(editBtn){
+          const id = editBtn.dataset.id || editBtn.dataset.row || editBtn.closest('[data-id]')?.dataset.id || editBtn.closest('[data-row]')?.dataset.row || '';
+          const found = state.items.find(x => String(x.id) === String(id) || String(x.row) === String(id));
+          if(found) startEditing(found);
+          return;
+        }
+        if(deleteBtn){
+          const id = deleteBtn.dataset.id || deleteBtn.dataset.row || deleteBtn.closest('[data-id]')?.dataset.id || deleteBtn.closest('[data-row]')?.dataset.row || '';
+          const found = state.items.find(x => String(x.id) === String(id) || String(x.row) === String(id));
+          if(found) askDeleteDashboard(found);
+          return;
+        }
+      });
+      el.addBtn.onclick = () => {
+        ui.modalDesc.value = '';
+        ui.modalAmount.value = '';
+        ui.modalType.value = 'income';
+        ui.modalCategory.value = 'Umum';
+        ui.modalDate.value = new Date().toISOString().slice(0,10);
+        ui.modalNote.value = '';
+        openModal(ui.formOverlay);
+      };
+      el.scrollListBtn.onclick = () => document.getElementById('dashListSection').scrollIntoView({ behavior:'smooth', block:'start' });
+      $('dashSaveBtn').onclick = saveAccount;
+      if (el.deleteBtn) el.deleteBtn.onclick = deleteCurrentDashboardAccount;
+      $('dashResetBtn').onclick = () => { resetForm(true); toast('Form akun direset.'); };
+      $('dashReloadBtn').onclick = () => loadList();
+      $('dashAddBtn').onclick = () => {
+        openView('dashboard');
+        document.getElementById('dashFormSection').scrollIntoView({ behavior:'smooth', block:'start' });
+      };
+      $('dashScrollListBtn').onclick = () => document.getElementById('dashListSection').scrollIntoView({ behavior:'smooth', block:'start' });
+      $('dashEndpointBtn').onclick = openEndpointModal;
+      $('dashEndpoint').addEventListener('change', () => {
+        localStorage.setItem(DASHBOARD_ENDPOINT_KEY, el.endpoint.value.trim() || DEFAULT_DASHBOARD_ENDPOINT);
+        el.endpoint.value = endpointValue();
+      });
+      ui.closeEndpointBtn.onclick = () => closeModal(ui.endpointOverlay);
+      ui.cancelEndpointBtn.onclick = () => closeModal(ui.endpointOverlay);
+      ui.saveEndpointBtn.onclick = saveEndpointFromModal;
+      ui.endpointInput.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter') saveEndpointFromModal();
+      });
+      ui.endpointOverlay.addEventListener('click', (e) => { if(e.target === ui.endpointOverlay) closeModal(ui.endpointOverlay); });
+      $('dashHarga').addEventListener('focus', () => { $('dashHarga').value = cleanNumber($('dashHarga').value); });
+      $('dashHarga').addEventListener('input', () => { $('dashHarga').value = formatRupiah($('dashHarga').value); });
+      $('dashHarga').addEventListener('blur', () => { $('dashHarga').value = formatRupiah($('dashHarga').value); });
+      $('dashImageFiles').addEventListener('change', setFileStateFromInput);
+      $('dashGambar').addEventListener('input', () => { formatImageUrlField(); renderPreview(); });
+      $('dashClearSearchBtn').onclick = () => { $('dashSearch').value=''; renderCards(); };
+      ui.closeBtn.onclick = () => { window.location.href = 'index.html'; };
+
+      document.addEventListener('click', (e) => {
+        if(!e.target.closest('.card-actions')){
+          closeDashboardActionMenus();
+        }
+      });
+
+      renderPreview();
+      renderCards();
+      await loadList(true);
+    }
+
+    async function loadList(silent=false){
+      setLoadingDashboard(true, 'Memuat akun...');
+      try{
+        const endpoint = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
+        localStorage.setItem(DASHBOARD_ENDPOINT_KEY, endpoint || DEFAULT_DASHBOARD_ENDPOINT);
+        el.endpoint.value = endpoint || DEFAULT_DASHBOARD_ENDPOINT;
+        const cb = `__yuraaa_list_${Date.now()}`;
+        const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
+        const res = await jsonp(url, cb);
+        state.items = Array.isArray(res && res.items) ? res.items : [];
+        if(!silent) toast('Data akun dimuat.');
+        renderCards();
+        setConnectionState(true, 'Tersambung');
+      }catch(e){
+        console.error(e);
+        setConnectionState(false, 'Gagal tersambung');
+        if(!silent) toast('Gagal memuat data akun.');
+      }finally{
+        setLoadingDashboard(false);
+      }
+    }
+
+        function jsonp(url, cbName){
+      return new Promise((resolve,reject)=>{
+        const script = document.createElement('script');
+        script.async = true;
+        const cleanup = () => {
+          try{ delete window[cbName]; }catch(_){ window[cbName] = undefined; }
+          script.remove();
+        };
+        window[cbName] = (data) => { cleanup(); resolve(data); };
+        script.onerror = () => { cleanup(); reject(new Error('Gagal memuat respons.')); };
+        script.src = url;
+        document.body.appendChild(script);
+      });
+    }
+
+    return { loadList, render: renderCards, init };
+  })();
+
+  /* =========================
+     GLOBAL EVENTS / INIT
+  ========================== */
+  $('goFinanceBtn').onclick = () => openView('finance');
+  $('goDashboardBtn').onclick = () => openView('dashboard');
+  $('refreshAllBtn').onclick = async () => {
+    await finance.loadApi();
+    await dashboard.loadList(true);
+    toast('Disegarkan.');
+  };
+
+  $('scrollFormBtn').onclick = () => document.getElementById('formSection').scrollIntoView({ behavior:'smooth', block:'start' });
+  $('scrollListBtn').onclick = () => document.getElementById('listSection').scrollIntoView({ behavior:'smooth', block:'start' });
+  $('floatingAddBtn').onclick = () => ui.modalDesc.focus();
+
+  // Finance modal helper
+  ui.saveModalBtn.onclick = () => {
+    $('desc').value = ui.modalDesc.value;
+    $('amount').value = ui.modalAmount.value;
+    $('type').value = ui.modalType.value;
+    $('category').value = ui.modalCategory.value;
+    $('date').value = ui.modalDate.value || new Date().toISOString().slice(0,10);
+    $('note').value = ui.modalNote.value;
+    ui.formOverlay.classList.remove('open');
+    ui.formOverlay.setAttribute('aria-hidden','true');
+    $('saveBtn').click();
+  };
+
+  // Close overlays by outside click
+  ui.confirmOverlay.onclick = (e) => { if(e.target === ui.confirmOverlay) ui.confirmOverlay.classList.remove('open'); };
+  ui.formOverlay.onclick = (e) => { if(e.target === ui.formOverlay) ui.formOverlay.classList.remove('open'); };
+
+  // Dashboard form quick reset / modal support
+  ui.closeFormModalBtn.onclick = () => ui.formOverlay.classList.remove('open');
+
+  // Esc
+  window.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){
+      ui.confirmOverlay.classList.remove('open');
+      ui.formOverlay.classList.remove('open');
+      setPinMsg('');
+    }
+  });
+
+  // Init (bind events once, even while locked)
+  finance.init();
+  dashboard.init();
+
+  const activeView = localStorage.getItem('yuraaa_active_view_v1') || 'finance';
+  openView(activeView);
+  ensureUnlocked();
+
+  if(sessionStorage.getItem(UNLOCK_KEY) === '1'){
+    finance.loadApi().catch(()=>{});
+    dashboard.loadList(true).catch(()=>{});
+  }
+
+})();
+</script>
+</body>
+</html>
