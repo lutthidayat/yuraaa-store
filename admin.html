@@ -1102,10 +1102,23 @@
   const ACTIVE_FILTER_KEY = 'finance_active_filter_v2';
   const DASHBOARD_ENDPOINT_KEY = 'dash_endpoint_v1';
   const DEFAULT_DASHBOARD_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwdr34FMbamJcEQaCEuD5n5_85M1pwnR5pAbGqqWfJPzurN0X_g6rXBs3G6Vx1FStPWgA/exec';
+  const OPEN_SHEET_URL = 'https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List';
   const CLOUDINARY_CLOUD_NAME = 'df3oxlqpx';
   const CLOUDINARY_UPLOAD_PRESET = 'yuraaa_upload';
 
   const $ = (id) => document.getElementById(id);
+
+  function normalizeEndpoint(raw){
+    let value = String(raw ?? '').trim();
+    if(!value) return '';
+    if(/^ttps:\/\//i.test(value)) value = 'h' + value;
+    if(/^script\.google\.com\//i.test(value)) value = 'https://' + value;
+    if(/^\/\//.test(value)) value = 'https:' + value;
+    if(!/^https?:\/\//i.test(value) && /script\.google\.com\/macros\/s\//i.test(value)) {
+      value = 'https://' + value;
+    }
+    return value;
+  }
   const ui = {
     app: $('app'),
     statusPill: $('statusPill'),
@@ -2019,10 +2032,18 @@ function bindAmountInput(node){
       return uploaded;
     }
     function saveDashboardEndpoint(){
-      localStorage.setItem(DASHBOARD_ENDPOINT_KEY, el.endpoint.value.trim() || DEFAULT_DASHBOARD_ENDPOINT);
+      const value = normalizeEndpoint(el.endpoint.value) || DEFAULT_DASHBOARD_ENDPOINT;
+      localStorage.setItem(DASHBOARD_ENDPOINT_KEY, value);
+      el.endpoint.value = value;
+      return value;
     }
     function endpointValue(){
-      return (localStorage.getItem(DASHBOARD_ENDPOINT_KEY) || DEFAULT_DASHBOARD_ENDPOINT).trim();
+      const saved = normalizeEndpoint(localStorage.getItem(DASHBOARD_ENDPOINT_KEY));
+      const value = saved || DEFAULT_DASHBOARD_ENDPOINT;
+      if(saved !== value){
+        localStorage.setItem(DASHBOARD_ENDPOINT_KEY, value);
+      }
+      return value;
     }
 
     function setRupiahInput(input){
@@ -2472,10 +2493,10 @@ function sendViaIframePost(endpoint, payload){
       ui.endpointInput.select();
     }
     function saveEndpointFromModal(){
-      const next = (ui.endpointInput.value || '').trim();
-      const value = next || DEFAULT_DASHBOARD_ENDPOINT;
-      localStorage.setItem(DASHBOARD_ENDPOINT_KEY, value);
-      el.endpoint.value = value;
+      const next = normalizeEndpoint(ui.endpointInput.value) || DEFAULT_DASHBOARD_ENDPOINT;
+      localStorage.setItem(DASHBOARD_ENDPOINT_KEY, next);
+      el.endpoint.value = next;
+      ui.endpointInput.value = next;
       closeModal(ui.endpointOverlay);
       toast('Endpoint disimpan.');
     }
@@ -2582,8 +2603,9 @@ function sendViaIframePost(endpoint, payload){
     async function init(){
       if(state.initialized) return;
       state.initialized = true;
-      el.endpoint.value = endpointValue();
-      if(!el.endpoint.value) el.endpoint.value = DEFAULT_DASHBOARD_ENDPOINT;
+      const initialEndpoint = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
+      localStorage.setItem(DASHBOARD_ENDPOINT_KEY, initialEndpoint);
+      el.endpoint.value = initialEndpoint;
       el.search.addEventListener('input', renderCards);
     el.statusFilter.addEventListener('change', renderCards);
       el.clearSearchBtn.addEventListener('click', () => { el.search.value=''; renderCards(); });
@@ -2648,19 +2670,52 @@ function sendViaIframePost(endpoint, payload){
       await loadList(true);
     }
 
+    function normalizeListResponse(res){
+      if(Array.isArray(res)) return res;
+      if(res && Array.isArray(res.items)) return res.items;
+      if(res && Array.isArray(res.data)) return res.data;
+      if(res && Array.isArray(res.result)) return res.result;
+      return [];
+    }
+
     async function loadList(silent=false){
       setLoadingDashboard(true, 'Memuat akun...');
       try{
         const endpoint = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
         localStorage.setItem(DASHBOARD_ENDPOINT_KEY, endpoint || DEFAULT_DASHBOARD_ENDPOINT);
         el.endpoint.value = endpoint || DEFAULT_DASHBOARD_ENDPOINT;
-        const cb = `__yuraaa_list_${Date.now()}`;
-        const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
-        const res = await jsonp(url, cb);
-        state.items = Array.isArray(res && res.items) ? res.items : [];
-        if(!silent) toast('Data akun dimuat.');
+
+        let rows = [];
+        const tries = [
+          async () => {
+            const res = await apiGetJson(`${endpoint}?action=list&_=${Date.now()}`);
+            return normalizeListResponse(res);
+          },
+          async () => {
+            const cb = `__yuraaa_list_${Date.now()}`;
+            const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
+            const res = await jsonp(url, cb);
+            return normalizeListResponse(res);
+          },
+          async () => {
+            const res = await apiGetJson(`${OPEN_SHEET_URL}?_=${Date.now()}`);
+            return normalizeListResponse(res);
+          }
+        ];
+
+        for(const attempt of tries){
+          try{
+            rows = await attempt();
+            if(rows.length) break;
+          }catch(err){
+            console.warn('Dashboard load attempt failed.', err);
+          }
+        }
+
+        state.items = rows;
+        setConnectionState(true, rows.length ? 'Tersambung' : 'Tersambung, data kosong');
+        if(!silent) toast(rows.length ? 'Data akun dimuat.' : 'Koneksi berhasil, data masih kosong.');
         renderCards();
-        setConnectionState(true, 'Tersambung');
       }catch(e){
         console.error(e);
         setConnectionState(false, 'Gagal tersambung');
@@ -2735,6 +2790,9 @@ function sendViaIframePost(endpoint, payload){
   // Init (bind events once, even while locked)
   finance.init();
   dashboard.init();
+
+  const storedEndpoint = normalizeEndpoint(localStorage.getItem(DASHBOARD_ENDPOINT_KEY)) || DEFAULT_DASHBOARD_ENDPOINT;
+  localStorage.setItem(DASHBOARD_ENDPOINT_KEY, storedEndpoint);
 
   const activeView = localStorage.getItem('yuraaa_active_view_v1') || 'finance';
   openView(activeView);
