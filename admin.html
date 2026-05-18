@@ -193,6 +193,12 @@
   .input, .select{height:52px;padding:0 14px;font-weight:700}
   .textarea{min-height:112px;padding:14px;resize:vertical;line-height:1.6;font-weight:600}
   .input::placeholder, .textarea::placeholder{color:#64748b}
+  .input-suffix-wrap{position:relative}
+  .input-suffix-wrap .input{padding-right:52px}
+  .input-suffix{
+    position:absolute;right:14px;top:50%;transform:translateY(-50%);
+    color:#cbd5e1;font-weight:950;font-size:16px;pointer-events:none;
+  }
   input, select, textarea{color:#fff !important;}
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
@@ -223,6 +229,7 @@
   .mini-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
   .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   .search-row{display:grid;grid-template-columns:1fr auto;gap:10px}
+  .dash-search-row{grid-template-columns:minmax(0,1fr) 190px auto}
   .filter-row{display:flex;gap:8px;flex-wrap:wrap}
   .chip{
     padding:8px 12px;border-radius:999px;
@@ -569,7 +576,6 @@
   .preview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
   .preview-item{position:relative;aspect-ratio:1/1;border-radius:18px;overflow:hidden;border:1px solid rgba(148,163,184,.10);background:linear-gradient(180deg, rgba(15,23,42,.95), rgba(2,6,23,.95))}
   .preview-item img{width:100%;height:100%;object-fit:cover;display:block}
-  .badge{display:none !important}
   .empty-state{display:flex;align-items:center;justify-content:center;min-height:180px;border-radius:18px;border:1px dashed rgba(148,163,184,.22);color:var(--muted);text-align:center;padding:16px;background:rgba(2,6,23,.16)}
   .status-pill{
     display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;
@@ -874,7 +880,19 @@
           </div>
           <div class="field">
             <label class="label" for="dashDiskon">Diskon</label>
-            <input id="dashDiskon" class="input" inputmode="numeric" placeholder="Contoh: 10">
+            <div class="input-suffix-wrap">
+              <input id="dashDiskon" class="input" inputmode="numeric" placeholder="Contoh: 10">
+              <span class="input-suffix">%</span>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label" for="dashLabel">Label</label>
+            <select id="dashLabel" class="select">
+              <option value="">Kosong</option>
+              <option value="new">New</option>
+              <option value="hot">Hot</option>
+              <option value="promo">Promo</option>
+            </select>
           </div>
           <div class="field">
             <label class="label" for="dashSheetId">Spreadsheet</label>
@@ -922,8 +940,14 @@
           </div>
         </div>
 
-        <div class="search-row">
+        <div class="search-row dash-search-row">
           <input id="dashSearch" class="input" placeholder="Cari nama / ID / kategori">
+          <select id="dashStatusFilter" class="select">
+            <option value="all">Semua Status</option>
+            <option value="ready">Ready</option>
+            <option value="proses">Proses</option>
+            <option value="sold">Sold</option>
+          </select>
           <button class="btn btn-secondary" id="dashClearSearchBtn">Clear</button>
         </div>
 
@@ -1073,7 +1097,7 @@
   ========================== */
   const API = 'https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List';
   const LOCAL_KEY = 'finance_manual_v4';
-  const PIN_CODE = '211202';
+  const PIN_CODE = '200523';
   const UNLOCK_KEY = 'finance_unlocked_v2';
   const ACTIVE_FILTER_KEY = 'finance_active_filter_v2';
   const DASHBOARD_ENDPOINT_KEY = 'dash_endpoint_v1';
@@ -1319,8 +1343,7 @@
       filter: localStorage.getItem(ACTIVE_FILTER_KEY) || 'all',
       deleteTarget: null,
       editingId: null,
-      initialized: false,
-      currentLabel: ''
+      initialized: false
     };
 
     function loadLocal(){
@@ -1610,41 +1633,54 @@
       window.__yuraaaDeleteContext = 'finance';
       window.__yuraaaDeletePayload = { id: String(id || ''), row: String(item.row || '') };
       ui.confirmMsg.textContent = `${item.desc} • ${rupiah(item.amount)} • ${formatDate(item.date)}`;
-      ui.confirmItemTitle.textContent = item.desc || 'Transaksi ini akan dihapus.';
-      ui.confirmItemMeta.textContent = `Jumlah: ${rupiah(item.amount)} • Tanggal: ${formatDate(item.date)}`;
       openModal(ui.confirmOverlay);
     }
-
     async function confirmDeleteFinance(){
       const context = window.__yuraaaDeleteContext || 'finance';
-      if(context !== 'finance') return;
       const payload = window.__yuraaaDeletePayload || {};
-      const id = String(payload.id || '').trim();
-      if(!id) return;
-      setButtonBusy(ui.yesDeleteBtn, true, 'Menghapus...');
-      setButtonBusy(ui.cancelDeleteBtn, true, 'Batal');
-      setLoadingDashboard(true, 'Menghapus transaksi...');
-      try{
-        state.manual = state.manual.filter(x => String(x.id) !== id);
-        saveLocal();
-        render();
-        closeModal(ui.confirmOverlay);
-        window.__yuraaaDeleteContext = '';
-        window.__yuraaaDeletePayload = null;
-        state.deleteTarget = null;
-        toast('Transaksi dihapus.');
-      }catch(e){
-        console.error(e);
-        toast(e.message || 'Gagal menghapus transaksi.');
-      }finally{
-        setButtonBusy(ui.yesDeleteBtn, false);
-        setButtonBusy(ui.cancelDeleteBtn, false);
-        setLoadingDashboard(false);
+      if(context === 'dashboard'){
+        const id = String(payload.id || '').trim();
+        if(!id) return;
+        setButtonBusy(ui.yesDeleteBtn, true, 'Menghapus...');
+        setButtonBusy(ui.cancelDeleteBtn, true, 'Batal');
+        setLoadingDashboard(true, 'Menghapus akun...');
+        try{
+          const res = await sendViaGoogleScript('delete', {
+            action: 'delete',
+            id,
+            row: String(payload.row || '')
+          });
+          if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
+          toast('Akun dihapus.');
+          closeModal(ui.confirmOverlay);
+          window.__yuraaaDeleteContext = '';
+          window.__yuraaaDeletePayload = null;
+          state.selectedDelete = null;
+          await dashboard.loadList(true);
+        }catch(e){
+          console.error(e);
+          toast(e.message || 'Gagal menghapus akun.');
+        }finally{
+          setButtonBusy(ui.yesDeleteBtn, false);
+          setButtonBusy(ui.cancelDeleteBtn, false);
+          setLoadingDashboard(false);
+        }
+        return;
       }
+
+      if(!state.deleteTarget) return;
+      state.manual = state.manual.filter(x => x.id !== state.deleteTarget);
+      saveLocal();
+      render();
+      closeModal(ui.confirmOverlay);
+      window.__yuraaaDeleteContext = '';
+      window.__yuraaaDeletePayload = null;
+      toast('Transaksi dihapus.');
     }
 
     function openModal(node){ node.classList.add('open'); node.setAttribute('aria-hidden','false'); }
     function closeModal(node){ node.classList.remove('open'); node.setAttribute('aria-hidden','true'); }
+
 
 async function loadApi(){
   setLoading(true, 'Memuat data akun sold...');
@@ -1804,7 +1840,7 @@ function bindAmountInput(node){
       game: $('dashGame'),
       harga: $('dashHarga'),
       diskon: $('dashDiskon'),
-      label: null,
+      label: $('dashLabel'),
       statusSel: $('dashStatus'),
       ket: $('dashKet'),
       gambar: $('dashGambar'),
@@ -1817,6 +1853,7 @@ function bindAmountInput(node){
       resetBtn: $('dashResetBtn'),
       cards: $('dashCards'),
       search: $('dashSearch'),
+      statusFilter: $('dashStatusFilter'),
       clearSearchBtn: $('dashClearSearchBtn'),
       searchResetBtn: $('dashSearchResetBtn'),
       endpointBtn: $('dashEndpointBtn'),
@@ -1836,8 +1873,7 @@ function bindAmountInput(node){
       objectUrls: [],
       sortNewest: true,
       filter: 'all',
-      initialized: false,
-      currentLabel: ''
+      initialized: false
     };
 
     function normalizeText(v){ return (v ?? '').toString().trim(); }
@@ -1849,6 +1885,10 @@ function bindAmountInput(node){
     function formatNum(v){
       const n = String(v ?? '').replace(/\D/g,'');
       return n ? new Intl.NumberFormat('id-ID').format(Number(n)) : '0';
+    }
+    function normalizePercentValue(v){
+      const n = String(v ?? '').replace(/[^\d]/g,'');
+      return n ? String(Number(n)) : '';
     }
     function esc(str){
       return String(str ?? '')
@@ -2021,7 +2061,7 @@ function bindAmountInput(node){
       el.game.value = '';
       el.harga.value = '';
       el.diskon.value = '';
-      state.currentLabel = '';
+      el.label.value = '';
       el.statusSel.value = 'ready';
       el.ket.value = '';
       el.gambar.value = '';
@@ -2046,7 +2086,7 @@ function bindAmountInput(node){
         keepImages: el.existingImages.value.trim(),
         imageFiles: [],
         uploadedImages: [],
-        Label: state.currentLabel || '',
+        Label: el.label.value,
         Status: el.statusSel.value,
         Ket: el.ket.value.trim(),
         Tanggal: new Date().toISOString(),
@@ -2079,7 +2119,7 @@ function bindAmountInput(node){
           <div class="card-tags">
             <span>${esc(item.Status || 'ready')}</span>
             <span>${esc(item.Label || '-')}</span>
-            <span>${esc(item.Diskon || '-')}</span>
+            <span>${normalizePercentValue(item.Diskon) ? esc(normalizePercentValue(item.Diskon) + '%') : '-'}</span>
           </div>
         </div>
       </div>`;
@@ -2087,8 +2127,15 @@ function bindAmountInput(node){
 
     function renderCards(){
       const q = normalizeText(el.search.value).toLowerCase();
+      const statusFilter = normalizeStatus(el.statusFilter ? el.statusFilter.value : 'all');
       const items = state.items
-        .filter(x => [x.Nama, x.id, x.Game, x.Harga, x.Label, x.Status, x.Ket, `row ${x.row}`].join(' ').toLowerCase().includes(q))
+        .filter(x => {
+          const hay = [x.Nama, x.id, x.Game, x.Kategori].filter(Boolean).join(' ').toLowerCase();
+          const matchSearch = hay.includes(q);
+          const rowStatus = normalizeStatus(x.Status || 'ready');
+          const matchStatus = statusFilter === 'all' || rowStatus === statusFilter;
+          return matchSearch && matchStatus;
+        })
         .sort((a,b)=> state.sortNewest ? b.row - a.row : a.row - b.row);
 
       if(!items.length){
@@ -2104,8 +2151,8 @@ function bindAmountInput(node){
       el.nama.value = item.Nama || '';
       el.game.value = item.Game || '';
       el.harga.value = item.Harga || '';
-      el.diskon.value = item.Diskon || '';
-      state.currentLabel = item.Label || '';
+      el.diskon.value = normalizePercentValue(item.Diskon || '');
+      el.label.value = item.Label || '';
       el.statusSel.value = item.Status || 'ready';
       el.ket.value = item.Ket || '';
       el.gambar.value = item.Gambar || '';
@@ -2391,7 +2438,7 @@ function sendViaIframePost(endpoint, payload){
         Gambar: normalizeImages_(el.gambar.value).join(', '),
         keepImages: el.existingImages.value.trim(),
         imageFiles: state.files,
-        Label: state.currentLabel || '',
+        Label: el.label.value,
         Status: el.statusSel.value,
         Ket: el.ket.value.trim(),
         Tanggal: new Date().toISOString(),
@@ -2442,7 +2489,7 @@ function sendViaIframePost(endpoint, payload){
       el.game.value = item.Game || '';
       el.harga.value = item.Harga || '';
       el.diskon.value = item.Diskon || '';
-      state.currentLabel = item.Label || '';
+      el.label.value = item.Label || '';
       el.statusSel.value = item.Status || 'ready';
       el.ket.value = item.Ket || '';
       el.gambar.value = item.Gambar || '';
@@ -2487,32 +2534,28 @@ function sendViaIframePost(endpoint, payload){
       }
     }
 
-
     function askDeleteDashboard(item){
       closeDashboardActionMenus();
-      ui.confirmBadge.textContent = '⚠️ Hapus akun';
-      ui.confirmTitle.textContent = 'Hapus akun?';
-      ui.confirmMsg.textContent = 'Akun akan dihapus permanen dari spreadsheet.';
-      ui.confirmItemTitle.textContent = item.Nama || 'Akun ini akan dihapus.';
-      ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Status: ${String(item.Status || 'ready')} • Game: ${item.Game || '-'} • ID: ${String(item.id || item.row || '').slice(0, 8) || '-'}`;
+      ui.confirmMsg.textContent = `${item.Nama} • Rp ${formatNum(item.Harga)} • ${item.Game || '-'}`;
+      ui.confirmItemTitle.textContent = item.Nama || 'Data ini akan dihapus.';
+      ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`;
       state.selectedDelete = item;
       window.__yuraaaDeleteContext = 'dashboard';
-      window.__yuraaaDeletePayload = { id: String(item.id || ''), row: String(item.row || '') };
+      window.__yuraaaDeletePayload = { id: String(item.id || '') };
       openModal(ui.confirmOverlay);
     }
 
-    async function confirmDeleteDashboard(){
+
+        async function confirmDeleteDashboard(){
       const item = state.selectedDelete || window.__yuraaaDeletePayload || {};
-      const id = String(item.id || '').trim();
-      if(!id) return;
+      if(!item) return;
       setButtonBusy(ui.yesDeleteBtn, true, 'Menghapus...');
       setButtonBusy(ui.cancelDeleteBtn, true, 'Batal');
       setLoadingDashboard(true, 'Menghapus akun...');
       try{
         const payload = {
           action: 'delete',
-          id,
-          row: String(item.row || '')
+          id: String(item.id || '')
         };
         const res = await sendViaGoogleScript('delete', payload);
         if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
@@ -2532,10 +2575,7 @@ function sendViaIframePost(endpoint, payload){
       }
     }
     function applyFilter(filter){
-      state.filter = filter || 'all';
-      document.querySelectorAll('[data-dfilter]').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.dfilter === state.filter);
-      });
+      state.filter = 'all';
       renderCards();
     }
 
@@ -2545,6 +2585,7 @@ function sendViaIframePost(endpoint, payload){
       el.endpoint.value = endpointValue();
       if(!el.endpoint.value) el.endpoint.value = DEFAULT_DASHBOARD_ENDPOINT;
       el.search.addEventListener('input', renderCards);
+    el.statusFilter.addEventListener('change', renderCards);
       el.clearSearchBtn.addEventListener('click', () => { el.search.value=''; renderCards(); });
       el.searchResetBtn.addEventListener('click', () => { el.search.value=''; renderCards(); toast('Pencarian dibersihkan.'); });
       el.reloadBtn.onclick = () => loadList();
@@ -2553,7 +2594,7 @@ function sendViaIframePost(endpoint, payload){
         if(editBtn){
           const id = editBtn.dataset.id || editBtn.dataset.row || editBtn.closest('[data-id]')?.dataset.id || editBtn.closest('[data-row]')?.dataset.row || '';
           const found = state.items.find(x => String(x.id) === String(id) || String(x.row) === String(id));
-          if(found) startEdit(found);
+          if(found) startEditing(found);
           return;
         }
       }, { passive:true });
@@ -2605,6 +2646,28 @@ function sendViaIframePost(endpoint, payload){
       renderPreview();
       renderCards();
       await loadList(true);
+    }
+
+    async function loadList(silent=false){
+      setLoadingDashboard(true, 'Memuat akun...');
+      try{
+        const endpoint = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
+        localStorage.setItem(DASHBOARD_ENDPOINT_KEY, endpoint || DEFAULT_DASHBOARD_ENDPOINT);
+        el.endpoint.value = endpoint || DEFAULT_DASHBOARD_ENDPOINT;
+        const cb = `__yuraaa_list_${Date.now()}`;
+        const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
+        const res = await jsonp(url, cb);
+        state.items = Array.isArray(res && res.items) ? res.items : [];
+        if(!silent) toast('Data akun dimuat.');
+        renderCards();
+        setConnectionState(true, 'Tersambung');
+      }catch(e){
+        console.error(e);
+        setConnectionState(false, 'Gagal tersambung');
+        if(!silent) toast('Gagal memuat data akun.');
+      }finally{
+        setLoadingDashboard(false);
+      }
     }
 
         function jsonp(url, cbName){
