@@ -223,7 +223,6 @@
   .mini-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
   .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   .search-row{display:grid;grid-template-columns:1fr auto;gap:10px}
-  .dash-search-row{grid-template-columns:minmax(0,1fr) 190px auto}
   .filter-row{display:flex;gap:8px;flex-wrap:wrap}
   .chip{
     padding:8px 12px;border-radius:999px;
@@ -945,14 +944,8 @@
           </div>
         </div>
 
-        <div class="search-row dash-search-row">
+        <div class="search-row">
           <input id="dashSearch" class="input" placeholder="Cari nama / ID / kategori">
-          <select id="dashStatusFilter" class="select">
-            <option value="all">Semua Status</option>
-            <option value="ready">Ready</option>
-            <option value="proses">Proses</option>
-            <option value="sold">Sold</option>
-          </select>
           <button class="btn btn-secondary" id="dashClearSearchBtn">Clear</button>
         </div>
 
@@ -1102,7 +1095,7 @@
   ========================== */
   const API = 'https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List';
   const LOCAL_KEY = 'finance_manual_v4';
-  const PIN_CODE = '200523';
+  const PIN_CODE = '211202';
   const UNLOCK_KEY = 'finance_unlocked_v2';
   const ACTIVE_FILTER_KEY = 'finance_active_filter_v2';
   const DASHBOARD_ENDPOINT_KEY = 'dash_endpoint_v1';
@@ -1859,7 +1852,6 @@ function bindAmountInput(node){
       resetBtn: $('dashResetBtn'),
       cards: $('dashCards'),
       search: $('dashSearch'),
-      statusFilter: $('dashStatusFilter'),
       clearSearchBtn: $('dashClearSearchBtn'),
       searchResetBtn: $('dashSearchResetBtn'),
       endpointBtn: $('dashEndpointBtn'),
@@ -1891,10 +1883,6 @@ function bindAmountInput(node){
     function formatNum(v){
       const n = String(v ?? '').replace(/\D/g,'');
       return n ? new Intl.NumberFormat('id-ID').format(Number(n)) : '0';
-    }
-    function normalizePercentValue(v){
-      const n = String(v ?? '').replace(/[^\d]/g,'');
-      return n ? String(Number(n)) : '';
     }
     function esc(str){
       return String(str ?? '')
@@ -2125,7 +2113,7 @@ function bindAmountInput(node){
           <div class="card-tags">
             <span>${esc(item.Status || 'ready')}</span>
             <span>${esc(item.Label || '-')}</span>
-            <span>${normalizePercentValue(item.Diskon) ? esc(normalizePercentValue(item.Diskon) + '%') : '-'}</span>
+            <span>${esc(item.Diskon || '-')}</span>
           </div>
         </div>
       </div>`;
@@ -2133,15 +2121,8 @@ function bindAmountInput(node){
 
     function renderCards(){
       const q = normalizeText(el.search.value).toLowerCase();
-      const statusFilter = normalizeStatus(el.statusFilter ? el.statusFilter.value : 'all');
       const items = state.items
-        .filter(x => {
-          const hay = [x.Nama, x.id, x.Game, x.Kategori].filter(Boolean).join(' ').toLowerCase();
-          const matchSearch = hay.includes(q);
-          const rowStatus = normalizeStatus(x.Status || 'ready');
-          const matchStatus = statusFilter === 'all' || rowStatus === statusFilter;
-          return matchSearch && matchStatus;
-        })
+        .filter(x => [x.Nama, x.id, x.Game, x.Harga, x.Label, x.Status, x.Ket, `row ${x.row}`].join(' ').toLowerCase().includes(q))
         .sort((a,b)=> state.sortNewest ? b.row - a.row : a.row - b.row);
 
       if(!items.length){
@@ -2157,7 +2138,7 @@ function bindAmountInput(node){
       el.nama.value = item.Nama || '';
       el.game.value = item.Game || '';
       el.harga.value = item.Harga || '';
-      el.diskon.value = normalizePercentValue(item.Diskon || '');
+      el.diskon.value = item.Diskon || '';
       el.label.value = item.Label || '';
       el.statusSel.value = item.Status || 'ready';
       el.ket.value = item.Ket || '';
@@ -2591,7 +2572,6 @@ function sendViaIframePost(endpoint, payload){
       el.endpoint.value = endpointValue();
       if(!el.endpoint.value) el.endpoint.value = DEFAULT_DASHBOARD_ENDPOINT;
       el.search.addEventListener('input', renderCards);
-    el.statusFilter.addEventListener('change', renderCards);
       el.clearSearchBtn.addEventListener('click', () => { el.search.value=''; renderCards(); });
       el.searchResetBtn.addEventListener('click', () => { el.search.value=''; renderCards(); toast('Pencarian dibersihkan.'); });
       el.reloadBtn.onclick = () => loadList();
