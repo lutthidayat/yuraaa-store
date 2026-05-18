@@ -212,16 +212,7 @@
   }
   select option{background:#020617;color:#fff}
   .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-  .controls .btn{flex:0 1 220px;height:44px}
-  .input-suffix-wrap{position:relative}
-  .input-with-suffix{padding-right:52px}
-  .input-suffix{
-    position:absolute;right:16px;top:50%;transform:translateY(-50%);
-    color:#cbd5e1;font-size:14px;font-weight:900;pointer-events:none
-  }
-  .filter-row.status-filters{margin-top:12px}
-  .chip.status-chip{text-transform:capitalize}
-  .chip.status-chip[data-dfilter="all"]{text-transform:none}
+  .controls .btn{flex:1 1 180px}
   .split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
   .mini-card{
     padding:16px;border-radius:22px;
@@ -315,9 +306,7 @@
   }
   .overlay.open{display:flex}
   .modal{
-    width:min(680px,calc(100vw - 24px));
-    max-height:calc(100vh - 24px);
-    overflow:auto;
+    width:min(720px,100%);
     border-radius:28px;
     background:linear-gradient(180deg, rgba(15,23,42,.98), rgba(8,13,28,.98));
     border:1px solid rgba(148,163,184,.16);
@@ -328,9 +317,9 @@
   .modal-top h4{margin:0;font-size:20px;font-weight:950}
   .modal-top p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
   .close-x{
-    width:auto;min-width:40px;height:40px;padding:0 12px;border-radius:14px;border:1px solid rgba(148,163,184,.16);
-    background:rgba(15,23,42,.8);color:#fff;cursor:pointer;font-size:18px;font-weight:900;
-    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    width:40px;height:40px;border-radius:14px;border:1px solid rgba(148,163,184,.16);
+    background:rgba(15,23,42,.8);color:#fff;cursor:pointer;font-size:18px;
+    display:grid;place-items:center;
   }
   .modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
   .modal-actions .btn{flex:1 1 160px;height:46px}
@@ -589,19 +578,18 @@
 
 
   .delete-summary{
-    margin-top:12px;
-    padding:16px;
-    border-radius:22px;
-    background:linear-gradient(180deg, rgba(239,68,68,.12), rgba(15,23,42,.86));
-    border:1px solid rgba(239,68,68,.18);
+    margin-top:10px;
+    padding:14px;
+    border-radius:18px;
+    background:linear-gradient(180deg, rgba(239,68,68,.10), rgba(15,23,42,.78));
+    border:1px solid rgba(239,68,68,.16);
     display:flex;
     gap:12px;
     align-items:flex-start;
-    box-shadow:0 18px 40px rgba(0,0,0,.18) inset;
   }
   .delete-badge{
-    width:44px;height:44px;border-radius:16px;display:grid;place-items:center;flex:0 0 auto;
-    background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.22);color:#fecaca;font-size:20px;font-weight:900;
+    width:42px;height:42px;border-radius:14px;display:grid;place-items:center;flex:0 0 auto;
+    background:rgba(239,68,68,.16);border:1px solid rgba(239,68,68,.18);color:#fecaca;font-size:20px;font-weight:900;
   }
   .delete-summary strong{display:block;font-size:14px;line-height:1.4;color:#fff}
   .delete-summary span{display:block;margin-top:4px;color:#cbd5e1;font-size:12px;line-height:1.5}
@@ -626,7 +614,7 @@
     .hero h2{font-size:30px;max-width:none}
     .topbar{padding:10px}
     .brand h1{font-size:18px}
-    .modal{padding:14px;border-radius:22px;width:min(100%,calc(100vw - 16px));max-height:calc(100vh - 16px)}
+    .modal{padding:14px;border-radius:22px}
     .pin-card{padding:16px}
     .modal-actions{flex-direction:column}
     .modal-actions .btn{width:100%}
@@ -886,10 +874,7 @@
           </div>
           <div class="field">
             <label class="label" for="dashDiskon">Diskon</label>
-            <div class="input-suffix-wrap">
-              <input id="dashDiskon" class="input input-with-suffix" inputmode="numeric" placeholder="Contoh: 10">
-              <span class="input-suffix">%</span>
-            </div>
+            <input id="dashDiskon" class="input" inputmode="numeric" placeholder="Contoh: 10">
           </div>
           <div class="field">
             <label class="label" for="dashSheetId">Spreadsheet</label>
@@ -933,15 +918,8 @@
         <div class="history-head">
           <div>
             <h3>Daftar Akun</h3>
-            <p>Klik Edit untuk ubah data, dan hapus lewat tombol delete yang sudah dibuat lebih modern.</p>
+            <p>Klik X untuk hapus cepat, klik Edit untuk ubah data dan tambah foto.</p>
           </div>
-        </div>
-
-        <div class="filter-row status-filters">
-          <button class="chip status-chip active" data-dfilter="all">Semua</button>
-          <button class="chip status-chip" data-dfilter="ready">Ready</button>
-          <button class="chip status-chip" data-dfilter="proses">Proses</button>
-          <button class="chip status-chip" data-dfilter="sold">Sold</button>
         </div>
 
         <div class="search-row">
@@ -960,9 +938,8 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
       <div class="modal-top">
         <div>
-          <div class="endpoint-badge" id="confirmBadge">⚠️ Konfirmasi hapus</div>
           <h4 id="confirmTitle">Hapus data?</h4>
-          <p id="confirmMsg">Data akan dihapus secara permanen.</p>
+          <p id="confirmMsg">Data akan dihapus secara permanen dari daftar akun.</p>
         </div>
         <button type="button" class="close-x" id="closeConfirmBtn" aria-label="Tutup">×</button>
       </div>
@@ -987,7 +964,7 @@
           <h4 id="formModalTitle">Tambah Transaksi</h4>
           <p>Modal tambahan untuk input cepat, tetap sinkron dengan form utama.</p>
         </div>
-        <button class="close-x" id="closeFormModalBtn" aria-label="Tutup">× Kembali</button>
+        <button class="close-x" id="closeFormModalBtn" aria-label="Tutup">×</button>
       </div>
       <div class="form-grid">
         <div class="field full">
@@ -1124,8 +1101,6 @@
     financeView: $('financeView'),
     dashboardView: $('dashboardView'),
     confirmOverlay: $('confirmOverlay'),
-    confirmBadge: $('confirmBadge'),
-    confirmTitle: $('confirmTitle'),
     confirmMsg: $('confirmMsg'),
     confirmItemTitle: $('confirmItemTitle'),
     confirmItemMeta: $('confirmItemMeta'),
@@ -1344,7 +1319,8 @@
       filter: localStorage.getItem(ACTIVE_FILTER_KEY) || 'all',
       deleteTarget: null,
       editingId: null,
-      initialized: false
+      initialized: false,
+      currentLabel: ''
     };
 
     function loadLocal(){
@@ -1392,21 +1368,6 @@
     }
     function cleanAmount(v){
       return String(v || '').replace(/\D/g, '');
-    }
-    function formatDiskon(v){
-      const d = cleanAmount(v);
-      return d ? `${d}%` : '-';
-    }
-    function normalizeStatusBucket(v){
-      const s = normalizeStatus(v);
-      if(s.includes('sold') || s.includes('terjual') || s.includes('done')) return 'sold';
-      if(s.includes('proses') || s.includes('process') || s.includes('progress')) return 'proses';
-      if(s.includes('ready') || !s) return 'ready';
-      return s;
-    }
-    function statusLabel(v){
-      const b = normalizeStatusBucket(v);
-      return b ? b.charAt(0).toUpperCase() + b.slice(1) : 'Ready';
     }
     function esc(str){
       return String(str ?? '')
@@ -1648,20 +1609,23 @@
       state.deleteTarget = id;
       window.__yuraaaDeleteContext = 'finance';
       window.__yuraaaDeletePayload = { id: String(id || ''), row: String(item.row || '') };
-      setDeleteModal('finance', {
-        title: item.desc || 'Transaksi ini akan dihapus.',
-        meta: `${rupiah(item.amount)} • ${item.category || '-'} • ${formatDate(item.date)}`
-      });
+      ui.confirmMsg.textContent = `${item.desc} • ${rupiah(item.amount)} • ${formatDate(item.date)}`;
+      ui.confirmItemTitle.textContent = item.desc || 'Transaksi ini akan dihapus.';
+      ui.confirmItemMeta.textContent = `Jumlah: ${rupiah(item.amount)} • Tanggal: ${formatDate(item.date)}`;
       openModal(ui.confirmOverlay);
     }
+
     async function confirmDeleteFinance(){
+      const context = window.__yuraaaDeleteContext || 'finance';
+      if(context !== 'finance') return;
       const payload = window.__yuraaaDeletePayload || {};
-      if(!state.deleteTarget) return;
+      const id = String(payload.id || '').trim();
+      if(!id) return;
       setButtonBusy(ui.yesDeleteBtn, true, 'Menghapus...');
       setButtonBusy(ui.cancelDeleteBtn, true, 'Batal');
       setLoadingDashboard(true, 'Menghapus transaksi...');
       try{
-        state.manual = state.manual.filter(x => x.id !== state.deleteTarget);
+        state.manual = state.manual.filter(x => String(x.id) !== id);
         saveLocal();
         render();
         closeModal(ui.confirmOverlay);
@@ -1681,7 +1645,6 @@
 
     function openModal(node){ node.classList.add('open'); node.setAttribute('aria-hidden','false'); }
     function closeModal(node){ node.classList.remove('open'); node.setAttribute('aria-hidden','true'); }
-
 
 async function loadApi(){
   setLoading(true, 'Memuat data akun sold...');
@@ -1841,6 +1804,7 @@ function bindAmountInput(node){
       game: $('dashGame'),
       harga: $('dashHarga'),
       diskon: $('dashDiskon'),
+      label: null,
       statusSel: $('dashStatus'),
       ket: $('dashKet'),
       gambar: $('dashGambar'),
@@ -1872,7 +1836,8 @@ function bindAmountInput(node){
       objectUrls: [],
       sortNewest: true,
       filter: 'all',
-      initialized: false
+      initialized: false,
+      currentLabel: ''
     };
 
     function normalizeText(v){ return (v ?? '').toString().trim(); }
@@ -2056,6 +2021,7 @@ function bindAmountInput(node){
       el.game.value = '';
       el.harga.value = '';
       el.diskon.value = '';
+      state.currentLabel = '';
       el.statusSel.value = 'ready';
       el.ket.value = '';
       el.gambar.value = '';
@@ -2080,7 +2046,7 @@ function bindAmountInput(node){
         keepImages: el.existingImages.value.trim(),
         imageFiles: [],
         uploadedImages: [],
-        Label: '',
+        Label: state.currentLabel || '',
         Status: el.statusSel.value,
         Ket: el.ket.value.trim(),
         Tanggal: new Date().toISOString(),
@@ -2103,7 +2069,6 @@ function bindAmountInput(node){
       return `<div class="account-card" data-id="${key}" data-row="${item.row}">
         <div class="card-actions" data-action-wrap>
           <button type="button" class="card-edit" data-daction="edit" data-id="${key}" data-row="${item.row}" title="Edit akun">Edit</button>
-          <button type="button" class="card-menu" data-daction="delete" data-id="${key}" data-row="${item.row}" title="Hapus akun">×</button>
         </div>
         <div class="card-media">${media}</div>
         <div class="card-body">
@@ -2112,9 +2077,9 @@ function bindAmountInput(node){
           <div class="card-sub">${esc(item.Game || '-')}</div>
           <div class="card-price">Rp ${esc(formatNum(item.Harga))}</div>
           <div class="card-tags">
-            <span>${esc(statusLabel(item.Status))}</span>
+            <span>${esc(item.Status || 'ready')}</span>
             <span>${esc(item.Label || '-')}</span>
-            <span>${esc(formatDiskon(item.Diskon))}</span>
+            <span>${esc(item.Diskon || '-')}</span>
           </div>
         </div>
       </div>`;
@@ -2123,11 +2088,7 @@ function bindAmountInput(node){
     function renderCards(){
       const q = normalizeText(el.search.value).toLowerCase();
       const items = state.items
-        .filter(x => {
-          const statusBucket = normalizeStatusBucket(x.Status);
-          if(state.filter !== 'all' && statusBucket !== state.filter) return false;
-          return [x.Nama, x.id, x.Game, x.Harga, x.Label, x.Status, x.Ket, `row ${x.row}`].join(' ').toLowerCase().includes(q);
-        })
+        .filter(x => [x.Nama, x.id, x.Game, x.Harga, x.Label, x.Status, x.Ket, `row ${x.row}`].join(' ').toLowerCase().includes(q))
         .sort((a,b)=> state.sortNewest ? b.row - a.row : a.row - b.row);
 
       if(!items.length){
@@ -2144,6 +2105,7 @@ function bindAmountInput(node){
       el.game.value = item.Game || '';
       el.harga.value = item.Harga || '';
       el.diskon.value = item.Diskon || '';
+      state.currentLabel = item.Label || '';
       el.statusSel.value = item.Status || 'ready';
       el.ket.value = item.Ket || '';
       el.gambar.value = item.Gambar || '';
@@ -2160,27 +2122,11 @@ function bindAmountInput(node){
       document.querySelectorAll('.account-card.menu-open').forEach(card => card.classList.remove('menu-open'));
     }
 
-    function setDeleteModal(kind, item){
-      const isDashboard = kind === 'dashboard';
-      ui.confirmBadge.textContent = isDashboard ? '⚠️ Hapus akun' : '⚠️ Hapus transaksi';
-      ui.confirmTitle.textContent = isDashboard ? 'Hapus akun?' : 'Hapus transaksi?';
-      ui.confirmMsg.textContent = isDashboard
-        ? 'Akun akan dihapus permanen dari spreadsheet.'
-        : 'Transaksi akan dihapus permanen dari riwayat keuangan.';
-      ui.confirmItemTitle.textContent = item.title || (isDashboard ? 'Akun ini akan dihapus.' : 'Transaksi ini akan dihapus.');
-      ui.confirmItemMeta.textContent = item.meta || 'Tindakan ini tidak bisa dibatalkan setelah data dihapus.';
-      ui.yesDeleteBtn.textContent = isDashboard ? 'Ya, hapus akun' : 'Ya, hapus transaksi';
-    }
-
     function askDeleteDashboard(item){
-      closeDashboardActionMenus();
-      setDeleteModal('dashboard', {
-        title: item.Nama || 'Akun ini akan dihapus.',
-        meta: `Harga: Rp ${formatNum(item.Harga)} • Status: ${statusLabel(item.Status)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`
-      });
+      ui.confirmMsg.textContent = `${item.Nama} • Rp ${formatNum(item.Harga)} • ${item.Game || '-'}`;
+      ui.confirmItemTitle.textContent = item.Nama || 'Data ini akan dihapus.';
+      ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`;
       state.selectedDelete = item;
-      window.__yuraaaDeleteContext = 'dashboard';
-      window.__yuraaaDeletePayload = { id: String(item.id || ''), row: String(item.row || '') };
       openModal(ui.confirmOverlay);
     }
 
@@ -2333,37 +2279,20 @@ function sendViaIframePost(endpoint, payload){
         localStorage.setItem(DASHBOARD_ENDPOINT_KEY, endpoint || DEFAULT_DASHBOARD_ENDPOINT);
         el.endpoint.value = endpoint || DEFAULT_DASHBOARD_ENDPOINT;
 
-        let rows = [];
-        let lastError = null;
-
+        let res = null;
         try{
-          const data = await apiGetJson(`${endpoint}?action=list&_=${Date.now()}`);
-          rows = Array.isArray(data && data.items) ? data.items : Array.isArray(data) ? data : [];
+          res = await apiGetJson(`${endpoint}?action=list&_=${Date.now()}`);
         }catch(err){
-          lastError = err;
-          console.warn('Dashboard fetch gagal, mencoba JSONP.', err);
+          console.warn('Dashboard list fetch failed, falling back to JSONP.', err);
+          const cb = `__yuraaa_list_${Date.now()}`;
+          const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
+          res = await jsonp(url, cb);
         }
 
-        if(!rows.length){
-          try{
-            const cb = `__yuraaa_list_${Date.now()}`;
-            const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
-            const res = await jsonp(url, cb);
-            rows = Array.isArray(res && res.items) ? res.items : Array.isArray(res) ? res : [];
-          }catch(err){
-            lastError = err;
-          }
-        }
-
-        if(!rows.length){
-          const msg = lastError && lastError.message ? lastError.message : 'Data kosong atau endpoint belum mengembalikan daftar.';
-          throw new Error(msg);
-        }
-
-        state.items = rows;
+        state.items = Array.isArray(res && res.items) ? res.items : Array.isArray(res) ? res : [];
+        setConnectionState(true, 'Tersambung');
         if(!silent) toast('Data akun dimuat.');
         renderCards();
-        setConnectionState(true, 'Tersambung');
       }catch(e){
         console.error(e);
         setConnectionState(false, 'Gagal tersambung');
@@ -2462,7 +2391,7 @@ function sendViaIframePost(endpoint, payload){
         Gambar: normalizeImages_(el.gambar.value).join(', '),
         keepImages: el.existingImages.value.trim(),
         imageFiles: state.files,
-        Label: '',
+        Label: state.currentLabel || '',
         Status: el.statusSel.value,
         Ket: el.ket.value.trim(),
         Tanggal: new Date().toISOString(),
@@ -2513,6 +2442,7 @@ function sendViaIframePost(endpoint, payload){
       el.game.value = item.Game || '';
       el.harga.value = item.Harga || '';
       el.diskon.value = item.Diskon || '';
+      state.currentLabel = item.Label || '';
       el.statusSel.value = item.Status || 'ready';
       el.ket.value = item.Ket || '';
       el.gambar.value = item.Gambar || '';
@@ -2531,38 +2461,57 @@ function sendViaIframePost(endpoint, payload){
         toast('Pilih akun lewat Edit dulu.');
         return;
       }
-      askDeleteDashboard({
-        id,
-        row: id,
-        Nama: String(el.nama.value || '').trim(),
-        Harga: cleanNumber(el.harga.value),
-        Status: el.statusSel.value || 'ready',
-        Game: String(el.game.value || '').trim()
-      });
+
+      const name = String(el.nama.value || '').trim() || 'akun ini';
+      if(!confirm(`Yakin hapus ${name}?`)){
+        return;
+      }
+
+      setButtonBusy(el.deleteBtn, true, 'Menghapus...');
+      setLoadingDashboard(true, 'Menghapus akun...');
+      try{
+        const res = await sendViaGoogleScript('delete', {
+          action: 'delete',
+          id
+        });
+        if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
+        toast('Akun dihapus.');
+        resetForm(true);
+        await loadList(true);
+      }catch(e){
+        console.error(e);
+        toast(e.message || 'Gagal menghapus akun.');
+      }finally{
+        setButtonBusy(el.deleteBtn, false);
+        setLoadingDashboard(false);
+      }
     }
+
 
     function askDeleteDashboard(item){
       closeDashboardActionMenus();
-      ui.confirmMsg.textContent = `${item.Nama} • Rp ${formatNum(item.Harga)} • ${item.Game || '-'}`;
-      ui.confirmItemTitle.textContent = item.Nama || 'Data ini akan dihapus.';
-      ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`;
+      ui.confirmBadge.textContent = '⚠️ Hapus akun';
+      ui.confirmTitle.textContent = 'Hapus akun?';
+      ui.confirmMsg.textContent = 'Akun akan dihapus permanen dari spreadsheet.';
+      ui.confirmItemTitle.textContent = item.Nama || 'Akun ini akan dihapus.';
+      ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Status: ${String(item.Status || 'ready')} • Game: ${item.Game || '-'} • ID: ${String(item.id || item.row || '').slice(0, 8) || '-'}`;
       state.selectedDelete = item;
       window.__yuraaaDeleteContext = 'dashboard';
-      window.__yuraaaDeletePayload = { id: String(item.id || '') };
+      window.__yuraaaDeletePayload = { id: String(item.id || ''), row: String(item.row || '') };
       openModal(ui.confirmOverlay);
     }
 
-
-        async function confirmDeleteDashboard(){
+    async function confirmDeleteDashboard(){
       const item = state.selectedDelete || window.__yuraaaDeletePayload || {};
-      if(!item) return;
+      const id = String(item.id || '').trim();
+      if(!id) return;
       setButtonBusy(ui.yesDeleteBtn, true, 'Menghapus...');
       setButtonBusy(ui.cancelDeleteBtn, true, 'Batal');
       setLoadingDashboard(true, 'Menghapus akun...');
       try{
         const payload = {
           action: 'delete',
-          id: String(item.id || ''),
+          id,
           row: String(item.row || '')
         };
         const res = await sendViaGoogleScript('delete', payload);
@@ -2598,27 +2547,16 @@ function sendViaIframePost(endpoint, payload){
       el.search.addEventListener('input', renderCards);
       el.clearSearchBtn.addEventListener('click', () => { el.search.value=''; renderCards(); });
       el.searchResetBtn.addEventListener('click', () => { el.search.value=''; renderCards(); toast('Pencarian dibersihkan.'); });
-      document.querySelectorAll('[data-dfilter]').forEach(btn => {
-        btn.addEventListener('click', () => applyFilter(btn.dataset.dfilter));
-      });
-      applyFilter(state.filter);
       el.reloadBtn.onclick = () => loadList();
       el.cards.addEventListener('click', (e) => {
         const editBtn = e.target.closest('[data-daction="edit"]');
-        const deleteBtn = e.target.closest('[data-daction="delete"]');
         if(editBtn){
           const id = editBtn.dataset.id || editBtn.dataset.row || editBtn.closest('[data-id]')?.dataset.id || editBtn.closest('[data-row]')?.dataset.row || '';
           const found = state.items.find(x => String(x.id) === String(id) || String(x.row) === String(id));
-          if(found) startEditing(found);
+          if(found) startEdit(found);
           return;
         }
-        if(deleteBtn){
-          const id = deleteBtn.dataset.id || deleteBtn.dataset.row || deleteBtn.closest('[data-id]')?.dataset.id || deleteBtn.closest('[data-row]')?.dataset.row || '';
-          const found = state.items.find(x => String(x.id) === String(id) || String(x.row) === String(id));
-          if(found) askDeleteDashboard(found);
-          return;
-        }
-      });
+      }, { passive:true });
       el.addBtn.onclick = () => {
         ui.modalDesc.value = '';
         ui.modalAmount.value = '';
@@ -2667,28 +2605,6 @@ function sendViaIframePost(endpoint, payload){
       renderPreview();
       renderCards();
       await loadList(true);
-    }
-
-    async function loadList(silent=false){
-      setLoadingDashboard(true, 'Memuat akun...');
-      try{
-        const endpoint = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
-        localStorage.setItem(DASHBOARD_ENDPOINT_KEY, endpoint || DEFAULT_DASHBOARD_ENDPOINT);
-        el.endpoint.value = endpoint || DEFAULT_DASHBOARD_ENDPOINT;
-        const cb = `__yuraaa_list_${Date.now()}`;
-        const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
-        const res = await jsonp(url, cb);
-        state.items = Array.isArray(res && res.items) ? res.items : [];
-        if(!silent) toast('Data akun dimuat.');
-        renderCards();
-        setConnectionState(true, 'Tersambung');
-      }catch(e){
-        console.error(e);
-        setConnectionState(false, 'Gagal tersambung');
-        if(!silent) toast('Gagal memuat data akun.');
-      }finally{
-        setLoadingDashboard(false);
-      }
     }
 
         function jsonp(url, cbName){
