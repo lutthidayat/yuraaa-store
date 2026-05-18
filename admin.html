@@ -1112,14 +1112,19 @@
     let value = String(raw ?? '').trim();
     if(!value) return '';
     if(/^ttps:\/\//i.test(value)) value = 'h' + value;
-    if(/^script\.google\.com\//i.test(value)) value = 'https://' + value;
     if(/^\/\//.test(value)) value = 'https:' + value;
+    if(/^script\.google\.com\//i.test(value)) value = 'https://' + value;
     if(!/^https?:\/\//i.test(value) && /script\.google\.com\/macros\/s\//i.test(value)) {
       value = 'https://' + value;
     }
+    if(/script\.googleusercontent\.com|script\.google\.com/i.test(value) && !/\/exec(?:\?|$)/i.test(value)){
+      value = value.replace(/\/?$/, '') + '/exec';
+    }
+    value = value.replace(/\/?$/, '');
     return value;
   }
-  const ui = {
+
+const ui = {
     app: $('app'),
     statusPill: $('statusPill'),
     goFinanceBtn: $('goFinanceBtn'),
@@ -2039,7 +2044,7 @@ function bindAmountInput(node){
     }
     function endpointValue(){
       const saved = normalizeEndpoint(localStorage.getItem(DASHBOARD_ENDPOINT_KEY));
-      const value = saved || DEFAULT_DASHBOARD_ENDPOINT;
+      const value = normalizeEndpoint(saved || DEFAULT_DASHBOARD_ENDPOINT) || DEFAULT_DASHBOARD_ENDPOINT;
       if(saved !== value){
         localStorage.setItem(DASHBOARD_ENDPOINT_KEY, value);
       }
