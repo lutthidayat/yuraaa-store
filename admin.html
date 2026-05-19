@@ -673,18 +673,18 @@
   <div class="app" id="app">
     <header class="topbar">
       <div class="brand">
-        <div class="logo">🏦</div>
+        <div class="logo">ðŸ¦</div>
         <div>
           <h1><span>Yuraaa</span> Finance & Dashboard</h1>
           <p>Saldo otomatis, manual income/expense, dan manajemen akun</p>
         </div>
       </div>
       <div class="top-actions">
-        <div class="pill" id="statusPill">● Tersimpan otomatis</div>
-        <button class="btn btn-secondary" id="goFinanceBtn">💰 Finance</button>
-        <button class="btn btn-secondary" id="goDashboardBtn">📊 Dashboard</button>
-        <button class="btn btn-secondary" id="refreshAllBtn">↻ Refresh</button>
-        <button class="btn btn-danger" id="closeBtn">✕ Close</button>
+        <div class="pill" id="statusPill">â— Tersimpan otomatis</div>
+        <button class="btn btn-secondary" id="goFinanceBtn">ðŸ’° Finance</button>
+        <button class="btn btn-secondary" id="goDashboardBtn">ðŸ“Š Dashboard</button>
+        <button class="btn btn-secondary" id="refreshAllBtn">â†» Refresh</button>
+        <button class="btn btn-danger" id="closeBtn">âœ• Close</button>
       </div>
     </header>
 
@@ -692,14 +692,14 @@
     <section id="financeView">
       <section class="hero">
         <div class="panel hero-main">
-          <div class="eyebrow">Bank-style UI • dark smooth dashboard • one-file</div>
+          <div class="eyebrow">Bank-style UI â€¢ dark smooth dashboard â€¢ one-file</div>
           <h2>Kelola <span>keuangan</span> lebih rapi.</h2>
           <p>
             Pemasukan otomatis diambil dari akun yang sudah sold di spreadsheet, lalu digabung dengan pemasukan/pengeluaran manual.
             Semua transaksi tampil dalam satu riwayat dengan tanggal, kategori, dan catatan.
           </p>
           <div class="hero-actions">
-            <button class="btn btn-primary" id="scrollFormBtn">＋ Add</button>
+            <button class="btn btn-primary" id="scrollFormBtn">ï¼‹ Add</button>
             <button class="btn btn-secondary" id="scrollListBtn">Lihat Riwayat</button>
             <button class="btn btn-blue" id="reloadApiBtn">Sync Spreadsheet</button>
           </div>
@@ -825,13 +825,13 @@
     <section id="dashboardView" class="hidden">
       <section class="hero">
         <div class="panel hero-main">
-          <div class="eyebrow">Upload multi gambar • UI seperti aplikasi • endpoint terbaru</div>
+          <div class="eyebrow">Upload multi gambar â€¢ UI seperti aplikasi â€¢ endpoint terbaru</div>
           <h2>Bikin data akun <span>lebih cepat</span>, rapi, dan aman.</h2>
           <p>
             Tambah akun, edit data, hapus lewat tombol X pada card, upload multi gambar langsung, preview, harga format Rupiah, popup/notifikasi, dan sinkronisasi otomatis.
           </p>
           <div class="hero-actions">
-            <button class="btn btn-primary" id="dashAddBtn">＋ Add Account</button>
+            <button class="btn btn-primary" id="dashAddBtn">ï¼‹ Add Account</button>
             <button class="btn btn-secondary" id="dashScrollListBtn">Lihat Data</button>
             <button class="btn btn-blue" id="dashReloadBtn">Sync Spreadsheet</button>
           </div>
@@ -887,7 +887,7 @@
           </div>
           <div class="field">
             <label class="label" for="dashNama">Nama</label>
-            <input id="dashNama" class="input" placeholder="Contoh: HSR Asia • Reroll SS">
+            <input id="dashNama" class="input" placeholder="Contoh: HSR Asia â€¢ Reroll SS">
           </div>
           <div class="field">
             <label class="label" for="dashGame">Game</label>
@@ -925,7 +925,7 @@
             <div class="field">
               <label class="label" for="dashImageFiles">Foto dari perangkat</label>
               <input id="dashImageFiles" class="input" type="file" accept="image/*" multiple style="padding:12px;height:auto">
-              <div class="helper">Bisa pilih lebih dari satu foto. Klik tombol × di preview untuk hapus gambar yang tidak dipakai.</div>
+              <div class="helper">Bisa pilih lebih dari satu foto. Klik tombol Ã— di preview untuk hapus gambar yang tidak dipakai.</div>
             </div>
             <div class="field" style="margin-top:14px">
               <label class="label" for="dashGambar">Link gambar cadangan</label>
@@ -972,7 +972,7 @@
     </section>
   </div>
 
-  <button class="floating-add" id="floatingAddBtn">＋ Add</button>
+  <button class="floating-add" id="floatingAddBtn">ï¼‹ Add</button>
 
   <div class="overlay" id="confirmOverlay" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
@@ -981,7 +981,7 @@
           <h4 id="confirmTitle">Hapus data?</h4>
           <p id="confirmMsg">Data akan dihapus secara permanen dari daftar akun.</p>
         </div>
-        <button type="button" class="close-x" id="closeConfirmBtn" aria-label="Tutup">×</button>
+        <button type="button" class="close-x" id="closeConfirmBtn" aria-label="Tutup">Ã—</button>
       </div>
       <div class="delete-summary">
         <div class="delete-badge">!</div>
@@ -1004,7 +1004,7 @@
           <h4 id="formModalTitle">Tambah Transaksi</h4>
           <p>Modal tambahan untuk input cepat, tetap sinkron dengan form utama.</p>
         </div>
-        <button class="close-x" id="closeFormModalBtn" aria-label="Tutup">×</button>
+        <button class="close-x" id="closeFormModalBtn" aria-label="Tutup">Ã—</button>
       </div>
       <div class="form-grid">
         <div class="field full">
@@ -1061,10 +1061,10 @@
           <h4 id="endpointTitle">Set Endpoint</h4>
           <p>Masukkan URL Apps Script terbaru untuk menyimpan, update, hapus, dan upload gambar.</p>
         </div>
-        <button type="button" class="close-x" id="closeEndpointBtn" aria-label="Tutup">×</button>
+        <button type="button" class="close-x" id="closeEndpointBtn" aria-label="Tutup">Ã—</button>
       </div>
 
-      <div class="endpoint-badge">⚙️ Endpoint Dashboard</div>
+      <div class="endpoint-badge">âš™ï¸ Endpoint Dashboard</div>
       <input id="endpointInput" class="input" placeholder="https://script.google.com/macros/s/.../exec">
       <div class="helper">Kalau kosong, aplikasi akan memakai default endpoint yang tersimpan.</div>
 
@@ -1084,12 +1084,12 @@
           <h2 class="pin-title" id="pinTitle">Masukkan PIN</h2>
           <p class="pin-sub">Akses dashboard keuangan dengan kode 6 digit.</p>
         </div>
-        <button class="pin-close" id="pinClose" aria-label="Tutup">×</button>
+        <button class="pin-close" id="pinClose" aria-label="Tutup">Ã—</button>
       </div>
 
       <div class="pin-body">
         <div class="pin-label">PIN Akses</div>
-        <input id="pinInput" class="pin-input" type="password" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" />
+        <input id="pinInput" class="pin-input" type="password" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢" />
         <div class="pin-msg" id="pinMsg"></div>
         <div class="pin-actions">
           <button class="btn btn-primary small" id="submitPinBtn">Buka</button>
@@ -1239,8 +1239,12 @@
   }
 
 
+function getDashboardEndpoint(){
+  return (localStorage.getItem(DASHBOARD_ENDPOINT_KEY) || DEFAULT_DASHBOARD_ENDPOINT).trim();
+}
+
 async function sendViaGoogleScript(action, payload = {}){
-  const endpoint = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
+  const endpoint = getDashboardEndpoint();
   const data = JSON.parse(JSON.stringify({ ...(payload || {}), action }));
 
   if(window.google && window.google.script && window.google.script.run){
@@ -1452,7 +1456,7 @@ function sendViaIframePost(endpoint, payload){
       finance.loadApi().catch(()=>{});
       dashboard.loadList(true).catch(()=>{});
     } else {
-      setPinMsg('❌ PIN salah');
+      setPinMsg('âŒ PIN salah');
       ui.pinInput.value = '';
       setTimeout(() => setPinMsg(''), 1500);
     }
@@ -1686,7 +1690,7 @@ function sendViaIframePost(endpoint, payload){
           <article class="tx">
             <div class="tx-top">
               <div class="tx-left">
-                <div class="icon ${item.type === 'income' ? 'income' : 'expense'}">${item.type === 'income' ? '↑' : '↓'}</div>
+                <div class="icon ${item.type === 'income' ? 'income' : 'expense'}">${item.type === 'income' ? 'â†‘' : 'â†“'}</div>
                 <div style="min-width:0">
                   <h4 class="tx-title">${esc(item.desc || '-')}</h4>
                   <div class="tx-meta">
@@ -1782,7 +1786,7 @@ function sendViaIframePost(endpoint, payload){
       state.deleteTarget = id;
       window.__yuraaaDeleteContext = 'finance';
       window.__yuraaaDeletePayload = { id: String(id || ''), row: String(item.row || '') };
-      ui.confirmMsg.textContent = `${item.desc} • ${rupiah(item.amount)} • ${formatDate(item.date)}`;
+      ui.confirmMsg.textContent = `${item.desc} â€¢ ${rupiah(item.amount)} â€¢ ${formatDate(item.date)}`;
       openModal(ui.confirmOverlay);
     }
     async function confirmDeleteFinance(){
@@ -2073,7 +2077,7 @@ function normalizeImages_(value){
   const seen = new Set();
   const source = Array.isArray(value) ? value.join('\n') : String(value);
   const normalized = source
-    .replace(/[，、；]/g, ',')
+    .replace(/[ï¼Œã€ï¼›]/g, ',')
     .replace(/\r\n?/g, '\n')
     .replace(/\u00A0/g, ' ')
     .trim();
@@ -2084,7 +2088,7 @@ function normalizeImages_(value){
   candidates.push(...urlMatches);
 
   normalized
-    .split(/[\n,;|\s]+/g)
+    .split(/[\n,;|]+|\s+/g)
     .map(s => s.trim())
     .filter(Boolean)
     .forEach(token => {
@@ -2115,7 +2119,7 @@ function firstImage(value){
     function formatShortId(value){
       const raw = String(value ?? '').trim();
       if(!raw) return '';
-      return raw.length > 12 ? `${raw.slice(0, 6)}…${raw.slice(-4)}` : raw;
+      return raw.length > 12 ? `${raw.slice(0, 6)}â€¦${raw.slice(-4)}` : raw;
     }
 
     function resetPreviewFiles(){
@@ -2124,6 +2128,26 @@ function firstImage(value){
       });
       state.objectUrls = [];
       state.files = [];
+    }
+
+    function resetDashboardForm(){
+      state.editingRow = null;
+      el.rowEdit.value = '';
+      el.existingImages.value = '';
+      el.nama.value = '';
+      el.game.value = '';
+      el.harga.value = '';
+      el.diskon.value = '';
+      el.label.value = '';
+      el.statusSel.value = 'ready';
+      el.ket.value = '';
+      el.gambar.value = '';
+      clearFiles();
+      el.formTitle.textContent = 'Tambah Akun';
+      el.saveBtn.textContent = 'Simpan Akun Baru';
+      if (el.deleteBtn) el.deleteBtn.classList.add('hidden');
+      renderPreview();
+      closeDashboardActionMenus();
     }
 
     function setConnectionState(ok, label){
@@ -2248,7 +2272,7 @@ function firstImage(value){
         el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>';
         return;
       }
-      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,12).map((item,i)=>`<div class="preview-item"><img src="${item.url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><button type="button" class="preview-remove" data-img-remove data-img-type="${item.type}" data-img-index="${item.index ?? ''}" data-img-url="${esc(item.url)}" title="Hapus gambar">×</button><div class="watermark-overlay"><img src="${WATERMARK_IMAGE}" alt="yuraaa.store watermark" loading="lazy" decoding="async" draggable="false"></div></div>`).join('')}</div>`;
+      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,12).map((item,i)=>`<div class="preview-item"><img src="${item.url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><button type="button" class="preview-remove" data-img-remove data-img-type="${item.type}" data-img-index="${item.index ?? ''}" data-img-url="${esc(item.url)}" title="Hapus gambar">Ã—</button><div class="watermark-overlay"><img src="${WATERMARK_IMAGE}" alt="yuraaa.store watermark" loading="lazy" decoding="async" draggable="false"></div></div>`).join('')}</div>`;
     }
 
     function formatImageUrlField(){
@@ -2329,9 +2353,9 @@ function firstImage(value){
     }
 
     function askDeleteDashboard(item){
-      ui.confirmMsg.textContent = `${item.Nama} • Rp ${formatNum(item.Harga)} • ${item.Game || '-'}`;
+      ui.confirmMsg.textContent = `${item.Nama} â€¢ Rp ${formatNum(item.Harga)} â€¢ ${item.Game || '-'}`;
       ui.confirmItemTitle.textContent = item.Nama || 'Data ini akan dihapus.';
-      ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`;
+      ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} â€¢ Game: ${item.Game || '-'} â€¢ ID: ${String(item.id || '').slice(0, 8) || '-'}`;
       state.selectedDelete = item;
       openModal(ui.confirmOverlay);
     }
@@ -2370,7 +2394,7 @@ function firstImage(value){
         const result = await sendViaGoogleScript(data.action, data);
         if(!result || result.ok === false) throw new Error((result && result.message) || 'Gagal menyimpan akun.');
         toast(data.action === 'update' ? 'Akun diperbarui.' : 'Akun disimpan.');
-        resetForm(true);
+        resetDashboardForm();
         await loadList(true);
       }catch(e){
         console.error(e);
@@ -2434,28 +2458,6 @@ function firstImage(value){
       toast('Endpoint disimpan.');
     }
 
-    function resetForm(preserveEndpoint = false){
-      state.editingRow = null;
-      el.rowEdit.value = '';
-      el.existingImages.value = '';
-      el.nama.value = '';
-      el.game.value = '';
-      el.harga.value = '';
-      el.diskon.value = '';
-      el.label.value = '';
-      el.statusSel.value = 'ready';
-      el.ket.value = '';
-      el.gambar.value = '';
-      clearFiles();
-      el.formTitle.textContent = 'Tambah Akun';
-      el.saveBtn.textContent = 'Simpan Akun Baru';
-      if(el.deleteBtn) el.deleteBtn.classList.add('hidden');
-      if(!preserveEndpoint){
-        el.endpoint.value = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
-      }
-      renderPreview();
-    }
-
     function startEditing(item){
       const editKey = item.id || item.row || '';
       state.editingRow = editKey;
@@ -2500,7 +2502,7 @@ function firstImage(value){
         });
         if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
         toast('Akun dihapus.');
-        resetForm(true);
+        resetDashboardForm();
         await loadList(true);
       }catch(e){
         console.error(e);
@@ -2513,9 +2515,9 @@ function firstImage(value){
 
     function askDeleteDashboard(item){
       closeDashboardActionMenus();
-      ui.confirmMsg.textContent = `${item.Nama} • Rp ${formatNum(item.Harga)} • ${item.Game || '-'}`;
+      ui.confirmMsg.textContent = `${item.Nama} â€¢ Rp ${formatNum(item.Harga)} â€¢ ${item.Game || '-'}`;
       ui.confirmItemTitle.textContent = item.Nama || 'Data ini akan dihapus.';
-      ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`;
+      ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} â€¢ Game: ${item.Game || '-'} â€¢ ID: ${String(item.id || '').slice(0, 8) || '-'}`;
       state.selectedDelete = item;
       window.__yuraaaDeleteContext = 'dashboard';
       window.__yuraaaDeletePayload = { id: String(item.id || ''), row: String(item.row || '') };
@@ -2622,7 +2624,7 @@ function firstImage(value){
       el.scrollListBtn.onclick = () => document.getElementById('dashListSection').scrollIntoView({ behavior:'smooth', block:'start' });
       $('dashSaveBtn').onclick = saveAccount;
       if (el.deleteBtn) el.deleteBtn.onclick = deleteCurrentDashboardAccount;
-      $('dashResetBtn').onclick = () => { resetForm(true); toast('Form akun direset.'); };
+      $('dashResetBtn').onclick = () => { resetDashboardForm(); toast('Form akun direset.'); };
       $('dashReloadBtn').onclick = () => loadList();
       $('dashAddBtn').onclick = () => {
         openView('dashboard');
@@ -2648,6 +2650,7 @@ function firstImage(value){
       $('dashDiskon').addEventListener('input', () => { setPercentInput($('dashDiskon')); });
       $('dashDiskon').addEventListener('blur', () => { setPercentInput($('dashDiskon')); });
       $('dashImageFiles').addEventListener('change', setFileStateFromInput);
+      $('dashImageFiles').addEventListener('input', setFileStateFromInput);
       $('dashImageFiles').addEventListener('click', () => { if(!el.imageFiles.value) renderPreview(); });
       $('dashGambar').addEventListener('input', () => { formatImageUrlField(); });
       $('dashClearSearchBtn').onclick = () => { $('dashSearch').value=''; renderCards(); };
