@@ -935,7 +935,7 @@
         </div>
 
         <div class="controls">
-          <button class="btn btn-primary" id="dashSaveBtn">Simpan Akun Baru</button>
+          <button type="button" class="btn btn-primary" id="dashSaveBtn">Simpan Akun Baru</button>
           <button type="button" class="btn btn-danger hidden" id="dashDeleteBtn">Hapus Akun</button>
           <button class="btn btn-secondary" id="dashSearchResetBtn">Tampilkan Semua</button>
         </div>
@@ -1943,6 +1943,24 @@ function bindAmountInput(node){
       return list.length ? list[0] : '';
     }
 
+    function uniqueList(list){
+      return Array.from(new Set((Array.isArray(list) ? list : []).filter(Boolean)));
+    }
+
+    function formatShortId(value){
+      const raw = String(value ?? '').trim();
+      if(!raw) return '';
+      return raw.length > 12 ? `${raw.slice(0, 6)}…${raw.slice(-4)}` : raw;
+    }
+
+    function resetPreviewFiles(){
+      state.objectUrls.forEach(url => {
+        try{ URL.revokeObjectURL(url); }catch(_){}
+      });
+      state.objectUrls = [];
+      state.files = [];
+    }
+
     function setConnectionState(ok, label){
       ui.dashConnText.textContent = label;
       ui.dashConnText.className = ok ? 'pill' : 'pill warn';
@@ -2232,9 +2250,7 @@ function bindAmountInput(node){
     }
 
     function clearFiles(){
-      state.objectUrls.forEach(u => URL.revokeObjectURL(u));
-      state.objectUrls = [];
-      state.files = [];
+      resetPreviewFiles();
       el.imageFiles.value = '';
     }
 
@@ -2315,7 +2331,7 @@ function bindAmountInput(node){
       ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`;
       state.selectedDelete = item;
       window.__yuraaaDeleteContext = 'dashboard';
-      window.__yuraaaDeletePayload = { id: String(item.id || '') };
+      window.__yuraaaDeletePayload = { id: String(item.id || ''), row: String(item.row || '') };
       openModal(ui.confirmOverlay);
     }
 
@@ -2323,13 +2339,16 @@ function bindAmountInput(node){
         async function confirmDeleteDashboard(){
       const item = state.selectedDelete || window.__yuraaaDeletePayload || {};
       if(!item) return;
+      const deleteId = String(item.id || item.row || '').trim();
+      if(!deleteId) throw new Error('ID/row data kosong.');
       setButtonBusy(ui.yesDeleteBtn, true, 'Menghapus...');
       setButtonBusy(ui.cancelDeleteBtn, true, 'Batal');
       setLoadingDashboard(true, 'Menghapus akun...');
       try{
         const payload = {
           action: 'delete',
-          id: String(item.id || '')
+          id: deleteId,
+          row: String(item.row || '')
         };
         const res = await sendViaGoogleScript('delete', payload);
         if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
@@ -2442,6 +2461,7 @@ function bindAmountInput(node){
       $('dashDiskon').addEventListener('input', () => { setPercentInput($('dashDiskon')); });
       $('dashDiskon').addEventListener('blur', () => { setPercentInput($('dashDiskon')); });
       $('dashImageFiles').addEventListener('change', setFileStateFromInput);
+      $('dashImageFiles').addEventListener('click', () => { if(!el.imageFiles.value) renderPreview(); });
       $('dashGambar').addEventListener('input', () => { formatImageUrlField(); });
       $('dashClearSearchBtn').onclick = () => { $('dashSearch').value=''; renderCards(); };
       ui.closeBtn.onclick = () => { window.location.href = 'index.html'; };
