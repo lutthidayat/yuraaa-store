@@ -165,12 +165,6 @@
   .value.balance{color:#d8b4fe}
 
   .layout{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
-@media (min-width: 1180px){
-  .layout{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
-}
-@media (min-width: 1400px){
-  .dash-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
-}
   .section{padding:18px}
   .section-head{
     display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:14px
@@ -229,6 +223,7 @@
   .mini-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
   .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   .search-row{display:grid;grid-template-columns:1fr auto;gap:10px}
+  .dash-search-row{grid-template-columns:minmax(0,1fr) 190px auto}
   .filter-row{display:flex;gap:8px;flex-wrap:wrap}
   .chip{
     padding:8px 12px;border-radius:999px;
@@ -575,18 +570,6 @@
   .preview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
   .preview-item{position:relative;aspect-ratio:1/1;border-radius:18px;overflow:hidden;border:1px solid rgba(148,163,184,.10);background:linear-gradient(180deg, rgba(15,23,42,.95), rgba(2,6,23,.95))}
   .preview-item img{width:100%;height:100%;object-fit:cover;display:block}
-  .preview-remove{
-    position:absolute;top:8px;right:8px;z-index:4;
-    width:30px;height:30px;border-radius:999px;
-    border:1px solid rgba(239,68,68,.28);
-    background:rgba(15,23,42,.92);
-    color:#fecaca;
-    display:grid;place-items:center;
-    font-size:18px;font-weight:900;
-    cursor:pointer;
-    box-shadow:0 10px 24px rgba(0,0,0,.28);
-  }
-  .preview-remove:hover{background:rgba(239,68,68,.18);color:#fff}
   .watermark-overlay{
     position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;z-index:2;
   }
@@ -788,7 +771,7 @@
             <button class="btn btn-primary" id="saveBtn">Simpan Transaksi</button>
             <button class="btn btn-secondary" id="clearFiltersBtn">Tampilkan Semua</button>
           </div>
-          <div class="helper">Angka otomatis diformat jadi Rupiah. Diskon otomatis ditambah tanda % di belakang angka. Input tetap dark, tidak berubah putih saat autofill.</div>
+          <div class="helper">Angka otomatis diformat jadi Rupiah. Input tetap dark, tidak berubah putih saat autofill.</div>
 
           <div class="split">
             <div class="mini-card">
@@ -808,7 +791,13 @@
               <h3>Riwayat</h3>
               <p>Semua transaksi tampil di satu tempat. Data manual bisa diedit atau dihapus.</p>
             </div>
-            <div class="helper">Riwayat ditampilkan tanpa sort chip; gunakan pencarian untuk memfilter transaksi.</div>
+            <div class="filter-row">
+              <button class="chip active" data-filter="all">Semua</button>
+              <button class="chip" data-filter="income">Masuk</button>
+              <button class="chip" data-filter="expense">Keluar</button>
+              <button class="chip" data-filter="api">Sold</button>
+              <button class="chip" data-filter="manual">Manual</button>
+            </div>
           </div>
 
           <div class="search-row">
@@ -925,7 +914,7 @@
             <div class="field">
               <label class="label" for="dashImageFiles">Foto dari perangkat</label>
               <input id="dashImageFiles" class="input" type="file" accept="image/*" multiple style="padding:12px;height:auto">
-              <div class="helper">Bisa pilih lebih dari satu foto. Klik tombol × di preview untuk hapus gambar yang tidak dipakai.</div>
+              <div class="helper">Bisa pilih lebih dari satu foto. Preview langsung muncul.</div>
             </div>
             <div class="field" style="margin-top:14px">
               <label class="label" for="dashGambar">Link gambar cadangan</label>
@@ -941,7 +930,7 @@
         </div>
 
         <div class="controls">
-          <button type="button" class="btn btn-primary" id="dashSaveBtn">Simpan Akun Baru</button>
+          <button class="btn btn-primary" id="dashSaveBtn">Simpan Akun Baru</button>
           <button type="button" class="btn btn-danger hidden" id="dashDeleteBtn">Hapus Akun</button>
           <button class="btn btn-secondary" id="dashSearchResetBtn">Tampilkan Semua</button>
         </div>
@@ -954,16 +943,16 @@
             <h3>Daftar Akun</h3>
             <p>Klik X untuk hapus cepat, klik Edit untuk ubah data dan tambah foto.</p>
           </div>
-          <div class="filter-row">
-            <button class="chip active" data-dash-filter="sold">Sold</button>
-            <button class="chip" data-dash-filter="ready">Ready</button>
-            <button class="chip" data-dash-filter="proses">Proses</button>
-            <button class="chip" data-dash-filter="all">Semua</button>
-          </div>
         </div>
 
-        <div class="search-row">
-          <input id="dashSearch" class="input" placeholder="Cari nama / game / harga / label">
+        <div class="search-row dash-search-row">
+          <input id="dashSearch" class="input" placeholder="Cari nama / ID / kategori">
+          <select id="dashStatusFilter" class="select">
+            <option value="all">Semua Status</option>
+            <option value="ready">Ready</option>
+            <option value="proses">Proses</option>
+            <option value="sold">Sold</option>
+          </select>
           <button class="btn btn-secondary" id="dashClearSearchBtn">Clear</button>
         </div>
 
@@ -1113,7 +1102,7 @@
   ========================== */
   const API = 'https://opensheet.elk.sh/1myMRPoj38C1abuqPjMNtb9QABON37dRop1Rglb3uGCw/List';
   const LOCAL_KEY = 'finance_manual_v4';
-  const PIN_CODE = '211202';
+  const PIN_CODE = '200523';
   const UNLOCK_KEY = 'finance_unlocked_v2';
   const ACTIVE_FILTER_KEY = 'finance_active_filter_v2';
   const DASHBOARD_ENDPOINT_KEY = 'dash_endpoint_v1';
@@ -1237,139 +1226,6 @@
 
     return json;
   }
-
-
-async function sendViaGoogleScript(action, payload = {}){
-  const endpoint = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
-  const data = JSON.parse(JSON.stringify({ ...(payload || {}), action }));
-
-  if(window.google && window.google.script && window.google.script.run){
-    return new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => reject(new Error('Permintaan melebihi waktu tunggu.')), 25000);
-      const doneResolve = (value) => { clearTimeout(timeout); resolve(value); };
-      const doneReject = (err) => {
-        clearTimeout(timeout);
-        reject(new Error(err && err.message ? err.message : String(err)));
-      };
-      const runner = window.google.script.run
-        .withSuccessHandler(doneResolve)
-        .withFailureHandler(doneReject);
-
-      if(action === 'delete' && typeof runner.deleteAccount === 'function'){
-        runner.deleteAccount(data);
-      } else if(action === 'update' && typeof runner.updateAccount === 'function'){
-        runner.updateAccount(data);
-      } else if(action === 'upload-image' && typeof runner.uploadImage === 'function'){
-        runner.uploadImage(data);
-      } else if(typeof runner.saveAccount === 'function'){
-        runner.saveAccount(data);
-      } else {
-        doneReject(new Error('google.script.run tidak tersedia.'));
-      }
-    });
-  }
-
-  return sendViaIframePost(endpoint, data);
-}
-
-function sendViaIframePost(endpoint, payload){
-  return new Promise((resolve, reject) => {
-    const token = `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
-    const iframeName = `sink_${token}`;
-    const iframe = document.createElement('iframe');
-    iframe.name = iframeName;
-    iframe.style.display = 'none';
-
-    const form = document.createElement('form');
-    form.action = endpoint;
-    form.method = 'POST';
-    form.target = iframeName;
-    form.style.display = 'none';
-
-    const fields = {
-      client: 'browser',
-      iframe: '1',
-      token,
-      origin: location.origin,
-      data: JSON.stringify(payload || {}),
-    };
-
-    Object.entries(fields).forEach(([name, value]) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      input.value = value;
-      form.appendChild(input);
-    });
-
-    let settled = false;
-    let submitted = false;
-
-    const cleanup = () => {
-      window.removeEventListener('message', onMessage);
-      iframe.removeEventListener('load', onLoad);
-      clearTimeout(timer);
-      setTimeout(() => {
-        try{ form.remove(); }catch(_){}
-        try{ iframe.remove(); }catch(_){}
-      }, 150);
-    };
-
-    const finish = (ok, data) => {
-      if(settled) return;
-      settled = true;
-      cleanup();
-      if(ok) resolve(data || { ok: true });
-      else reject(new Error((data && data.message) || 'Gagal menyimpan data.'));
-    };
-
-    const parseWindowName = () => {
-      try{
-        const raw = iframe.contentWindow && iframe.contentWindow.name;
-        if(!raw) return null;
-        const parsed = JSON.parse(raw);
-        if(parsed && parsed.source === 'yuraaa-apps-script' && parsed.token === token) return parsed;
-      }catch(_){}
-      return null;
-    };
-
-    const onMessage = (event) => {
-      const data = event.data || {};
-      if(!data || data.source !== 'yuraaa-apps-script' || data.token !== token) return;
-      finish(!!data.ok, data);
-    };
-
-    const onLoad = () => {
-      if(!submitted) return;
-      setTimeout(() => {
-        if(settled) return;
-        const byName = parseWindowName();
-        if(byName){
-          finish(!!byName.ok, byName);
-          return;
-        }
-        finish(true, { ok: true, message: 'Data terkirim.' });
-      }, 700);
-    };
-
-    const timer = setTimeout(() => {
-      if(settled) return;
-      const byName = parseWindowName();
-      if(byName){
-        finish(!!byName.ok, byName);
-        return;
-      }
-      finish(true, { ok: true, message: 'Data terkirim (auto-accepted).' });
-    }, 15000);
-
-    window.addEventListener('message', onMessage);
-    iframe.addEventListener('load', onLoad);
-    document.body.appendChild(iframe);
-    document.body.appendChild(form);
-    submitted = true;
-    form.submit();
-  });
-}
 
   function toast(msg){
     ui.toast.textContent = msg;
@@ -1920,6 +1776,8 @@ function bindAmountInput(node){
     el.clearFiltersBtn.onclick = () => {
       state.filter = 'all';
       localStorage.setItem(ACTIVE_FILTER_KEY, 'all');
+      document.querySelectorAll('[data-filter]').forEach(ch => ch.classList.remove('active'));
+      document.querySelector('[data-filter="all"]').classList.add('active');
       render();
       toast('Filter dibersihkan.');
     };
@@ -2001,6 +1859,7 @@ function bindAmountInput(node){
       resetBtn: $('dashResetBtn'),
       cards: $('dashCards'),
       search: $('dashSearch'),
+      statusFilter: $('dashStatusFilter'),
       clearSearchBtn: $('dashClearSearchBtn'),
       searchResetBtn: $('dashSearchResetBtn'),
       endpointBtn: $('dashEndpointBtn'),
@@ -2019,10 +1878,7 @@ function bindAmountInput(node){
       files: [],
       objectUrls: [],
       sortNewest: true,
-      filter: (() => {
-        const saved = (localStorage.getItem('dashboard_filter_v1') || 'all').toLowerCase();
-        return ['all','sold','ready','proses'].includes(saved) ? saved : 'all';
-      })(),
+      filter: 'all',
       initialized: false
     };
 
@@ -2036,6 +1892,10 @@ function bindAmountInput(node){
       const n = String(v ?? '').replace(/\D/g,'');
       return n ? new Intl.NumberFormat('id-ID').format(Number(n)) : '0';
     }
+    function normalizePercentValue(v){
+      const n = String(v ?? '').replace(/[^\d]/g,'');
+      return n ? String(Number(n)) : '';
+    }
     function esc(str){
       return String(str ?? '')
         .replace(/&/g,'&amp;')
@@ -2046,11 +1906,8 @@ function bindAmountInput(node){
     function toDrivePreview(url){
       const u = normalizeText(url);
       if(!u) return '';
-      let compact = u.replace(/\s+/g,'');
+      const compact = u.replace(/\s+/g,'');
       if(!compact) return '';
-
-      if(/^drive\.google\.com/i.test(compact)) compact = `https://${compact}`;
-      if(/^www\.drive\.google\.com/i.test(compact)) compact = `https://${compact}`;
 
       if(/cloudinary\.com|res\.cloudinary\.com/i.test(compact)) {
         return compact;
@@ -2065,65 +1922,24 @@ function bindAmountInput(node){
       const id = (match1 && match1[1]) || (match2 && match2[1]) || '';
       return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000` : compact;
     }
-function extractLinks(raw){
-  return normalizeImages_(raw);
-}
-function normalizeImages_(value){
-  if(!value) return [];
-  const seen = new Set();
-  const source = Array.isArray(value) ? value.join('\n') : String(value);
-  const normalized = source
-    .replace(/[，、；]/g, ',')
-    .replace(/\r\n?/g, '\n')
-    .replace(/\u00A0/g, ' ')
-    .trim();
-  if(!normalized) return [];
-
-  const candidates = [];
-  const urlMatches = normalized.match(/https?:\/\/[^\s<>"'`]+/gi) || [];
-  candidates.push(...urlMatches);
-
-  normalized
-    .split(/[\n,;|]+|\s{2,}/g)
-    .map(s => s.trim())
-    .filter(Boolean)
-    .forEach(token => {
-      if(/^https?:\/\//i.test(token) || /drive\.google\.com|googleusercontent|lh3\.googleusercontent|cloudinary\.com|res\.cloudinary\.com/i.test(token)){
-        candidates.push(token);
-      }
-    });
-
-  return candidates
-    .map(token => token.replace(/[)\].,]+$/g, '').trim())
-    .map(token => toDrivePreview(token))
-    .filter(Boolean)
-    .filter(link => {
-      if(seen.has(link)) return false;
-      seen.add(link);
-      return true;
-    });
-}
-function firstImage(value){
+    function extractLinks(raw){
+      if(!raw) return [];
+      const seen = new Set();
+      return String(raw)
+        .split(/[\n,;|]+/)
+        .map(s => s.trim())
+        .filter(Boolean)
+        .map(s => toDrivePreview(s))
+        .filter(Boolean)
+        .filter(link => {
+          if(seen.has(link)) return false;
+          seen.add(link);
+          return true;
+        });
+    }
+    function firstImage(value){
       const list = extractLinks(value || '');
       return list.length ? list[0] : '';
-    }
-
-    function uniqueList(list){
-      return Array.from(new Set((Array.isArray(list) ? list : []).filter(Boolean)));
-    }
-
-    function formatShortId(value){
-      const raw = String(value ?? '').trim();
-      if(!raw) return '';
-      return raw.length > 12 ? `${raw.slice(0, 6)}…${raw.slice(-4)}` : raw;
-    }
-
-    function resetPreviewFiles(){
-      state.objectUrls.forEach(url => {
-        try{ URL.revokeObjectURL(url); }catch(_){}
-      });
-      state.objectUrls = [];
-      state.files = [];
     }
 
     function setConnectionState(ok, label){
@@ -2220,41 +2036,73 @@ function firstImage(value){
       input.value = digits ? formatRupiah(digits) : '';
     }
 
-    function setPercentInput(input){
-      const digits = cleanNumber(input.value);
-      input.value = digits ? `${digits}%` : '';
-    }
-
     function renderPreview(){
-      const fileItems = state.files.map((file, index) => ({
-        type: 'file',
-        url: state.objectUrls[index] || '',
-        index
-      })).filter(item => item.url);
-
-      const imageItems = [];
-      const seen = new Set(fileItems.map(item => item.url));
-      [...normalizeImages_(el.gambar.value).map(url => ({ type: 'gambar', url })), ...normalizeImages_(el.existingImages.value).map(url => ({ type: 'existing', url }))].forEach(item => {
-        if(item.url && !seen.has(item.url)){
-          seen.add(item.url);
-          imageItems.push(item);
-        }
-      });
-
-      const urls = [...fileItems, ...imageItems];
+      const urls = [...state.objectUrls, ...extractLinks(el.gambar.value), ...extractLinks(el.existingImages.value)];
       el.previewCount.textContent = String(urls.length);
       el.imageState.textContent = `${state.files.length ? state.files.length + ' foto dipilih' : (urls.length ? urls.length + ' link terdeteksi' : '0 foto dipilih')}`;
       if(!urls.length){
         el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>';
         return;
       }
-      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,12).map((item,i)=>`<div class="preview-item"><img src="${item.url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><button type="button" class="preview-remove" data-img-remove data-img-type="${item.type}" data-img-index="${item.index ?? ''}" data-img-url="${esc(item.url)}" title="Hapus gambar">×</button><div class="watermark-overlay"><img src="${WATERMARK_IMAGE}" alt="yuraaa.store watermark" loading="lazy" decoding="async" draggable="false"></div></div>`).join('')}</div>`;
+      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,12).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="watermark-overlay"><img src="${WATERMARK_IMAGE}" alt="yuraaa.store watermark" loading="lazy" decoding="async" draggable="false"></div></div>`).join('')}</div>`;
     }
 
-    function formatImageUrlField(){
-      const links = normalizeImages_(el.gambar.value);
-      el.gambar.value = links.join(', ');
+        function resetPreviewFiles(){
+      state.objectUrls.forEach(u => URL.revokeObjectURL(u));
+      state.objectUrls = [];
+      state.files = [];
+    }
+
+    function clearFiles(){
+      resetPreviewFiles();
+      el.imageFiles.value = '';
+    }
+
+    function resetForm(keepEndpoint=true){
+      if(!keepEndpoint) localStorage.setItem(DASHBOARD_ENDPOINT_KEY, DEFAULT_DASHBOARD_ENDPOINT);
+      el.rowEdit.value = '';
+      state.editingRow = null;
+      el.existingImages.value = '';
+      el.nama.value = '';
+      el.game.value = '';
+      el.harga.value = '';
+      el.diskon.value = '';
+      el.label.value = '';
+      el.statusSel.value = 'ready';
+      el.ket.value = '';
+      el.gambar.value = '';
+      clearFiles();
+      el.formTitle.textContent = 'Tambah Akun';
+      el.saveBtn.textContent = 'Simpan Akun Baru';
+      if (el.deleteBtn) el.deleteBtn.classList.add('hidden');
+      el.endpoint.value = endpointValue();
+      setRupiahInput(el.harga);
       renderPreview();
+    }
+
+    function buildPayload(){
+      return {
+        action: el.rowEdit.value ? 'update' : 'save',
+        row: el.rowEdit.value ? Number(el.rowEdit.value) : '',
+        Nama: el.nama.value.trim(),
+        Harga: cleanNumber(el.harga.value),
+        Diskon: cleanNumber(el.diskon.value),
+        Game: el.game.value.trim(),
+        Gambar: el.gambar.value.trim(),
+        keepImages: el.existingImages.value.trim(),
+        imageFiles: [],
+        uploadedImages: [],
+        Label: el.label.value,
+        Status: el.statusSel.value,
+        Ket: el.ket.value.trim(),
+        Tanggal: new Date().toISOString(),
+        DONE: ''
+      };
+    }
+
+    function formatShortId(value){
+      const clean = String(value ?? '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      return clean ? `YR-${clean.slice(0, 6)}` : '';
     }
 
     function renderCard(item){
@@ -2277,7 +2125,7 @@ function firstImage(value){
           <div class="card-tags">
             <span>${esc(item.Status || 'ready')}</span>
             <span>${esc(item.Label || '-')}</span>
-            <span>${esc(item.Diskon || '-')}</span>
+            <span>${normalizePercentValue(item.Diskon) ? esc(normalizePercentValue(item.Diskon) + '%') : '-'}</span>
           </div>
         </div>
       </div>`;
@@ -2285,15 +2133,15 @@ function firstImage(value){
 
     function renderCards(){
       const q = normalizeText(el.search.value).toLowerCase();
-      const filter = (state.filter || 'all').toLowerCase();
+      const statusFilter = normalizeStatus(el.statusFilter ? el.statusFilter.value : 'all');
       const items = state.items
         .filter(x => {
-          if(filter === 'all') return true;
-          const status = normalizeStatus(pick(x, 'Status', 'status'));
-          if(filter === 'sold') return isSold(status);
-          return status === filter || status.includes(filter);
+          const hay = [x.Nama, x.id, x.Game, x.Kategori].filter(Boolean).join(' ').toLowerCase();
+          const matchSearch = hay.includes(q);
+          const rowStatus = normalizeStatus(x.Status || 'ready');
+          const matchStatus = statusFilter === 'all' || rowStatus === statusFilter;
+          return matchSearch && matchStatus;
         })
-        .filter(x => [x.Nama, x.Game, x.Harga, x.Label, x.Status, x.Ket, `row ${x.row}`].join(' ').toLowerCase().includes(q))
         .sort((a,b)=> state.sortNewest ? b.row - a.row : a.row - b.row);
 
       if(!items.length){
@@ -2309,8 +2157,7 @@ function firstImage(value){
       el.nama.value = item.Nama || '';
       el.game.value = item.Game || '';
       el.harga.value = item.Harga || '';
-      el.diskon.value = item.Diskon || '';
-      setPercentInput(el.diskon);
+      el.diskon.value = normalizePercentValue(item.Diskon || '');
       el.label.value = item.Label || '';
       el.statusSel.value = item.Status || 'ready';
       el.ket.value = item.Ket || '';
@@ -2336,6 +2183,209 @@ function firstImage(value){
       openModal(ui.confirmOverlay);
     }
 
+    function openModal(node){
+      node.classList.add('open');
+      node.setAttribute('aria-hidden','false');
+    }
+    function closeModal(node){
+      node.classList.remove('open');
+      node.setAttribute('aria-hidden','true');
+    }
+
+    function isValidImageUrl(url){
+      return /drive\.google\.com|googleusercontent|lh3\.googleusercontent|cloudinary\.com|res\.cloudinary\.com/i.test(url);
+    }
+    function normalizeImages_(value){
+      if(!value) return [];
+      if(Array.isArray(value)) return value.map(v => toDrivePreview(String(v))).filter(Boolean);
+      const txt = String(value).trim();
+      if(!txt) return [];
+      return txt.split(/[\n,;|]+/g).map(v => toDrivePreview(v.trim().replace(/\s+/g,''))).filter(Boolean);
+    }
+
+    function fileToPayload(){
+      return prepareFiles(el.imageFiles.files);
+    }
+
+    async function sendViaGoogleScript(action, payload){
+      const endpoint = endpointValue();
+      const data = JSON.parse(JSON.stringify({ ...(payload || {}), action }));
+
+      if(window.google && google.script && google.script.run){
+        return new Promise((resolve,reject)=>{
+          const timeout = setTimeout(() => reject(new Error('Permintaan melebihi waktu tunggu.')), 25000);
+          const doneResolve = (value) => { clearTimeout(timeout); resolve(value); };
+          const doneReject = (err) => {
+            clearTimeout(timeout);
+            reject(new Error(err && err.message ? err.message : String(err)));
+          };
+          const runner = google.script.run
+            .withSuccessHandler(doneResolve)
+            .withFailureHandler(doneReject);
+          if(action === 'delete') runner.deleteAccount(data);
+          else if(action === 'update') runner.updateAccount(data);
+          else if(action === 'upload-image' && runner.uploadImage) runner.uploadImage(data);
+          else runner.saveAccount(data);
+        });
+      }
+
+      return apiPostJson(endpoint, data).catch(err => {
+        console.warn('fetch/json gagal, fallback iframe dipakai.', err);
+        return sendViaIframePost(endpoint, data);
+      });
+    }
+
+function sendViaIframePost(endpoint, payload){
+      return new Promise((resolve,reject)=>{
+        const token = `${Date.now()}_${Math.random().toString(36).slice(2,10)}`;
+        const iframeName = `sink_${token}`;
+        const iframe = document.createElement('iframe');
+        iframe.name = iframeName;
+        iframe.style.display = 'none';
+
+        const form = document.createElement('form');
+        form.action = endpoint;
+        form.method = 'POST';
+        form.target = iframeName;
+        form.style.display = 'none';
+
+        const fields = {
+          client:'github',
+          iframe:'1',
+          origin:location.origin,
+          token,
+          data:JSON.stringify(payload)
+        };
+        Object.entries(fields).forEach(([name,value])=>{
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
+        });
+
+        let settled = false;
+        let submitted = false;
+
+        const cleanup = () => {
+          window.removeEventListener('message', onMessage);
+          iframe.removeEventListener('load', onLoad);
+          clearTimeout(timer);
+          setTimeout(()=>{ form.remove(); iframe.remove(); },150);
+        };
+        const finish = (ok, data) => {
+          if(settled) return;
+          settled = true;
+          cleanup();
+          if(ok) resolve(data || { ok:true });
+          else reject(new Error((data && data.message) || 'Gagal menyimpan data.'));
+        };
+        const parseWindowName = () => {
+          try{
+            const raw = iframe.contentWindow && iframe.contentWindow.name;
+            if(!raw) return null;
+            const parsed = JSON.parse(raw);
+            if(parsed && parsed.source === 'yuraaa-apps-script' && parsed.token === token) return parsed;
+          }catch(_){}
+          return null;
+        };
+        const onMessage = (event) => {
+          const data = event.data || {};
+          if(!data || data.source !== 'yuraaa-apps-script' || data.token !== token) return;
+          finish(!!data.ok, data);
+        };
+        const onLoad = () => {
+          if(!submitted) return;
+          setTimeout(()=>{
+            if(settled) return;
+            const byName = parseWindowName();
+            if(byName){
+              finish(!!byName.ok, byName);
+              return;
+            }
+            finish(true, { ok:true, message:'Data terkirim.' });
+          }, 800);
+        };
+        const timer = setTimeout(()=>{
+          if(settled) return;
+          const byName = parseWindowName();
+          if(byName){
+            finish(!!byName.ok, byName);
+            return;
+          }
+          finish(true, { ok:true, message:'Data terkirim (auto-accepted).' });
+        }, 15000);
+
+        window.addEventListener('message', onMessage);
+        iframe.addEventListener('load', onLoad);
+        document.body.appendChild(iframe);
+        document.body.appendChild(form);
+        submitted = true;
+        form.submit();
+      });
+    }
+
+    async function loadList(silent=false){
+      setLoadingDashboard(true, 'Memuat akun...');
+      try{
+        const endpoint = endpointValue() || DEFAULT_DASHBOARD_ENDPOINT;
+        localStorage.setItem(DASHBOARD_ENDPOINT_KEY, endpoint || DEFAULT_DASHBOARD_ENDPOINT);
+        el.endpoint.value = endpoint || DEFAULT_DASHBOARD_ENDPOINT;
+
+        let res = null;
+        try{
+          res = await apiGetJson(`${endpoint}?action=list&_=${Date.now()}`);
+        }catch(err){
+          console.warn('Dashboard list fetch failed, falling back to JSONP.', err);
+          const cb = `__yuraaa_list_${Date.now()}`;
+          const url = `${endpoint}?action=list&callback=${cb}&_=${Date.now()}`;
+          res = await jsonp(url, cb);
+        }
+
+        state.items = Array.isArray(res && res.items) ? res.items : Array.isArray(res) ? res : [];
+        setConnectionState(true, 'Tersambung');
+        if(!silent) toast('Data akun dimuat.');
+        renderCards();
+      }catch(e){
+        console.error(e);
+        setConnectionState(false, 'Gagal tersambung');
+        if(!silent) toast('Gagal memuat data akun.');
+      }finally{
+        setLoadingDashboard(false);
+      }
+    }
+
+    function jsonp(url, cbName){
+      return new Promise((resolve,reject)=>{
+        const script = document.createElement('script');
+        script.async = true;
+        const cleanup = () => {
+          try{ delete window[cbName]; }catch(_){ window[cbName] = undefined; }
+          script.remove();
+        };
+        window[cbName] = (data) => { cleanup(); resolve(data); };
+        script.onerror = () => { cleanup(); reject(new Error('Gagal memuat respons.')); };
+        script.src = url;
+        document.body.appendChild(script);
+      });
+    }
+
+    function formatPreview(){
+      const urls = [...state.objectUrls, ...normalizeImages_(el.gambar.value), ...normalizeImages_(el.existingImages.value)];
+      el.previewCount.textContent = String(urls.length);
+      el.imageState.textContent = `${state.files.length ? state.files.length + ' foto dipilih' : (urls.length ? urls.length + ' link terdeteksi' : '0 foto dipilih')}`;
+      if(!urls.length){
+        el.previewArea.innerHTML = '<div class="empty-state">Belum ada gambar. Pilih file foto atau tempel URL gambar untuk melihat preview.</div>';
+        return;
+      }
+      el.previewArea.innerHTML = `<div class="preview-grid">${urls.slice(0,12).map((url,i)=>`<div class="preview-item"><img src="${url}" alt="Preview ${i+1}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;padding:12px;color:#94a3b8;font-size:12px;line-height:1.5;&quot;>Preview gagal dimuat.<br>Periksa file/link gambar.</div>'"><div class="badge">#${i+1}</div></div>`).join('')}</div>`;
+    }
+
+    function formatImageUrlField(){
+      const links = normalizeImages_(el.gambar.value);
+      el.gambar.value = links.join(', ');
+    }
+
     async function saveAccount(){
       const data = buildPayload();
       if(!data.Nama){ toast('Nama akun belum diisi.'); return; }
@@ -2357,11 +2407,11 @@ function firstImage(value){
         }
 
         setLoadingDashboard(true, data.action === 'update' ? 'Menyimpan perubahan...' : 'Menyimpan akun...');
-        const mergedLinks = uniqueList([
+        const mergedLinks = [
           ...normalizeImages_(el.existingImages.value),
           ...normalizeImages_(el.gambar.value),
           ...uploaded
-        ].filter(Boolean));
+        ].filter(Boolean);
         data.uploadedImages = uploaded;
         data.Gambar = mergedLinks.join(', ');
         data.keepImages = el.existingImages.value.trim();
@@ -2415,7 +2465,9 @@ function firstImage(value){
     }
 
     function clearFiles(){
-      resetPreviewFiles();
+      state.objectUrls.forEach(u => URL.revokeObjectURL(u));
+      state.objectUrls = [];
+      state.files = [];
       el.imageFiles.value = '';
     }
 
@@ -2443,7 +2495,6 @@ function firstImage(value){
       el.game.value = item.Game || '';
       el.harga.value = item.Harga || '';
       el.diskon.value = item.Diskon || '';
-      setPercentInput(el.diskon);
       el.label.value = item.Label || '';
       el.statusSel.value = item.Status || 'ready';
       el.ket.value = item.Ket || '';
@@ -2496,7 +2547,7 @@ function firstImage(value){
       ui.confirmItemMeta.textContent = `Harga: Rp ${formatNum(item.Harga)} • Game: ${item.Game || '-'} • ID: ${String(item.id || '').slice(0, 8) || '-'}`;
       state.selectedDelete = item;
       window.__yuraaaDeleteContext = 'dashboard';
-      window.__yuraaaDeletePayload = { id: String(item.id || ''), row: String(item.row || '') };
+      window.__yuraaaDeletePayload = { id: String(item.id || '') };
       openModal(ui.confirmOverlay);
     }
 
@@ -2504,16 +2555,13 @@ function firstImage(value){
         async function confirmDeleteDashboard(){
       const item = state.selectedDelete || window.__yuraaaDeletePayload || {};
       if(!item) return;
-      const deleteId = String(item.id || item.row || '').trim();
-      if(!deleteId) throw new Error('ID/row data kosong.');
       setButtonBusy(ui.yesDeleteBtn, true, 'Menghapus...');
       setButtonBusy(ui.cancelDeleteBtn, true, 'Batal');
       setLoadingDashboard(true, 'Menghapus akun...');
       try{
         const payload = {
           action: 'delete',
-          id: deleteId,
-          row: String(item.row || '')
+          id: String(item.id || '')
         };
         const res = await sendViaGoogleScript('delete', payload);
         if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
@@ -2533,8 +2581,7 @@ function firstImage(value){
       }
     }
     function applyFilter(filter){
-      state.filter = filter;
-      document.querySelectorAll('[data-dash-filter]').forEach(ch => ch.classList.toggle('active', ch.dataset.dashFilter === filter));
+      state.filter = 'all';
       renderCards();
     }
 
@@ -2543,42 +2590,11 @@ function firstImage(value){
       state.initialized = true;
       el.endpoint.value = endpointValue();
       if(!el.endpoint.value) el.endpoint.value = DEFAULT_DASHBOARD_ENDPOINT;
-      document.querySelectorAll('[data-dash-filter]').forEach(ch => ch.addEventListener('click', () => applyFilter(ch.dataset.dashFilter)));
       el.search.addEventListener('input', renderCards);
+    el.statusFilter.addEventListener('change', renderCards);
       el.clearSearchBtn.addEventListener('click', () => { el.search.value=''; renderCards(); });
-      el.searchResetBtn.addEventListener('click', () => { el.search.value=''; applyFilter('all'); toast('Filter dibersihkan.'); });
+      el.searchResetBtn.addEventListener('click', () => { el.search.value=''; renderCards(); toast('Pencarian dibersihkan.'); });
       el.reloadBtn.onclick = () => loadList();
-      el.previewArea.addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-img-remove]');
-        if(!btn) return;
-        e.preventDefault();
-
-        const type = btn.dataset.imgType || '';
-        const url = btn.dataset.imgUrl || '';
-        const index = Number(btn.dataset.imgIndex || -1);
-
-        if(type === 'file' && Number.isFinite(index) && index >= 0){
-          const nextFiles = state.files.filter((_, i) => i !== index);
-          if(state.objectUrls[index]) URL.revokeObjectURL(state.objectUrls[index]);
-          state.files = nextFiles;
-          state.objectUrls = nextFiles.map(f => URL.createObjectURL(f));
-          el.imageFiles.value = '';
-          renderPreview();
-          toast('Gambar dipilih dihapus.');
-          return;
-        }
-
-        if(url){
-          const removeFrom = (field) => {
-            const cleaned = uniqueList(normalizeImages_(field.value).filter(link => link !== url));
-            field.value = cleaned.join(', ');
-          };
-          removeFrom(el.gambar);
-          removeFrom(el.existingImages);
-          renderPreview();
-          toast('Gambar dihapus.');
-        }
-      });
       el.cards.addEventListener('click', (e) => {
         const editBtn = e.target.closest('[data-daction="edit"]');
         if(editBtn){
@@ -2622,12 +2638,8 @@ function firstImage(value){
       $('dashHarga').addEventListener('focus', () => { $('dashHarga').value = cleanNumber($('dashHarga').value); });
       $('dashHarga').addEventListener('input', () => { $('dashHarga').value = formatRupiah($('dashHarga').value); });
       $('dashHarga').addEventListener('blur', () => { $('dashHarga').value = formatRupiah($('dashHarga').value); });
-      $('dashDiskon').addEventListener('focus', () => { $('dashDiskon').value = cleanNumber($('dashDiskon').value); });
-      $('dashDiskon').addEventListener('input', () => { setPercentInput($('dashDiskon')); });
-      $('dashDiskon').addEventListener('blur', () => { setPercentInput($('dashDiskon')); });
       $('dashImageFiles').addEventListener('change', setFileStateFromInput);
-      $('dashImageFiles').addEventListener('click', () => { if(!el.imageFiles.value) renderPreview(); });
-      $('dashGambar').addEventListener('input', () => { formatImageUrlField(); });
+      $('dashGambar').addEventListener('input', () => { formatImageUrlField(); renderPreview(); });
       $('dashClearSearchBtn').onclick = () => { $('dashSearch').value=''; renderCards(); };
       ui.closeBtn.onclick = () => { window.location.href = 'index.html'; };
 
