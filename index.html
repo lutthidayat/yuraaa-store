@@ -537,6 +537,12 @@
       gap:12px;
       margin-bottom:12px;
     }
+    .notif-group-actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex:0 0 auto;
+    }
     .notif-group-head h4{
       margin:0;
       font-size:15px;
@@ -685,6 +691,94 @@
       color:var(--muted);
       text-align:center;
       background:rgba(15,23,42,.35);
+    }
+
+    .notif-carousel{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .notif-carousel::-webkit-scrollbar{display:none}
+    .notif-carousel .notif-item{
+      width:100%;
+      margin-top:0;
+    }
+
+.notif-controls{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin:4px 0 14px;
+      flex-wrap:wrap;
+    }
+    .notif-mode{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .notif-mode-btn{
+      height:38px;
+      border-radius:12px;
+      border:1px solid rgba(148,163,184,.14);
+      background:rgba(15,23,42,.72);
+      color:#dbeafe;
+      padding:0 14px;
+      font:inherit;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+    .notif-mode-btn:hover{
+      border-color:rgba(139,92,246,.26);
+      transform:translateY(-1px);
+    }
+    .notif-mode-btn.active{
+      background:rgba(139,92,246,.18);
+      border-color:rgba(167,139,250,.32);
+      color:#fff;
+      box-shadow:0 10px 18px rgba(139,92,246,.12);
+    }
+    .notif-mode-label{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+    .notif-pager{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:8px;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+    .notif-pageinfo{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
+    .notif-pagebtn{
+      min-width:36px;
+      height:36px;
+      border-radius:12px;
+      border:1px solid rgba(148,163,184,.14);
+      background:rgba(15,23,42,.72);
+      color:#dbeafe;
+      cursor:pointer;
+      font-weight:900;
+      transition:.18s ease;
+    }
+    .notif-pagebtn:hover{
+      border-color:rgba(139,92,246,.26);
+      transform:translateY(-1px);
+    }
+    .notif-pagebtn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none;
     }
     @media (max-width: 640px){
       .notif-panel{margin-top:14px;border-radius:24px;padding:14px;max-height:calc(100vh - 28px)}
@@ -1341,6 +1435,8 @@
     const FB_LINK = "https://www.facebook.com/share/1DzBVVkDDF/";
     const PAGE_SIZE = 6;
     const NEW_DAYS = 7;
+    const NOTIF_PAGE_SIZE = 5;
+    let notifPages = { new: 0, update: 0, sold: 0 };
 
     let RAW_DATA = [];
     let FILTERED_DATA = [];
@@ -1546,6 +1642,16 @@
       return Math.max(0, Math.min(100, normalized));
     }
 
+function normalizeLastActionValue(rawValue){
+      const s = normalizeText(rawValue).toLowerCase().replace(/[^a-z]/g, '');
+      if (!s) return '';
+      if (['new', 'created', 'add', 'added'].includes(s)) return 'new';
+      if (['update', 'updated', 'edit', 'edited'].includes(s)) return 'update';
+      if (['sold', 'done', 'terjual'].includes(s)) return 'sold';
+      if (s === 'save') return '';
+      return '';
+    }
+
 function mapItem(raw, idx){
       const nama = raw.Nama ?? raw.nama ?? raw.Name ?? raw.name ?? raw.Judul ?? raw.judul ?? '-';
       const hargaRaw = raw.Harga ?? raw.harga ?? raw.Price ?? raw.price ?? 0;
@@ -1557,7 +1663,7 @@ function mapItem(raw, idx){
       const ket = normalizeText(raw.Ket ?? raw.ket ?? raw.Detail ?? raw.detail ?? '');
       const createdAt = parseDate(raw.CreatedAt ?? raw.createdAt ?? raw.Tanggal ?? raw.tanggal ?? raw.Date ?? raw.date ?? raw.Timestamp ?? raw.timestamp ?? raw.Waktu ?? raw.waktu);
       const updatedAt = parseDate(raw.UpdatedAt ?? raw.updatedAt ?? raw.ModifiedAt ?? raw.modifiedAt ?? raw.UpdateAt ?? raw.updateAt ?? raw.LastUpdate ?? raw.lastUpdate);
-      const lastAction = normalizeText(raw.LastAction ?? raw.lastAction ?? raw.Action ?? raw.action ?? '').toLowerCase();
+      const lastAction = normalizeLastActionValue(raw.LastAction ?? raw.lastAction ?? raw.Action ?? raw.action ?? '');
 
       const harga = Number(String(hargaRaw).replace(/[^\d]/g, '')) || 0;
       const diskon = parseDiscountValue(diskonRaw);
@@ -2090,89 +2196,49 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
       els.sidebarFb.href = FB_LINK;
     }
 
+
     function renderNotifications(){
-      const formatDate = (d) => d
-        ? d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
-        : '-';
+      const msDay = 1000 * 60 * 60 * 24;
 
-      const actionTime = (item, type) => {
-        if (type === 'update') return item.updatedAt || item.createdAt || null;
-        if (type === 'sold') return item.updatedAt || item.createdAt || null;
-        return item.createdAt || item.updatedAt || null;
+      const sortByRecent = (a, b) => {
+        const bt = ((b.updatedAt || b.createdAt)?.getTime?.() || 0);
+        const at = ((a.updatedAt || a.createdAt)?.getTime?.() || 0);
+        return bt - at;
       };
 
-      const sortByTime = (a, b, type) => {
-        const timeA = actionTime(a, type)?.getTime?.() || 0;
-        const timeB = actionTime(b, type)?.getTime?.() || 0;
-        return timeB - timeA;
+      const detectType = (item) => {
+        const action = String(item.lastAction || '').toLowerCase();
+        const status = String(item.status || '').toLowerCase();
+        if (action === 'sold' || status === 'sold') return 'sold';
+        if (action === 'update') return 'update';
+        if (action === 'new') return 'new';
+        if (item.createdAt) {
+          const days = (Date.now() - item.createdAt.getTime()) / msDay;
+          if (days >= 0 && days <= NEW_DAYS) return 'new';
+        }
+        if (item.updatedAt && item.createdAt && item.updatedAt > item.createdAt) return 'update';
+        return null;
       };
 
-      const isLegacyNew = (item) => {
-        if (item.lastAction) return item.lastAction === 'new';
-        if (!item.createdAt) return false;
-        const days = (Date.now() - item.createdAt.getTime()) / (1000 * 60 * 60 * 24);
-        return days >= 0 && days <= NEW_DAYS;
-      };
+      const allNew = RAW_DATA.filter(item => detectType(item) === 'new').sort(sortByRecent);
+      const allUpdated = RAW_DATA.filter(item => detectType(item) === 'update').sort(sortByRecent);
+      const allSold = RAW_DATA.filter(item => detectType(item) === 'sold').sort(sortByRecent);
 
-      const isLegacyUpdate = (item) => {
-        if (item.lastAction) return item.lastAction === 'update';
-        return !!(item.updatedAt && item.createdAt && item.updatedAt > item.createdAt);
-      };
-
-      const isLegacySold = (item) => {
-        if (item.lastAction) return item.lastAction === 'sold';
-        return (item.status || '').toLowerCase() === 'sold';
-      };
-
-      const added = RAW_DATA
-        .filter(item => isLegacyNew(item))
-        .sort((a,b) => sortByTime(a, b, 'new'))
-        .slice(0, 5);
-
-      const updated = RAW_DATA
-        .filter(item => isLegacyUpdate(item))
-        .sort((a,b) => sortByTime(a, b, 'update'))
-        .slice(0, 5);
-
-      const sold = RAW_DATA
-        .filter(item => isLegacySold(item))
-        .sort((a,b) => sortByTime(a, b, 'sold'))
-        .slice(0, 5);
-
-      const newCount = RAW_DATA.filter(item => isLegacyNew(item)).length;
-      const updateCount = RAW_DATA.filter(item => isLegacyUpdate(item)).length;
-      const soldCount = RAW_DATA.filter(item => isLegacySold(item)).length;
-
-      els.notifStats.innerHTML = `
-        <div class="notif-stat">
-          <div class="n-label">Akun Baru</div>
-          <div class="n-value">${newCount}</div>
-          <div class="n-sub">Ditambahkan</div>
-        </div>
-        <div class="notif-stat">
-          <div class="n-label">Akun Diupdate</div>
-          <div class="n-value">${updateCount}</div>
-          <div class="n-sub">Perubahan terbaru</div>
-        </div>
-        <div class="notif-stat">
-          <div class="n-label">Akun Sold</div>
-          <div class="n-value">${soldCount}</div>
-          <div class="n-sub">Sudah terjual</div>
-        </div>
-      `;
-
-      const thumbFor = (item) => (item.previewImages?.[0] || item.images?.[0] || '');
       const timeAgo = (d) => {
         if (!d) return '-';
-        const diff = Date.now() - d.getTime();
-        const hours = Math.max(1, Math.floor(diff / (1000 * 60 * 60)));
-        if (hours < 24) return `${hours} jam lalu`;
-        const days = Math.max(1, Math.floor(hours / 24));
-        return `${days} hari lalu`;
+        const diffMs = Date.now() - d.getTime();
+        const diffMin = Math.floor(diffMs / (1000 * 60));
+        if (diffMin < 60) return `${Math.max(1, diffMin)} menit lalu`;
+        const diffHour = Math.floor(diffMin / 60);
+        if (diffHour < 24) return `${diffHour} jam lalu`;
+        const diffDay = Math.floor(diffHour / 24);
+        return `${diffDay} hari lalu`;
       };
 
+      const thumbFor = (item) => (item.previewImages?.[0] || item.images?.[0] || '');
+
       const renderItem = (item, type) => {
-        const time = actionTime(item, type);
+        const time = item.updatedAt || item.createdAt || null;
         const tagText = type === 'new' ? 'NEW' : type === 'update' ? 'UPDATE' : 'SOLD';
         const subText = type === 'new'
           ? 'Akun baru ditambahkan'
@@ -2181,53 +2247,87 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
             : 'Akun berhasil sold';
 
         return `
-        <div class="notif-item ${type}" data-open="${item.id}" role="button" tabindex="0" aria-label="Buka detail ${item.nama}">
-          <div class="notif-left">
-            <div class="notif-thumb">
-              ${thumbFor(item) ? `<img src="${thumbFor(item)}" alt="${item.nama}">` : ''}
-            </div>
-            <div class="notif-text">
-              <div class="notif-title">
-                <strong>${item.nama}</strong>
-                <span class="notif-time">${timeAgo(time)}</span>
+          <div class="notif-item ${type}" data-open="${item.id}" role="button" tabindex="0" aria-label="Buka detail ${item.nama}">
+            <div class="notif-left">
+              <div class="notif-thumb">
+                ${thumbFor(item) ? `<img src="${thumbFor(item)}" alt="${item.nama}">` : ''}
               </div>
-              <div class="notif-subtext">${subText}</div>
+              <div class="notif-text">
+                <div class="notif-title">
+                  <strong>${item.nama}</strong>
+                  <span class="notif-time">${timeAgo(time)}</span>
+                </div>
+                <div class="notif-subtext">${subText}</div>
+              </div>
+            </div>
+            <div class="notif-right">
+              <span class="notif-tag ${type}">${tagText}</span>
+              <span class="notif-dot ${type}"></span>
             </div>
           </div>
-          <div class="notif-right">
-            <span class="notif-tag ${type}">${tagText}</span>
-            <span class="notif-dot ${type}"></span>
-          </div>
-        </div>
-      `;
+        `;
       };
 
-      els.notifList.innerHTML = `
-        <div class="notif-group">
-          <div class="notif-group-head">
-            <h4>✨ Akun Baru (${added.length})</h4>
-            <a class="notif-group-link" href="#" data-notif-jump="new">Lihat semua</a>
+      const renderGroup = (title, items, emptyText, type) => {
+        const totalPages = Math.max(1, Math.ceil(items.length / NOTIF_PAGE_SIZE));
+        if (!Number.isInteger(notifPages[type])) notifPages[type] = 0;
+        notifPages[type] = Math.min(Math.max(0, notifPages[type]), totalPages - 1);
+
+        const page = notifPages[type];
+        const start = page * NOTIF_PAGE_SIZE;
+        const visible = items.slice(start, start + NOTIF_PAGE_SIZE);
+
+        const showPager = items.length > 0;
+        const prevDisabled = page <= 0;
+        const nextDisabled = page >= totalPages - 1;
+
+        return `
+          <div class="notif-group" data-notif-group="${type}">
+            <div class="notif-group-head">
+              <h4>${title} (${items.length})</h4>
+              ${showPager ? `
+              <div class="notif-group-actions">
+                <button class="notif-pagebtn" type="button" data-notif-nav="prev" data-notif-type="${type}" ${prevDisabled ? 'disabled' : ''}>‹</button>
+                <span class="notif-pageinfo">${page + 1} / ${totalPages}</span>
+                <button class="notif-pagebtn" type="button" data-notif-nav="next" data-notif-type="${type}" ${nextDisabled ? 'disabled' : ''}>›</button>
+              </div>
+              ` : ''}
+            </div>
+            ${visible.length
+              ? `<div class="notif-carousel">${visible.map(item => renderItem(item, type)).join('')}</div>`
+              : `<div class="notif-empty">${emptyText}</div>`}
           </div>
-          ${added.length ? added.map(item => renderItem(item, 'new')).join('') : '<div class="notif-empty">Belum ada data akun baru.</div>'}
+        `;
+      };
+
+      els.notifStats.innerHTML = `
+        <div class="notif-stat">
+          <div class="n-label">Akun Baru</div>
+          <div class="n-value">${allNew.length}</div>
+          <div class="n-sub">Ditambahkan</div>
         </div>
-        <div class="notif-group">
-          <div class="notif-group-head">
-            <h4>📝 Akun Diupdate (${updated.length})</h4>
-            <a class="notif-group-link" href="#" data-notif-jump="update">Lihat semua</a>
-          </div>
-          ${updated.length ? updated.map(item => renderItem(item, 'update')).join('') : '<div class="notif-empty">Belum ada akun yang diupdate.</div>'}
+        <div class="notif-stat">
+          <div class="n-label">Akun Diupdate</div>
+          <div class="n-value">${allUpdated.length}</div>
+          <div class="n-sub">Perubahan terbaru</div>
         </div>
-        <div class="notif-group">
-          <div class="notif-group-head">
-            <h4>🔥 Akun Sold (${sold.length})</h4>
-            <a class="notif-group-link" href="#" data-notif-jump="sold">Lihat semua</a>
-          </div>
-          ${sold.length ? sold.map(item => renderItem(item, 'sold')).join('') : '<div class="notif-empty">Belum ada akun sold.</div>'}
+        <div class="notif-stat">
+          <div class="n-label">Akun Sold</div>
+          <div class="n-value">${allSold.length}</div>
+          <div class="n-sub">Sudah terjual</div>
         </div>
       `;
+
+      els.notifList.innerHTML = [
+        renderGroup('✨ Akun Baru', allNew, 'Belum ada data akun baru.', 'new'),
+        renderGroup('📝 Akun Diupdate', allUpdated, 'Belum ada akun yang diupdate.', 'update'),
+        renderGroup('🔥 Akun Sold', allSold, 'Belum ada akun sold.', 'sold'),
+      ].join('');
     }
 
     function render(){
+
+
 
       const { totalPages, pageItems } = paginate(FILTERED_DATA);
       els.listView.classList.remove('loading-fade');
@@ -2313,21 +2413,7 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
       if (item){
         e.preventDefault();
         openModal(item.dataset.open);
-        return;
       }
-
-      const link = e.target.closest('[data-notif-jump]');
-      if (!link) return;
-      e.preventDefault();
-      const target = link.dataset.notifJump;
-      const group = [...els.notifList.querySelectorAll('.notif-group')].find(el =>
-        target === 'new'
-          ? el.querySelector('h4')?.textContent?.includes('Akun Baru')
-          : target === 'update'
-            ? el.querySelector('h4')?.textContent?.includes('Akun Diupdate')
-            : el.querySelector('h4')?.textContent?.includes('Akun Sold')
-      );
-      group?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     els.notifList.addEventListener('keydown', (e) => {
@@ -2336,6 +2422,26 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
       if (e.key === 'Enter' || e.key === ' '){
         e.preventDefault();
         openModal(item.dataset.open);
+      }
+    });
+
+    els.notifList.addEventListener('click', (e) => {
+      const navBtn = e.target.closest('[data-notif-nav]');
+      if (navBtn){
+        const type = navBtn.dataset.notifType;
+        const dir = navBtn.dataset.notifNav;
+        const items = {
+          new: RAW_DATA.filter(item => (String(item.lastAction || '').toLowerCase() === 'new') || (item.createdAt && ((Date.now() - item.createdAt.getTime()) / (1000 * 60 * 60 * 24) <= NEW_DAYS))),
+          update: RAW_DATA.filter(item => {
+            const action = String(item.lastAction || '').toLowerCase();
+            return action === 'update' || (item.updatedAt && item.createdAt && item.updatedAt > item.createdAt);
+          }),
+          sold: RAW_DATA.filter(item => String(item.lastAction || '').toLowerCase() === 'sold' || String(item.status || '').toLowerCase() === 'sold')
+        }[type] || [];
+        const totalPages = Math.max(1, Math.ceil(items.length / NOTIF_PAGE_SIZE));
+        notifPages[type] = Math.min(Math.max(0, (notifPages[type] || 0) + (dir === 'next' ? 1 : -1)), totalPages - 1);
+        renderNotifications();
+        return;
       }
     });
 
@@ -2403,5 +2509,4 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
     }, 5 * 60 * 1000);
   </script>
 </body>
-</html>/body>
 </html>
