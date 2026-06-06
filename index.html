@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yuraaa Marketplace Premium</title>
+  <title>Yuraaa Store</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -327,10 +327,13 @@
       border:1px solid rgba(148,163,184,.1);
       position:relative;flex:0 0 auto;
       padding:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
     .thumb img{
       width:100%;height:100%;
-      object-fit:contain;
+      object-fit:cover;
       object-position:center center;
       background:
         radial-gradient(circle at 50% 30%, rgba(139,92,246,.15), transparent 42%),
@@ -339,6 +342,15 @@
       box-sizing:border-box;
       filter:saturate(1.02) contrast(1.02);
       border-radius:14px;
+    }
+    .thumb.is-portrait img{
+      object-fit:contain;
+      width:100%;
+      height:100%;
+      padding:8px;
+    }
+    .thumb.is-portrait{
+      background:linear-gradient(180deg, rgba(148,163,184,.08), rgba(15,23,42,.1));
     }
     .thumb-count{
       position:absolute;left:12px;bottom:12px;z-index:2;
@@ -550,6 +562,13 @@
       border-radius:18px;
       background:linear-gradient(180deg, rgba(15,23,42,.84), rgba(10,15,30,.96));
       margin-top:10px;
+      cursor:pointer;
+      transition:transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+    .notif-item:hover{
+      transform:translateY(-1px);
+      border-color:rgba(139,92,246,.22);
+      background:linear-gradient(180deg, rgba(17,24,39,.92), rgba(10,15,30,.98));
     }
     .notif-item:first-child{margin-top:0;border-top:none}
     .notif-left{
@@ -638,6 +657,11 @@
       border-color:rgba(239,68,68,.22);
       color:#fecaca;
     }
+    .notif-tag.update{
+      background:rgba(59,130,246,.14);
+      border-color:rgba(59,130,246,.22);
+      color:#dbeafe;
+    }
     .notif-dot{
       width:8px;
       height:8px;
@@ -649,6 +673,10 @@
     .notif-dot.sold{
       background:#ef4444;
       box-shadow:0 0 0 4px rgba(239,68,68,.12);
+    }
+    .notif-dot.update{
+      background:#3b82f6;
+      box-shadow:0 0 0 4px rgba(59,130,246,.12);
     }
     .notif-empty{
       padding:16px;
@@ -781,7 +809,7 @@
     /* Modal */
     .modal{
       position:fixed;inset:0;background:rgba(2,6,23,.72);backdrop-filter: blur(12px);
-      display:none;align-items:center;justify-content:center;padding:18px;z-index:80
+      display:none;align-items:center;justify-content:center;padding:18px;z-index:130
     }
     .modal.open{display:flex}
     .modal-card{
@@ -816,8 +844,9 @@
     .modal-frame{
       width:100%;
       height:clamp(320px, 54vh, 580px);
-      display:grid;
-      place-items:center;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       background:linear-gradient(180deg, rgba(2,6,23,.92), rgba(8,13,28,.96));
       overflow:hidden;
       padding:12px;
@@ -831,6 +860,16 @@
       display:block;
       background:linear-gradient(180deg, rgba(2,6,23,.35), rgba(2,6,23,.35));
       border-radius:16px;
+    }
+    .modal-frame.is-portrait img{
+      width:auto;
+      height:100%;
+      max-width:100%;
+    }
+    .modal-frame.is-landscape img{
+      width:100%;
+      height:auto;
+      max-height:100%;
     }
     .modal-empty{display:grid;place-items:center}
     .empty-media{color:var(--muted);font-size:13px;letter-spacing:.02em}
@@ -905,7 +944,7 @@
     .purchase-modal{
       position:fixed;
       inset:0;
-      z-index:120;
+      z-index:140;
       background:rgba(2,6,23,.72);
       backdrop-filter:blur(12px);
       display:none;
@@ -1175,7 +1214,6 @@
           <p id="notifSub">Akun baru ditambahkan dan akun yang sudah sold.</p>
         </div>
         <div class="notif-head-actions">
-          <button class="notif-mark" type="button" id="markAllReadBtn">◌ Tandai semua dibaca</button>
           <button class="close-btn" id="closeNotif" aria-label="Tutup notifikasi">✕</button>
         </div>
       </div>
@@ -1416,6 +1454,25 @@
       return [...new Set(urls.map(addWatermark).filter(Boolean))];
     };
 
+    function fitMediaImage(img){
+      if (!img) return;
+      const apply = () => {
+        const isPortrait = (img.naturalHeight || 0) > (img.naturalWidth || 0);
+        const frame = img.closest('.thumb, .modal-frame');
+        if (frame){
+          frame.classList.toggle('is-portrait', isPortrait);
+          frame.classList.toggle('is-landscape', !isPortrait);
+        }
+      };
+      if (img.complete && img.naturalWidth){
+        apply();
+      } else {
+        img.addEventListener('load', apply, { once: true });
+      }
+    }
+
+    window.__fitImage = fitMediaImage;
+
     function getUniqueGames(primaryRows = [], extraRows = []) {
       const map = new Map();
 
@@ -1498,7 +1555,9 @@ function mapItem(raw, idx){
       const label = normalizeText(raw.Label ?? raw.label ?? '');
       const status = normalizeText(raw.Status ?? raw.status ?? 'ready').toLowerCase();
       const ket = normalizeText(raw.Ket ?? raw.ket ?? raw.Detail ?? raw.detail ?? '');
-      const createdAt = parseDate(raw.Tanggal ?? raw.tanggal ?? raw.Date ?? raw.date ?? raw.CreatedAt ?? raw.createdAt ?? raw.Timestamp ?? raw.timestamp ?? raw.Waktu ?? raw.waktu);
+      const createdAt = parseDate(raw.CreatedAt ?? raw.createdAt ?? raw.Tanggal ?? raw.tanggal ?? raw.Date ?? raw.date ?? raw.Timestamp ?? raw.timestamp ?? raw.Waktu ?? raw.waktu);
+      const updatedAt = parseDate(raw.UpdatedAt ?? raw.updatedAt ?? raw.ModifiedAt ?? raw.modifiedAt ?? raw.UpdateAt ?? raw.updateAt ?? raw.LastUpdate ?? raw.lastUpdate);
+      const lastAction = normalizeText(raw.LastAction ?? raw.lastAction ?? raw.Action ?? raw.action ?? '').toLowerCase();
 
       const harga = Number(String(hargaRaw).replace(/[^\d]/g, '')) || 0;
       const diskon = parseDiscountValue(diskonRaw);
@@ -1517,9 +1576,12 @@ function mapItem(raw, idx){
         status,
         ket,
         createdAt,
+        updatedAt,
+        lastAction,
         raw,
       };
     }
+
     function getPromoMeta(item){
       const discount = Math.max(0, Math.min(100, Number(item?.diskon) || 0));
       const originalPrice = Math.max(0, Number(item?.harga || 0));
@@ -1732,7 +1794,7 @@ function mapItem(raw, idx){
         <article class="card" data-id="${item.id}" role="button" tabindex="0" onclick="window.__openCard && window.__openCard('${item.id}')">
           ${previewImg ? `
           <div class="thumb">
-            <img src="${previewImg}" alt="${item.nama}" loading="lazy" decoding="async">
+            <img src="${previewImg}" alt="${item.nama}" loading="lazy" decoding="async" onload="window.__fitImage && window.__fitImage(this)">
           </div>` : `<div class="thumb" aria-hidden="true"></div>`}
 
           <div class="card-main">
@@ -1887,18 +1949,23 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
       els.purchaseModal.classList.add('hidden');
       els.purchaseModal.classList.remove('open');
       els.purchaseModal.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
+      syncBodyScroll();
+    }
+
+    function syncBodyScroll(){
+      const anyOpen = !els.notifModal.classList.contains('hidden') || els.modal.classList.contains('open') || els.purchaseModal.classList.contains('open');
+      document.body.style.overflow = anyOpen ? 'hidden' : '';
     }
 
     function closeModal(){
       els.modal.classList.remove('open');
       els.modal.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
       if (modalSwiper) {
         modalSwiper.destroy(true, true);
         modalSwiper = null;
       }
       activeModalItem = null;
+      syncBodyScroll();
     }
 
     function openModal(id){
@@ -1931,7 +1998,7 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
       els.modalSlides.innerHTML = images.length ? images.map((src, idx) => `
         <div class="swiper-slide">
           <div class="modal-frame">
-            <img src="${src}" alt="gambar-${idx + 1}" loading="eager" decoding="async">
+            <img src="${src}" alt="gambar-${idx + 1}" loading="eager" decoding="async" onload="window.__fitImage && window.__fitImage(this)">
           </div>
         </div>
       `).join('') : `
@@ -1944,14 +2011,14 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
 
       els.thumbStrip.innerHTML = images.length ? images.map((src, idx) => `
         <button class="thumb-chip ${idx === 0 ? 'active' : ''}" data-thumb="${idx}">
-          <img src="${src}" alt="thumb-${idx + 1}" loading="lazy" decoding="async">
+          <img src="${src}" alt="thumb-${idx + 1}" loading="lazy" decoding="async" onload="window.__fitImage && window.__fitImage(this)">
         </button>
       `).join('') : '';
 
       setModalContactState(item);
 
       els.modal.classList.add('open');
-      document.body.style.overflow = 'hidden';
+      syncBodyScroll();
 
       requestAnimationFrame(() => {
         if (modalSwiper) modalSwiper.destroy(true, true);
@@ -2028,36 +2095,69 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
         ? d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
         : '-';
 
+      const actionTime = (item, type) => {
+        if (type === 'update') return item.updatedAt || item.createdAt || null;
+        if (type === 'sold') return item.updatedAt || item.createdAt || null;
+        return item.createdAt || item.updatedAt || null;
+      };
+
+      const sortByTime = (a, b, type) => {
+        const timeA = actionTime(a, type)?.getTime?.() || 0;
+        const timeB = actionTime(b, type)?.getTime?.() || 0;
+        return timeB - timeA;
+      };
+
+      const isLegacyNew = (item) => {
+        if (item.lastAction) return item.lastAction === 'new';
+        if (!item.createdAt) return false;
+        const days = (Date.now() - item.createdAt.getTime()) / (1000 * 60 * 60 * 24);
+        return days >= 0 && days <= NEW_DAYS;
+      };
+
+      const isLegacyUpdate = (item) => {
+        if (item.lastAction) return item.lastAction === 'update';
+        return !!(item.updatedAt && item.createdAt && item.updatedAt > item.createdAt);
+      };
+
+      const isLegacySold = (item) => {
+        if (item.lastAction) return item.lastAction === 'sold';
+        return (item.status || '').toLowerCase() === 'sold';
+      };
+
       const added = RAW_DATA
-        .filter(item => item.createdAt)
-        .sort((a,b) => b.createdAt - a.createdAt)
+        .filter(item => isLegacyNew(item))
+        .sort((a,b) => sortByTime(a, b, 'new'))
         .slice(0, 5);
 
-      const soldAll = RAW_DATA.filter(item => (item.status || '').toLowerCase() === 'sold');
-      const sold = soldAll
-        .sort((a,b) => (b.createdAt?.getTime?.() || 0) - (a.createdAt?.getTime?.() || 0))
+      const updated = RAW_DATA
+        .filter(item => isLegacyUpdate(item))
+        .sort((a,b) => sortByTime(a, b, 'update'))
         .slice(0, 5);
 
-      const ready = RAW_DATA.filter(item => (item.status || '').toLowerCase() === 'ready').length;
-      const proses = RAW_DATA.filter(item => (item.status || '').toLowerCase() === 'proses').length;
-      const soldCount = soldAll.length;
-      const newCount = added.length;
+      const sold = RAW_DATA
+        .filter(item => isLegacySold(item))
+        .sort((a,b) => sortByTime(a, b, 'sold'))
+        .slice(0, 5);
+
+      const newCount = RAW_DATA.filter(item => isLegacyNew(item)).length;
+      const updateCount = RAW_DATA.filter(item => isLegacyUpdate(item)).length;
+      const soldCount = RAW_DATA.filter(item => isLegacySold(item)).length;
 
       els.notifStats.innerHTML = `
         <div class="notif-stat">
-          <div class="n-label">Baru Ditambahkan</div>
+          <div class="n-label">Akun Baru</div>
           <div class="n-value">${newCount}</div>
-          <div class="n-sub">Hari ini</div>
+          <div class="n-sub">Ditambahkan</div>
         </div>
         <div class="notif-stat">
-          <div class="n-label">Baru Sold</div>
+          <div class="n-label">Akun Diupdate</div>
+          <div class="n-value">${updateCount}</div>
+          <div class="n-sub">Perubahan terbaru</div>
+        </div>
+        <div class="notif-stat">
+          <div class="n-label">Akun Sold</div>
           <div class="n-value">${soldCount}</div>
-          <div class="n-sub">Akun terjual</div>
-        </div>
-        <div class="notif-stat">
-          <div class="n-label">Status Aktif</div>
-          <div class="n-value">${ready + proses}</div>
-          <div class="n-sub">${ready} ready • ${proses} proses</div>
+          <div class="n-sub">Sudah terjual</div>
         </div>
       `;
 
@@ -2065,16 +2165,23 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
       const timeAgo = (d) => {
         if (!d) return '-';
         const diff = Date.now() - d.getTime();
-        const mins = Math.max(1, Math.round(diff / 60000));
-        if (mins < 60) return `${mins} menit lalu`;
-        const hours = Math.round(mins / 60);
+        const hours = Math.max(1, Math.floor(diff / (1000 * 60 * 60)));
         if (hours < 24) return `${hours} jam lalu`;
-        const days = Math.round(hours / 24);
+        const days = Math.max(1, Math.floor(hours / 24));
         return `${days} hari lalu`;
       };
 
-      const renderItem = (item, type) => `
-        <div class="notif-item ${type}">
+      const renderItem = (item, type) => {
+        const time = actionTime(item, type);
+        const tagText = type === 'new' ? 'NEW' : type === 'update' ? 'UPDATE' : 'SOLD';
+        const subText = type === 'new'
+          ? 'Akun baru ditambahkan'
+          : type === 'update'
+            ? 'Akun lama diperbarui'
+            : 'Akun berhasil sold';
+
+        return `
+        <div class="notif-item ${type}" data-open="${item.id}" role="button" tabindex="0" aria-label="Buka detail ${item.nama}">
           <div class="notif-left">
             <div class="notif-thumb">
               ${thumbFor(item) ? `<img src="${thumbFor(item)}" alt="${item.nama}">` : ''}
@@ -2082,17 +2189,18 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
             <div class="notif-text">
               <div class="notif-title">
                 <strong>${item.nama}</strong>
-                <span class="notif-time">${timeAgo(item.createdAt)}</span>
+                <span class="notif-time">${timeAgo(time)}</span>
               </div>
-              <div class="notif-subtext">${type === 'new' ? 'Akun baru ditambahkan' : 'Berhasil terjual'}</div>
+              <div class="notif-subtext">${subText}</div>
             </div>
           </div>
           <div class="notif-right">
-            <span class="notif-tag ${type}">${type === 'new' ? 'NEW' : 'SOLD'}</span>
-            <span class="notif-dot ${type === 'sold' ? 'sold' : ''}"></span>
+            <span class="notif-tag ${type}">${tagText}</span>
+            <span class="notif-dot ${type}"></span>
           </div>
         </div>
       `;
+      };
 
       els.notifList.innerHTML = `
         <div class="notif-group">
@@ -2104,7 +2212,14 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
         </div>
         <div class="notif-group">
           <div class="notif-group-head">
-            <h4>🔥 Baru Sold (${sold.length})</h4>
+            <h4>📝 Akun Diupdate (${updated.length})</h4>
+            <a class="notif-group-link" href="#" data-notif-jump="update">Lihat semua</a>
+          </div>
+          ${updated.length ? updated.map(item => renderItem(item, 'update')).join('') : '<div class="notif-empty">Belum ada akun yang diupdate.</div>'}
+        </div>
+        <div class="notif-group">
+          <div class="notif-group-head">
+            <h4>🔥 Akun Sold (${sold.length})</h4>
             <a class="notif-group-link" href="#" data-notif-jump="sold">Lihat semua</a>
           </div>
           ${sold.length ? sold.map(item => renderItem(item, 'sold')).join('') : '<div class="notif-empty">Belum ada akun sold.</div>'}
@@ -2185,21 +2300,22 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
     els.notifyBtn.addEventListener('click', () => {
       renderNotifications();
       els.notifModal.classList.remove('hidden');
+      syncBodyScroll();
     });
 
     els.closeNotif.addEventListener('click', () => {
       els.notifModal.classList.add('hidden');
+      syncBodyScroll();
     });
 
-    const markAllReadBtn = document.getElementById('markAllReadBtn');
-    if (markAllReadBtn){
-      markAllReadBtn.addEventListener('click', () => {
-        els.notifyBtn.classList.remove('icon-badge');
-        showToast('Semua notifikasi ditandai dibaca.');
-      });
-    }
-
     els.notifList.addEventListener('click', (e) => {
+      const item = e.target.closest('[data-open]');
+      if (item){
+        e.preventDefault();
+        openModal(item.dataset.open);
+        return;
+      }
+
       const link = e.target.closest('[data-notif-jump]');
       if (!link) return;
       e.preventDefault();
@@ -2207,13 +2323,27 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
       const group = [...els.notifList.querySelectorAll('.notif-group')].find(el =>
         target === 'new'
           ? el.querySelector('h4')?.textContent?.includes('Akun Baru')
-          : el.querySelector('h4')?.textContent?.includes('Baru Sold')
+          : target === 'update'
+            ? el.querySelector('h4')?.textContent?.includes('Akun Diupdate')
+            : el.querySelector('h4')?.textContent?.includes('Akun Sold')
       );
       group?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
+    els.notifList.addEventListener('keydown', (e) => {
+      const item = e.target.closest('[data-open]');
+      if (!item) return;
+      if (e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        openModal(item.dataset.open);
+      }
+    });
+
     els.notifModal.addEventListener('click', (e) => {
-      if (e.target === els.notifModal) els.notifModal.classList.add('hidden');
+      if (e.target === els.notifModal){
+        els.notifModal.classList.add('hidden');
+        syncBodyScroll();
+      }
     });
 
     els.pagination.addEventListener('click', (e) => {
@@ -2261,6 +2391,7 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
         closeModal();
         closeAllDropdowns();
         els.notifModal.classList.add('hidden');
+        syncBodyScroll();
       }
     });
 
@@ -2272,4 +2403,5 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
     }, 5 * 60 * 1000);
   </script>
 </body>
+</html>/body>
 </html>
