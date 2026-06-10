@@ -2098,7 +2098,7 @@
     <section class="content">
       <header class="topbar">
         <div class="topbar-left">
-          <button class="hamburger" id="toggleSidebar" title="Admin">☰</button>
+          <button class="hamburger" id="toggleSidebar" type="button" onclick="window.location.href='./admin.html'" title="Admin">☰</button>
           <div class="page-title">
             <h1><span>Yuraaa</span> Store</h1>
             <p id="subtitle">Ringkasan akun, filter status, dan notifikasi</p>
@@ -3530,9 +3530,12 @@ function gameEmojiFor(name){
     }
 
     // events
-    els.toggleSidebar.addEventListener('click', () => {
-      window.location.href = 'admin.html';
-    });
+    if (els.toggleSidebar) {
+      els.toggleSidebar.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.href = './admin.html';
+      });
+    }
 
     els.notifyBtn.addEventListener('click', () => {
       renderNotifications();
