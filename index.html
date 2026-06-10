@@ -85,13 +85,16 @@
       pointer-events:none;
     }
     .avatar-wrap{
-      width:96px;height:96px;border-radius:999px;padding:3px;
+      width:108px;height:108px;border-radius:26px;padding:5px;
       background:linear-gradient(145deg, rgba(139,92,246,.9), rgba(59,130,246,.45));
       box-shadow:0 12px 30px rgba(139,92,246,.22);
       position:relative;
+      overflow:hidden;
     }
     .avatar{
-      width:100%;height:100%;border-radius:999px;object-fit:cover;display:block;
+      width:100%;height:100%;border-radius:20px;object-fit:contain;object-position:center center;display:block;
+      background:rgba(11,17,34,.55);
+      padding:6px;
       border:3px solid rgba(255,255,255,.07);
     }
     .verified{
@@ -1840,6 +1843,23 @@
       font-size:12px;
       font-weight:900;
     }
+
+    .sidebar .side-btn{
+      justify-content:space-between;
+    }
+    .sidebar .side-btn .label{
+      flex:1;
+      text-align:left;
+      font-weight:800;
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .sidebar .side-count{
+      flex:0 0 auto;
+      margin-left:auto;
+    }
     .trust-box{
       margin-top:2px;
       border-radius:20px;
@@ -1985,6 +2005,26 @@
       }
     }
 
+
+    /* Hide visible scrollbars while keeping scroll behavior */
+    html, body, .sidebar, .main, .notif-panel, .modal-info, .dd-menu, .thumb-strip, .hot-track {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar,
+    .sidebar::-webkit-scrollbar,
+    .main::-webkit-scrollbar,
+    .notif-panel::-webkit-scrollbar,
+    .modal-info::-webkit-scrollbar,
+    .dd-menu::-webkit-scrollbar,
+    .thumb-strip::-webkit-scrollbar,
+    .hot-track::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
+
   </style>
 </head>
 <body>
@@ -2014,14 +2054,7 @@
 
       <div class="side-section">
         <div class="side-title">GAME</div>
-        <div class="side-nav">
-          <button class="side-btn" type="button" data-sidebar-game=""><span class="side-icon">🎮</span><span class="label">Semua Game</span><span class="side-count" id="sideCountAll">0</span></button>
-          <button class="side-btn" type="button" data-sidebar-game="honkai star rail"><span class="side-icon">⚡</span><span class="label">Honkai Star Rail</span><span class="side-count" id="sideCountHSR">0</span></button>
-          <button class="side-btn" type="button" data-sidebar-game="wuthering waves"><span class="side-icon">🌊</span><span class="label">Wuthering Waves</span><span class="side-count" id="sideCountWW">0</span></button>
-          <button class="side-btn" type="button" data-sidebar-game="genshin impact"><span class="side-icon">✨</span><span class="label">Genshin Impact</span><span class="side-count" id="sideCountGI">0</span></button>
-          <button class="side-btn" type="button" data-sidebar-game="zenless zone zero"><span class="side-icon">🌀</span><span class="label">Zenless Zone Zero</span><span class="side-count" id="sideCountZZZ">0</span></button>
-          <button class="side-btn" type="button" data-sidebar-game="arknights"><span class="side-icon">🛡</span><span class="label">Arknights</span><span class="side-count" id="sideCountAK">0</span></button>
-        </div>
+        <div class="side-nav" id="sidebarGameNav"></div>
       </div>
 
       <div class="side-section">
@@ -2350,6 +2383,7 @@
 
     const els = {
       sidebar: document.querySelector('.sidebar'),
+      sidebarGameNav: document.getElementById('sidebarGameNav'),
       toggleSidebar: document.getElementById('toggleSidebar'),
       notifyBtn: document.getElementById('notifyBtn'),
       listView: document.getElementById('listView'),
@@ -2721,6 +2755,7 @@ function mapItem(raw, idx){
           if (type === 'game') {
             selectedGame = value;
             setDropdownButton('game', value ? value : 'Semua Game');
+            syncSidebarGameActive();
           }
           if (type === 'status') {
             selectedStatus = value;
@@ -3077,6 +3112,67 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
 
     window.__openCard = openModal;
 
+    
+function gameEmojiFor(name){
+      const key = normalizeText(name).toLowerCase();
+      if (key.includes('honkai star rail') || key.includes('star rail')) return '⚡';
+      if (key.includes('wuthering waves')) return '🌊';
+      if (key.includes('genshin impact') || key.includes('genshin')) return '✨';
+      if (key.includes('zenless zone zero') || key.includes('zzz')) return '🌀';
+      if (key.includes('arknights')) return '🛡';
+      if (key.includes('solo leveling')) return '🔥';
+      if (key.includes('mobile legends') || key.includes('mobile legend') || key.includes('ml')) return '⚔️';
+      if (key.includes('pubg')) return '🎯';
+      if (key.includes('free fire') || key.includes('ff')) return '🔥';
+      if (key.includes('counter')) return '🎮';
+      return '🎮';
+    }
+
+    function sidebarGameItems(games){
+      const freq = new Map();
+      RAW_DATA.forEach(item => {
+        const key = normalizeText(item.game).toLowerCase();
+        if (!key) return;
+        freq.set(key, (freq.get(key) || 0) + 1);
+      });
+
+      const items = [
+        { value: '', title: 'Semua Game', count: RAW_DATA.length, icon: '🎮' },
+        ...games.map(g => ({
+          value: g,
+          title: g,
+          count: freq.get(String(g).toLowerCase()) || 0,
+          icon: gameEmojiFor(g)
+        }))
+      ];
+
+      return items.sort((a, b) => {
+        if (a.value === '') return -1;
+        if (b.value === '') return 1;
+        if (b.count !== a.count) return b.count - a.count;
+        return a.title.localeCompare(b.title, 'id');
+      });
+    }
+
+    function renderSidebarGames(games){
+      if (!els.sidebarGameNav) return;
+      const items = sidebarGameItems(games);
+      els.sidebarGameNav.innerHTML = items.map(item => `
+        <button class="side-btn ${String(item.value) === String(selectedGame) ? 'active' : ''}" type="button" data-sidebar-game="${String(item.value).replace(/"/g, '&quot;')}">
+          <span class="side-icon">${item.icon}</span>
+          <span class="label">${item.title}</span>
+          <span class="side-count">${item.count}</span>
+        </button>
+      `).join('');
+    }
+
+    function syncSidebarGameActive(){
+      if (!els.sidebarGameNav) return;
+      els.sidebarGameNav.querySelectorAll('[data-sidebar-game]').forEach(btn => {
+        btn.classList.toggle('active', (btn.dataset.sidebarGame || '') === selectedGame);
+      });
+    }
+
     function loadGames(){
       const games = getUniqueGames(
         RAW_DATA,
@@ -3093,6 +3189,8 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
       });
       const maxFreq = Math.max(0, ...freq.values());
       topGames = new Set([...freq.entries()].filter(([,count]) => count === maxFreq && maxFreq > 0).map(([game]) => game));
+
+      renderSidebarGames(games);
 
       buildDropdownMenu('game', [
         { value: '', title: 'Semua Game', sub: 'Tampilkan semua akun' },
@@ -3113,6 +3211,7 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
     }
 
     function setContactLinks(){
+
       const wa = `https://wa.me/${WA_NUMBER}`;
       els.sidebarWa.href = wa;
       els.sidebarFb.href = FB_LINK;
@@ -3460,15 +3559,18 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
     }
 
 
-    document.querySelectorAll('[data-sidebar-game]').forEach(btn => {
-      btn.addEventListener('click', () => {
+    if (els.sidebarGameNav) {
+      els.sidebarGameNav.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-sidebar-game]');
+        if (!btn) return;
         selectedGame = btn.dataset.sidebarGame || '';
         currentPage = 1;
         setDropdownButton('game', selectedGame || 'Semua Game');
         setDropdownActive('game', selectedGame);
+        syncSidebarGameActive();
         applyFilters();
       });
-    });
+    }
 
     document.querySelectorAll('[data-sidebar-status]').forEach(btn => {
       btn.addEventListener('click', () => {
