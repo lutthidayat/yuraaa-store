@@ -1235,6 +1235,756 @@
       }
     }
 
+  
+    /* ===== Premium Marketplace overrides ===== */
+    .app{
+      grid-template-columns: 292px minmax(0, 1fr);
+    }
+    .sidebar{
+      position:sticky;
+      top:0;
+      height:100dvh;
+      overflow:auto;
+      scrollbar-width:thin;
+    }
+    .sidebar::-webkit-scrollbar{width:10px}
+    .sidebar::-webkit-scrollbar-thumb{
+      background:rgba(148,163,184,.22);
+      border-radius:999px;
+      border:2px solid transparent;
+      background-clip:padding-box;
+    }
+    .topbar{
+      padding:0 20px 0 24px;
+      gap:16px;
+    }
+    .top-actions{
+      gap:12px;
+    }
+    .trust-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      height:42px;
+      padding:0 14px;
+      border-radius:14px;
+      border:1px solid rgba(34,197,94,.22);
+      background:linear-gradient(180deg, rgba(15,23,42,.9), rgba(10,15,31,.96));
+      color:#dcfce7;
+      font-size:12px;
+      font-weight:800;
+      white-space:nowrap;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.02);
+    }
+    .login-btn{
+      height:42px;
+      padding:0 16px;
+      border-radius:14px;
+      border:1px solid rgba(139,92,246,.28);
+      background:linear-gradient(180deg, rgba(139,92,246,.92), rgba(109,40,217,.96));
+      color:#fff;
+      font-size:12px;
+      font-weight:900;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 12px 24px rgba(139,92,246,.18);
+    }
+
+    .content{
+      min-width:0;
+      padding-bottom:28px;
+    }
+
+    .main{
+      padding:18px 22px 28px;
+    }
+
+    .searchbar{
+      height:60px;
+      border-radius:20px;
+      margin-bottom:18px;
+      border:1px solid rgba(148,163,184,.16);
+      background:linear-gradient(180deg, rgba(15,23,42,.9), rgba(10,15,31,.96));
+      box-shadow:0 14px 32px rgba(2,6,23,.26), inset 0 1px 0 rgba(255,255,255,.02);
+    }
+
+    .toolbar{
+      display:grid !important;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin:0 0 18px;
+    }
+    .dd-btn{
+      height:58px;
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(15,23,42,.9), rgba(10,15,31,.96));
+      border:1px solid rgba(148,163,184,.16);
+      box-shadow:0 14px 32px rgba(2,6,23,.18), inset 0 1px 0 rgba(255,255,255,.02);
+    }
+
+    .hero{
+      margin-bottom:18px;
+      border-radius:30px;
+      border:1px solid rgba(148,163,184,.12);
+      background:
+        radial-gradient(600px 260px at 20% 20%, rgba(139,92,246,.2), transparent 60%),
+        linear-gradient(180deg, rgba(11,17,34,.98), rgba(6,10,22,.98));
+      overflow:hidden;
+      box-shadow:0 24px 70px rgba(2,6,23,.42);
+    }
+    .hero-layout{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:0;
+      min-height:320px;
+    }
+    .hero-copy{
+      padding:28px 28px 24px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:16px;
+    }
+    .hero-kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      width:max-content;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(167,139,250,.22);
+      background:rgba(124,58,237,.12);
+      color:#ddd6fe;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.03em;
+    }
+    .hero-copy h2{
+      margin:0;
+      font-size:44px;
+      line-height:1;
+      letter-spacing:-.03em;
+      font-weight:900;
+    }
+    .hero-copy h2 span{
+      color:#c084fc;
+    }
+    .hero-copy p{
+      margin:0;
+      max-width:560px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.7;
+    }
+    .hero-metrics{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+      max-width:520px;
+    }
+    .hero-metric{
+      border-radius:18px;
+      border:1px solid rgba(148,163,184,.12);
+      background:rgba(15,23,42,.56);
+      padding:12px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .hero-metric strong{
+      font-size:22px;
+      line-height:1;
+      color:#fff;
+      font-weight:900;
+    }
+    .hero-metric span{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
+    .hero-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .hero-btn{
+      min-width:140px;
+      height:46px;
+      border-radius:14px;
+      border:1px solid rgba(148,163,184,.16);
+      color:#fff;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 16px;
+      text-decoration:none;
+      font-weight:900;
+      box-shadow:0 12px 28px rgba(0,0,0,.26);
+    }
+    .hero-btn.wa{
+      background:linear-gradient(180deg, #7c3aed, #5b21b6);
+      border-color:rgba(167,139,250,.28);
+    }
+    .hero-btn.fb{
+      background:rgba(15,23,42,.6);
+      border-color:rgba(148,163,184,.18);
+    }
+    .hero-art{
+      position:relative;
+      min-height:320px;
+      background:
+        linear-gradient(90deg, rgba(11,17,34,.08), rgba(11,17,34,.64)),
+        radial-gradient(400px 240px at 50% 36%, rgba(139,92,246,.16), transparent 60%);
+      background-size:cover;
+      background-position:center;
+      overflow:hidden;
+    }
+    .hero-art::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg, rgba(2,6,23,.08), rgba(2,6,23,.38));
+    }
+    .hero-art-overlay{
+      position:absolute;
+      left:20px;
+      right:20px;
+      bottom:20px;
+      border-radius:24px;
+      padding:16px;
+      background:linear-gradient(180deg, rgba(2,6,23,.28), rgba(2,6,23,.7));
+      border:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(10px);
+      box-shadow:0 18px 40px rgba(0,0,0,.24);
+    }
+    .hero-chip{
+      display:inline-flex;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(239,68,68,.16);
+      border:1px solid rgba(239,68,68,.24);
+      color:#fecaca;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.04em;
+    }
+    .hero-art-overlay h3{
+      margin:10px 0 4px;
+      font-size:22px;
+      line-height:1.1;
+      font-weight:900;
+    }
+    .hero-art-overlay p{
+      margin:0;
+      color:#cbd5e1;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:12px;
+      margin-bottom:18px;
+    }
+    .stat-card{
+      border-radius:20px;
+      border:1px solid rgba(148,163,184,.12);
+      background:linear-gradient(180deg, rgba(11,17,34,.96), rgba(8,13,28,.96));
+      box-shadow:0 12px 30px rgba(2,6,23,.22);
+      padding:16px 16px 15px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .stat-ico{
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      background:rgba(139,92,246,.14);
+      color:#ddd6fe;
+      font-size:18px;
+    }
+    .stat-info{min-width:0}
+    .stat-value{
+      font-size:24px;
+      font-weight:900;
+      color:#fff;
+      line-height:1;
+      margin-bottom:4px;
+    }
+    .stat-label{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .section-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:14px;
+      margin:4px 0 14px;
+    }
+    .section-head h3{
+      margin:0;
+      font-size:18px;
+      line-height:1.15;
+      font-weight:900;
+      letter-spacing:-.02em;
+    }
+    .section-head p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .section-link{
+      border:none;
+      background:rgba(15,23,42,.72);
+      color:#dbeafe;
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:800;
+      font-size:12px;
+      cursor:pointer;
+      border:1px solid rgba(148,163,184,.14);
+    }
+
+    .hot-track{
+      display:grid;
+      grid-auto-flow:column;
+      grid-auto-columns:minmax(230px, 1fr);
+      gap:14px;
+      overflow-x:auto;
+      padding-bottom:6px;
+      scrollbar-width:none;
+      margin-bottom:18px;
+    }
+    .hot-track::-webkit-scrollbar{display:none}
+    .hot-card{
+      border-radius:22px;
+      border:1px solid rgba(148,163,184,.12);
+      background:linear-gradient(180deg, rgba(11,17,34,.98), rgba(8,13,28,.98));
+      overflow:hidden;
+      box-shadow:0 18px 40px rgba(2,6,23,.24);
+      min-height:280px;
+    }
+    .hot-thumb{
+      position:relative;
+      height:150px;
+      background:#0b1122;
+      overflow:hidden;
+    }
+    .hot-thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .hot-badge{
+      position:absolute;
+      top:10px;
+      left:10px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(239,68,68,.88);
+      color:#fff;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.04em;
+      box-shadow:0 8px 18px rgba(239,68,68,.16);
+    }
+    .hot-body{
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .hot-title{
+      font-size:15px;
+      font-weight:900;
+      line-height:1.3;
+    }
+    .hot-sub{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
+    .hot-price{
+      font-size:18px;
+      font-weight:900;
+      color:#34d399;
+      margin-top:2px;
+    }
+    .hot-foot{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:4px;
+    }
+    .hot-status{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:rgba(34,197,94,.14);
+      border:1px solid rgba(34,197,94,.24);
+      color:#86efac;
+      font-size:11px;
+      font-weight:900;
+    }
+    .hot-btn{
+      border:none;
+      background:rgba(139,92,246,.16);
+      color:#ddd6fe;
+      border:1px solid rgba(167,139,250,.2);
+      height:34px;
+      padding:0 12px;
+      border-radius:12px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .list{
+      display:grid !important;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:14px;
+      margin-bottom:20px;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(11,17,34,.98), rgba(8,13,28,.98));
+      border:1px solid rgba(148,163,184,.12);
+      border-radius:22px;
+      overflow:hidden;
+      padding:0;
+      min-height:0;
+      box-shadow:0 18px 40px rgba(2,6,23,.24);
+      transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+      display:flex;
+      flex-direction:column;
+    }
+    .card:hover{
+      transform:translateY(-3px);
+      border-color:rgba(139,92,246,.3);
+      box-shadow:0 22px 50px rgba(2,6,23,.34);
+    }
+    .card .thumb{
+      width:100%;
+      height:168px;
+      border-radius:0;
+      padding:0;
+      border:none;
+      position:relative;
+      background:#0b1122;
+    }
+    .card .thumb img{
+      border-radius:0;
+      object-fit:cover;
+    }
+    .card-main{
+      padding:14px;
+      gap:8px;
+      flex:1;
+    }
+    .card-top{
+      margin-bottom:2px;
+    }
+    .card .title{
+      font-size:15px;
+      line-height:1.25;
+      -webkit-line-clamp:2;
+      min-height:40px;
+    }
+    .card .game-badge{
+      padding:6px 10px;
+      font-size:11px;
+      margin-bottom:8px;
+    }
+    .item-id{
+      font-size:11px;
+      margin-top:4px;
+    }
+    .price-row{
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .price{
+      font-size:17px;
+    }
+    .old-price{
+      font-size:12px;
+    }
+    .disc-pill{
+      padding:4px 8px;
+      font-size:11px;
+    }
+    .meta-row{
+      gap:6px;
+    }
+    .meta-row .pill{
+      padding:6px 9px;
+      font-size:11px;
+    }
+    .desc{
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+      min-height:40px;
+      line-height:1.45;
+      font-size:12px;
+      color:#cbd5e1;
+    }
+    .badge-row{
+      margin-top:auto;
+    }
+    .status-pill{
+      padding:7px 10px;
+      font-size:11px;
+    }
+    .contact-chip{
+      padding:7px 10px;
+      font-size:11px;
+    }
+    .card-side{
+      display:none !important;
+    }
+    .card .mini-actions{
+      display:flex;
+      width:100%;
+      justify-content:stretch;
+      margin-top:6px;
+    }
+    .card .mini-btn{
+      flex:1;
+      min-height:38px;
+      border-radius:12px;
+      font-size:12px;
+    }
+
+    .feature-banner{
+      display:none !important;
+    }
+
+    .footer-features{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:12px;
+      margin-top:20px;
+    }
+    .footer-feature{
+      border-radius:20px;
+      border:1px solid rgba(148,163,184,.12);
+      background:linear-gradient(180deg, rgba(11,17,34,.98), rgba(8,13,28,.98));
+      padding:14px;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      box-shadow:0 14px 30px rgba(2,6,23,.2);
+    }
+    .footer-feature .ico{
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      background:rgba(139,92,246,.14);
+      color:#ddd6fe;
+      font-size:18px;
+      flex:0 0 auto;
+    }
+    .footer-feature strong{
+      display:block;
+      margin-bottom:4px;
+      font-size:13px;
+      font-weight:900;
+    }
+    .footer-feature span{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .sidebar .side-section{
+      padding-top:0;
+    }
+    .sidebar .side-nav{
+      gap:10px;
+    }
+    .sidebar .side-btn{
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(15,23,42,.46);
+      border:1px solid rgba(148,163,184,.08);
+    }
+    .sidebar .side-btn .label{
+      flex:1;
+      text-align:left;
+      font-weight:800;
+    }
+    .side-count{
+      color:#a78bfa;
+      font-size:12px;
+      font-weight:900;
+    }
+    .trust-box{
+      margin-top:2px;
+      border-radius:20px;
+      border:1px solid rgba(148,163,184,.12);
+      background:linear-gradient(180deg, rgba(11,17,34,.98), rgba(8,13,28,.98));
+      padding:14px;
+    }
+    .trust-box .title{
+      font-size:13px;
+      font-weight:900;
+      margin-bottom:10px;
+      min-height:0;
+    }
+    .trust-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .trust-item{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:#dbeafe;
+      font-size:12px;
+      font-weight:700;
+    }
+    .request-box{
+      margin-top:0;
+      border-radius:20px;
+      border:1px solid rgba(148,163,184,.12);
+      background:
+        radial-gradient(180px 80px at 80% 25%, rgba(139,92,246,.18), transparent 62%),
+        linear-gradient(180deg, rgba(11,17,34,.98), rgba(8,13,28,.98));
+      padding:16px;
+    }
+    .request-box h4{
+      margin:0 0 6px;
+      font-size:14px;
+      font-weight:900;
+    }
+    .request-box p{
+      margin:0 0 12px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+    }
+    .request-btn{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:44px;
+      border-radius:14px;
+      text-decoration:none;
+      color:#fff;
+      font-weight:900;
+      background:linear-gradient(180deg, #7c3aed, #5b21b6);
+      border:1px solid rgba(167,139,250,.22);
+    }
+
+    .mobile-nav{
+      display:none;
+    }
+
+    @media (max-width: 1180px){
+      .app{grid-template-columns:86px minmax(0,1fr)}
+      .brand,.profile-card,.side-section,.contact-box .small,.contact-box .socials,.side-title{display:none}
+      .sidebar{padding:14px 10px}
+      .sidebar .side-btn{justify-content:center;padding:14px 8px}
+      .sidebar .side-btn .label{display:none}
+      .sidebar .side-btn .side-count{display:none}
+      .stats-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .list{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .footer-features{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media (max-width: 980px){
+      .app{grid-template-columns:1fr;min-height:100vh}
+      .sidebar{display:none}
+      .content{height:auto;overflow:visible}
+      .hero-layout{grid-template-columns:1fr}
+      .hero-copy h2{font-size:34px}
+      .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .list{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .toolbar{grid-template-columns:1fr 1fr}
+      .hot-track{grid-auto-columns:minmax(220px, 260px)}
+      .footer-features{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .topbar{padding:12px 14px; height:auto; align-items:flex-start; flex-wrap:wrap}
+      .login-btn{display:none}
+    }
+    @media (max-width: 640px){
+      .main{padding:14px 14px 90px}
+      .page-title h1{font-size:20px}
+      .page-title p{font-size:12px}
+      .searchbar{height:54px}
+      .toolbar{grid-template-columns:1fr}
+      .hero-copy{padding:20px}
+      .hero-copy h2{font-size:28px}
+      .hero-metrics{grid-template-columns:1fr 1fr 1fr}
+      .hero-art{min-height:220px}
+      .hero-art-overlay{left:12px;right:12px;bottom:12px}
+      .stats-grid{grid-template-columns:1fr 1fr}
+      .list{grid-template-columns:1fr}
+      .card .thumb{height:190px}
+      .footer-features{grid-template-columns:1fr}
+      .top-actions .trust-chip{display:none}
+      .notif-panel{margin-top:14px;border-radius:24px;padding:14px;max-height:calc(100vh - 28px)}
+      .notif-stats{grid-template-columns:1fr 1fr}
+      .mobile-nav{
+        display:grid;
+        position:fixed;
+        left:12px;
+        right:12px;
+        bottom:12px;
+        z-index:120;
+        grid-template-columns:repeat(5,minmax(0,1fr));
+        gap:8px;
+        padding:10px;
+        border-radius:22px;
+        border:1px solid rgba(148,163,184,.14);
+        background:rgba(5,8,22,.9);
+        backdrop-filter:blur(16px);
+        box-shadow:0 20px 50px rgba(0,0,0,.45);
+      }
+      .mobile-nav a{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:6px;
+        padding:8px 4px;
+        border-radius:14px;
+        text-decoration:none;
+        color:#dbeafe;
+        font-size:11px;
+        font-weight:800;
+      }
+      .mobile-nav a.active{
+        background:rgba(139,92,246,.18);
+        color:#fff;
+      }
+      .mobile-nav span{
+        font-size:18px;
+        line-height:1;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1250,6 +2000,56 @@
         <div class="profile-name">Yuraaa Store</div>
         <div class="profile-sub">Trusted Seller</div>
         <div class="profile-meta"><span class="dot"></span><span>4.9 (245+ Ulasan)</span></div>
+      </div>
+
+
+      <div class="side-section">
+        <div class="side-title">MAIN MENU</div>
+        <div class="side-nav">
+          <a class="side-btn active" href="#heroSection"><span class="side-icon">⌂</span><span class="label">Beranda</span></a>
+          <a class="side-btn" href="#hotSection"><span class="side-icon">✦</span><span class="label">Hot Account</span></a>
+          <a class="side-btn" href="#listSection"><span class="side-icon">▦</span><span class="label">Semua Akun</span></a>
+        </div>
+      </div>
+
+      <div class="side-section">
+        <div class="side-title">GAME</div>
+        <div class="side-nav">
+          <button class="side-btn" type="button" data-sidebar-game=""><span class="side-icon">🎮</span><span class="label">Semua Game</span><span class="side-count" id="sideCountAll">0</span></button>
+          <button class="side-btn" type="button" data-sidebar-game="honkai star rail"><span class="side-icon">⚡</span><span class="label">Honkai Star Rail</span><span class="side-count" id="sideCountHSR">0</span></button>
+          <button class="side-btn" type="button" data-sidebar-game="wuthering waves"><span class="side-icon">🌊</span><span class="label">Wuthering Waves</span><span class="side-count" id="sideCountWW">0</span></button>
+          <button class="side-btn" type="button" data-sidebar-game="genshin impact"><span class="side-icon">✨</span><span class="label">Genshin Impact</span><span class="side-count" id="sideCountGI">0</span></button>
+          <button class="side-btn" type="button" data-sidebar-game="zenless zone zero"><span class="side-icon">🌀</span><span class="label">Zenless Zone Zero</span><span class="side-count" id="sideCountZZZ">0</span></button>
+          <button class="side-btn" type="button" data-sidebar-game="arknights"><span class="side-icon">🛡</span><span class="label">Arknights</span><span class="side-count" id="sideCountAK">0</span></button>
+        </div>
+      </div>
+
+      <div class="side-section">
+        <div class="side-title">STATUS</div>
+        <div class="side-nav">
+          <button class="side-btn" type="button" data-sidebar-status="ready"><span class="side-icon">🟢</span><span class="label">Ready</span><span class="side-count" id="sideCountReady">0</span></button>
+          <button class="side-btn" type="button" data-sidebar-status="proses"><span class="side-icon">🟡</span><span class="label">Proses</span><span class="side-count" id="sideCountProses">0</span></button>
+          <button class="side-btn" type="button" data-sidebar-status="sold"><span class="side-icon">🔴</span><span class="label">Sold</span><span class="side-count" id="sideCountSold">0</span></button>
+        </div>
+      </div>
+
+      <div class="side-section">
+        <div class="side-title">TRUSTED & AMAN</div>
+        <div class="trust-box">
+          <div class="title">Marketplace Premium</div>
+          <div class="trust-list">
+            <div class="trust-item">✓ Via Middleman</div>
+            <div class="trust-item">✓ Fast Response</div>
+            <div class="trust-item">✓ Aman 100%</div>
+            <div class="trust-item">✓ Garansi setelah deal</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="request-box">
+        <h4>Butuh akun special?</h4>
+        <p>Request akun sesuai game dan budgetmu langsung ke admin.</p>
+        <a class="request-btn" id="sidebarRequest" href="#" target="_blank" rel="noopener">Request Sekarang</a>
       </div>
 
       <div class="contact-box">
@@ -1272,7 +2072,9 @@
           </div>
         </div>
         <div class="top-actions">
+          <div class="trust-chip">🛡 Jaminan Aman</div>
           <button class="icon-btn icon-badge" id="notifyBtn" title="Notifikasi">🔔</button>
+          <a class="login-btn" href="#" aria-label="Login">Login</a>
         </div>
       </header>
 
@@ -1283,6 +2085,52 @@
           <span class="search-icon">🔍</span>
           <input id="searchInput" class="search-input" type="search" placeholder="Cari akun, game, ID, atau detail..." autocomplete="off" />
         </div>
+
+
+        <section class="hero" id="heroSection">
+          <div class="hero-layout">
+            <div class="hero-copy">
+              <div class="hero-kicker">Trusted Game Account Marketplace</div>
+              <h2 id="heroTitle">YURAAA <span>MARKETPLACE</span></h2>
+              <p id="heroDesc">Marketplace akun game premium dengan tampilan modern, aman, cepat, dan nyaman di desktop maupun mobile.</p>
+              <div class="hero-metrics">
+                <div class="hero-metric"><strong id="heroSold">0</strong><span>Akun Terjual</span></div>
+                <div class="hero-metric"><strong id="heroRating">4.9/5</strong><span>Rating</span></div>
+                <div class="hero-metric"><strong id="heroSafe">100%</strong><span>Aman</span></div>
+              </div>
+              <div class="hero-actions">
+                <a class="hero-btn wa" id="heroWa" href="#" target="_blank" rel="noopener">WhatsApp</a>
+                <a class="hero-btn fb" id="heroFb" href="#" target="_blank" rel="noopener">Facebook</a>
+              </div>
+            </div>
+            <div class="hero-art" id="heroArt">
+              <div class="hero-art-overlay">
+                <span class="hero-chip" id="heroChip">HOT</span>
+                <h3 id="heroItemName">Wisadel Starter</h3>
+                <p id="heroItemGame">Honkai Star Rail</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="stats-grid" id="statsGrid"></section>
+
+        <div class="section-head" id="hotSection">
+          <div>
+            <h3>🔥 HOT ACCOUNT</h3>
+            <p>Akun unggulan yang paling menonjol saat ini.</p>
+          </div>
+          <button class="section-link" type="button" id="hotSeeAll">Lihat Semua</button>
+        </div>
+        <div class="hot-track" id="hotTrack"></div>
+
+        <section class="section-head" id="listSection" style="margin-top:6px;">
+          <div>
+            <h3>SEMUA AKUN</h3>
+            <p>Gunakan filter game, status, dan urutan untuk mencari akun yang tepat.</p>
+          </div>
+          <button class="section-link" type="button" id="resetFilters">Reset Filter</button>
+        </section>
 
         <div class="toolbar" aria-hidden="true">
           <div class="dd" id="gameDD">
@@ -1312,24 +2160,38 @@
 
         <div class="pagination-wrap" id="pagination"></div>
 
-        <div class="feature-banner">
-          <div class="banner-left">
-            <div class="shield">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M12 2 4 5v6c0 5 3.6 9.7 8 11 4.4-1.3 8-6 8-11V5l-8-3Z"/><path d="M9 12l2 2 4-5"/></svg>
-            </div>
-            <div>
-              <h3 class="banner-title">Aman & Terpercaya</h3>
-              <p class="banner-text">Semua akun ditampilkan dengan detail lengkap. Klik card untuk membuka popup, lihat gambar dulu, lalu pilih direct atau middleman untuk akun ready.</p>
-            </div>
+        <section class="footer-features" aria-label="Keunggulan marketplace">
+          <div class="footer-feature">
+            <div class="ico">⚡</div>
+            <div><strong>Proses Cepat</strong><span>Langsung diproses begitu pembayaran masuk.</span></div>
           </div>
-          <div class="banner-actions">
-            <div class="banner-note">Tombol kontak hanya muncul di popup akun <b>ready</b>.</div>
+          <div class="footer-feature">
+            <div class="ico">🛡</div>
+            <div><strong>Akun Terjamin</strong><span>Informasi detail dan popup jelas sebelum transaksi.</span></div>
           </div>
-        </div>
+          <div class="footer-feature">
+            <div class="ico">💎</div>
+            <div><strong>Harga Terbaik</strong><span>Listing rapi dengan promo dan harga yang transparan.</span></div>
+          </div>
+          <div class="footer-feature">
+            <div class="ico">⌛</div>
+            <div><strong>Layanan 24/7</strong><span>Admin siap membantu kapan saja lewat kontak resmi.</span></div>
+          </div>
+        </section>
+
       </main>
     </section>
   </div>
 
+
+
+  <nav class="mobile-nav" aria-label="Navigasi bawah">
+    <a href="#heroSection" class="active"><span>⌂</span>Beranda</a>
+    <a href="#hotSection"><span>✦</span>Hot</a>
+    <a href="#listSection"><span>▦</span>Akun</a>
+    <a href="#notifModal" id="mobileNotifLink"><span>🔔</span>Notif</a>
+    <a href="#heroSection" id="mobileMenuLink"><span>☰</span>Menu</a>
+  </nav>
 
   <div class="notif-modal hidden" id="notifModal">
     <div class="notif-panel" role="dialog" aria-modal="true" aria-labelledby="notifTitle">
@@ -1463,8 +2325,8 @@
       return digits;
     };
     const WA_NUMBER = normalizeWaNumber("085939286029");
-    const FB_LINK = "https://www.facebook.com/share/1DzBVVkDDF/";
-    const PAGE_SIZE = 6;
+    const FB_LINK = "https://www.facebook.com/profile.php?id=61576952270951";
+    const PAGE_SIZE = 8;
     const NEW_DAYS = 7;
     const NOTIF_PAGE_SIZE = 5;
     let notifPages = { new: 0, update: 0, sold: 0 };
@@ -1538,6 +2400,20 @@
       skeletonTemplate: document.getElementById('skeletonTemplate'),
       subtitle: document.getElementById('subtitle'),
       searchInput: document.getElementById('searchInput'),
+      heroArt: document.getElementById('heroArt'),
+      heroTitle: document.getElementById('heroTitle'),
+      heroDesc: document.getElementById('heroDesc'),
+      heroSold: document.getElementById('heroSold'),
+      heroRating: document.getElementById('heroRating'),
+      heroSafe: document.getElementById('heroSafe'),
+      heroWa: document.getElementById('heroWa'),
+      heroFb: document.getElementById('heroFb'),
+      heroItemName: document.getElementById('heroItemName'),
+      heroItemGame: document.getElementById('heroItemGame'),
+      heroChip: document.getElementById('heroChip'),
+      statsGrid: document.getElementById('statsGrid'),
+      hotTrack: document.getElementById('hotTrack'),
+      sidebarRequest: document.getElementById('sidebarRequest'),
     };;
 
     const STATUS_META = {
@@ -1931,6 +2807,7 @@ function mapItem(raw, idx){
       return { totalPages, pageItems: items.slice(start, start + PAGE_SIZE) };
     }
 
+    
     function cardHTML(item){
       const previewImg = (item.images && item.images[0]) || (item.previewImages && item.previewImages[0]) || '';
       const imgCount = Array.isArray(item.images) ? item.images.length : 0;
@@ -1938,20 +2815,21 @@ function mapItem(raw, idx){
       const statusClass = getStatusClass(item.status);
       const promo = getPromoMeta(item);
       const blocked = isContactBlocked(item);
-      const contactHint = blocked
-        ? (item.status === 'sold' ? 'Akun sudah terjual.' : 'Sedang proses, kontak dinonaktifkan.')
-        : 'Klik card untuk detail premium dan slide foto.';
       const itemId = item.displayId || formatDisplayId(item.id);
+      const labelBadge = label ? `<span class="hot-badge">${String(label).toUpperCase()}</span>` : '';
       return `
         <article class="card" data-id="${item.id}" role="button" tabindex="0" onclick="window.__openCard && window.__openCard('${item.id}')">
-          ${previewImg ? `
           <div class="thumb">
+            ${labelBadge}
+            ${previewImg ? `
             <img src="${previewImg}" alt="${item.nama}" loading="lazy" decoding="async" onload="window.__fitImage && window.__fitImage(this)">
-          </div>` : `<div class="thumb" aria-hidden="true"></div>`}
+            ` : ''}
+          </div>
 
           <div class="card-main">
             <div class="card-top">
               <div class="title-wrap">
+                <div class="game-badge">${item.game || 'Game'}</div>
                 <h3 class="title">${item.nama}</h3>
                 <div class="item-id">ID #${itemId}</div>
               </div>
@@ -1964,8 +2842,8 @@ function mapItem(raw, idx){
             </div>
 
             <div class="meta-row">
-              <span class="pill">Klik card untuk detail & slide foto</span>
               <span class="pill">${imgCount} gambar</span>
+              <span class="pill">${item.status}</span>
             </div>
 
             <div class="desc">${item.ket || 'Tidak ada detail tambahan.'}</div>
@@ -1974,10 +2852,7 @@ function mapItem(raw, idx){
               <div class="status-pill ${statusClass}"><span class="status-dot"></span>${item.status}</div>
               ${blocked ? `<span class="contact-chip locked">Kontak nonaktif</span>` : `<span class="contact-chip">Siap dibeli</span>`}
             </div>
-          </div>
 
-          <div class="card-side">
-            <div class="side-note">${contactHint}</div>
             <div class="mini-actions">
               <button class="mini-btn mini-wa" data-open="${item.id}">Buka Detail</button>
             </div>
@@ -1985,6 +2860,7 @@ function mapItem(raw, idx){
         </article>
       `;
     }
+
 
     function renderSkeleton(count = 6){
       els.listView.classList.add('loading-fade');
@@ -2237,9 +3113,12 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
     }
 
     function setContactLinks(){
-
-      els.sidebarWa.href = `https://wa.me/${WA_NUMBER}`;
+      const wa = `https://wa.me/${WA_NUMBER}`;
+      els.sidebarWa.href = wa;
       els.sidebarFb.href = FB_LINK;
+      if (els.heroWa) els.heroWa.href = wa;
+      if (els.heroFb) els.heroFb.href = FB_LINK;
+      if (els.sidebarRequest) els.sidebarRequest.href = wa;
     }
 
 
@@ -2369,9 +3248,124 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
       ].join('');
     }
 
+
+    function getTopList(count = 4){
+      const labelScore = (item) => {
+        let score = 0;
+        const label = inferLabel(item);
+        if (label === 'hot') score += 6;
+        if (label === 'new') score += 4;
+        if (label === 'promo') score += 3;
+        if ((item.status || '').toLowerCase() === 'ready') score += 2;
+        score += Math.min(10, Math.max(0, 10 - ((Date.now() - (item.createdAt?.getTime?.() || Date.now())) / (1000 * 60 * 60 * 24))));
+        score += Math.min(2, Math.max(0, (item.images || []).length / 2));
+        return score;
+      };
+      return [...RAW_DATA]
+        .filter(item => (item.status || '').toLowerCase() === 'ready')
+        .sort((a, b) => labelScore(b) - labelScore(a))
+        .slice(0, count);
+    }
+
+    function getHeroItem(){
+      return getTopList(1)[0] || RAW_DATA.find(item => (item.images || []).length) || RAW_DATA[0] || null;
+    }
+
+    function renderMarketplaceShell(){
+      const total = RAW_DATA.length;
+      const readyCount = RAW_DATA.filter(item => (item.status || '').toLowerCase() === 'ready').length;
+      const prosesCount = RAW_DATA.filter(item => (item.status || '').toLowerCase() === 'proses').length;
+      const soldCount = RAW_DATA.filter(item => (item.status || '').toLowerCase() === 'sold').length;
+      const newCount = RAW_DATA.filter(item => inferLabel(item) === 'new').length;
+
+      const gameCount = (needle) => RAW_DATA.filter(item => (item.game || '').toLowerCase() === needle).length;
+      const hotItem = getHeroItem();
+
+      if (els.heroArt) {
+        const image = (hotItem && (hotItem.images?.[0] || hotItem.previewImages?.[0])) || '';
+        if (image) els.heroArt.style.backgroundImage = `linear-gradient(90deg, rgba(11,17,34,.08), rgba(11,17,34,.64)), url("${image}")`;
+        else els.heroArt.style.backgroundImage = 'radial-gradient(400px 240px at 50% 36%, rgba(139,92,246,.16), transparent 60%), linear-gradient(180deg, rgba(11,17,34,.32), rgba(8,13,28,.98))';
+      }
+      if (els.heroItemName) els.heroItemName.textContent = hotItem?.nama || 'Wisadel Starter';
+      if (els.heroItemGame) els.heroItemGame.textContent = hotItem?.game || 'Honkai Star Rail';
+      if (els.heroChip) els.heroChip.textContent = inferLabel(hotItem) ? String(inferLabel(hotItem)).toUpperCase() : 'HOT';
+      if (els.heroSold) els.heroSold.textContent = `${soldCount || total || 0}`;
+      if (els.heroWa) els.heroWa.href = `https://wa.me/${WA_NUMBER}`;
+      if (els.heroFb) els.heroFb.href = FB_LINK;
+
+      if (els.statsGrid) {
+        els.statsGrid.innerHTML = [
+          { icon: '📦', value: total, label: 'Total Akun' },
+          { icon: '🟢', value: readyCount, label: 'Ready' },
+          { icon: '🟡', value: prosesCount, label: 'Proses' },
+          { icon: '🔴', value: soldCount, label: 'Sold' },
+          { icon: '⭐', value: '4.9', label: 'Rating' },
+        ].map(stat => `
+          <div class="stat-card">
+            <div class="stat-ico">${stat.icon}</div>
+            <div class="stat-info">
+              <div class="stat-value">${stat.value}</div>
+              <div class="stat-label">${stat.label}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      if (els.hotTrack) {
+        const items = getTopList(4);
+        els.hotTrack.innerHTML = items.length ? items.map(item => {
+          const image = (item.images && item.images[0]) || (item.previewImages && item.previewImages[0]) || '';
+          const promo = getPromoMeta(item);
+          return `
+            <article class="hot-card" data-open="${item.id}" role="button" tabindex="0" onclick="window.__openCard && window.__openCard('${item.id}')">
+              <div class="hot-thumb">
+                ${image ? `<img src="${image}" alt="${item.nama}" loading="lazy">` : ''}
+                <div class="hot-badge">HOT</div>
+              </div>
+              <div class="hot-body">
+                <div class="hot-title">${item.nama}</div>
+                <div class="hot-sub">${item.game || '-'}</div>
+                <div class="hot-price">Rp ${rupiah(promo.discountedPrice)}</div>
+                <div class="hot-foot">
+                  <span class="hot-status">READY</span>
+                  <button class="hot-btn" type="button" data-open="${item.id}">Detail</button>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('') : '<div class="empty">Belum ada akun unggulan.</div>';
+      }
+
+      if (els.sidebarWa) {
+        els.sidebarWa.href = `https://wa.me/${WA_NUMBER}`;
+      }
+      if (els.sidebarFb) {
+        els.sidebarFb.href = FB_LINK;
+      }
+      if (els.sidebarRequest) {
+        els.sidebarRequest.href = `https://wa.me/${WA_NUMBER}`;
+      }
+
+      const counts = [
+        ['sideCountAll', total],
+        ['sideCountHSR', gameCount('honkai star rail')],
+        ['sideCountWW', gameCount('wuthering waves')],
+        ['sideCountGI', gameCount('genshin impact')],
+        ['sideCountZZZ', gameCount('zenless zone zero')],
+        ['sideCountAK', gameCount('arknights')],
+        ['sideCountReady', readyCount],
+        ['sideCountProses', prosesCount],
+        ['sideCountSold', soldCount],
+      ];
+      counts.forEach(([id, value]) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = String(value);
+      });
+    }
+
+
     function render(){
-
-
+      renderMarketplaceShell();
 
       const { totalPages, pageItems } = paginate(FILTERED_DATA);
       els.listView.classList.remove('loading-fade');
@@ -2438,7 +3432,7 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
 
     // events
     els.toggleSidebar.addEventListener('click', () => {
-      window.location.href = 'admin.html';
+      document.querySelector('.sidebar')?.classList.toggle('open');
     });
 
     els.notifyBtn.addEventListener('click', () => {
@@ -2447,10 +3441,64 @@ Harga diskon: Rp ${rupiah(promo.discountedPrice)}`;
       syncBodyScroll();
     });
 
+    const mobileNotifLink = document.getElementById('mobileNotifLink');
+    if (mobileNotifLink) {
+      mobileNotifLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        renderNotifications();
+        els.notifModal.classList.remove('hidden');
+        syncBodyScroll();
+      });
+    }
+
     if (els.searchInput){
       els.searchInput.addEventListener('input', () => {
         searchQuery = els.searchInput.value || '';
         currentPage = 1;
+        applyFilters();
+      });
+    }
+
+
+    document.querySelectorAll('[data-sidebar-game]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedGame = btn.dataset.sidebarGame || '';
+        currentPage = 1;
+        setDropdownButton('game', selectedGame || 'Semua Game');
+        setDropdownActive('game', selectedGame);
+        applyFilters();
+      });
+    });
+
+    document.querySelectorAll('[data-sidebar-status]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedStatus = btn.dataset.sidebarStatus || '';
+        currentPage = 1;
+        setDropdownButton('status', STATUS_META[selectedStatus].title);
+        setDropdownActive('status', selectedStatus);
+        applyFilters();
+      });
+    });
+
+    const hotSeeAll = document.getElementById('hotSeeAll');
+    if (hotSeeAll) {
+      hotSeeAll.addEventListener('click', () => {
+        document.getElementById('listSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
+    const resetFiltersBtn = document.getElementById('resetFilters');
+    if (resetFiltersBtn) {
+      resetFiltersBtn.addEventListener('click', () => {
+        selectedGame = '';
+        selectedStatus = '';
+        searchQuery = '';
+        currentPage = 1;
+        if (els.searchInput) els.searchInput.value = '';
+        setDropdownButton('game', 'Semua Game');
+        setDropdownButton('status', STATUS_META[''].title);
+        setDropdownActive('game', '');
+        setDropdownActive('status', '');
         applyFilters();
       });
     }
