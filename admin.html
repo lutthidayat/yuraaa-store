@@ -784,6 +784,38 @@
     grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
     gap:14px;
   }
+  .dashboard-actions{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:10px;
+  }
+  .action-chip{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    min-height:54px;
+    padding:0 14px;
+    border-radius:18px;
+    background:rgba(15,23,42,.78);
+    border:1px solid rgba(148,163,184,.14);
+    color:#e5e7eb;
+    font:inherit;
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    box-shadow:var(--shadow);
+  }
+  .action-chip.primary{
+    background:linear-gradient(180deg, rgba(139,92,246,.92), rgba(79,70,229,.78));
+  }
+  .action-chip.finance{
+    background:linear-gradient(180deg, rgba(14,165,233,.92), rgba(3,105,161,.78));
+  }
+  .action-chip:hover{transform:translateY(-1px)}
+  .action-chip:active{transform:translateY(0) scale(.98)}
+
   .summary-card{
     display:flex;align-items:center;gap:14px;
     padding:18px;border-radius:24px;border:1px solid rgba(148,163,184,.14);
@@ -800,23 +832,6 @@
   .summary-card.green .summary-ic{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.20)}
   .summary-card.orange .summary-ic{background:rgba(251,146,60,.18);border-color:rgba(251,146,60,.20)}
   .summary-card.violet .summary-ic{background:rgba(168,85,247,.18);border-color:rgba(168,85,247,.20)}
-  .quick-actions{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:14px;
-  }
-  .quick-btn{
-    display:flex;align-items:center;gap:14px;padding:18px;border-radius:22px;border:1px solid rgba(148,163,184,.14);
-    background:rgba(15,23,42,.78);color:#fff;cursor:pointer;box-shadow:var(--shadow);text-align:left
-  }
-  .quick-btn span{
-    width:48px;height:48px;border-radius:18px;display:grid;place-items:center;
-    background:rgba(99,102,241,.18);border:1px solid rgba(129,140,248,.16);font-size:22px;flex:0 0 auto
-  }
-  .quick-btn strong{display:block;font-size:16px}
-  .quick-btn small{display:block;margin-top:4px;color:var(--muted);font-size:12px}
-  .quick-btn.primary{background:linear-gradient(180deg, rgba(139,92,246,.92), rgba(79,70,229,.78))}
-  .quick-btn.primary span{background:rgba(255,255,255,.12)}
   .content-grid{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
   .finance-side .mini-stats{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
   .mini-stat{
@@ -850,12 +865,12 @@
   @media (max-width: 1280px){
     .admin-shell{grid-template-columns:1fr}
     .sidebar{position:relative;top:auto;min-height:auto}
-    .summary-grid,.quick-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .summary-grid,.dashboard-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
     .content-grid{grid-template-columns:1fr}
   }
   @media (max-width: 760px){
     .top-search,.stage-search{display:none}
-    .summary-grid,.quick-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .summary-grid,.dashboard-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
     .stage-top{padding:12px}
     .stage-head h2{font-size:19px}
     .content-grid{grid-template-columns:1fr}
@@ -969,7 +984,7 @@
     .search-row{grid-template-columns:1fr}
     .search-row.compact{grid-template-columns:1fr}
     .summary-grid,
-    .quick-actions,
+    .dashboard-actions,
     .dash-grid{
       grid-template-columns:repeat(2,minmax(0,1fr));
     }
@@ -1000,19 +1015,12 @@
       width:100%;
       justify-content:space-between;
     }
-    .quick-btn{
-      padding:12px;
-      border-radius:18px;
-      gap:10px;
-      min-height:70px;
+    .action-chip{
+      min-height:46px;
+      border-radius:16px;
+      padding:0 10px;
+      font-size:13px;
     }
-    .quick-btn span{
-      width:40px;
-      height:40px;
-      border-radius:14px;
-      font-size:18px;
-    }
-    .quick-btn small{display:none}
     .content-grid{
       grid-template-columns:1fr;
     }
@@ -1308,28 +1316,11 @@
             </div>
           </section>
 
-          <section class="quick-actions">
-            <button class="quick-btn primary" id="dashAddBtn" type="button">
-              <span>＋</span>
-              <div>
-                <strong>Tambah Akun</strong>
-                <small>Buat akun baru</small>
-              </div>
-            </button>
-            <button class="quick-btn" type="button" id="dashEndpointBtn">
-              <span>⇪</span>
-              <div>
-                <strong>Import Akun</strong>
-                <small>Import dari file / excel</small>
-              </div>
-            </button>
-            <button class="quick-btn" id="dashReloadBtn" type="button">
-              <span>↻</span>
-              <div>
-                <strong>Sync Data</strong>
-                <small>Perbarui semua data</small>
-              </div>
-            </button>
+          <section class="dashboard-actions">
+            <button class="action-chip primary" id="dashAddBtn" type="button">＋ Tambah Akun</button>
+            <button class="action-chip" id="dashEndpointBtn" type="button">⇪ Impor Akun</button>
+            <button class="action-chip" id="dashReloadBtn" type="button">↻ Sync Data</button>
+            <button class="action-chip finance" id="dashFinanceBtn" type="button">💰 Keuangan</button>
           </section>
 
           <section class="content-grid">
@@ -1358,9 +1349,10 @@
               </div>
 
               <div style="margin-top:14px" id="dashCards" class="dash-grid"></div>
-            </section>          </section>
+            </section>
+          </section>
 
-          <section class="panel section" id="dashFormSection">
+          <section class="panel section hidden" id="dashFormSection">
             <div class="section-head">
               <div>
                 <h3 id="dashFormTitle">Tambah Akun</h3>
@@ -2912,6 +2904,7 @@ function firstImage(value){
       if (el.deleteBtn) el.deleteBtn.classList.remove('hidden');
       setRupiahInput(el.harga);
       renderPreview();
+      document.getElementById('dashFormSection')?.classList.remove('hidden');
       document.getElementById('dashFormSection').scrollIntoView({ behavior:'smooth', block:'start' });
     }
 
@@ -2960,8 +2953,9 @@ function firstImage(value){
 
         const result = await sendViaGoogleScript(data.action, data);
         if(!result || result.ok === false) throw new Error((result && result.message) || 'Gagal menyimpan akun.');
-        toast(data.action === 'update' ? 'Akun diperbarui.' : 'Akun disimpan.');
+        toast(data.action === 'update' ? 'Akun diperbarui.' : 'Akun disimpan.', 'success');
         resetDashboardForm();
+        hideDashboardForm();
         await loadList(true);
       }catch(e){
         console.error(e);
@@ -3045,6 +3039,7 @@ function firstImage(value){
       if (el.deleteBtn) el.deleteBtn.classList.remove('hidden');
       setRupiahInput(el.harga);
       renderPreview();
+      document.getElementById('dashFormSection')?.classList.remove('hidden');
       document.getElementById('dashFormSection').scrollIntoView({ behavior:'smooth', block:'start' });
     }
 
@@ -3070,6 +3065,7 @@ function firstImage(value){
         if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
         toast('Akun berhasil dihapus.', 'success');
         resetDashboardForm();
+        hideDashboardForm();
         await loadList(true);
       }catch(e){
         console.error(e);
@@ -3195,24 +3191,29 @@ function firstImage(value){
           return;
         }
       }, { passive:true });
+      const showDashboardForm = () => {
+        ui.dashboardView.querySelector('#dashFormSection')?.classList.remove('hidden');
+      };
+      const hideDashboardForm = () => {
+        ui.dashboardView.querySelector('#dashFormSection')?.classList.add('hidden');
+      };
+      const scrollToDashboardForm = () => {
+        const sec = document.getElementById('dashFormSection');
+        if(!sec) return;
+        sec.scrollIntoView({ behavior:'smooth', block:'start' });
+      };
+
       el.addBtn.onclick = () => {
-        ui.modalDesc.value = '';
-        ui.modalAmount.value = '';
-        ui.modalType.value = 'income';
-        ui.modalCategory.value = 'Umum';
-        ui.modalDate.value = new Date().toISOString().slice(0,10);
-        ui.modalNote.value = '';
-        openModal(ui.formOverlay);
+        resetDashboardForm();
+        showDashboardForm();
+        scrollToDashboardForm();
       };
       el.scrollListBtn.onclick = () => document.getElementById('dashListSection').scrollIntoView({ behavior:'smooth', block:'start' });
       $('dashSaveBtn').onclick = saveAccount;
       if (el.deleteBtn) el.deleteBtn.onclick = deleteCurrentDashboardAccount;
-      $('dashResetBtn').onclick = () => { resetDashboardForm(); toast('Form akun direset.'); };
+      $('dashResetBtn').onclick = () => { resetDashboardForm(); showDashboardForm(); toast('Form akun direset.'); };
       $('dashReloadBtn').onclick = () => loadList();
-      $('dashAddBtn').onclick = () => {
-        openView('dashboard');
-        document.getElementById('dashFormSection').scrollIntoView({ behavior:'smooth', block:'start' });
-      };
+      $('dashFinanceBtn').onclick = () => openView('finance');
       $('dashScrollListBtn').onclick = () => document.getElementById('dashListSection').scrollIntoView({ behavior:'smooth', block:'start' });
       $('dashEndpointBtn').onclick = openEndpointModal;
       $('dashEndpoint').addEventListener('change', () => {
