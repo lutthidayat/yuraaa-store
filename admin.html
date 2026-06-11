@@ -54,7 +54,7 @@
   }
 
   .topbar{
-    position:sticky;top:0;z-index:20;
+    position:relative;z-index:20;
     display:flex;align-items:center;justify-content:space-between;gap:12px;
     padding:12px 14px;
     background:rgba(2,6,23,.72);
@@ -800,8 +800,7 @@
     padding:0;
   }
   .topbar{
-    position:sticky;
-    top:14px;
+    position:relative;
     z-index:25;
     padding:14px 18px;
     border-radius:28px;
@@ -1001,6 +1000,103 @@
     .dash-grid{grid-template-columns:1fr}
   }
 
+  .pager{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:14px;
+    padding:12px 14px;
+    border-radius:18px;
+    background:rgba(2,6,23,.28);
+    border:1px solid rgba(148,163,184,.10);
+  }
+  .pager-info{
+    font-size:12px;
+    font-weight:900;
+    color:#dbeafe;
+    padding:8px 12px;
+    border-radius:999px;
+    border:1px solid rgba(148,163,184,.12);
+    background:rgba(15,23,42,.72);
+    white-space:nowrap;
+  }
+  .pager .btn{
+    min-width:130px;
+    height:40px;
+    border-radius:14px;
+    font-size:13px;
+  }
+  .pager .btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+    transform:none;
+  }
+  .account-modal{
+    width:min(760px, 100%);
+  }
+  .quick-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    max-height:min(65vh, 560px);
+    overflow:auto;
+    padding-right:4px;
+  }
+  .quick-item{
+    padding:14px;
+    border-radius:18px;
+    background:rgba(2,6,23,.28);
+    border:1px solid rgba(148,163,184,.10);
+  }
+  .quick-item strong{
+    display:block;
+    font-size:15px;
+    line-height:1.35;
+    margin-bottom:6px;
+  }
+  .quick-item .price{
+    color:#c4b5fd;
+    font-weight:900;
+    margin-bottom:6px;
+  }
+  .quick-item .note{
+    color:#cbd5e1;
+    font-size:12px;
+    line-height:1.55;
+  }
+  .quick-empty{
+    padding:24px;
+    border-radius:18px;
+    border:1px dashed rgba(148,163,184,.22);
+    color:var(--muted);
+    text-align:center;
+    background:rgba(2,6,23,.16);
+  }
+  .quick-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .quick-head h4{
+    margin:0;
+    font-size:20px;
+    font-weight:950;
+  }
+  .quick-head p{
+    margin:6px 0 0;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.5;
+  }
+  .topbar{
+    z-index:1000;
+  }
+  .sidebar{
+    z-index:900;
+  }
+
 </style>
 </head>
 <body class="locked">
@@ -1021,7 +1117,7 @@
       </span>
     </button>
 
-    <button class="nav-item" type="button" onclick="document.getElementById('goDashboardBtn').click()">
+    <button class="nav-item" type="button" onclick="openAccountQuickList()">
       <span class="nav-ico">📦</span>
       <span>
         <strong>Akun</strong>
@@ -1235,6 +1331,12 @@
             <button class="btn btn-secondary" id="clearSearchBtn">Clear</button>
           </div>
 
+          <div class="pager" id="txPager">
+            <button class="btn btn-secondary" id="txPrevBtn" type="button">← Previous</button>
+            <span class="pager-info" id="txPageInfo">1 / 1</span>
+            <button class="btn btn-secondary" id="txNextBtn" type="button">Next →</button>
+          </div>
+
           <div style="margin-top:14px" class="history-list" id="list"></div>
         </section>
       </div>
@@ -1380,6 +1482,12 @@
           <button class="btn btn-secondary" id="dashClearSearchBtn">Clear</button>
         </div>
 
+        <div class="pager" id="dashPager">
+          <button class="btn btn-secondary" id="dashPrevBtn" type="button">← Previous</button>
+          <span class="pager-info" id="dashPageInfo">1 / 1</span>
+          <button class="btn btn-secondary" id="dashNextBtn" type="button">Next →</button>
+        </div>
+
         <div style="margin-top:14px" id="dashCards" class="dash-grid"></div>
       </section>
     </section>
@@ -1485,6 +1593,21 @@
         <button type="button" class="btn btn-primary" id="saveEndpointBtn">Simpan Endpoint</button>
         <button type="button" class="btn btn-secondary" id="cancelEndpointBtn">Batal</button>
       </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="accountOverlay" aria-hidden="true">
+    <div class="modal account-modal" role="dialog" aria-modal="true" aria-labelledby="accountQuickTitle">
+      <div class="modal-top">
+        <div class="quick-head">
+          <div>
+            <h4 id="accountQuickTitle">Daftar Akun Cepat</h4>
+            <p>Nama, harga, dan keterangan singkat dari akun yang tersedia.</p>
+          </div>
+        </div>
+        <button type="button" class="close-x" id="closeAccountOverlayBtn" aria-label="Tutup">×</button>
+      </div>
+      <div id="accountQuickList" class="quick-list"></div>
     </div>
   </div>
 
@@ -1850,6 +1973,9 @@ function sendViaIframePost(endpoint, payload){
   ui.closeBtn.onclick = () => { window.location.href = 'index.html'; };
 
   ui.pinClose.onclick = () => { window.location.href = 'index.html'; };
+  document.getElementById('accountOverlay')?.addEventListener('click', (e) => {
+    if(e.target.id === 'accountOverlay') closeAccountQuickList();
+  });
   ui.submitPinBtn.onclick = () => pinCheck(ui.pinInput.value.trim());
   ui.pinInput.addEventListener('input', () => {
     ui.pinInput.value = ui.pinInput.value.replace(/\D/g, '').slice(0, 6);
@@ -1901,7 +2027,10 @@ function sendViaIframePost(endpoint, payload){
       refreshBtn: $('reloadApiBtn'),
       scrollFormBtn: $('scrollFormBtn'),
       scrollListBtn: $('scrollListBtn'),
-      floatingAddBtn: $('floatingAddBtn')
+      floatingAddBtn: $('floatingAddBtn'),
+      txPrevBtn: $('txPrevBtn'),
+      txNextBtn: $('txNextBtn'),
+      txPageInfo: $('txPageInfo')
     };
     const state = {
       manual: loadLocal(),
@@ -1910,7 +2039,9 @@ function sendViaIframePost(endpoint, payload){
       filter: localStorage.getItem(ACTIVE_FILTER_KEY) || 'all',
       deleteTarget: null,
       editingId: null,
-      initialized: false
+      initialized: false,
+      page: 1,
+      perPage: 5
     };
 
     function loadLocal(){
@@ -1965,6 +2096,14 @@ function sendViaIframePost(endpoint, payload){
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
+    }
+
+    function paginate(items, page, perPage){
+      const total = Array.isArray(items) ? items.length : 0;
+      const pages = Math.max(1, Math.ceil(total / perPage));
+      const current = Math.min(Math.max(Number(page) || 1, 1), pages);
+      const start = (current - 1) * perPage;
+      return { page: current, pages, items: (items || []).slice(start, start + perPage) };
     }
     function normalizeStatus(v){
       return String(v ?? '').toLowerCase().trim().replace(/[^a-z]/g, '');
@@ -2081,13 +2220,19 @@ function sendViaIframePost(endpoint, payload){
       el.soldCount.textContent = String(s.soldCount);
 
       const items = state.merged.filter(filterItem).filter(searchMatch);
+      const pageData = paginate(items, state.page, state.perPage);
+      state.page = pageData.page;
 
-      if(!items.length){
+      el.txPrevBtn.disabled = pageData.page <= 1;
+      el.txNextBtn.disabled = pageData.page >= pageData.pages;
+      el.txPageInfo.textContent = `${pageData.page} / ${pageData.pages}`;
+
+      if(!pageData.items.length){
         el.list.innerHTML = '<div class="empty">Belum ada transaksi yang cocok dengan filter atau pencarian.</div>';
         return;
       }
 
-      el.list.innerHTML = items.map(item => {
+      el.list.innerHTML = pageData.items.map(item => {
         const badge = item.source === 'api'
           ? '<span class="meta-pill">Sold</span>'
           : '<span class="meta-pill">Manual</span>';
@@ -2340,7 +2485,9 @@ function bindAmountInput(node){
       render();
       toast('Filter dibersihkan.');
     };
-    el.search.addEventListener('input', render);
+    el.search.addEventListener('input', () => { state.page = 1; render(); });
+    el.txPrevBtn.onclick = () => { state.page = Math.max(1, state.page - 1); render(); };
+    el.txNextBtn.onclick = () => { state.page += 1; render(); };
     document.querySelectorAll('[data-filter]').forEach(ch => ch.addEventListener('click', () => {
       state.filter = ch.dataset.filter;
       localStorage.setItem(ACTIVE_FILTER_KEY, state.filter);
@@ -2426,7 +2573,13 @@ function bindAmountInput(node){
       scrollListBtn: $('dashScrollListBtn'),
       dashListSection: $('dashListSection'),
       dashFormSection: $('dashFormSection'),
-      dashConnText: $('dashConnText')
+      dashConnText: $('dashConnText'),
+      prevBtn: $('dashPrevBtn'),
+      nextBtn: $('dashNextBtn'),
+      pageInfo: $('dashPageInfo'),
+      accountOverlay: $('accountOverlay'),
+      accountQuickList: $('accountQuickList'),
+      closeAccountOverlayBtn: $('closeAccountOverlayBtn')
     };
 
     const state = {
@@ -2436,7 +2589,9 @@ function bindAmountInput(node){
       files: [],
       objectUrls: [],
       sortNewest: true,
-initialized: false
+initialized: false,
+      page: 1,
+      perPage: 5
     };
 
     function normalizeText(v){ return (v ?? '').toString().trim(); }
@@ -2455,6 +2610,14 @@ initialized: false
         .replace(/</g,'&lt;')
         .replace(/>/g,'&gt;')
         .replace(/"/g,'&quot;');
+    }
+
+    function paginate(items, page, perPage){
+      const total = Array.isArray(items) ? items.length : 0;
+      const pages = Math.max(1, Math.ceil(total / perPage));
+      const current = Math.min(Math.max(Number(page) || 1, 1), pages);
+      const start = (current - 1) * perPage;
+      return { page: current, pages, items: (items || []).slice(start, start + perPage) };
     }
     function toDrivePreview(url){
       const u = normalizeText(url);
@@ -2690,6 +2853,42 @@ function firstImage(value){
       renderPreview();
     }
 
+
+    function renderQuickAccountList(){
+      const q = normalizeText(el.search.value).toLowerCase();
+      const items = state.items
+        .filter(x => [x.Nama, x.Game, x.Harga, x.Label, x.Status, x.Ket, `row ${x.row}`].join(' ').toLowerCase().includes(q))
+        .sort((a,b)=> state.sortNewest ? b.row - a.row : a.row - b.row);
+
+      if(!items.length){
+        el.accountQuickList.innerHTML = '<div class="quick-empty">Belum ada akun yang bisa ditampilkan.</div>';
+        return;
+      }
+
+      el.accountQuickList.innerHTML = items.map(item => `
+        <div class="quick-item">
+          <strong>${esc(item.Nama || '-')}</strong>
+          <div class="price">Rp ${esc(formatNum(item.Harga))}</div>
+          <div class="note">${esc(item.Ket || '-')}</div>
+        </div>
+      `).join('');
+    }
+
+    function openAccountQuickList(){
+      renderQuickAccountList();
+      openModal(el.accountOverlay);
+      const firstClose = el.closeAccountOverlayBtn;
+      if(firstClose) firstClose.focus({ preventScroll:true });
+    }
+
+    function closeAccountQuickList(){
+      closeModal(el.accountOverlay);
+    }
+
+    if (typeof window !== 'undefined') {
+      window.openAccountQuickList = openAccountQuickList;
+    }
+
     function renderCard(item){
       const img = firstImage(item.Gambar || item.gambar || item.images || '');
       const media = img
@@ -2722,11 +2921,18 @@ function firstImage(value){
         .filter(x => [x.Nama, x.Game, x.Harga, x.Label, x.Status, x.Ket, `row ${x.row}`].join(' ').toLowerCase().includes(q))
         .sort((a,b)=> state.sortNewest ? b.row - a.row : a.row - b.row);
 
-      if(!items.length){
+      const pageData = paginate(items, state.page, state.perPage);
+      state.page = pageData.page;
+
+      el.prevBtn.disabled = pageData.page <= 1;
+      el.nextBtn.disabled = pageData.page >= pageData.pages;
+      el.pageInfo.textContent = `${pageData.page} / ${pageData.pages}`;
+
+      if(!pageData.items.length){
         el.cards.innerHTML = '<div class="empty">Belum ada data dimuat.</div>';
         return;
       }
-      el.cards.innerHTML = items.map(renderCard).join('');
+      el.cards.innerHTML = pageData.items.map(renderCard).join('');
     }
 
     function startEdit(item){
@@ -2964,9 +3170,12 @@ function firstImage(value){
       state.initialized = true;
       el.endpoint.value = endpointValue();
       if(!el.endpoint.value) el.endpoint.value = DEFAULT_DASHBOARD_ENDPOINT;
-      el.search.addEventListener('input', renderCards);
-      el.clearSearchBtn.addEventListener('click', () => { el.search.value=''; renderCards(); });
-      el.searchResetBtn.addEventListener('click', () => { el.search.value=''; renderCards(); toast('Pencarian dibersihkan.'); });
+      el.search.addEventListener('input', () => { state.page = 1; renderCards(); });
+      el.clearSearchBtn.addEventListener('click', () => { el.search.value=''; state.page = 1; renderCards(); });
+      el.searchResetBtn.addEventListener('click', () => { el.search.value=''; state.page = 1; renderCards(); toast('Pencarian dibersihkan.'); });
+      el.prevBtn.onclick = () => { state.page = Math.max(1, state.page - 1); renderCards(); };
+      el.nextBtn.onclick = () => { state.page += 1; renderCards(); };
+      el.closeAccountOverlayBtn.onclick = closeAccountQuickList;
       el.reloadBtn.onclick = () => loadList();
       el.previewArea.addEventListener('click', (e) => {
         const btn = e.target.closest('[data-img-remove]');
