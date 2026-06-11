@@ -786,7 +786,7 @@
   }
   .dashboard-actions{
     display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr));
+    grid-template-columns:repeat(3,minmax(0,1fr));
     gap:10px;
   }
   .action-chip{
@@ -984,9 +984,14 @@
     .search-row{grid-template-columns:1fr}
     .search-row.compact{grid-template-columns:1fr}
     .summary-grid,
-    .dashboard-actions,
     .dash-grid{
       grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    .dashboard-actions{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    .dashboard-actions .finance{
+      grid-column:1 / -1;
     }
     .account-toolbar{gap:10px}
     .chips{width:100%}
@@ -1020,6 +1025,9 @@
       border-radius:16px;
       padding:0 10px;
       font-size:13px;
+    }
+    .dashboard-actions .finance{
+      grid-column:1 / -1;
     }
     .content-grid{
       grid-template-columns:1fr;
@@ -1090,6 +1098,7 @@
             <button class="btn btn-primary" id="scrollFormBtn">＋ Add</button>
             <button class="btn btn-secondary" id="scrollListBtn">Lihat Riwayat</button>
             <button class="btn btn-blue" id="reloadApiBtn">Sync Spreadsheet</button>
+            <button class="btn btn-danger" id="financeCloseBtn">Close Admin</button>
           </div>
         </div>
         <div class="panel hero-side">
@@ -1229,13 +1238,6 @@
           </div>
 
           <nav class="side-nav" aria-label="Navigasi">
-            <button class="side-link active" id="goDashboardBtn" type="button">
-              <span class="side-ic">🏠</span>
-              <span>
-                <b>Dashboard</b>
-                <small>Tambah, edit, hapus akun</small>
-              </span>
-            </button>
 
             <button class="side-link" type="button" id="dashScrollListBtn">
               <span class="side-ic">📦</span>
@@ -1318,8 +1320,7 @@
 
           <section class="dashboard-actions">
             <button class="action-chip primary" id="dashAddBtn" type="button">＋ Tambah Akun</button>
-            <button class="action-chip" id="dashEndpointBtn" type="button">⇪ Impor Akun</button>
-            <button class="action-chip" id="dashReloadBtn" type="button">↻ Sync Data</button>
+            <button class="action-chip" id="dashDashboardBtn" type="button">🏠 Dashboard</button>
             <button class="action-chip finance" id="dashFinanceBtn" type="button">💰 Keuangan</button>
           </section>
 
@@ -1603,12 +1604,13 @@
     app: $('app'),
     statusPill: $('statusPill'),
     goFinanceBtn: $('goFinanceBtn'),
-    goDashboardBtn: $('goDashboardBtn'),
+    goDashboardBtn: null,
     refreshAllBtn: $('refreshAllBtn'),
     closeBtn: null,
     sidebarCloseBtn: $('sidebarCloseBtn'),
     sidebarBackdrop: $('sidebarBackdrop'),
     financeBackBtn: $('financeBackBtn'),
+    financeCloseBtn: $('financeCloseBtn'),
     homeBtn: $('homeBtn'),
     pinOverlay: $('pinOverlay'),
     pinCard: $('pinCard'),
@@ -1642,6 +1644,7 @@
     scrollListBtn: $('scrollListBtn'),
     floatingAddBtn: $('floatingAddBtn'),
     addBtn: $('dashAddBtn'),
+    dashDashboardBtn: $('dashDashboardBtn'),
     dashScrollListBtn: $('dashScrollListBtn'),
     dashReloadBtn: $('dashReloadBtn'),
     dashConnText: null,
@@ -1906,6 +1909,14 @@ function sendViaIframePost(endpoint, payload){
     window.location.href = 'index.html';
   }
 
+  function goToAdminPage(){
+    sessionStorage.removeItem(UNLOCK_KEY);
+    sessionStorage.removeItem('yuraaa_active_view_v1');
+    closeSidebarDrawer();
+    forceScrollTop();
+    window.location.href = 'admin.html';
+  }
+
   function openSidebarDrawer(open){
     document.body.classList.toggle('drawer-open', !!open);
   }
@@ -1955,9 +1966,9 @@ function sendViaIframePost(endpoint, payload){
   }
 
   ui.goFinanceBtn.onclick = () => openView('finance');
-  ui.goDashboardBtn.onclick = () => openView('dashboard');
+  if(ui.dashDashboardBtn) ui.dashDashboardBtn.onclick = () => openView('dashboard');
   if(ui.homeBtn) ui.homeBtn.onclick = goToIndex;
-    if(ui.sidebarCloseBtn) ui.sidebarCloseBtn.onclick = () => closeSidebarDrawer();
+  if(ui.sidebarCloseBtn) ui.sidebarCloseBtn.onclick = () => closeSidebarDrawer();
   if(ui.sidebarBackdrop) ui.sidebarBackdrop.onclick = () => closeSidebarDrawer();
   if(ui.financeBackBtn) ui.financeBackBtn.onclick = goToIndex;
   ui.refreshAllBtn.onclick = async () => {
@@ -1965,7 +1976,11 @@ function sendViaIframePost(endpoint, payload){
     await dashboard.loadList(true);
     toast('Disegarkan.');
   };
-  ui.pinClose.onclick = () => { window.location.href = 'index.html'; };
+  if(ui.dashAddBtn) ui.dashAddBtn.onclick = () => showFormOverlay();
+  if(ui.dashFinanceBtn) ui.dashFinanceBtn.onclick = () => openView('finance');
+  if(ui.dashDashboardBtn) ui.dashDashboardBtn.onclick = () => openView('dashboard');
+  if(ui.financeCloseBtn) ui.financeCloseBtn.onclick = () => goToAdminPage();
+  ui.pinClose.onclick = () => { goToAdminPage(); };
   ui.submitPinBtn.onclick = () => pinCheck(ui.pinInput.value.trim());
   ui.pinInput.addEventListener('input', () => {
     ui.pinInput.value = ui.pinInput.value.replace(/\D/g, '').slice(0, 6);
@@ -2539,6 +2554,7 @@ function bindAmountInput(node){
       endpointBtn: $('dashEndpointBtn'),
       reloadBtn: $('dashReloadBtn'),
       addBtn: $('dashAddBtn'),
+    dashDashboardBtn: $('dashDashboardBtn'),
       scrollListBtn: $('dashScrollListBtn'),
       dashListSection: $('dashListSection'),
       dashFormSection: $('dashFormSection'),
