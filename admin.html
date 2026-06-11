@@ -817,12 +817,7 @@
   .quick-btn small{display:block;margin-top:4px;color:var(--muted);font-size:12px}
   .quick-btn.primary{background:linear-gradient(180deg, rgba(139,92,246,.92), rgba(79,70,229,.78))}
   .quick-btn.primary span{background:rgba(255,255,255,.12)}
-  .content-grid{
-    display:grid;
-    grid-template-columns:minmax(0,1fr) minmax(320px,360px);
-    gap:14px;
-    align-items:start;
-  }
+  .content-grid{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
   .finance-side .mini-stats{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
   .mini-stat{
     padding:14px;border-radius:18px;background:rgba(15,23,42,.72);border:1px solid rgba(34,197,94,.16)
@@ -860,9 +855,9 @@
   }
   @media (max-width: 760px){
     .top-search,.stage-search{display:none}
-    .summary-grid,.quick-actions{grid-template-columns:1fr}
-    .stage-top{padding:14px}
-    .stage-head h2{font-size:22px}
+    .summary-grid,.quick-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .stage-top{padding:12px}
+    .stage-head h2{font-size:19px}
     .content-grid{grid-template-columns:1fr}
   }
 
@@ -919,7 +914,6 @@
     box-shadow:0 10px 28px rgba(0,0,0,.22);
   }
   .sidebar-close-btn:hover{transform:translateY(-1px)}
-  .finance-back-btn{min-width:170px}
   #homeBtn2{display:inline-grid}
   @media (max-width: 760px){
     .app{padding:10px 10px 20px}
@@ -941,8 +935,9 @@
       gap:8px;
     }
     .pill{
-      width:100%;
+      width:auto;
       justify-content:center;
+      flex:1 1 auto;
     }
     .hero{gap:12px}
     .hero-main,.hero-side,.section{padding:14px}
@@ -950,17 +945,23 @@
     .hero p{font-size:13px;line-height:1.6}
     .hero-actions{
       display:grid;
-      grid-template-columns:1fr;
+      grid-template-columns:1fr 1fr;
       gap:8px;
     }
     .hero-actions .btn{
       width:100%;
       min-width:0;
+      height:42px;
+      font-size:13px;
+      padding:0 10px;
+    }
+    .hero-actions .btn:nth-child(3){
+      grid-column:1 / -1;
     }
     .stats{gap:10px}
     .stat{
-      min-height:92px;
-      padding:14px;
+      min-height:84px;
+      padding:12px;
       border-radius:18px;
     }
     .stat .value{font-size:18px}
@@ -970,7 +971,7 @@
     .summary-grid,
     .quick-actions,
     .dash-grid{
-      grid-template-columns:1fr;
+      grid-template-columns:repeat(2,minmax(0,1fr));
     }
     .account-toolbar{gap:10px}
     .chips{width:100%}
@@ -991,23 +992,27 @@
       width:100%;
       gap:8px;
     }
+    .notify-chip{display:none}
     .stage-search-input{
       width:100%;
     }
-    .notify-chip,.date-chip{
+    .notify-chip{
       width:100%;
       justify-content:space-between;
     }
     .quick-btn{
-      padding:14px;
+      padding:12px;
       border-radius:18px;
+      gap:10px;
+      min-height:70px;
     }
     .quick-btn span{
-      width:42px;
-      height:42px;
+      width:40px;
+      height:40px;
       border-radius:14px;
       font-size:18px;
     }
+    .quick-btn small{display:none}
     .content-grid{
       grid-template-columns:1fr;
     }
@@ -1015,7 +1020,7 @@
       position:fixed;
       left:10px;
       top:10px;
-      width:min(300px, calc(100vw - 20px));
+      width:min(280px, calc(100vw - 20px));
       height:calc(100vh - 20px);
       overflow:auto;
       transform:translateX(calc(-100% - 18px));
@@ -1077,7 +1082,6 @@
             <button class="btn btn-primary" id="scrollFormBtn">＋ Add</button>
             <button class="btn btn-secondary" id="scrollListBtn">Lihat Riwayat</button>
             <button class="btn btn-blue" id="reloadApiBtn">Sync Spreadsheet</button>
-            <button class="btn btn-secondary finance-back-btn" id="financeBackBtn">↩ Dashboard</button>
           </div>
         </div>
         <div class="panel hero-side">
@@ -1255,9 +1259,9 @@
         <main class="main-stage">
           <section class="stage-top">
             <div class="stage-head">
+              <button class="home-pill" id="homeBtn2" type="button" aria-label="Kembali ke index">☰</button>
               <div>
-                <h2>Halo! 👋</h2>
-                <p>Kelola akun dan keuangan tokomu dengan mudah.</p>
+                <h2>Dashboard</h2>
               </div>
             </div>
 
@@ -1266,10 +1270,6 @@
                 <input id="dashSearch" class="stage-search-input" placeholder="Cari akun..." autocomplete="off">
               </div>
               <div class="notify-chip">🔔 <span>3</span></div>
-              <div class="date-chip">
-                <strong id="dashClockDate">22 Mei 2025</strong>
-                <span id="dashClockTime">Kamis, 14:32</span>
-              </div>
             </div>
           </section>
 
@@ -1358,43 +1358,7 @@
               </div>
 
               <div style="margin-top:14px" id="dashCards" class="dash-grid"></div>
-            </section>
-
-            <aside class="panel section finance-side">
-              <div class="history-head">
-                <div>
-                  <h3>Keuangan</h3>
-                  <p>Transaksi dari akun sold dan input manual.</p>
-                </div>
-              </div>
-
-              <div class="mini-stats">
-                <div class="mini-stat">
-                  <span>Pemasukan</span>
-                  <strong id="dashFinanceIncome">Rp 0</strong>
-                  <small>Terjual dari akun sold</small>
-                </div>
-                <div class="mini-stat red">
-                  <span>Pengeluaran</span>
-                  <strong id="dashFinanceExpense">Rp 0</strong>
-                  <small>Estimasi biaya operasional</small>
-                </div>
-                <div class="mini-stat purple">
-                  <span>Saldo Bersih</span>
-                  <strong id="dashFinanceBalance">Rp 0</strong>
-                  <small>Total saldo bersih</small>
-                </div>
-              </div>
-
-              <div class="tx-list">
-                <div class="tx-mini income"><b>Terjual - HSR Asia E6 Acheron</b><small>22 Mei 2025, 14:20</small><span>+ Rp 450.000</span></div>
-                <div class="tx-mini income"><b>Terjual - ZZZ Asia Starter</b><small>22 Mei 2025, 11:10</small><span>+ Rp 250.000</span></div>
-                <div class="tx-mini expense"><b>Pengeluaran - Topup Game</b><small>22 Mei 2025, 10:15</small><span>- Rp 300.000</span></div>
-                <div class="tx-mini expense"><b>Pengeluaran - Ongkir</b><small>21 Mei 2025, 16:45</small><span>- Rp 25.000</span></div>
-                <div class="tx-mini income"><b>Terjual - Genshin Asia AR60</b><small>21 Mei 2025, 13:10</small><span>+ Rp 350.000</span></div>
-              </div>
-            </aside>
-          </section>
+            </section>          </section>
 
           <section class="panel section" id="dashFormSection">
             <div class="section-head">
@@ -1649,7 +1613,7 @@
     goFinanceBtn: $('goFinanceBtn'),
     goDashboardBtn: $('goDashboardBtn'),
     refreshAllBtn: $('refreshAllBtn'),
-    closeBtn: $('closeBtn'),
+    closeBtn: null,
     sidebarCloseBtn: $('sidebarCloseBtn'),
     sidebarBackdrop: $('sidebarBackdrop'),
     financeBackBtn: $('financeBackBtn'),
@@ -1688,7 +1652,7 @@
     addBtn: $('dashAddBtn'),
     dashScrollListBtn: $('dashScrollListBtn'),
     dashReloadBtn: $('dashReloadBtn'),
-    dashConnText: $('dashConnText'),
+    dashConnText: null,
     dashFormSection: $('dashFormSection'),
     dashListSection: $('dashListSection'),
     dashEndpointBtn: $('dashEndpointBtn'),
@@ -1707,6 +1671,7 @@
   }
   const forceScrollTop = () => window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   window.addEventListener('pageshow', forceScrollTop);
+window.addEventListener('DOMContentLoaded', forceScrollTop);
   window.addEventListener('load', () => setTimeout(forceScrollTop, 0));
 
 
