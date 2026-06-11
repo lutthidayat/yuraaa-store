@@ -308,6 +308,9 @@
     max-width:min(92vw,560px);text-align:center;font-size:13px;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+  .toast.success{border-color:rgba(34,197,94,.32);color:#dcfce7}
+  .toast.error{border-color:rgba(239,68,68,.32);color:#fecaca}
+  .toast.warn{border-color:rgba(251,191,36,.32);color:#fde68a}
   .overlay{
     position:fixed;inset:0;background:rgba(2,6,23,.72);backdrop-filter:blur(14px);
     display:none;align-items:center;justify-content:center;padding:18px;z-index:100;
@@ -969,6 +972,10 @@
     .dash-grid{
       grid-template-columns:1fr;
     }
+    .account-toolbar{gap:10px}
+    .chips{width:100%}
+    .chips .chip{flex:1 1 calc(50% - 6px); justify-content:center}
+    .search-row.compact{width:100%}
     .stage-top{
       padding:12px;
       gap:10px;
@@ -1248,7 +1255,6 @@
         <main class="main-stage">
           <section class="stage-top">
             <div class="stage-head">
-              <button class="home-pill" id="homeBtn2" type="button" aria-label="Kembali ke index">☰</button>
               <div>
                 <h2>Halo! 👋</h2>
                 <p>Kelola akun dan keuangan tokomu dengan mudah.</p>
@@ -1324,13 +1330,6 @@
                 <small>Perbarui semua data</small>
               </div>
             </button>
-            <button class="quick-btn" id="goFinanceBtn2" type="button" onclick="document.getElementById('goFinanceBtn').click()">
-              <span>💰</span>
-              <div>
-                <strong>Keuangan</strong>
-                <small>Lihat transaksi</small>
-              </div>
-            </button>
           </section>
 
           <section class="content-grid">
@@ -1367,7 +1366,6 @@
                   <h3>Keuangan</h3>
                   <p>Transaksi dari akun sold dan input manual.</p>
                 </div>
-                <button class="btn btn-secondary" type="button" id="goFinanceBtn3" onclick="document.getElementById('goFinanceBtn').click()">Buka</button>
               </div>
 
               <div class="mini-stats">
@@ -1395,8 +1393,6 @@
                 <div class="tx-mini expense"><b>Pengeluaran - Ongkir</b><small>21 Mei 2025, 16:45</small><span>- Rp 25.000</span></div>
                 <div class="tx-mini income"><b>Terjual - Genshin Asia AR60</b><small>21 Mei 2025, 13:10</small><span>+ Rp 350.000</span></div>
               </div>
-
-              <button class="btn btn-primary full-btn" type="button" id="dashAddTransactionMini" onclick="document.getElementById('goFinanceBtn').click()">＋ Tambah Transaksi Manual</button>
             </aside>
           </section>
 
@@ -1654,12 +1650,10 @@
     goDashboardBtn: $('goDashboardBtn'),
     refreshAllBtn: $('refreshAllBtn'),
     closeBtn: $('closeBtn'),
-    sidebarLogoutBtn: $('sidebarLogoutBtn'),
     sidebarCloseBtn: $('sidebarCloseBtn'),
     sidebarBackdrop: $('sidebarBackdrop'),
     financeBackBtn: $('financeBackBtn'),
     homeBtn: $('homeBtn'),
-    homeBtn2: $('homeBtn2'),
     pinOverlay: $('pinOverlay'),
     pinCard: $('pinCard'),
     pinClose: $('pinClose'),
@@ -1708,6 +1702,13 @@
     cancelEndpointBtn: $('cancelEndpointBtn'),
     closeEndpointBtn: $('closeEndpointBtn')
   };
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  const forceScrollTop = () => window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  window.addEventListener('pageshow', forceScrollTop);
+  window.addEventListener('load', () => setTimeout(forceScrollTop, 0));
+
 
 
   async function fetchTextWithTimeout(url, options = {}, timeoutMs = 18000){
@@ -1905,8 +1906,11 @@ function sendViaIframePost(endpoint, payload){
   });
 }
 
-  function toast(msg){
+  function toast(msg, type='success'){
+    if(!ui.toast) return;
     ui.toast.textContent = msg;
+    ui.toast.classList.remove('success', 'error', 'warn');
+    if(type) ui.toast.classList.add(type);
     ui.toast.classList.add('show');
     clearTimeout(toast._t);
     toast._t = setTimeout(() => ui.toast.classList.remove('show'), 1800);
@@ -1941,6 +1945,7 @@ function sendViaIframePost(endpoint, payload){
     sessionStorage.removeItem(UNLOCK_KEY);
     sessionStorage.removeItem('yuraaa_active_view_v1');
     closeSidebarDrawer();
+    forceScrollTop();
     window.location.href = 'index.html';
   }
 
@@ -1962,6 +1967,7 @@ function sendViaIframePost(endpoint, payload){
     setTopbarBackAction(which);
     closeSidebarDrawer();
     localStorage.setItem('yuraaa_active_view_v1', finance ? 'finance' : 'dashboard');
+    forceScrollTop();
     if(!finance){
       dashboard.render();
       if(sessionStorage.getItem(UNLOCK_KEY) === '1') dashboard.loadList(true).catch(()=>{});
@@ -1969,6 +1975,7 @@ function sendViaIframePost(endpoint, payload){
       finance.render();
       if(sessionStorage.getItem(UNLOCK_KEY) === '1') finance.loadApi().catch(()=>{});
     }
+    setTimeout(forceScrollTop, 0);
   }
   function lockApp(){
     sessionStorage.removeItem(UNLOCK_KEY);
@@ -1993,10 +2000,9 @@ function sendViaIframePost(endpoint, payload){
   ui.goFinanceBtn.onclick = () => openView('finance');
   ui.goDashboardBtn.onclick = () => openView('dashboard');
   if(ui.homeBtn) ui.homeBtn.onclick = goToIndex;
-  if(ui.homeBtn2) ui.homeBtn2.onclick = goToIndex;
-  if(ui.sidebarCloseBtn) ui.sidebarCloseBtn.onclick = () => closeSidebarDrawer();
+    if(ui.sidebarCloseBtn) ui.sidebarCloseBtn.onclick = () => closeSidebarDrawer();
   if(ui.sidebarBackdrop) ui.sidebarBackdrop.onclick = () => closeSidebarDrawer();
-  if(ui.financeBackBtn) ui.financeBackBtn.onclick = () => openView('dashboard');
+  if(ui.financeBackBtn) ui.financeBackBtn.onclick = goToIndex;
   ui.refreshAllBtn.onclick = async () => {
     await finance.loadApi();
     await dashboard.loadList(true);
@@ -2016,7 +2022,7 @@ function sendViaIframePost(endpoint, payload){
   function pinCheck(val){
     if(val === PIN_CODE){
       unlockApp();
-      toast('PIN benar.');
+      toast('PIN benar. Silakan masuk.', 'success');
       const active = localStorage.getItem('yuraaa_active_view_v1') || 'finance';
       openView(active);
       finance.loadApi().catch(()=>{});
@@ -2289,9 +2295,9 @@ function sendViaIframePost(endpoint, payload){
       const date = el.date.value || todayISO();
       const note = el.note.value.trim();
 
-      if(!desc){ toast('Keterangan belum diisi.'); return; }
-      if(!amount){ toast('Jumlah belum diisi.'); return; }
-      if(!date){ toast('Tanggal belum diisi.'); return; }
+      if(!desc){ toast('Keterangan belum diisi.', 'warn'); return; }
+      if(!amount){ toast('Jumlah belum diisi.', 'warn'); return; }
+      if(!date){ toast('Tanggal belum diisi.', 'warn'); return; }
 
       if(el.editId.value){
         const idx = state.manual.findIndex(x => x.id === el.editId.value);
@@ -2306,7 +2312,7 @@ function sendViaIframePost(endpoint, payload){
             note,
             updatedAt: new Date().toISOString()
           };
-          toast('Transaksi diperbarui.');
+          toast('Transaksi berhasil diperbarui.', 'success');
         }
       } else {
         state.manual.unshift({
@@ -2321,7 +2327,7 @@ function sendViaIframePost(endpoint, payload){
           createdAt: new Date().toISOString(),
           updatedAt: ''
         });
-        toast('Transaksi disimpan.');
+        toast('Transaksi berhasil disimpan.', 'success');
       }
 
       saveLocal();
@@ -2371,7 +2377,7 @@ function sendViaIframePost(endpoint, payload){
             row: String(payload.row || '')
           });
           if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
-          toast('Akun dihapus.');
+          toast('Akun berhasil dihapus.', 'success');
           closeModal(ui.confirmOverlay);
           window.__yuraaaDeleteContext = '';
           window.__yuraaaDeletePayload = null;
@@ -2379,7 +2385,7 @@ function sendViaIframePost(endpoint, payload){
           await dashboard.loadList(true);
         }catch(e){
           console.error(e);
-          toast(e.message || 'Gagal menghapus akun.');
+          toast(e.message || 'Gagal menghapus akun.', 'error');
         }finally{
           setButtonBusy(ui.yesDeleteBtn, false);
           setButtonBusy(ui.cancelDeleteBtn, false);
@@ -2395,7 +2401,7 @@ function sendViaIframePost(endpoint, payload){
       closeModal(ui.confirmOverlay);
       window.__yuraaaDeleteContext = '';
       window.__yuraaaDeletePayload = null;
-      toast('Transaksi dihapus.');
+      toast('Transaksi berhasil dihapus.', 'success');
     }
 
     function openModal(node){ node.classList.add('open'); node.setAttribute('aria-hidden','false'); }
@@ -2714,9 +2720,11 @@ function firstImage(value){
     }
 
     function setConnectionState(ok, label){
-      ui.dashConnText.textContent = label;
-      ui.dashConnText.className = ok ? 'pill' : 'pill warn';
-      el.status.textContent = label;
+      if(ui.dashConnText){
+        ui.dashConnText.textContent = label;
+        ui.dashConnText.className = ok ? 'pill' : 'pill warn';
+      }
+      if(el.status) el.status.textContent = label;
     }
     function setLoadingDashboard(show, text='Memproses...'){
       setLoading(show, text);
@@ -2956,9 +2964,9 @@ function firstImage(value){
 
     async function saveAccount(){
       const data = buildPayload();
-      if(!data.Nama){ toast('Nama akun belum diisi.'); return; }
-      if(!data.Game){ toast('Game belum diisi.'); return; }
-      if(!data.Harga){ toast('Harga belum diisi.'); return; }
+      if(!data.Nama){ toast('Nama akun belum diisi.', 'warn'); return; }
+      if(!data.Game){ toast('Game belum diisi.', 'warn'); return; }
+      if(!data.Harga){ toast('Harga belum diisi.', 'warn'); return; }
 
       setLoadingDashboard(true, 'Menyiapkan data...');
       setButtonBusy(ui.saveBtn, true, data.action === 'update' ? 'Menyimpan...' : 'Menyimpan...');
@@ -2992,7 +3000,7 @@ function firstImage(value){
         await loadList(true);
       }catch(e){
         console.error(e);
-        toast(e.message || 'Gagal menyimpan akun.');
+        toast(e.message || 'Gagal menyimpan akun.', 'error');
       }finally{
         setButtonBusy(ui.saveBtn, false);
         setLoadingDashboard(false);
@@ -3095,12 +3103,12 @@ function firstImage(value){
           id
         });
         if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
-        toast('Akun dihapus.');
+        toast('Akun berhasil dihapus.', 'success');
         resetDashboardForm();
         await loadList(true);
       }catch(e){
         console.error(e);
-        toast(e.message || 'Gagal menghapus akun.');
+        toast(e.message || 'Gagal menghapus akun.', 'error');
       }finally{
         setButtonBusy(el.deleteBtn, false);
         setLoadingDashboard(false);
@@ -3135,7 +3143,7 @@ function firstImage(value){
         };
         const res = await sendViaGoogleScript('delete', payload);
         if(!res || res.ok === false) throw new Error((res && res.message) || 'Gagal menghapus akun.');
-        toast('Akun dihapus.');
+        toast('Akun berhasil dihapus.', 'success');
         closeModal(ui.confirmOverlay);
         state.selectedDelete = null;
         window.__yuraaaDeleteContext = '';
@@ -3143,7 +3151,7 @@ function firstImage(value){
         await loadList(true);
       }catch(e){
         console.error(e);
-        toast(e.message || 'Gagal menghapus akun.');
+        toast(e.message || 'Gagal menghapus akun.', 'error');
       }finally{
         setButtonBusy(ui.yesDeleteBtn, false);
         setButtonBusy(ui.cancelDeleteBtn, false);
